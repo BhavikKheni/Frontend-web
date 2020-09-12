@@ -239,7 +239,7 @@ function App() {
   };
 
   const closeForgotPasswordDialog = () => {
-    setForgotPasswordDialog(true);
+    setForgotPasswordDialog(false);
   };
 
   return (
