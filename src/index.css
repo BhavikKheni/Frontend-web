@@ -11,3 +11,36 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+
+/* common */
+.text-center {
+  text-align: center;
+}
+/* common over */
+
+/* header */
+header .navbar-brand {
+  margin-right: 20px;
+}
+header button.MuiButtonBase-root ~ button {
+  margin-left: 16px;
+}
+/* header over*/
+
+
+/* form css */
+.form-modal .MuiDialog-paperWidthSm {
+  max-width: 400px;
+  width: 100%;
+}
+.form-modal .form-wrapper {
+  padding-top: 30px;
+}
+.form-wrapper .MuiFormControl-root {
+  width: 100%;
+}
+.form-wrapper  .MuiFormControl-marginNormal {
+  margin-top: 0px;
+  margin-bottom: 15px;
+}
