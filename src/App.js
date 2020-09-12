@@ -216,6 +216,7 @@ function App() {
 
   const [openSignIn, setOpenSignIn] = React.useState(false);
   const [openSignUp, setOpenSignUp] = React.useState(false);
+  const [openForgotPassword, setForgotPasswordDialog] = React.useState(false);
 
   const openSignInDialog = () => {
     setOpenSignIn(true);
@@ -231,6 +232,14 @@ function App() {
 
   const handleCloseSignUp = () => {
     setOpenSignUp(false);
+  };
+
+  const openForgotPasswordDialog = () => {
+    setForgotPasswordDialog(true);
+  };
+
+  const closeForgotPasswordDialog = () => {
+    setForgotPasswordDialog(true);
   };
 
   return (
@@ -303,6 +312,12 @@ function App() {
                     size="small"
                     margin="normal"
                   />
+                  <Button color="primary" onClick={() => {
+                    handleCloseSignIn();
+                    openForgotPasswordDialog();
+                  }}>
+                    Forgot Password?
+                  </Button>
                   <Button variant="contained" color="primary">
                     Log in
                   </Button>
@@ -314,8 +329,8 @@ function App() {
                   handleCloseSignIn();
                   openSignUpDialog();
                 }}>
-                    Sign Up
-                  </Button>
+                  Sign Up
+                </Button>
                 </span>
               </DialogContent>
             </Dialog>
@@ -366,8 +381,38 @@ function App() {
                   handleCloseSignUp();
                   openSignInDialog();
                 }}>
-                    Sign In
+                  Sign In
+                </Button>
+                </span>
+              </DialogContent>
+            </Dialog>
+            <Dialog onClose={closeForgotPasswordDialog} aria-labelledby="customized-dialog-title" open={openForgotPassword} className={'modal-dialog form-modal'}>
+              <DialogTitle id="customized-dialog-title" onClose={closeForgotPasswordDialog}>
+                FORGOT PASSWORD
+              </DialogTitle>
+              <DialogContent className={'form-wrapper'} dividers>
+                <FormControl>
+                  <TextField
+                    label="Email Address"
+                    id="outlined-email"
+                    variant="outlined"
+                    size="small"
+                    margin="normal"
+                    autoFocus
+                  />
+                  <Button variant="contained" color="primary">
+                    RESET PASSWORD
                   </Button>
+                </FormControl>
+              </DialogContent>
+              <DialogContent dividers className={'text-center'}>
+                <span>Already member? <br />
+                <Button href="#text-buttons" color="primary" onClick={() => {
+                  closeForgotPasswordDialog();
+                  openSignInDialog();
+                }}>
+                  Sign In
+                </Button>
                 </span>
               </DialogContent>
             </Dialog>
