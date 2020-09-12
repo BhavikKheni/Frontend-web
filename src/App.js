@@ -214,13 +214,23 @@ function App() {
     </Menu>
   );
 
-  const [open, setOpen] = React.useState(false);
+  const [openSignIn, setOpenSignIn] = React.useState(false);
+  const [openSignUp, setOpenSignUp] = React.useState(false);
 
-  const handleClickOpen = () => {
-    setOpen(true);
+  const openSignInDialog = () => {
+    setOpenSignIn(true);
   };
-  const handleClose = () => {
-    setOpen(false);
+
+  const handleCloseSignIn = () => {
+    setOpenSignIn(false);
+  };
+
+  const openSignUpDialog = () => {
+    setOpenSignUp(true);
+  };
+
+  const handleCloseSignUp = () => {
+    setOpenSignUp(false);
   };
 
   return (
@@ -270,16 +280,16 @@ function App() {
             >
               <AccountCircle />
             </IconButton> */}
-            <Button variant="outlined" size="small" color="inherit" onClick={handleClickOpen}>Login</Button>
-            <Button variant="outlined" size="small" color="inherit">Signup</Button>
-            <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} className={'modal-dialog form-modal'}>
-              <DialogTitle id="customized-dialog-title" onClose={handleClose}>
+            <Button variant="outlined" size="small" color="inherit" onClick={openSignInDialog}>Login</Button>
+            <Button variant="outlined" size="small" color="inherit" onClick={openSignUpDialog}>Signup</Button>
+            <Dialog onClose={handleCloseSignIn} aria-labelledby="customized-dialog-title" open={openSignIn} className={'modal-dialog form-modal'}>
+              <DialogTitle id="customized-dialog-title" onClose={handleCloseSignIn}>
                 LOGIN
               </DialogTitle>
               <DialogContent className={'form-wrapper'} dividers>
                 <FormControl>
                   <TextField
-                    label="Email Id"
+                    label="Email Address"
                     id="outlined-email"
                     variant="outlined"
                     size="small"
@@ -300,8 +310,63 @@ function App() {
               </DialogContent>
               <DialogContent dividers className={'text-center'}>
                 <span>Not a member already? <br />
-                <Button href="#text-buttons" color="primary">
-                    Sign up
+                <Button href="#text-buttons" color="primary" onClick={() => {
+                  handleCloseSignIn();
+                  openSignUpDialog();
+                }}>
+                    Sign Up
+                  </Button>
+                </span>
+              </DialogContent>
+            </Dialog>
+            <Dialog onClose={handleCloseSignUp} aria-labelledby="customized-dialog-title" open={openSignUp} className={'modal-dialog form-modal'}>
+              <DialogTitle id="customized-dialog-title" onClose={handleCloseSignUp}>
+                SIGN UP
+              </DialogTitle>
+              <DialogContent className={'form-wrapper'} dividers>
+                <FormControl>
+                  <TextField
+                    label="Email Address"
+                    type="email"
+                    id="outlined-email"
+                    variant="outlined"
+                    size="small"
+                    margin="normal"
+                    autoFocus
+                  />
+                  <TextField
+                    label="First Name"
+                    id="outlined-email"
+                    variant="outlined"
+                    size="small"
+                    margin="normal"
+                  />
+                  <TextField
+                    label="Last Name"
+                    id="outlined-email"
+                    variant="outlined"
+                    size="small"
+                    margin="normal"
+                  />
+                  <TextField
+                    label="Password"
+                    id="outlined-password"
+                    variant="outlined"
+                    size="small"
+                    margin="normal"
+                  />
+                  <Button variant="contained" color="primary">
+                    Submit
+                  </Button>
+                </FormControl>
+              </DialogContent>
+              <DialogContent dividers className={'text-center'}>
+                <span>Already member? <br />
+                <Button href="#text-buttons" color="primary" onClick={() => {
+                  handleCloseSignUp();
+                  openSignInDialog();
+                }}>
+                    Sign In
                   </Button>
                 </span>
               </DialogContent>
