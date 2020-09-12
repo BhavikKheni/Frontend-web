@@ -26,6 +26,10 @@ import CloseIcon from '@material-ui/icons/Close';
 import { withStyles } from '@material-ui/core/styles';
 import { FormControl, InputLabel, Input, FormHelperText, TextField } from '@material-ui/core';
 import './App.css';
+import CreateRoutes from './Routers/Routers.js';
+import { Link } from 'react-router-dom';
+import { BrowserRouter as Router, useLocation } from 'react-router-dom';
+
 
 const useStyles = makeStyles((theme) => ({
   grow: {
@@ -257,8 +261,10 @@ function App() {
           <Typography className={classes.title} variant="h6" noWrap className={'navbar-brand'}>
             OWERA
           </Typography>
-          <Button color="secondary">Dashboard</Button>
-          <Button color="secondary">Services</Button>
+          <Router>
+            <Button color="secondary" component={Link} to="/dashboard">Dashboard</Button>
+            <Button color="secondary" component={Link} to="/services">Services</Button>
+          </Router>
           <div className={classes.grow} />
           <div className={classes.search}>
             <div className={classes.searchIcon}>
@@ -291,7 +297,7 @@ function App() {
             </IconButton> */}
             <Button variant="outlined" size="small" color="inherit" onClick={openSignInDialog}>Login</Button>
             <Button variant="outlined" size="small" color="inherit" onClick={openSignUpDialog}>Signup</Button>
-            <Dialog onClose={handleCloseSignIn} aria-labelledby="customized-dialog-title" open={openSignIn} className={'modal-dialog form-modal'}>
+            <Dialog onClose={handleCloseSignIn} disableBackdropClick aria-labelledby="customized-dialog-title" open={openSignIn} className={'modal-dialog form-modal'}>
               <DialogTitle id="customized-dialog-title" onClose={handleCloseSignIn}>
                 LOGIN
               </DialogTitle>
@@ -334,7 +340,7 @@ function App() {
                 </span>
               </DialogContent>
             </Dialog>
-            <Dialog onClose={handleCloseSignUp} aria-labelledby="customized-dialog-title" open={openSignUp} className={'modal-dialog form-modal'}>
+            <Dialog onClose={handleCloseSignUp} disableBackdropClick aria-labelledby="customized-dialog-title" open={openSignUp} className={'modal-dialog form-modal'}>
               <DialogTitle id="customized-dialog-title" onClose={handleCloseSignUp}>
                 SIGN UP
               </DialogTitle>
@@ -386,7 +392,7 @@ function App() {
                 </span>
               </DialogContent>
             </Dialog>
-            <Dialog onClose={closeForgotPasswordDialog} aria-labelledby="customized-dialog-title" open={openForgotPassword} className={'modal-dialog form-modal'}>
+            <Dialog onClose={closeForgotPasswordDialog} disableBackdropClick aria-labelledby="customized-dialog-title" open={openForgotPassword} className={'modal-dialog form-modal'}>
               <DialogTitle id="customized-dialog-title" onClose={closeForgotPasswordDialog}>
                 FORGOT PASSWORD
               </DialogTitle>
@@ -430,6 +436,9 @@ function App() {
           </div>
         </Toolbar>
       </AppBar>
+      <Router>
+        <CreateRoutes />
+      </Router>
       {renderMobileMenu}
       {renderMenu}
     </div>
