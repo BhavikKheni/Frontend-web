@@ -11,7 +11,7 @@ import { withStyles } from "@material-ui/core/styles";
 import MuiDialogContent from "@material-ui/core/DialogContent";
 import { login, setLocalStorage } from "../../../Services/Auth.service";
 import InputTextComponent from "../../../Components/Forms/Input";
-import Link from '@material-ui/core/Link';
+import Link from "@material-ui/core/Link";
 
 const styles = (theme) => ({
   root: {
@@ -92,7 +92,7 @@ const SignIn = (props) => {
             setLogin(res && res.user);
             handleCloseSignIn();
           } else {
-            setOpen(true);
+            console.log(res.message);
           }
         })
         .catch((error) => {
@@ -138,10 +138,14 @@ const SignIn = (props) => {
               required={isValid}
               onChange={handleChange}
             />
-            <Link href="#" className={"forgot-password"} onClick={() => {
+            <Link
+              href="#"
+              className={"forgot-password"}
+              onClick={() => {
                 handleCloseSignIn();
                 openForgotPasswordDialog();
-              }}>
+              }}
+            >
               Forgot Password?
             </Link>
             <Button
