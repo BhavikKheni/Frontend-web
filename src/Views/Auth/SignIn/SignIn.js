@@ -9,6 +9,8 @@ import { FormControl, TextField } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import MuiDialogContent from "@material-ui/core/DialogContent";
 import { login, setLocalStorage } from '../../../Services/Auth.service';
+import InputTextComponent from '../../../Components/Forms/Input';
+
 const styles = (theme) => ({
   root: {
     margin: 0,
@@ -60,6 +62,7 @@ const SignIn = (props) => {
   const [isLoading, setLoading] = useState(false);
   const [isDisabled, setDisabled] = useState(false);
   const [isEmailValid, setEmailValid] = useState(true);
+
   const [state, setState] = useState({
     email: null,
     password: null,
@@ -71,6 +74,7 @@ const SignIn = (props) => {
       [e.target.name]: e.target.value,
     });
   };
+  
   const onSubmit = () => {
     // if (!isValid) return;
     setLoading(true);
@@ -97,6 +101,7 @@ const SignIn = (props) => {
       setDisabled(false);
     });
   };
+
   return (
     <React.Fragment>
       <Dialog
@@ -111,26 +116,22 @@ const SignIn = (props) => {
         </DialogTitle>
         <DialogContent className={"form-wrapper"} dividers>
           <FormControl>
-            <TextField
+            <InputTextComponent
               label="Email Address"
+              type="email"
+              placeholder="Email Address"
+              name="Email"
               id="outlined-email"
-              variant="outlined"
-              size="small"
-              margin="normal"
+              required
               autoFocus
-              placeholder="Username"
-              name="email"
-              onChange={handleChange}
             />
-            <TextField
+            <InputTextComponent
               label="Password"
               type="password"
-              id="outlined-password"
-              variant="outlined"
-              size="small"
-              margin="normal"
+              placeholder="Password"
               name="password"
-              onChange={handleChange}
+              id="outlined-password"
+              required
             />
             <Button
               color="primary"

@@ -10,6 +10,7 @@ import { FormControl, TextField } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import MuiDialogContent from "@material-ui/core/DialogContent";
 import { add } from '../../../Services/Auth.service';
+import InputTextComponent from '../../../Components/Forms/Input';
 
 const styles = (theme) => ({
   root: {
@@ -103,41 +104,38 @@ const SignUp = (props) => {
         </DialogTitle>
         <DialogContent className={"form-wrapper"} dividers>
           <FormControl>
-            <TextField
+            <InputTextComponent
               label="Email Address"
               type="email"
+              placeholder="Email Address"
+              name="Email"
               id="outlined-email"
-              variant="outlined"
-              size="small"
-              margin="normal"
+              required
               autoFocus
-              name="email"
-              onChange={handleChange}
             />
-            <TextField
+            <InputTextComponent
               label="First Name"
-              id="outlined-email"
-              variant="outlined"
-              size="small"
-              margin="normal"
-              name="firstName"
-              onChange={handleChange}
+              type="text"
+              placeholder="First Name"
+              name="FirstName"
+              id="outlined-first-name"
+              required
             />
-            <TextField
+            <InputTextComponent
               label="Last Name"
-              id="outlined-email"
-              variant="outlined"
-              size="small"
-              margin="normal"
+              type="text"
+              placeholder="Last Name"
+              name="LastName"
+              id="outlined-last-name"
+              required
             />
-            <TextField
+            <InputTextComponent
               label="Password"
+              type="password"
+              placeholder="Password"
+              name="Password"
               id="outlined-password"
-              variant="outlined"
-              size="small"
-              margin="normal"
-              name="password"
-              onChange={handleChange}
+              required
             />
             <Button variant="contained" color="primary"  disabled={isDisabled}>
               Continue
