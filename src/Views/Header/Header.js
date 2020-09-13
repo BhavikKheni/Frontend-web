@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink, withRouter } from "react-router-dom";
+import { withRouter } from "react-router-dom";
 import { fade, makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -15,13 +15,14 @@ import MailIcon from "@material-ui/icons/Mail";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import MoreIcon from "@material-ui/icons/MoreVert";
 import Button from "@material-ui/core/Button";
-// import CreateRoutes from "./Routers/Routers.js";
 import ForgotPassword from "../Auth/ForgotPassword/ForgotPassword";
 import SignIn from "../Auth/SignIn/SignIn";
 import SignUp from "../Auth/SignUp/SignUp";
 import { onIsLoggedIn } from "../../Services/Auth.service";
 import { SessionContext } from "../../Provider/Provider";
+
 const useSession = () => React.useContext(SessionContext);
+
 const useStyles = makeStyles((theme) => ({
   grow: {
     flexGrow: 1,
@@ -87,6 +88,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const OweraHeader = (props) => {
+
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
@@ -112,6 +114,7 @@ const OweraHeader = (props) => {
   };
 
   const menuId = "primary-search-account-menu";
+
   const renderMenu = (
     <Menu
       anchorEl={anchorEl}
@@ -128,6 +131,7 @@ const OweraHeader = (props) => {
   );
 
   const mobileMenuId = "primary-search-account-menu-mobile";
+
   const renderMobileMenu = (
     <Menu
       anchorEl={mobileMoreAnchorEl}
@@ -172,6 +176,7 @@ const OweraHeader = (props) => {
   const [openSignUp, setOpenSignUp] = React.useState(false);
   const [openForgotPassword, setForgotPasswordDialog] = React.useState(false);
   let { isLoggedIn, doLogin, user } = useSession();
+
   const { history } = props;
   const openSignInDialog = () => {
     setOpenSignIn(true);
@@ -205,26 +210,12 @@ const OweraHeader = (props) => {
       }
     });
   };
-  let Routes = [
-    { name: "Dashboard", url: "/dashboard" },
-    { name: "Profile", url: `/profile/${user && user.id_user}` },
-    // { name: 'Services', url: '/services' },
-    { name: "Work and earn", url: "/jobs/active-service" },
-    { name: "About", url: "/about" },
-  ];
+
   return (
     <React.Fragment>
       <div className={classes.grow}>
         <AppBar position="static">
           <Toolbar>
-            {/* <IconButton
-            edge="start"
-            className={classes.menuButton}
-            color="inherit"
-            aria-label="open drawer"
-          >
-            <MenuIcon />
-          </IconButton> */}
             <Typography
               className={classes.title}
               variant="h6"
@@ -329,9 +320,6 @@ const OweraHeader = (props) => {
             </div>
           </Toolbar>
         </AppBar>
-        {/* <Router>
-          <CreateRoutes />
-        </Router> */}
         {renderMobileMenu}
         {renderMenu}
       </div>

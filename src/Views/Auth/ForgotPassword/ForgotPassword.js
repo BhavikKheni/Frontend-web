@@ -129,7 +129,6 @@ const ForgotPassword = (props) => {
           <span>
             Already member? <br />
             <Button
-              href="#text-buttons"
               color="primary"
               onClick={() => {
                 closeForgotPasswordDialog();

@@ -104,6 +104,7 @@ const SignIn = (props) => {
         aria-labelledby="customized-dialog-title"
         open={openSignIn}
         className={"modal-dialog form-modal"}
+        disableBackdropClick
       >
         <DialogTitle id="customized-dialog-title" onClose={handleCloseSignIn}>
           LOGIN
@@ -123,6 +124,7 @@ const SignIn = (props) => {
             />
             <TextField
               label="Password"
+              type="password"
               id="outlined-password"
               variant="outlined"
               size="small"
@@ -155,7 +157,6 @@ const SignIn = (props) => {
           <span>
             Not a member already? <br />
             <Button
-              href="#text-buttons"
               color="primary"
               onClick={() => {
                 handleCloseSignIn();

@@ -96,6 +96,7 @@ const SignUp = (props) => {
         aria-labelledby="customized-dialog-title"
         open={openSignUp}
         className={"modal-dialog form-modal"}
+        disableBackdropClick
       >
         <DialogTitle id="customized-dialog-title" onClose={handleCloseSignUp}>
           SIGN UP
@@ -147,7 +148,6 @@ const SignUp = (props) => {
           <span>
             Already member? <br />
             <Button
-              href="#text-buttons"
               color="primary"
               onClick={() => {
                 handleCloseSignUp();
