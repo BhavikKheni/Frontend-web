@@ -6,7 +6,8 @@ import MuiDialogTitle from "@material-ui/core/DialogTitle";
 import Typography from "@material-ui/core/Typography";
 import CloseIcon from "@material-ui/icons/Close";
 import IconButton from "@material-ui/core/IconButton";
-import { FormControl, TextField } from "@material-ui/core";
+import { FormControl } from "@material-ui/core";
+import InputTextComponent from "../../../Components/Forms/Input";
 import { withStyles } from "@material-ui/core/styles";
 import MuiDialogContent from "@material-ui/core/DialogContent";
 import { add } from "../../../Services/Auth.service";
@@ -56,38 +57,35 @@ const ForgotPassword = (props) => {
   const [isLoading, setLoading] = useState(false);
   const [isDisabled, setDisabled] = useState(false);
   const [email, setEmail] = useState(null);
-  const [isEmailValid, setEmailValid] = useState(true);
+  const [isValid, setValid] = useState(false);
 
   const handleChange = (e) => {
     setEmail(e.target.value);
   };
 
   const onFinish = () => {
-    // if (!isEmailValid || !email) return;
-    // setLoading(true);
-    setDisabled(true);
-    add("/forgot", { email: email })
-      .then((res) => {
-        if (res && res.type === "SUCCESS") {
-          // Message('Success', 'Forgot password request is completed. Kindly check your mail');
-          setLoading(false);
-          setDisabled(false);
-          // toggle();
-        } else {
-          // Message('Error', res && res.message);
+    console.log(email)
+    if (email) {
+      setValid(false);
+      setDisabled(true);
+      add("/forgot", { email: email })
+        .then((res) => {
+          if (res && res.type === "SUCCESS") {
+            setDisabled(false);
+          } else {
+            setTimeout(() => {
+              setDisabled(false);
+            }, 2000);
+          }
+        })
+        .catch((error) => {
           setTimeout(() => {
-            setLoading(false);
             setDisabled(false);
           }, 2000);
-        }
-      })
-      .catch((error) => {
-        setTimeout(() => {
-          // Message('error', 'Request Failed');
-          setLoading(false);
-          setDisabled(false);
-        }, 2000);
-      });
+        });
+    }else{
+      setValid(true);
+    }
   };
 
   return (
@@ -107,13 +105,15 @@ const ForgotPassword = (props) => {
         </DialogTitle>
         <DialogContent className={"form-wrapper"} dividers>
           <FormControl>
-            <TextField
+          <InputTextComponent
               label="Email Address"
+              type="email"
+              placeholder="Email Address"
+              name="email"
               id="outlined-email"
-              variant="outlined"
-              size="small"
-              margin="normal"
               autoFocus
+              required={isValid}
+              onChange={handleChange}
             />
             <Button
               variant="contained"

@@ -6,11 +6,11 @@ import MuiDialogTitle from "@material-ui/core/DialogTitle";
 import Typography from "@material-ui/core/Typography";
 import CloseIcon from "@material-ui/icons/Close";
 import IconButton from "@material-ui/core/IconButton";
-import { FormControl, TextField } from "@material-ui/core";
+import { FormControl } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import MuiDialogContent from "@material-ui/core/DialogContent";
-import { add } from '../../../Services/Auth.service';
-import InputTextComponent from '../../../Components/Forms/Input';
+import { add } from "../../../Services/Auth.service";
+import InputTextComponent from "../../../Components/Forms/Input";
 
 const styles = (theme) => ({
   root: {
@@ -54,7 +54,6 @@ const SignUp = (props) => {
   const [isLoading, setLoading] = useState(false);
   const [isDisabled, setDisabled] = useState(false);
   const [isValid, setValid] = useState(false);
-  const [isEmailValid, setEmailValid] = useState(true);
   const [state, setState] = useState({
     email: null,
     first_name: null,
@@ -70,24 +69,20 @@ const SignUp = (props) => {
   };
 
   const onFinish = () => {
-    // if (!isValid) return;
-    setLoading(true);
-    setDisabled(true);
-    add("/signup", state)
-      .then((res) => {
-        if (res && res.type === "SUCCESS") {
-          // Message('success', 'Signed up successfully');
-          // toggle();
-        } else {
-          // Message('error', res.message);
-          // setLoading(false);
-          setDisabled(false);
-        }
-      })
-      .catch((error) => {
-        // Message('error', 'Request failed');
-        // setLoading(false);
-      });
+    if (state.email && state.first_name && state.last_name && state.password) {
+      setValid(false);
+      setDisabled(true);
+      add("/signup", state)
+        .then((res) => {
+          if (res && res.type === "SUCCESS") {
+          } else {
+            setDisabled(false);
+          }
+        })
+        .catch((error) => {});
+    } else {
+      setValid(true);
+    }
   };
 
   return (
@@ -110,34 +105,45 @@ const SignUp = (props) => {
               placeholder="Email Address"
               name="Email"
               id="outlined-email"
-              required
               autoFocus
+              required={isValid}
+              onChange={handleChange}
             />
             <InputTextComponent
               label="First Name"
               type="text"
               placeholder="First Name"
-              name="FirstName"
+              name="first_name"
               id="outlined-first-name"
-              required
+              required={isValid}
+              onChange={handleChange}
             />
             <InputTextComponent
               label="Last Name"
               type="text"
               placeholder="Last Name"
-              name="LastName"
+              name="last_name"
               id="outlined-last-name"
-              required
+              required={isValid}
+              onChange={handleChange}
             />
             <InputTextComponent
               label="Password"
               type="password"
               placeholder="Password"
-              name="Password"
+              name="password"
               id="outlined-password"
-              required
+              required={isValid}
+              onChange={handleChange}
             />
-            <Button variant="contained" color="primary"  disabled={isDisabled}>
+            <Button
+              variant="contained"
+              color="primary"
+              disabled={isDisabled}
+              onClick={() => {
+                onFinish();
+              }}
+            >
               Continue
             </Button>
           </FormControl>

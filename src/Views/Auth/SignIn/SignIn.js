@@ -5,11 +5,12 @@ import MuiDialogTitle from "@material-ui/core/DialogTitle";
 import Typography from "@material-ui/core/Typography";
 import CloseIcon from "@material-ui/icons/Close";
 import IconButton from "@material-ui/core/IconButton";
-import { FormControl, TextField } from "@material-ui/core";
+import { FormControl } from "@material-ui/core";
+import Snackbar from "@material-ui/core/Snackbar";
 import { withStyles } from "@material-ui/core/styles";
 import MuiDialogContent from "@material-ui/core/DialogContent";
-import { login, setLocalStorage } from '../../../Services/Auth.service';
-import InputTextComponent from '../../../Components/Forms/Input';
+import { login, setLocalStorage } from "../../../Services/Auth.service";
+import InputTextComponent from "../../../Components/Forms/Input";
 
 const styles = (theme) => ({
   root: {
@@ -55,13 +56,12 @@ const SignIn = (props) => {
     openForgotPasswordDialog,
     openSignUpDialog,
     setLogin,
-    toggle
   } = props;
 
   const [isValid, setValid] = useState(false);
   const [isLoading, setLoading] = useState(false);
   const [isDisabled, setDisabled] = useState(false);
-  const [isEmailValid, setEmailValid] = useState(true);
+  const [open, setOpen] = React.useState(false);
 
   const [state, setState] = useState({
     email: null,
@@ -74,32 +74,32 @@ const SignIn = (props) => {
       [e.target.name]: e.target.value,
     });
   };
-  
   const onSubmit = () => {
-    // if (!isValid) return;
-    setLoading(true);
-    setDisabled(true);
-    login(state.email, state.password).then((res) => {
+    if (state.email && state.password) {
+      setValid(false);
+      setDisabled(true);
+      login(state.email, state.password)
+        .then((res) => {
+          setDisabled(false);
 
-      // setLoading(false);
-      setDisabled(false);
-
-      if (res && res.type === 'SUCCESS') {
-        setLocalStorage({
-          ...((res && res.user) || {}),
-          token: res.auth_token
+          if (res && res.type === "SUCCESS") {
+            setLocalStorage({
+              ...((res && res.user) || {}),
+              token: res.auth_token,
+            });
+            setOpen(true);
+            setLogin(res && res.user);
+            handleCloseSignIn();
+          } else {
+            setOpen(true);
+          }
+        })
+        .catch((error) => {
+          setDisabled(false);
         });
-        setLogin(res && res.user);
-        // Message('success', res.status);
-        handleCloseSignIn();
-      } else {
-        // Message('error', res.message);
-      }
-    }).catch((error) => {
-      // Message('error', "Error");
-      setLoading(false);
-      setDisabled(false);
-    });
+    } else {
+      setValid(true);
+    }
   };
 
   return (
@@ -120,10 +120,11 @@ const SignIn = (props) => {
               label="Email Address"
               type="email"
               placeholder="Email Address"
-              name="Email"
+              name="email"
               id="outlined-email"
-              required
               autoFocus
+              required={isValid}
+              onChange={handleChange}
             />
             <InputTextComponent
               label="Password"
@@ -131,7 +132,8 @@ const SignIn = (props) => {
               placeholder="Password"
               name="password"
               id="outlined-password"
-              required
+              required={isValid}
+              onChange={handleChange}
             />
             <Button
               color="primary"
@@ -169,6 +171,12 @@ const SignIn = (props) => {
           </span>
         </DialogContent>
       </Dialog>
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        open={open}
+        message="Login Successfully"
+        autoHideDuration={3000}
+      />
     </React.Fragment>
   );
 };
