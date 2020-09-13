@@ -50,54 +50,58 @@ const Home = (props) => {
   return (
     <React.Fragment>
       <Card className={classes.root}>
-      <CardHeader
-        avatar={
-            <Tooltip title="Tushar Balar" placement="top-start" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} arrow>
-                <Avatar aria-label="recipe" className={classes.avatar}>
-                    TB
-                </Avatar>
-            </Tooltip>
-        }
-        action={
+        <div className={'card-header'}>
+          <Tooltip title="Tushar Balar" placement="top-start" TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} arrow>
+              <Avatar aria-label="name" className={classes.avatar}>
+                  TB
+              </Avatar>
+          </Tooltip>
+          <div className={'card-title'}>
+            <Typography variant="subtitle1" >
+              Frontend Developer
+            </Typography>
+            <Typography variant="caption">
+            <span color="primary">Live Now</span> - <span>12.5$/h</span>
+            </Typography>
+          </div>
           <IconButton aria-label="settings">
-            <LaunchIcon />
-          </IconButton>
-        }
-        title="Frontend Developer"
-        subheader="Live Now - 12.5$/h"
-      />
-      <CardMedia
-        className={classes.media}
-        image="https://cdn.jpegmini.com/user/images/slider_puffin_jpegmini_mobile.jpg"
-        title="Paella dish"
-      />
-      <CardContent>
-        <Typography variant="body2" color="textSecondary" component="p">
-          This impressive paella is a perfect party dish and a fun meal to cook together with your
-          guests. Add 1 cup of frozen peas along with the mussels, if you like.
-        </Typography>
-      </CardContent>
-      <CardActions disableSpacing>
-        <div>
-            <Typography variant="caption" color="textSecondary" component="p">
-                Simpathy
-                <StarBorderRoundedIcon />
-                <StarBorderRoundedIcon />
-                <StarBorderRoundedIcon />
-                <StarBorderRoundedIcon />
-                <StarBorderRoundedIcon />
-            </Typography>
-            <Typography variant="caption" color="textSecondary" component="p">
-                Service Quality
-                <StarBorderRoundedIcon />
-                <StarBorderRoundedIcon />
-                <StarBorderRoundedIcon />
-                <StarBorderRoundedIcon />
-                <StarBorderRoundedIcon />
-            </Typography>
+              <LaunchIcon />
+            </IconButton>
         </div>
-      </CardActions>
-    </Card>
+        <CardMedia
+          className={classes.media}
+          image="https://cdn.jpegmini.com/user/images/slider_puffin_jpegmini_mobile.jpg"
+          title="Paella dish"
+        />
+        <CardContent>
+          <Typography variant="body2" color="textSecondary" component="p">
+            This impressive paella is a perfect party dish and a fun meal to cook together with your
+            guests. Add 1 cup of frozen peas along with the mussels, if you like.
+          </Typography>
+        </CardContent>
+        <CardActions disableSpacing className={'card-ratings'}>
+            <Typography variant="caption" color="textSecondary" component="p">
+                <span>Simpathy</span>
+                <span>
+                  <StarBorderRoundedIcon />
+                  <StarBorderRoundedIcon />
+                  <StarBorderRoundedIcon />
+                  <StarBorderRoundedIcon />
+                  <StarBorderRoundedIcon />
+                </span>
+            </Typography>
+            <Typography variant="caption" color="textSecondary" component="p" className={'text-right'}>
+                <span>Service Quality</span>
+                <span>
+                  <StarBorderRoundedIcon />
+                  <StarBorderRoundedIcon />
+                  <StarBorderRoundedIcon />
+                  <StarBorderRoundedIcon />
+                  <StarBorderRoundedIcon />
+                </span>
+            </Typography>
+        </CardActions>
+      </Card>
     </React.Fragment>
   );
 };

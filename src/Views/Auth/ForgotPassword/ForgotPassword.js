@@ -128,7 +128,7 @@ const ForgotPassword = (props) => {
         </DialogContent>
         <DialogContent dividers className={"text-center"}>
           <span>
-            Already member? <br />
+            Already have an account? <br />
             <Button
               color="primary"
               onClick={() => {

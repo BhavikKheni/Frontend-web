@@ -1,11 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import TextField from '@material-ui/core/TextField';
 import {
-    fade,
-    ThemeProvider,
     withStyles,
     makeStyles,
-    createMuiTheme,
   } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
 
@@ -49,7 +46,6 @@ const InputTextComponent = (props) => {
                 <ValidationTextField
                     id={props.id}
                     className={classes.marginBottom}
-                    m={2}
                     name={props.name}
                     label={props.label}
                     defaultValue={props.defaultValue}

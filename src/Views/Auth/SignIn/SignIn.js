@@ -11,6 +11,7 @@ import { withStyles } from "@material-ui/core/styles";
 import MuiDialogContent from "@material-ui/core/DialogContent";
 import { login, setLocalStorage } from "../../../Services/Auth.service";
 import InputTextComponent from "../../../Components/Forms/Input";
+import Link from '@material-ui/core/Link';
 
 const styles = (theme) => ({
   root: {
@@ -102,6 +103,8 @@ const SignIn = (props) => {
     }
   };
 
+  const preventDefault = (event) => event.preventDefault();
+
   return (
     <React.Fragment>
       <Dialog
@@ -135,15 +138,12 @@ const SignIn = (props) => {
               required={isValid}
               onChange={handleChange}
             />
-            <Button
-              color="primary"
-              onClick={() => {
+            <Link href="#" className={"forgot-password"} onClick={() => {
                 handleCloseSignIn();
                 openForgotPasswordDialog();
-              }}
-            >
+              }}>
               Forgot Password?
-            </Button>
+            </Link>
             <Button
               variant="contained"
               color="primary"
