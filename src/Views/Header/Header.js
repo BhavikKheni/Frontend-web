@@ -1,5 +1,5 @@
 import React from "react";
-import { withRouter } from "react-router-dom";
+import { withRouter, Link as RouterLink } from "react-router-dom";
 import { fade, makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -20,6 +20,7 @@ import SignIn from "../Auth/SignIn/SignIn";
 import SignUp from "../Auth/SignUp/SignUp";
 import { onIsLoggedIn } from "../../Services/Auth.service";
 import { SessionContext } from "../../Provider/Provider";
+import Link from "@material-ui/core/Link";
 
 const useSession = () => React.useContext(SessionContext);
 
@@ -35,6 +36,10 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.up("sm")]: {
       display: "block",
     },
+  },
+  route: {
+    color: "#fff",
+    marginRight: 5,
   },
   search: {
     position: "relative",
@@ -88,13 +93,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const OweraHeader = (props) => {
-
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
-
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+  let { pathname } = props.location;
 
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -224,14 +228,13 @@ const OweraHeader = (props) => {
             >
               OWERA
             </Typography>
-            {/* <Router>
-              <Button color="secondary" component={Link} to="/dashboard">
-                Dashboard
-              </Button>
-              <Button color="secondary" component={Link} to="/services">
-                Services
-              </Button>
-            </Router> */}
+            <MenuItem component={RouterLink} to="/dashboard" selected={pathname === '/dashboard'}>
+              Dashboard
+            </MenuItem>
+            <MenuItem component={RouterLink} to="/services" selected={pathname === '/services'}>
+              Services
+            </MenuItem>
+
             <div className={classes.grow} />
             <div className={classes.search}>
               <div className={classes.searchIcon}>

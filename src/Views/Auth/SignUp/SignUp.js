@@ -75,6 +75,8 @@ const SignUp = (props) => {
       add("/signup", state)
         .then((res) => {
           if (res && res.type === "SUCCESS") {
+            setDisabled(false)
+            handleCloseSignUp()
           } else {
             setDisabled(false);
           }

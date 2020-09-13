@@ -72,6 +72,7 @@ const ForgotPassword = (props) => {
         .then((res) => {
           if (res && res.type === "SUCCESS") {
             setDisabled(false);
+            closeForgotPasswordDialog()
           } else {
             setTimeout(() => {
               setDisabled(false);
