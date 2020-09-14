@@ -93,13 +93,13 @@ const SignUp = (props) => {
         onClose={handleCloseSignUp}
         aria-labelledby="customized-dialog-title"
         open={openSignUp}
-        className={"modal-dialog form-modal"}
+        className={"modal-dialog form_modal"}
         disableBackdropClick
       >
         <DialogTitle id="customized-dialog-title" onClose={handleCloseSignUp}>
           SIGN UP
         </DialogTitle>
-        <DialogContent className={"form-wrapper"} dividers>
+        <DialogContent className={"form_wrapper"} dividers>
           <FormControl>
             <InputTextComponent
               label="Email Address"

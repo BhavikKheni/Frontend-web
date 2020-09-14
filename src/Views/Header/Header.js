@@ -1,5 +1,6 @@
 import React from "react";
 import { withRouter, Link as RouterLink } from "react-router-dom";
+import clsx from "clsx";
 import { fade, makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -20,7 +21,6 @@ import SignIn from "../Auth/SignIn/SignIn";
 import SignUp from "../Auth/SignUp/SignUp";
 import { onIsLoggedIn } from "../../Services/Auth.service";
 import { SessionContext } from "../../Provider/Provider";
-import Link from "@material-ui/core/Link";
 
 const useSession = () => React.useContext(SessionContext);
 
@@ -221,17 +221,24 @@ const OweraHeader = (props) => {
         <AppBar position="static">
           <Toolbar>
             <Typography
-              className={classes.title}
+              className={clsx(classes.title, "navbar-brand")}
               variant="h6"
               noWrap
-              className={"navbar-brand"}
             >
               OWERA
             </Typography>
-            <MenuItem component={RouterLink} to="/dashboard" selected={pathname === '/dashboard'}>
+            <MenuItem
+              component={RouterLink}
+              to="/dashboard"
+              selected={pathname === "/dashboard"}
+            >
               Dashboard
             </MenuItem>
-            <MenuItem component={RouterLink} to="/services" selected={pathname === '/services'}>
+            <MenuItem
+              component={RouterLink}
+              to="/services"
+              selected={pathname === "/services"}
+            >
               Services
             </MenuItem>
 

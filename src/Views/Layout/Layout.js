@@ -6,13 +6,13 @@ function DefaultLayout(props) {
   return (
     <div>
       <OweraHeader />
-      <div className={'content-wrapper'}>
-        <div className={'content-data'}>
+      <div className={'content_wrapper'}>
+        <div className={'content_data'}>
           <Container fixed>
             {props.children}
           </Container>
         </div>
-        <footer className={'main-footer'}>
+        <footer className={'main_footer'}>
           
         </footer>
       </div>

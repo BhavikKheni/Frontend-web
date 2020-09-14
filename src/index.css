@@ -23,17 +23,14 @@ body {
 .text-center {
   text-align: center;
 }
-.text-right {
-  text-align: right;
-}
 /* common over */
-.content-wrapper {
+.content_wrapper {
   display: flex;
   flex-direction: column;
   overflow-y: auto;
   height: calc(100vh - 64px);
 }
-.content-data {
+.content_data {
   padding: 30px 0;
   margin-top: auto;
   margin-bottom: auto;
@@ -49,63 +46,63 @@ header button.MuiButtonBase-root ~ button {
 /* header over*/
 
 /* Footer */
-.main-footer {
+.main_footer {
   min-height: 100px;
   background-color: #d3d3d3;
 }
 /* Footer over */
 
 /* form css */
-.form-modal .MuiDialog-paperWidthSm {
+.form_modal .MuiDialog-paperWidthSm {
   max-width: 400px;
   width: 100%;
 }
-.form-modal .form-wrapper {
+.form_modal .form_wrapper {
   padding-top: 30px;
 }
-.form-wrapper .MuiFormControl-root {
+.form_wrapper .MuiFormControl-root {
   width: 100%;
 }
-.form-wrapper  .MuiFormControl-marginNormal {
+.form_wrapper  .MuiFormControl-marginNormal {
   margin-top: 0px;
   margin-bottom: 15px;
 }
 
 /* card */
-.card-header {
+.card_header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 16px;
 }
-.card-header .MuiAvatar-circle {
+.card_header .MuiAvatar-circle {
   width: 30px;
   height: 30px;
   font-size: 16px;
 }
-.card-title h6 {
+.card_title h6 {
   line-height: normal;
 }
-.card-title h4 {
+.card_title h4 {
   margin-bottom: 5px;
 }
 /* .card-header button {
   padding: 0;
 } */
-.card-ratings {
+.card_ratings {
   background-color: #e1e1e129;
 }
-.card-ratings p {
+.card_ratings p {
   max-width: 50%;
   width: 100%;
   display: flex;
   flex-direction: column;
 }
-.card-ratings svg {
+.card_ratings svg {
   width: 0.6em;
   height: 0.6em;
 }
 
-.form-wrapper .forgot-password {
+.form_wrapper .forgot-password {
   margin-bottom: 20px;
 }

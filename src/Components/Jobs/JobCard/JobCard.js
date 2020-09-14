@@ -42,13 +42,13 @@ const JobCardComponent = (props) => {
   const { title, image, header, description, price } = props;
   return (
     <Card className={classes.root}>
-      <div className={"card-header"}>
+      <div className={"card_header"}>
         <TooltipComponent title="Tushar Balar">
           <Avatar aria-label="name" className={classes.avatar}>
             TB
           </Avatar>
         </TooltipComponent>
-        <div className={"card-title"}>
+        <div className={"card_title"}>
           <Typography variant="subtitle1">{title}</Typography>
           <Typography variant="caption">
             <span color="primary">Live Now</span> - <span>{price}$/h</span>
@@ -70,7 +70,7 @@ const JobCardComponent = (props) => {
           {description}
         </Typography>
       </CardContent>
-      <CardActions disableSpacing className={"card-ratings"}>
+      <CardActions disableSpacing className={"card_ratings"}>
         <Typography variant="caption" color="textSecondary" component="p">
           <span>Simpathy</span>
           <span>
@@ -85,7 +85,7 @@ const JobCardComponent = (props) => {
           variant="caption"
           color="textSecondary"
           component="p"
-          className={"text-right"}
+          align='right'
         >
           <span>Service Quality</span>
           <span>

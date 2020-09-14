@@ -96,7 +96,7 @@ const ForgotPassword = (props) => {
         disableBackdropClick
         aria-labelledby="customized-dialog-title"
         open={openForgotPassword}
-        className={"modal-dialog form-modal"}
+        className={"modal-dialog form_modal"}
       >
         <DialogTitle
           id="customized-dialog-title"
@@ -104,7 +104,7 @@ const ForgotPassword = (props) => {
         >
           FORGOT PASSWORD
         </DialogTitle>
-        <DialogContent className={"form-wrapper"} dividers>
+        <DialogContent className={"form_wrapper"} dividers>
           <FormControl>
           <InputTextComponent
               label="Email Address"
