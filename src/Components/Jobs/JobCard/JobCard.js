@@ -6,14 +6,12 @@ import CardActions from "@material-ui/core/CardActions";
 import Avatar from "@material-ui/core/Avatar";
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
-import StarBorderRoundedIcon from "@material-ui/icons/StarBorderRounded";
 import LaunchIcon from "@material-ui/icons/Launch";
-import Tooltip from "@material-ui/core/Tooltip";
-import Fade from "@material-ui/core/Fade";
+import StarBorderIcon from '@material-ui/icons/StarBorder';
 import { makeStyles } from "@material-ui/core/styles";
 import { red } from "@material-ui/core/colors";
 import TooltipComponent from "../../../Components/Tooltip/Tooltip";
-
+import RatingComponent from "../../Rating/Rating";
 const useStyles = makeStyles((theme) => ({
   root: {
     maxWidth: 300,
@@ -74,26 +72,30 @@ const JobCardComponent = (props) => {
         <Typography variant="caption" color="textSecondary" component="p">
           <span>Simpathy</span>
           <span>
-            <StarBorderRoundedIcon />
-            <StarBorderRoundedIcon />
-            <StarBorderRoundedIcon />
-            <StarBorderRoundedIcon />
-            <StarBorderRoundedIcon />
+            <RatingComponent
+              name="Simpathy"
+              precision={0.5}
+              defaultValue={3.5}
+              readOnly
+              emptyIcon={<StarBorderIcon fontSize="inherit" />}
+            />
           </span>
         </Typography>
         <Typography
           variant="caption"
           color="textSecondary"
           component="p"
-          align='right'
+          align="right"
         >
           <span>Service Quality</span>
           <span>
-            <StarBorderRoundedIcon />
-            <StarBorderRoundedIcon />
-            <StarBorderRoundedIcon />
-            <StarBorderRoundedIcon />
-            <StarBorderRoundedIcon />
+            <RatingComponent
+              name="Quality"
+              defaultValue={2.5}
+              precision={0.5}
+              readOnly
+              emptyIcon={<StarBorderIcon fontSize="inherit" />}
+            />
           </span>
         </Typography>
       </CardActions>
