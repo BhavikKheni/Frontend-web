@@ -11,35 +11,66 @@ import { withStyles } from "@material-ui/core/styles";
 import MuiDialogContent from "@material-ui/core/DialogContent";
 import { login, setLocalStorage } from "../../../Services/Auth.service";
 import InputTextComponent from "../../../Components/Forms/Input";
+import TextField from "@material-ui/core/TextField";
 import Link from "@material-ui/core/Link";
-
+import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
+import "./signin.css";
 const styles = (theme) => ({
   root: {
     margin: 0,
     padding: theme.spacing(2),
+    display: "flex",
   },
   closeButton: {
     position: "absolute",
     right: theme.spacing(1),
     top: theme.spacing(1),
-    color: theme.palette.grey[500],
+    color: "#FF7A00",
   },
 });
 
 const DialogTitle = withStyles(styles)((props) => {
-  const { children, classes, onClose, ...other } = props;
+  const {
+    children,
+    classes,
+    onClose,
+    openSignUpDialog,
+    ...other
+  } = props;
   return (
     <MuiDialogTitle disableTypography className={classes.root} {...other}>
-      <Typography variant="h6">{children}</Typography>
-      {onClose ? (
-        <IconButton
-          aria-label="close"
-          className={classes.closeButton}
-          onClick={onClose}
-        >
-          <CloseIcon />
-        </IconButton>
-      ) : null}
+      <div
+        style={{ maxWidth: 140, width: "100%", display: "flex", flex: 1 }}
+      ></div>
+      <div className="signin-header">
+        <div>
+          <span className="signin-title">{children}</span>
+        </div>
+        <div>
+          <span className="signin-anAccount">Don't have account?</span>{" "}
+          <span
+            className="signin-anAccount"
+            style={{ textDecoration: "underline", cursor: "pointer" }}
+            onClick={() => {
+              onClose();
+              openSignUpDialog();
+            }}
+          >
+            Sign up
+          </span>
+        </div>
+      </div>
+      <div style={{ maxWidth: 140, width: "100%", display: "flex", flex: 1 }}>
+        {onClose ? (
+          <IconButton
+            aria-label="close"
+            className={classes.closeButton}
+            onClick={onClose}
+          >
+            <CloseIcon />
+          </IconButton>
+        ) : null}
+      </div>
     </MuiDialogTitle>
   );
 });
@@ -49,7 +80,12 @@ const DialogContent = withStyles((theme) => ({
     padding: theme.spacing(2),
   },
 }))(MuiDialogContent);
-
+const TextInputField = withStyles((theme) => ({
+  root: {
+    backgroundColor: "#F5F5F5",
+    borderRadius: 10,
+  },
+}))(TextField);
 const SignIn = (props) => {
   const {
     openSignIn,
@@ -103,23 +139,72 @@ const SignIn = (props) => {
     }
   };
 
-  const preventDefault = (event) => event.preventDefault();
-
   return (
     <React.Fragment>
       <Dialog
         onClose={handleCloseSignIn}
         aria-labelledby="customized-dialog-title"
         open={openSignIn}
-        className={"modal-dialog form_modal"}
         disableBackdropClick
+        className="login-dialog"
       >
-        <DialogTitle id="customized-dialog-title" onClose={handleCloseSignIn}>
+        <DialogTitle
+          id="customized-dialog-title"
+          onClose={handleCloseSignIn}
+          openSignUpDialog={openSignUpDialog}
+        >
           LOGIN
         </DialogTitle>
-        <DialogContent className={"form_wrapper"} dividers>
-          <FormControl>
-            <InputTextComponent
+        <DialogContent style={{ textAlign: "center" }}>
+          <FormControl className="login-form-control">
+            <TextInputField
+              id="outlined-email"
+              label="Email"
+              type="email"
+              name="email"
+              placeholder="Email"
+              variant="filled"
+            />
+            <TextInputField
+              id="outlined-password"
+              label="Password"
+              type="password"
+              placeholder="Password"
+              name="password"
+              variant="filled"
+              className="password"
+            />
+            <div
+              style={{
+                marginTop: 29,
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <Link
+                href="#"
+                className={"forgot-password"}
+                onClick={() => {
+                  handleCloseSignIn();
+                  openForgotPasswordDialog();
+                }}
+              >
+                Forgot Password?
+              </Link>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => {
+                  onSubmit();
+                }}
+                disabled={isDisabled}
+                className="login"
+              >
+                Log in <ArrowForwardIosIcon />
+              </Button>
+            </div>
+            {/* <InputTextComponent
               label="Email Address"
               type="email"
               placeholder="Email Address"
@@ -128,8 +213,8 @@ const SignIn = (props) => {
               autoFocus
               required={isValid}
               onChange={handleChange}
-            />
-            <InputTextComponent
+            /> */}
+            {/* <InputTextComponent
               label="Password"
               type="password"
               placeholder="Password"
@@ -147,8 +232,8 @@ const SignIn = (props) => {
               }}
             >
               Forgot Password?
-            </Link>
-            <Button
+            </Link> */}
+            {/* <Button
               variant="contained"
               color="primary"
               onClick={() => {
@@ -157,22 +242,8 @@ const SignIn = (props) => {
               disabled={isDisabled}
             >
               Log in
-            </Button>
+            </Button> */}
           </FormControl>
-        </DialogContent>
-        <DialogContent dividers className={"text-center"}>
-          <span>
-            Not a member already? <br />
-            <Button
-              color="primary"
-              onClick={() => {
-                handleCloseSignIn();
-                openSignUpDialog();
-              }}
-            >
-              Sign Up
-            </Button>
-          </span>
         </DialogContent>
       </Dialog>
       <Snackbar
