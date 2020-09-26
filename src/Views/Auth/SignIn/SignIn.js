@@ -7,7 +7,7 @@ import MuiDialogContent from "@material-ui/core/DialogContent";
 import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
 import MuiAlert from "@material-ui/lab/Alert";
 import { login, setLocalStorage } from "../../../Services/Auth.service";
-import InputTextComponent from "../../../Components/Forms/Input";
+import InputComponent from "../../../Components/Forms/Input";
 import ButtonComponent from "../../../Components/Forms/Button";
 import FormDialog from "../../../Components/Dialog/Dialog";
 import "./signin.css";
@@ -105,7 +105,7 @@ const SignIn = (props) => {
         <DialogContent style={{ textAlign: "center" }}>
           <form onSubmit={onSubmit} noValidate autoComplete="off">
             <FormControl className="login-form-control">
-              <InputTextComponent
+              <InputComponent
                 label="Email"
                 type="email"
                 placeholder="Email"
@@ -119,7 +119,7 @@ const SignIn = (props) => {
                   border: isError && isValid ? "1px solid red" : "initial",
                 }}
               />
-              <InputTextComponent
+              <InputComponent
                 label="Password"
                 type="password"
                 placeholder="Password"
@@ -156,7 +156,7 @@ const SignIn = (props) => {
                   disabled={isDisabled}
                   className="login"
                   endIcon={<ArrowForwardIosIcon />}
-                  title=" Log in"
+                  title="Log in"
                 />
               </div>
             </FormControl>

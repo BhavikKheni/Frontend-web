@@ -6,10 +6,12 @@ import { withStyles } from "@material-ui/core/styles";
 import MuiDialogContent from "@material-ui/core/DialogContent";
 import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
 import Grid from "@material-ui/core/Grid";
-import InputTextComponent from "../../../Components/Forms/Input";
+import InputComponent from "../../../Components/Forms/Input";
 import ButtonComponent from "../../../Components/Forms/Button";
+import TypographyComponent from "../../../Components/Typography/Typography";
 import { add } from "../../../Services/Auth.service";
-import FormDialog from "../../../Components/Dialog/Dialog";
+import DialogComponent from "../../../Components/Dialog/Dialog";
+import { themes } from "../../../themes";
 
 import "./Signup.css";
 
@@ -76,7 +78,7 @@ const SignUp = (props) => {
 
   return (
     <React.Fragment>
-      <FormDialog
+      <DialogComponent
         onClose={handleCloseSignUp}
         open={openSignUp}
         title="Sign up"
@@ -92,7 +94,7 @@ const SignUp = (props) => {
         <DialogContent style={{ textAlign: "center" }}>
           <form onSubmit={onSubmit} noValidate autoComplete="off">
             <FormControl className="signup-form-control">
-              <InputTextComponent
+              <InputComponent
                 label="Full name"
                 type="text"
                 placeholder="Full name"
@@ -107,7 +109,7 @@ const SignUp = (props) => {
                   border: isError && isValid ? "1px solid red" : "initial",
                 }}
               />
-              <InputTextComponent
+              <InputComponent
                 label="Email"
                 type="email"
                 placeholder="Email"
@@ -121,7 +123,7 @@ const SignUp = (props) => {
                   border: isError && isValid ? "1px solid red" : "initial",
                 }}
               />
-              <InputTextComponent
+              <InputComponent
                 label="Password"
                 type="password"
                 placeholder="Create password"
@@ -135,21 +137,8 @@ const SignUp = (props) => {
                   border: isError && isValid ? "1px solid red" : "initial",
                 }}
               />
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  height: 48,
-                  alignItems: "center",
-                }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    height: 48,
-                  }}
-                >
+              <div className="item">
+                <div style={{ display: "flex" }}>
                   <FormControlLabel
                     control={
                       <CustomCheckbox
@@ -162,53 +151,52 @@ const SignUp = (props) => {
                       />
                     }
                   />
-                  <div
-                    style={{
-                      width: "100%",
-                      maxWidth: 198,
-                      display: "flex",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <span className="terms-condition">
-                      With your registration you agree to our{" "}
-                    </span>
-                    <span
-                      className="terms-condition"
+                  <div className="item-1">
+                    <TypographyComponent
+                      title="With your registration you agree to our"
+                      variant="h1"
                       style={{
-                        color: "#65B61B",
-                        cursor: "pointer",
-                        marginTop: 10,
-                        textAlign: "start",
+                        lineHeight: 4,
                       }}
+                    />
+
+                    <TypographyComponent
+                      title="terms & conditions"
+                      variant="h1"
                       onClick={() => {
                         setTermsCondition(true);
                         handleCloseSignUp();
                       }}
-                    >
-                      terms & conditions
-                    </span>
+                      style={{
+                        lineHeight: 0,
+                        textAlign: "left",
+                        color: themes.default.colors.green,
+                      }}
+                      className="terms-condition-item"
+                    />
                   </div>
                 </div>
-                <ButtonComponent
-                  variant="contained"
-                  color="primary"
-                  type="submit"
-                  disabled={isDisabled}
-                  className="go"
-                  endIcon={<ArrowForwardIosIcon />}
-                  title="go"
-                  style={{
-                    backgroundColor: isChecked ? "#2FB41A" : "#949494",
-                    height: 48,
-                  }}
-                />
+                <div style={{ height: 48 }}>
+                  <ButtonComponent
+                    variant="contained"
+                    color="primary"
+                    type="submit"
+                    disabled={isDisabled}
+                    className="go"
+                    endIcon={<ArrowForwardIosIcon />}
+                    title="go"
+                    style={{
+                      backgroundColor: isChecked ? "#2FB41A" : "#949494",
+                      height: 48,
+                    }}
+                  />
+                </div>
               </div>
             </FormControl>
           </form>
         </DialogContent>
-      </FormDialog>
-      <FormDialog
+      </DialogComponent>
+      <DialogComponent
         onClose={handleCloseTermsCondition}
         open={openTermsCondition}
         title="Terms & condtitions"
@@ -220,7 +208,7 @@ const SignUp = (props) => {
             <FormControl className="terms-condition-control">
               <Grid container spacing={3}>
                 <Grid item xs={12} sm={6} md={6} lg={6} xl={6}>
-                  <InputTextComponent
+                  <InputComponent
                     label="Full name"
                     type="text"
                     placeholder="Full name"
@@ -238,7 +226,7 @@ const SignUp = (props) => {
                   />
                 </Grid>
                 <Grid item xs={12} sm={6} md={6} lg={6} xl={6}>
-                  <InputTextComponent
+                  <InputComponent
                     label="Create password"
                     type="password"
                     placeholder="Create password"
@@ -255,7 +243,7 @@ const SignUp = (props) => {
                   />
                 </Grid>
                 <Grid item xs={12} sm={6} md={6} lg={6} xl={6}>
-                  <InputTextComponent
+                  <InputComponent
                     label="Email"
                     type="email"
                     placeholder="Email"
@@ -272,14 +260,8 @@ const SignUp = (props) => {
                   />
                 </Grid>
                 <Grid item xs={12} sm={6} md={6} lg={6} xl={6}>
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
-                    <div>
+                  <div className="item">
+                    <div style={{ display: "flex" }}>
                       <FormControlLabel
                         control={
                           <CustomCheckbox
@@ -292,28 +274,43 @@ const SignUp = (props) => {
                           />
                         }
                       />
-                      <span className="terms-condition">
-                        With your registration you agree to our{" "}
-                      </span>
-                      <span
-                        className="terms-condition"
-                        style={{ color: "#65B61B" }}
-                      >
-                        terms & conditions
-                      </span>
+                      <div className="item-1">
+                        <TypographyComponent
+                          title="With your registration you agree to our"
+                          variant="h1"
+                          style={{
+                            lineHeight: 4,
+                          }}
+                        />
+
+                        <TypographyComponent
+                          title="terms & conditions"
+                          variant="h1"
+                          style={{
+                            lineHeight: 0,
+                            textAlign: "left",
+                            color: themes.default.colors.green,
+                            cursor: "initial"
+                          }}
+                          className="terms-condition-item"
+                        />
+                      </div>
                     </div>
-                    <ButtonComponent
-                      variant="contained"
-                      color="primary"
-                      type="submit"
-                      disabled={isDisabled}
-                      className="login"
-                      endIcon={<ArrowForwardIosIcon />}
-                      title="go"
-                      style={{
-                        backgroundColor: isChecked ? "#2FB41A" : "#949494",
-                      }}
-                    />
+                    <div style={{ height: 48 }}>
+                      <ButtonComponent
+                        variant="contained"
+                        color="primary"
+                        type="submit"
+                        disabled={isDisabled}
+                        className="go"
+                        endIcon={<ArrowForwardIosIcon />}
+                        title="go"
+                        style={{
+                          backgroundColor: isChecked ? "#2FB41A" : "#949494",
+                          height: 48,
+                        }}
+                      />
+                    </div>
                   </div>
                 </Grid>
               </Grid>
@@ -354,7 +351,7 @@ const SignUp = (props) => {
             </FormControl>
           </form>
         </DialogContent>
-      </FormDialog>
+      </DialogComponent>
     </React.Fragment>
   );
 };

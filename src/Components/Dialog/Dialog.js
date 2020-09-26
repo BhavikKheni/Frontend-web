@@ -6,6 +6,7 @@ import CloseIcon from "@material-ui/icons/Close";
 import IconButton from "@material-ui/core/IconButton";
 import TypographyComponent from "../../Components/Typography/Typography";
 import "./Dialog.css";
+
 const styles = (theme) => ({
   root: {
     margin: 0,
@@ -47,19 +48,18 @@ const DialogTitle = withStyles(styles)((props) => {
       ></div>
       <div className={classes.header}>
         <div>
-          <TypographyComponent title={title} variant="h1" color="primary" />
+          <TypographyComponent title={title} variant="h3" />
         </div>
-        <div>
-          <span className="anAccount">{subTitle1}</span>
-          <span
-            className="anAccount"
+        <div style={{ display: "flex" }}>
+          <TypographyComponent title={subTitle1} variant="h2" />
+          <TypographyComponent
             style={{ textDecoration: "underline", cursor: "pointer" }}
             onClick={(e) => {
               onSubTitle2(e);
             }}
-          >
-            {subTitle2}
-          </span>
+            title={subTitle2}
+            variant="h2"
+          ></TypographyComponent>
         </div>
       </div>
       <div style={{ maxWidth: 140, width: "100%", display: "flex", flex: 1 }}>
@@ -87,7 +87,7 @@ const DialogStyle = makeStyles((theme) => ({
   },
 }));
 
-const FormDialog = (props) => {
+const DialogComponent = (props) => {
   const {
     open,
     onClose,
@@ -124,4 +124,4 @@ const FormDialog = (props) => {
   );
 };
 
-export default FormDialog;
+export default DialogComponent;

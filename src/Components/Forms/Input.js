@@ -35,7 +35,7 @@ const ValidationTextField = withStyles({
   },
 })(TextField);
 
-const InputTextComponent = (props) => {
+const InputComponent = (props) => {
   const classes = useStyles();
 
   return (
@@ -59,5 +59,4 @@ const InputTextComponent = (props) => {
     </React.Fragment>
   );
 };
-
-export default InputTextComponent;
+export default InputComponent;

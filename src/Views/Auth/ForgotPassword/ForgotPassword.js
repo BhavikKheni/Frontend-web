@@ -1,16 +1,15 @@
 import React, { useState } from "react";
-
-import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import MuiDialogTitle from "@material-ui/core/DialogTitle";
 import Typography from "@material-ui/core/Typography";
 import CloseIcon from "@material-ui/icons/Close";
 import IconButton from "@material-ui/core/IconButton";
 import { FormControl } from "@material-ui/core";
-import InputTextComponent from "../../../Components/Forms/Input";
+import InputComponent from "../../../Components/Forms/Input";
 import { withStyles } from "@material-ui/core/styles";
 import MuiDialogContent from "@material-ui/core/DialogContent";
 import { add } from "../../../Services/Auth.service";
+import ButtonComponent from "../../../Components/Forms/Button";
 const styles = (theme) => ({
   root: {
     margin: 0,
@@ -64,7 +63,7 @@ const ForgotPassword = (props) => {
   };
 
   const onFinish = () => {
-    console.log(email)
+    console.log(email);
     if (email) {
       setValid(false);
       setDisabled(true);
@@ -72,7 +71,7 @@ const ForgotPassword = (props) => {
         .then((res) => {
           if (res && res.type === "SUCCESS") {
             setDisabled(false);
-            closeForgotPasswordDialog()
+            closeForgotPasswordDialog();
           } else {
             setTimeout(() => {
               setDisabled(false);
@@ -84,7 +83,7 @@ const ForgotPassword = (props) => {
             setDisabled(false);
           }, 2000);
         });
-    }else{
+    } else {
       setValid(true);
     }
   };
@@ -106,7 +105,7 @@ const ForgotPassword = (props) => {
         </DialogTitle>
         <DialogContent className={"form_wrapper"} dividers>
           <FormControl>
-          <InputTextComponent
+            <InputComponent
               label="Email Address"
               type="email"
               placeholder="Email Address"
@@ -116,33 +115,30 @@ const ForgotPassword = (props) => {
               required={isValid}
               onChange={handleChange}
             />
-            <Button
+            <ButtonComponent
               variant="contained"
               color="primary"
               disabled={isDisabled}
               onClick={onFinish}
-            >
-              RESET PASSWORD
-            </Button>
+              title="RESET PASSWORD"
+            />
           </FormControl>
         </DialogContent>
         <DialogContent dividers className={"text-center"}>
           <span>
             Already have an account? <br />
-            <Button
+            <ButtonComponent
               color="primary"
               onClick={() => {
                 closeForgotPasswordDialog();
                 openSignInDialog();
               }}
-            >
-              Sign In
-            </Button>
+              title="Sign In"
+            />
           </span>
         </DialogContent>
       </Dialog>
     </React.Fragment>
   );
 };
-
 export default ForgotPassword;
