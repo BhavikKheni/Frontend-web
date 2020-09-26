@@ -1,91 +1,25 @@
 import React, { useState } from "react";
-import Button from "@material-ui/core/Button";
-import Dialog from "@material-ui/core/Dialog";
-import MuiDialogTitle from "@material-ui/core/DialogTitle";
-import Typography from "@material-ui/core/Typography";
-import CloseIcon from "@material-ui/icons/Close";
-import IconButton from "@material-ui/core/IconButton";
-import { FormControl } from "@material-ui/core";
-import Snackbar from "@material-ui/core/Snackbar";
 import { withStyles } from "@material-ui/core/styles";
-import MuiDialogContent from "@material-ui/core/DialogContent";
-import { login, setLocalStorage } from "../../../Services/Auth.service";
-import InputTextComponent from "../../../Components/Forms/Input";
-import TextField from "@material-ui/core/TextField";
+import { FormControl } from "@material-ui/core";
 import Link from "@material-ui/core/Link";
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiDialogContent from "@material-ui/core/DialogContent";
 import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
+import MuiAlert from "@material-ui/lab/Alert";
+import { login, setLocalStorage } from "../../../Services/Auth.service";
+import InputComponent from "../../../Components/Forms/Input";
+import ButtonComponent from "../../../Components/Forms/Button";
+import DialogComponent from "../../../Components/Dialog/Dialog";
 import "./signin.css";
-const styles = (theme) => ({
-  root: {
-    margin: 0,
-    padding: theme.spacing(2),
-    display: "flex",
-  },
-  closeButton: {
-    position: "absolute",
-    right: theme.spacing(1),
-    top: theme.spacing(1),
-    color: "#FF7A00",
-  },
-});
-
-const DialogTitle = withStyles(styles)((props) => {
-  const {
-    children,
-    classes,
-    onClose,
-    openSignUpDialog,
-    ...other
-  } = props;
-  return (
-    <MuiDialogTitle disableTypography className={classes.root} {...other}>
-      <div
-        style={{ maxWidth: 140, width: "100%", display: "flex", flex: 1 }}
-      ></div>
-      <div className="signin-header">
-        <div>
-          <span className="signin-title">{children}</span>
-        </div>
-        <div>
-          <span className="signin-anAccount">Don't have account?</span>{" "}
-          <span
-            className="signin-anAccount"
-            style={{ textDecoration: "underline", cursor: "pointer" }}
-            onClick={() => {
-              onClose();
-              openSignUpDialog();
-            }}
-          >
-            Sign up
-          </span>
-        </div>
-      </div>
-      <div style={{ maxWidth: 140, width: "100%", display: "flex", flex: 1 }}>
-        {onClose ? (
-          <IconButton
-            aria-label="close"
-            className={classes.closeButton}
-            onClick={onClose}
-          >
-            <CloseIcon />
-          </IconButton>
-        ) : null}
-      </div>
-    </MuiDialogTitle>
-  );
-});
 
 const DialogContent = withStyles((theme) => ({
   root: {
     padding: theme.spacing(2),
   },
 }))(MuiDialogContent);
-const TextInputField = withStyles((theme) => ({
-  root: {
-    backgroundColor: "#F5F5F5",
-    borderRadius: 10,
-  },
-}))(TextField);
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 const SignIn = (props) => {
   const {
     openSignIn,
@@ -96,6 +30,7 @@ const SignIn = (props) => {
   } = props;
 
   const [isValid, setValid] = useState(false);
+  const [isError, setError] = useState(false);
   const [isLoading, setLoading] = useState(false);
   const [isDisabled, setDisabled] = useState(false);
   const [open, setOpen] = React.useState(false);
@@ -111,14 +46,16 @@ const SignIn = (props) => {
       [e.target.name]: e.target.value,
     });
   };
-  const onSubmit = () => {
+
+  const onSubmit = (e) => {
+    e.preventDefault();
     if (state.email && state.password) {
       setValid(false);
       setDisabled(true);
+      setError(false);
       login(state.email, state.password)
         .then((res) => {
           setDisabled(false);
-
           if (res && res.type === "SUCCESS") {
             setLocalStorage({
               ...((res && res.user) || {}),
@@ -136,122 +73,109 @@ const SignIn = (props) => {
         });
     } else {
       setValid(true);
+      setError(true);
     }
   };
 
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+  };
   return (
     <React.Fragment>
-      <Dialog
-        onClose={handleCloseSignIn}
-        aria-labelledby="customized-dialog-title"
+      <DialogComponent
+        onClose={(e) => {
+          e.stopPropagation();
+          handleCloseSignIn();
+          setState(null)
+        }}
         open={openSignIn}
-        disableBackdropClick
-        className="login-dialog"
+        title="Sign in"
+        subTitle1="Don't have account?"
+        subTitle2="Sign up"
+        onSubTitle2={(e) => {
+          e.stopPropagation();
+          handleCloseSignIn();
+          openSignUpDialog();
+        }}
+        maxHeight={328}
       >
-        <DialogTitle
-          id="customized-dialog-title"
-          onClose={handleCloseSignIn}
-          openSignUpDialog={openSignUpDialog}
-        >
-          LOGIN
-        </DialogTitle>
         <DialogContent style={{ textAlign: "center" }}>
-          <FormControl className="login-form-control">
-            <TextInputField
-              id="outlined-email"
-              label="Email"
-              type="email"
-              name="email"
-              placeholder="Email"
-              variant="filled"
-            />
-            <TextInputField
-              id="outlined-password"
-              label="Password"
-              type="password"
-              placeholder="Password"
-              name="password"
-              variant="filled"
-              className="password"
-            />
-            <div
-              style={{
-                marginTop: 29,
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <Link
-                href="#"
-                className={"forgot-password"}
-                onClick={() => {
-                  handleCloseSignIn();
-                  openForgotPasswordDialog();
+          <form onSubmit={onSubmit} noValidate autoComplete="off">
+            <FormControl className="login-form-control">
+              <InputComponent
+                label="Email"
+                type="email"
+                placeholder="Email"
+                name="email"
+                id="outlined-email"
+                autoFocus
+                required={isValid}
+                onChange={handleChange}
+                error={isError}
+                styles={{
+                  border: isError && isValid ? "1px solid red" : "initial",
+                }}
+              />
+              <InputComponent
+                label="Password"
+                type="password"
+                placeholder="Password"
+                name="password"
+                id="outlined-password"
+                required={isValid}
+                onChange={handleChange}
+                error={isError}
+                styles={{
+                  border: isError && isValid ? "1px solid red" : "initial",
+                }}
+              />
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
                 }}
               >
-                Forgot Password?
-              </Link>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => {
-                  onSubmit();
-                }}
-                disabled={isDisabled}
-                className="login"
-              >
-                Log in <ArrowForwardIosIcon />
-              </Button>
-            </div>
-            {/* <InputTextComponent
-              label="Email Address"
-              type="email"
-              placeholder="Email Address"
-              name="email"
-              id="outlined-email"
-              autoFocus
-              required={isValid}
-              onChange={handleChange}
-            /> */}
-            {/* <InputTextComponent
-              label="Password"
-              type="password"
-              placeholder="Password"
-              name="password"
-              id="outlined-password"
-              required={isValid}
-              onChange={handleChange}
-            />
-            <Link
-              href="#"
-              className={"forgot-password"}
-              onClick={() => {
-                handleCloseSignIn();
-                openForgotPasswordDialog();
-              }}
-            >
-              Forgot Password?
-            </Link> */}
-            {/* <Button
-              variant="contained"
-              color="primary"
-              onClick={() => {
-                onSubmit();
-              }}
-              disabled={isDisabled}
-            >
-              Log in
-            </Button> */}
-          </FormControl>
+                <Link
+                  href="#"
+                  className={"forgot-password"}
+                  onClick={() => {
+                    handleCloseSignIn();
+                    openForgotPasswordDialog();
+                  }}
+                >
+                  Forgot Password?
+                </Link>
+                <ButtonComponent
+                  variant="contained"
+                  color="primary"
+                  type="submit"
+                  disabled={isDisabled}
+                  className="login"
+                  endIcon={<ArrowForwardIosIcon />}
+                  title="Log in"
+                />
+              </div>
+            </FormControl>
+          </form>
         </DialogContent>
-      </Dialog>
+      </DialogComponent>
       <Snackbar
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
         open={open}
-        message="Login Successfully"
         autoHideDuration={3000}
-      />
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+      >
+        <Alert onClose={handleClose} severity="success">
+          Login Successfully
+        </Alert>
+      </Snackbar>
     </React.Fragment>
   );
 };
