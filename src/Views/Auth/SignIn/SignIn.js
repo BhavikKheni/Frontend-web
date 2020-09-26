@@ -9,7 +9,7 @@ import MuiAlert from "@material-ui/lab/Alert";
 import { login, setLocalStorage } from "../../../Services/Auth.service";
 import InputComponent from "../../../Components/Forms/Input";
 import ButtonComponent from "../../../Components/Forms/Button";
-import FormDialog from "../../../Components/Dialog/Dialog";
+import DialogComponent from "../../../Components/Dialog/Dialog";
 import "./signin.css";
 
 const DialogContent = withStyles((theme) => ({
@@ -85,7 +85,7 @@ const SignIn = (props) => {
   };
   return (
     <React.Fragment>
-      <FormDialog
+      <DialogComponent
         onClose={(e) => {
           e.stopPropagation();
           handleCloseSignIn();
@@ -162,7 +162,7 @@ const SignIn = (props) => {
             </FormControl>
           </form>
         </DialogContent>
-      </FormDialog>
+      </DialogComponent>
       <Snackbar
         open={open}
         autoHideDuration={3000}

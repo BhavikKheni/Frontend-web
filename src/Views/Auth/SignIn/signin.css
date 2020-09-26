@@ -7,21 +7,6 @@
   border-bottom: none;
 }
 
-.login-form-control .MuiOutlinedInput-notchedOutline {
-  border-color: #191919;
-}
-
-.login-form-control
-  .MuiOutlinedInput-root.Mui-focused
-  .MuiOutlinedInput-notchedOutline {
-  border-color: #191919;
-  border-width: 1px;
-}
-
-.login-form-control .MuiFormLabel-root.Mui-focused {
-  color: #191919;
-}
-
 .login-form-control .forgot-password {
   font-family: Rubik;
   font-style: normal;

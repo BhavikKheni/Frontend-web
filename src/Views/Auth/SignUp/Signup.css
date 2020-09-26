@@ -28,27 +28,15 @@
 .signup-form-control .MuiFilledInput-underline::after {
   border-bottom: none;
 }
-.signup-form-control .MuiOutlinedInput-notchedOutline {
-  border-color: #191919;
-}
-.signup-form-control
-  .MuiOutlinedInput-root.Mui-focused
-  .MuiOutlinedInput-notchedOutline {
-  border-color: #191919;
-  border-width: 1px;
-}
+
 .signup-form-control .email {
   margin-top: 20px;
 }
 .signup-form-control .password {
   margin-top: 20px;
 }
-.signup-form-control .MuiFormLabel-root.Mui-focused {
-  color: #191919;
-}
 
 .terms-condition-item {
-  color: #65b61b;
   cursor: pointer;
   margin-top: 10px;
   text-align: center;

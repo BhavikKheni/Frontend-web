@@ -6,6 +6,7 @@ export const colorValues = {
   whiteSmoke:"#F5F5F5",// use in signin sub-title
   orange: "#FF7A00",// use in sign in title
   green: "#2FB41A",// use in button
+  Nero:'#191919',
   transparent: "transparent",
 };
 
@@ -90,6 +91,7 @@ export const themes = {
       white: colorValues.white,
       whiteSmoke: colorValues.whiteSmoke,
       orange: colorValues.orange,
+      Nero: colorValues.Nero,
       background: {
         main: colorValues.white,
       },
