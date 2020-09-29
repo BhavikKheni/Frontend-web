@@ -34,14 +34,15 @@ const ButtonComponent = (props) => {
     disableFocusRipple,
     disableElevation,
     size,
-    style
+    style,
+    className,
   } = props;
   return (
     <React.Fragment>
       <Button
         variant={variant}
         color={color}
-        className={clsx(classes.primary, classes.button)}
+        className={clsx(classes.primary, classes.button, className)}
         endIcon={endIcon}
         onClick={onClick}
         type={type}
@@ -49,7 +50,7 @@ const ButtonComponent = (props) => {
         disableFocusRipple={disableFocusRipple}
         disableElevation={disableElevation}
         size={size}
-        style={{...style}}
+        style={{ ...style }}
       >
         {title}
       </Button>

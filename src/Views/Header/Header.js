@@ -241,7 +241,15 @@ const OweraHeader = (props) => {
             >
               Services
             </MenuItem>
-
+            {isLoggedIn && (
+              <MenuItem
+                component={RouterLink}
+                to="/profile"
+                selected={pathname === "/profile"}
+              >
+                Profile
+              </MenuItem>
+            )}
             <div className={classes.grow} />
             <div className={classes.search}>
               <div className={classes.searchIcon}>

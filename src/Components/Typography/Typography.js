@@ -15,6 +15,15 @@ const theme = createMuiTheme({
     h3: {
       ...themes.default.fonts.h3,
     },
+    h4: {
+      ...themes.default.fonts.h4,
+    },
+    h5: {
+      ...themes.default.fonts.h5,
+    },
+    h6: {
+      ...themes.default.fonts.h6,
+    },
   },
 });
 const useStyles = makeStyles({

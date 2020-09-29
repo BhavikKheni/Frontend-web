@@ -9,7 +9,7 @@ const theme = createMuiTheme({
     MuiInputLabel: {
       root: {
         "&$focused": {
-          color: themes.default.colors.Nero,
+          color: themes.default.colors.nero,
         },
       },
     },
@@ -22,10 +22,10 @@ const useStyles = makeStyles((theme) => ({
     flexWrap: "wrap",
   },
   margin: {
-    margin: theme.spacing(1, "auto"),
+    // margin: theme.spacing(1, "auto"),
   },
   marginBottom: {
-    marginBottom: "20px",
+    // marginBottom: "20px",
   },
 }));
 
@@ -43,9 +43,14 @@ const ValidationTextField = withStyles({
       borderLeftWidth: 6,
       padding: "4px !important", // override inline-style
     },
-    backgroundColor: "#F5F5F5",
-    borderRadius: 10,
-    border: "1px solid #191919",
+    "& .MuiFilledInput-input": {
+      backgroundColor: "#fff",
+      border: "1px solid rgba(25, 25, 25, 0.9)",
+      borderRadius: 3,
+    },
+    "& .MuiFilledInput-underline::after": {
+      borderBottom: "none",
+    }
   },
 })(TextField);
 
@@ -68,6 +73,7 @@ const InputComponent = (props) => {
           required={props.required}
           onChange={props.onChange}
           autoFocus={props.autoFocus}
+          helperText={props.helperText}
           variant="filled"
           style={{ ...props.styles }}
         />
