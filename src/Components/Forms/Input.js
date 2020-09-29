@@ -20,37 +20,23 @@ const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
     flexWrap: "wrap",
+    borderRadius: "10px",
   },
-  margin: {
-    // margin: theme.spacing(1, "auto"),
-  },
-  marginBottom: {
-    // marginBottom: "20px",
-  },
+  margin: {},
+  marginBottom: {},
+  borderRadius: "10px",
 }));
 
 const ValidationTextField = withStyles({
   root: {
-    "& input:valid + fieldset": {
-      borderColor: "green",
-      borderWidth: 2,
-    },
-    "& input:invalid + fieldset": {
-      borderColor: "red",
-      borderWidth: 2,
-    },
-    "& input:valid:focus + fieldset": {
-      borderLeftWidth: 6,
-      padding: "4px !important", // override inline-style
-    },
     "& .MuiFilledInput-input": {
       backgroundColor: "#fff",
       border: "1px solid rgba(25, 25, 25, 0.9)",
-      borderRadius: 3,
+      borderRadius: "10px",
     },
     "& .MuiFilledInput-underline::after": {
       borderBottom: "none",
-    }
+    },
   },
 })(TextField);
 

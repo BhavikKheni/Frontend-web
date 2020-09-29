@@ -12,7 +12,8 @@ import TypographyComponent from "../../../Components/Typography/Typography";
 import { add } from "../../../Services/Auth.service";
 import DialogComponent from "../../../Components/Dialog/Dialog";
 import { themes } from "../../../themes";
-
+import { useFormik } from "formik";
+import * as Yup from "yup";
 import "./Signup.css";
 
 const DialogContent = withStyles((theme) => ({
@@ -20,6 +21,7 @@ const DialogContent = withStyles((theme) => ({
     padding: theme.spacing(2),
   },
 }))(MuiDialogContent);
+
 const CustomCheckbox = withStyles({
   root: {
     color: "#949494",
@@ -29,48 +31,54 @@ const CustomCheckbox = withStyles({
   },
   checked: {},
 })((props) => <Checkbox color="default" {...props} />);
+
 const SignUp = (props) => {
   const { handleCloseSignUp, openSignUp, openSignInDialog } = props;
-  const [isLoading, setLoading] = useState(false);
   const [isDisabled, setDisabled] = useState(false);
-  const [isValid, setValid] = useState(false);
-  const [isError, setError] = useState(false);
   const [isChecked, setChecked] = useState(false);
   const [openTermsCondition, setTermsCondition] = useState(false);
-
-  const [state, setState] = useState({
-    email: "",
-    full_name: "",
-    password: "",
+  const formik = useFormik({
+    initialValues: {
+      full_name: "",
+      email: "",
+      password: "",
+    },
+    onSubmit: (values) => {
+      onSubmit(values);
+    },
+    validate: (values) => {
+      const errors = {};
+      if (!values.email) {
+        errors.email = "Required";
+      } else if (
+        !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
+      ) {
+        errors.email = "Invalid email address";
+      }
+      return errors;
+    },
+    validationSchema: Yup.object().shape({
+      password: Yup.string()
+        .required("Password is required")
+        .min(8, "Password is too short - should be 8 chars minimum.")
+        .matches(
+          /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{7,}$/,
+          "8 characters or longer. Combine upper and lowercase and numbers."
+        ),
+      full_name: Yup.string().required("Required"),
+    }),
   });
 
-  const handleChange = (e) => {
-    setState({
-      ...state,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const onSubmit = (e) => {
-    e.preventDefault();
-    if (state.email && state.full_name && state.password) {
-      setValid(false);
-      setDisabled(true);
-      setError(false);
-      add("/signup", state)
-        .then((res) => {
-          if (res && res.type === "SUCCESS") {
-            setDisabled(false);
-            handleCloseSignUp();
-          } else {
-            setDisabled(false);
-          }
-        })
-        .catch((error) => {});
-    } else {
-      setValid(true);
-      setError(true);
-    }
+  const onSubmit = (values) => {
+    add("/signup", values)
+      .then((res) => {
+        if (res && res.type === "SUCCESS") {
+          handleCloseSignUp();
+        } else {
+          setDisabled(false);
+        }
+      })
+      .catch((error) => {});
   };
   const handleCloseTermsCondition = () => {
     setTermsCondition(false);
@@ -89,10 +97,10 @@ const SignUp = (props) => {
           handleCloseSignUp();
           openSignInDialog();
         }}
-        maxHeight={407}
+        maxHeight={427}
       >
         <DialogContent style={{ textAlign: "center" }}>
-          <form onSubmit={onSubmit} noValidate autoComplete="off">
+          <form onSubmit={formik.handleSubmit} className="signup-form">
             <FormControl className="signup-form-control">
               <InputComponent
                 label="Full name"
@@ -100,14 +108,14 @@ const SignUp = (props) => {
                 placeholder="Full name"
                 name="full_name"
                 id="outlined-name"
-                value={state.full_name}
                 autoFocus
-                required={isValid}
-                onChange={handleChange}
-                error={isError}
-                styles={{
-                  border: isError && isValid ? "1px solid red" : "initial",
-                }}
+                onChange={formik.handleChange}
+                value={formik.values.full_name}
+                error={formik.errors.full_name ? true : false}
+                helperText={
+                  formik.errors.full_name && `${formik.errors.full_name}`
+                }
+                styles={{ maxHeight: 80, height: "100%" }}
               />
               <InputComponent
                 label="Email"
@@ -115,13 +123,11 @@ const SignUp = (props) => {
                 placeholder="Email"
                 name="email"
                 id="outlined-email"
-                value={state.email}
-                required={isValid}
-                onChange={handleChange}
-                error={isError}
-                styles={{
-                  border: isError && isValid ? "1px solid red" : "initial",
-                }}
+                onChange={formik.handleChange}
+                value={formik.values.email}
+                error={formik.errors.email ? true : false}
+                helperText={formik.errors.email && `${formik.errors.email}`}
+                styles={{ maxHeight: 80, height: "100%", marginTop: 10 }}
               />
               <InputComponent
                 label="Password"
@@ -129,13 +135,13 @@ const SignUp = (props) => {
                 placeholder="Create password"
                 name="password"
                 id="outlined-password"
-                value={state.password}
-                required={isValid}
-                onChange={handleChange}
-                error={isError}
-                styles={{
-                  border: isError && isValid ? "1px solid red" : "initial",
-                }}
+                onChange={formik.handleChange}
+                value={formik.values.password}
+                error={formik.errors.password ? true : false}
+                helperText={
+                  formik.errors.password && `${formik.errors.password}`
+                }
+                styles={{ maxHeight: 80, height: "100%", marginTop: 10 }}
               />
               <div className="item">
                 <div style={{ display: "flex" }}>
@@ -204,9 +210,9 @@ const SignUp = (props) => {
         maxWidth={1269}
       >
         <DialogContent style={{ textAlign: "center" }}>
-          <form onSubmit={onSubmit} noValidate autoComplete="off">
+          <form onSubmit={formik.handleSubmit} noValidate autoComplete="off" className="terms-condition-form">
             <FormControl className="terms-condition-control">
-              <Grid container spacing={3}>
+              <Grid container spacing={3} className="terms-condition-item">
                 <Grid item xs={12} sm={6} md={6} lg={6} xl={6}>
                   <InputComponent
                     label="Full name"
@@ -214,14 +220,13 @@ const SignUp = (props) => {
                     placeholder="Full name"
                     name="full_name"
                     id="outlined-name"
-                    value={state.full_name}
                     autoFocus
-                    required={isValid}
-                    onChange={handleChange}
-                    error={isError}
-                    styles={{
-                      border: isError && isValid ? "1px solid red" : "initial",
-                    }}
+                    onChange={formik.handleChange}
+                    value={formik.values.full_name}
+                    error={formik.errors.full_name ? true : false}
+                    helperText={
+                      formik.errors.full_name && `${formik.errors.full_name}`
+                    }
                     className="terms-condition-fullName"
                   />
                 </Grid>
@@ -232,13 +237,13 @@ const SignUp = (props) => {
                     placeholder="Create password"
                     name="password"
                     id="outlined-password"
-                    value={state.password}
-                    required={isValid}
-                    onChange={handleChange}
-                    error={isError}
-                    styles={{
-                      border: isError && isValid ? "1px solid red" : "initial",
-                    }}
+                    onChange={formik.handleChange}
+                    value={formik.values.password}
+                    error={formik.errors.password ? true : false}
+                    helperText={
+                      formik.errors.password && `${formik.errors.password}`
+                    }
+                    styles={{ maxHeight: 80, height: "100%" }}
                     className="password terms-condition-password"
                   />
                 </Grid>
@@ -249,13 +254,11 @@ const SignUp = (props) => {
                     placeholder="Email"
                     name="email"
                     id="outlined-email"
-                    value={state.email}
-                    required={isValid}
-                    onChange={handleChange}
-                    error={isError}
-                    styles={{
-                      border: isError && isValid ? "1px solid red" : "initial",
-                    }}
+                    onChange={formik.handleChange}
+                    value={formik.values.email}
+                    error={formik.errors.email ? true : false}
+                    helperText={formik.errors.email && `${formik.errors.email}`}
+                    styles={{ maxHeight: 80, height: "100%", marginTop: 10 }}
                     className="email terms-condition-email"
                   />
                 </Grid>
@@ -290,7 +293,7 @@ const SignUp = (props) => {
                             lineHeight: 0,
                             textAlign: "left",
                             color: themes.default.colors.green,
-                            cursor: "initial"
+                            cursor: "initial",
                           }}
                           className="terms-condition-item"
                         />

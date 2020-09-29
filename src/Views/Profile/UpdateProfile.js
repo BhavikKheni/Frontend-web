@@ -43,11 +43,7 @@ const useStyles = makeStyles((theme) => ({
     "& > *": {
       margin: theme.spacing(1),
     },
-  },
-  large: {
-    width: theme.spacing(25),
-    height: theme.spacing(25),
-  },
+  }
 }));
 
 const DialogContent = withStyles((theme) => ({
@@ -127,8 +123,16 @@ const UpdateProfile = (props) => {
     setUserData({ ...userData, [e.target.name]: e.target.value });
   };
 
-  const handleUploadClick = (e) => {
-    setUserData({ ...userData, ["image"]: e.target.files[0] });
+  const handleUploadClick = (event) => {
+    var output = document.getElementById("output");
+    output.src = URL.createObjectURL(event.target.files[0]);
+    output.onload = function () {
+      URL.revokeObjectURL(output.src);
+    };
+    setUserData({
+      ...userData,
+      [event.target.name]: event.target.files[0],
+    });
   };
 
   const onEmail = () => {
@@ -213,10 +217,15 @@ const UpdateProfile = (props) => {
             style={{ marginTop: 20 }}
           >
             <Grid item xs={12} sm={6} md={4} lg={4} xl={4}>
-              <Avatar
+              <img
                 alt="profile"
                 src={ProfilePic}
-                className={classes.large}
+                style={{
+                  width: "200px",
+                  height: "200px",
+                  borderRadius: "100%"
+                }}
+                id="output"
               />
               <label className="change-picture">
                 <div>
