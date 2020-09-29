@@ -28,11 +28,13 @@ import MuiFormControl from "@material-ui/core/FormControl";
 import { themes } from "../../themes";
 import { SessionContext } from "../../Provider/Provider";
 import { get } from "../../Services/Auth.service";
+import Service from "../../Services/index";
 import Input from "@material-ui/core/Input";
 import Hidden from "@material-ui/core/Hidden";
 import "react-phone-input-2/lib/style.css";
 import "./UpdateProfile.css";
 import * as Yup from "yup";
+const service = new Service();
 const useSession = () => React.useContext(SessionContext);
 const options = countryList().getData();
 const useStyles = makeStyles((theme) => ({
@@ -55,18 +57,9 @@ const DialogContent = withStyles((theme) => ({
 }))(MuiDialogContent);
 const FormControl = withStyles((theme) => ({
   root: {
-    // maxWidth: 458,
     width: "100%",
   },
 }))(MuiFormControl);
-const FormControl2 = withStyles((theme) => {
-  return {
-    root: {
-      maxWidth: 229,
-      width: "100%",
-    },
-  };
-})(MuiFormControl);
 
 const Input2 = withStyles((theme) => ({
   root: {
@@ -83,7 +76,6 @@ const UpdateProfile = (props) => {
     bio: "",
     country: "",
     image: null,
-    cover_image: null,
     password: null,
     newPassword: null,
     languages: [],
@@ -136,7 +128,7 @@ const UpdateProfile = (props) => {
   };
 
   const handleUploadClick = (e) => {
-    var file = e.target.files[0];
+    setUserData({ ...userData, ["image"]: e.target.files[0] });
   };
 
   const onEmail = () => {
@@ -163,7 +155,7 @@ const UpdateProfile = (props) => {
     tick();
   }
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
     if (userData.password !== userData.newPassword) {
       setPassword(true);
@@ -173,9 +165,34 @@ const UpdateProfile = (props) => {
     if (!userData.first_name || !userData.last_name) {
       setError(true);
     } else {
+      if (userData) {
+        const formData = new FormData();
+        userData.id_user = user.id_user;
+        if (userData.image instanceof File) {
+          formData.append("image", userData.image);
+        }
+        formData.append("id_user", user.id_user);
+        formData.append("fname", userData.first_name);
+        formData.append("lname", userData.last_name);
+        formData.append("country", userData.country);
+        const languageId = languages
+          .filter((f) =>
+            Object.values(userData.languages).includes(f.language_name)
+          )
+          .map((m) => m.id_language);
+        for (let i = 0; i < userData.languages.length; i++) {
+          formData.append(`languages[${i}]`, languageId[i]);
+        }
+
+        const res = await service.upload("/profile/update", formData);
+        if (res.status === 200) {
+          console.log("success");
+        } else {
+          console.log("Error");
+        }
+      }
       setError(false);
     }
-    console.log(userData);
   };
 
   return (
@@ -556,6 +573,36 @@ const UpdateProfile = (props) => {
                     }}
                   />
                 </Grid>
+              </Grid>
+
+              <Grid container spacing={3}>
+                <Grid item xs={12} md={5}>
+                  <Grid container spacing={3}></Grid>
+                  <Grid container spacing={3}></Grid>
+                </Grid>
+                <Hidden smDown>
+                  <Grid item md={1}></Grid>
+                </Hidden>
+                <Grid item xs={12} md={5}>
+                  <Grid container spacing={3}>
+                    <Grid item xs={12} md={12}></Grid>
+                    <Grid item xs={12} md={6}></Grid>
+                    <Grid item xs={12} md={6}>
+                      <FormControl>
+                        <ButtonComponent
+                          variant="contained"
+                          color="primary"
+                          type="submit"
+                          className="update-profile"
+                          title="Update my profile"
+                        />
+                      </FormControl>
+                    </Grid>
+                  </Grid>
+                </Grid>
+                <Hidden smDown>
+                  <Grid item md={1}></Grid>
+                </Hidden>
               </Grid>
             </Grid>
           </form>

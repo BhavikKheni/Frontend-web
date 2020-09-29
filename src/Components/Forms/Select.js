@@ -79,7 +79,7 @@ const BootstrapInput = withStyles((theme) => ({
     backgroundColor: theme.palette.background.paper,
     border: "1px solid rgba(25, 25, 25, 0.9)",
     fontSize: 16,
-    padding: "26px 26px 10px 12px",
+    padding: "14px 26px 10px 12px",
     transition: theme.transitions.create(["border-color", "box-shadow"]),
     fontFamily: [
       "rubik",
