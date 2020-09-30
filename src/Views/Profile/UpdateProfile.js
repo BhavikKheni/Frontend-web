@@ -410,6 +410,7 @@ const UpdateProfile = (props) => {
                         value={(userData.country && userData.country) || ""}
                         onChange={handleChange}
                         name="country"
+                        label="Select a country"
                       >
                         {options.map((m, i) => (
                           <MenuItem key={i} value={m.label}>
@@ -426,6 +427,7 @@ const UpdateProfile = (props) => {
                       </InputLabel>
                       <SelectComponent
                         name="languages"
+                        label="Select a language"
                         multiple
                         value={
                           Array.isArray(userData.languages)
@@ -461,6 +463,7 @@ const UpdateProfile = (props) => {
                       </InputLabel>
                       <SelectComponent
                         name="languages"
+                        label="Add new language"
                         multiple
                         value={
                           Array.isArray(userData.languages)

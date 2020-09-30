@@ -11,8 +11,8 @@ const theme = createMuiTheme({
         "&$focused": {
           color: themes.default.colors.nero,
         },
-        fontFamily:'Rubik',
-        color: themes.default.colors.nero
+        fontFamily: "Rubik",
+        color: themes.default.colors.nero,
       },
     },
   },
@@ -39,6 +39,20 @@ const ValidationTextField = withStyles({
     "& .MuiFilledInput-underline::after": {
       borderBottom: "none",
     },
+    "& .MuiFilledInput-multiline": {
+      padding: 0,
+    },
+    "& .MuiFilledInput-root": {
+      backgroundColor: "transparent",
+      borderTopLeftRadius: 0,
+      borderTopRightRadius: 0,
+    },
+    "& .MuiFilledInput-underline:before": {
+      borderBottom: "none",
+    },
+    "& .MuiFilledInput-inputMultiline": {
+      padding: 12,
+    },
   },
 })(TextField);
 
@@ -63,7 +77,10 @@ const InputComponent = (props) => {
           autoFocus={props.autoFocus}
           helperText={props.helperText}
           variant="filled"
+          multiline={props.multiline}
+          rows={props.rows}
           style={{ ...props.styles }}
+          inputProps={props.inputProps}
         />
       </ThemeProvider>
     </React.Fragment>

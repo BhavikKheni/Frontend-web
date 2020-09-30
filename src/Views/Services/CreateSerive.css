@@ -1,0 +1,13 @@
+.service-price .MuiFilledInput-input {
+  padding: 7px 12px 10px;
+}
+.service-rate-item {
+  display: flex;
+  justify-content: space-between;
+}
+.mt {
+  margin-top: 20px;
+}
+.cost {
+  margin-top: 30px;
+}

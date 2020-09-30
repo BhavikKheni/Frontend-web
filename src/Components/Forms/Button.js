@@ -7,19 +7,12 @@ const useStyles = makeStyles((theme) => ({
   button: {
     margin: theme.spacing(1),
     height: 48,
-    fontFamily:'Rubik',
-    
+    fontFamily: "Rubik",
   },
   primary: {
     backgroundColor: "#2fb41a",
     "&:hover": {
       backgroundColor: "#2fb41a",
-    },
-  },
-  secondary: {
-    backgroundColor: "#333333",
-    "&:hover": {
-      backgroundColor: "#333333",
     },
   },
 }));
@@ -45,7 +38,11 @@ const ButtonComponent = (props) => {
       <Button
         variant={variant}
         color={color}
-        className={clsx(classes.primary, classes.button, className)}
+        className={clsx(
+          classes.primary,
+          classes.button,
+          className
+        )}
         endIcon={endIcon}
         onClick={onClick}
         type={type}
