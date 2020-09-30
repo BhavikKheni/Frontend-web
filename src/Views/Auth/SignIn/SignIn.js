@@ -1,15 +1,14 @@
-import React, { useState } from "react";
+import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 import { FormControl } from "@material-ui/core";
 import Link from "@material-ui/core/Link";
-import Snackbar from "@material-ui/core/Snackbar";
 import MuiDialogContent from "@material-ui/core/DialogContent";
 import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
-import MuiAlert from "@material-ui/lab/Alert";
 import { login, setLocalStorage } from "../../../Services/Auth.service";
 import InputComponent from "../../../Components/Forms/Input";
 import ButtonComponent from "../../../Components/Forms/Button";
 import DialogComponent from "../../../Components/Dialog/Dialog";
+import SnackBraComponent from "../../../Components/SnackBar/SnackBar";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import "./signin.css";
@@ -19,9 +18,7 @@ const DialogContent = withStyles((theme) => ({
     padding: theme.spacing(2),
   },
 }))(MuiDialogContent);
-function Alert(props) {
-  return <MuiAlert elevation={6} variant="filled" {...props} />;
-}
+
 const SignIn = (props) => {
   const {
     openSignIn,
@@ -32,7 +29,7 @@ const SignIn = (props) => {
   } = props;
 
   const [open, setOpen] = React.useState(false);
-
+  const [setRes, setTypeRes] = React.useState("");
   const onSubmit = (values) => {
     login(values.email, values.password)
       .then((res) => {
@@ -44,8 +41,10 @@ const SignIn = (props) => {
           setOpen(true);
           setLogin(res && res.user);
           handleCloseSignIn();
+          setTypeRes(res);
         } else {
-          console.log(res.message);
+          setOpen(true)
+          setTypeRes(res);
         }
       })
       .catch((error) => {});
@@ -95,11 +94,6 @@ const SignIn = (props) => {
             validationSchema={Yup.object().shape({
               password: Yup.string()
                 .required("Password is required")
-                .min(8, "Password is too short - should be 8 chars minimum.")
-                .matches(
-                  /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{7,}$/,
-                  "8 characters or longer. Combine upper and lowercase and numbers."
-                ),
             })}
           >
             {({ values, errors, handleChange, handleSubmit, isSubmitting }) => (
@@ -157,19 +151,16 @@ const SignIn = (props) => {
           </Formik>
         </DialogContent>
       </DialogComponent>
-      <Snackbar
+      <SnackBraComponent
         open={open}
-        autoHideDuration={3000}
         onClose={handleClose}
         anchorOrigin={{
           vertical: "top",
           horizontal: "center",
         }}
-      >
-        <Alert onClose={handleClose} severity="success">
-          Login Successfully
-        </Alert>
-      </Snackbar>
+        message={setRes.message}
+        type={setRes.type && setRes.type.toLowerCase()}
+      ></SnackBraComponent>
     </React.Fragment>
   );
 };

@@ -6,6 +6,9 @@ import clsx from "clsx";
 const useStyles = makeStyles((theme) => ({
   button: {
     margin: theme.spacing(1),
+    height: 48,
+    fontFamily:'Rubik',
+    
   },
   primary: {
     backgroundColor: "#2fb41a",

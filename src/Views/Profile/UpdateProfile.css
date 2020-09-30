@@ -1,4 +1,3 @@
-
 .stripe-verification-item {
   display: flex;
   flex-direction: column;
@@ -70,3 +69,11 @@ input[type="file"] {
   width: 458px;
   text-align: left;
 }
+
+.profile-image-tag {
+  text-align: center;
+}
+.profile-image-button {
+  margin-top: 20px;
+}
+

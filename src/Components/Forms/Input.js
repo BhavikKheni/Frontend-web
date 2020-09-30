@@ -11,6 +11,8 @@ const theme = createMuiTheme({
         "&$focused": {
           color: themes.default.colors.nero,
         },
+        fontFamily:'Rubik',
+        color: themes.default.colors.nero
       },
     },
   },
