@@ -28,7 +28,14 @@ const useStyles = makeStyles((theme) => ({
     },
   },
 }));
-
+const useStyles1 = makeStyles((theme) => ({
+  formControl: {
+    minWidth: 120,
+  },
+  selectEmpty: {
+    marginTop: theme.spacing(2),
+  },
+}));
 const FormControl = withStyles((theme) => ({
   root: {
     width: "100%",
@@ -37,6 +44,7 @@ const FormControl = withStyles((theme) => ({
 
 const CreateService = (props) => {
   const classes = useStyles();
+  const classes1 = useStyles1();
   let { user } = useSession();
   const [open, setOpen] = React.useState(false);
   const [setRes, setTypeRes] = React.useState("");
@@ -188,8 +196,8 @@ const CreateService = (props) => {
                   <Grid container spacing={3}>
                     <Grid item xs={12} md={12}>
                       <FormControl
-                        variant="filled"
-                        className={classes.formControl}
+                        variant="outlined"
+                        className={classes1.formControl}
                         error={errors.category ? true : false}
                       >
                         <SelectComponent
@@ -228,7 +236,7 @@ const CreateService = (props) => {
 
                     <Grid item xs={12} md={12}>
                       <FormControl
-                        variant="filled"
+                        variant="outlined"
                         className={classes.formControl}
                         error={errors.subcategory ? true : false}
                       >

@@ -1,11 +1,10 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 import InputLabel from "@material-ui/core/InputLabel";
-import Select from "@material-ui/core/Select";
+import MuiSelect from "@material-ui/core/Select";
 import InputBase from "@material-ui/core/InputBase";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 const BootstrapInput = withStyles((theme) => ({
-  root: {},
   input: {
     borderRadius: 4,
     position: "relative",
@@ -21,6 +20,12 @@ const BootstrapInput = withStyles((theme) => ({
   },
 }))(InputBase);
 
+
+const Select = withStyles((theme) => ({
+  root: {
+    borderRadius:10
+  },
+}))(MuiSelect);
 export default function SelectComponent(props) {
   const {
     value,
@@ -32,9 +37,10 @@ export default function SelectComponent(props) {
     MenuProps,
     label,
   } = props;
+  
   return (
     <React.Fragment>
-      <InputLabel id={name}>{label}</InputLabel>
+      <InputLabel>{label}</InputLabel>
       <Select
         labelId={name}
         id={name}

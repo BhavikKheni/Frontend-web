@@ -405,7 +405,7 @@ const UpdateProfile = (props) => {
               <Grid item xs={12} md={5}>
                 <Grid container spacing={3}>
                   <Grid item xs={12} md={12}>
-                    <FormControl>
+                    <FormControl variant="outlined">
                       <SelectComponent
                         value={(userData.country && userData.country) || ""}
                         onChange={handleChange}
@@ -421,10 +421,7 @@ const UpdateProfile = (props) => {
                     </FormControl>
                   </Grid>
                   <Grid item xs={12} md={6}>
-                    <FormControl>
-                      <InputLabel id="demo-customized-select-label">
-                        Select new language
-                      </InputLabel>
+                    <FormControl variant="outlined">
                       <SelectComponent
                         name="languages"
                         label="Select a language"
@@ -457,10 +454,7 @@ const UpdateProfile = (props) => {
                     </FormControl>
                   </Grid>
                   <Grid item xs={12} md={6}>
-                    <FormControl>
-                      <InputLabel id="demo-customized-select-label">
-                        Select new language
-                      </InputLabel>
+                    <FormControl variant="outlined">
                       <SelectComponent
                         name="languages"
                         label="Add new language"
@@ -992,7 +986,7 @@ const UpdateProfile = (props) => {
                     title="Sorry! Image size is too big. It must be 2MB or smaller."
                     style={{
                       color: "#FF0000",
-                      marginTop:20
+                      marginTop: 20,
                     }}
                   />
                 )}
