@@ -248,6 +248,13 @@ const OweraHeader = (props) => {
             >
               Services
             </MenuItem>
+            <MenuItem
+              component={RouterLink}
+              to="/create-services"
+              selected={pathname === "/create-service"}
+            >
+              Create service
+            </MenuItem>
             {isLoggedIn && (
               <MenuItem
                 component={RouterLink}

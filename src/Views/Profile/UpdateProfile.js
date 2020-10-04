@@ -18,19 +18,21 @@ import PhoneInput from "react-phone-input-2";
 import { Formik } from "formik";
 import countryList from "react-select-country-list";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import MuiFormControl from "@material-ui/core/FormControl";
+import Input from "@material-ui/core/Input";
+import Hidden from "@material-ui/core/Hidden";
+import Dropzone from "react-dropzone";
 import ProfilePic from "../../profile-image.png";
 import TypographyComponent from "../../Components/Typography/Typography";
 import SelectComponent from "../../Components/Forms/Select";
 import ButtonComponent from "../../Components/Forms/Button";
 import InputComponent from "../../Components/Forms/Input";
 import DialogComponent from "../../Components/Dialog/Dialog";
-import MuiFormControl from "@material-ui/core/FormControl";
+import SnackbarComponent from "../../Components/SnackBar/SnackBar";
 import { themes } from "../../themes";
 import { SessionContext } from "../../Provider/Provider";
 import { get } from "../../Services/Auth.service";
 import Service from "../../Services/index";
-import Input from "@material-ui/core/Input";
-import Hidden from "@material-ui/core/Hidden";
 import "react-phone-input-2/lib/style.css";
 import "./UpdateProfile.css";
 import * as Yup from "yup";
@@ -43,7 +45,7 @@ const useStyles = makeStyles((theme) => ({
     "& > *": {
       margin: theme.spacing(1),
     },
-  }
+  },
 }));
 
 const DialogContent = withStyles((theme) => ({
@@ -86,17 +88,24 @@ const UpdateProfile = (props) => {
   const [languages, setLanguages] = useState([]);
   const [isPassword, setPassword] = useState(false);
   const [isError, setError] = useState(false);
+  const [openImage, setImageOpen] = useState(false);
+  const [openErrorSnackBar, setOpenSnackBar] = useState(false);
+  const [resError, setResError] = useState("");
+  const [isImageSize, isSetImageSize] = useState(false);
   useEffect(() => {
     async function getData() {
       setLoading(true);
       const res = await get(`/profile/${user && user.id_user}`);
-
       if (res) {
         setUserData({
-          ...(res || {}),
+          ...res,
         });
+        setLoading(false);
+      } else {
+        setResError(res);
+        setOpenSnackBar(true);
+        setLoading(false);
       }
-      setLoading(false);
     }
 
     async function fetchLanguages() {
@@ -124,15 +133,23 @@ const UpdateProfile = (props) => {
   };
 
   const handleUploadClick = (event) => {
-    var output = document.getElementById("output");
-    output.src = URL.createObjectURL(event.target.files[0]);
-    output.onload = function () {
-      URL.revokeObjectURL(output.src);
-    };
-    setUserData({
-      ...userData,
-      [event.target.name]: event.target.files[0],
-    });
+    if (event.target.files[0]) {
+      var FileSize = event.target.files[0].size / 1024 / 1024; // in MB
+      if (FileSize > 2) {
+        isSetImageSize(true);
+      } else {
+        var output = document.getElementById("output");
+        output.src = URL.createObjectURL(event.target.files[0]);
+        output.onload = function () {
+          URL.revokeObjectURL(output.src);
+        };
+        setUserData({
+          ...userData,
+          [event.target.name]: event.target.files[0],
+        });
+        isSetImageSize(false);
+      }
+    }
   };
 
   const onEmail = () => {
@@ -202,7 +219,9 @@ const UpdateProfile = (props) => {
   return (
     <div style={{ width: "100%" }}>
       {isLoading ? (
-        <CircularProgress />
+        <div style={{ textAlign: "center" }}>
+          <CircularProgress />
+        </div>
       ) : (
         <React.Fragment>
           <TypographyComponent
@@ -223,27 +242,17 @@ const UpdateProfile = (props) => {
                 style={{
                   width: "200px",
                   height: "200px",
-                  borderRadius: "100%"
+                  borderRadius: "100%",
                 }}
-                id="output"
               />
-              <label className="change-picture">
-                <div>
-                  <TypographyComponent
-                    variant="h5"
-                    title="Change picture"
-                    style={{ fontWeight: 500 }}
-                  />
-                </div>
-                <input
-                  accept="image/*"
-                  id="contained-button-file"
-                  multiple
-                  type="file"
-                  name="image"
-                  onChange={(event) => handleUploadClick(event)}
-                />
-              </label>
+              <TypographyComponent
+                variant="h5"
+                title="Change picture"
+                style={{ fontWeight: 500 }}
+                onClick={() => {
+                  setImageOpen(true);
+                }}
+              />
             </Grid>
             <Grid item xs={12} sm={6} md={4} lg={4} xl={4}>
               <TypographyComponent
@@ -263,9 +272,10 @@ const UpdateProfile = (props) => {
                 />
               </Grid>
               <Grid style={{ marginTop: 10 }}>
-                {userData.languages.map((language, i) => (
-                  <span key={i}>{language}</span>
-                ))}
+                {userData.languages &&
+                  userData.languages.map((language, i) => (
+                    <span key={i}>{language}</span>
+                  ))}
               </Grid>
             </Grid>
             <Grid item xs={4} sm={4} md={4} lg={4} xl={4}>
@@ -313,7 +323,7 @@ const UpdateProfile = (props) => {
                         value={userData.first_name && userData.first_name}
                         placeholder="First name"
                         name="first_name"
-                        id="outlined-name"
+                        id="first_name"
                         onChange={handleChange}
                         error={isError}
                       />
@@ -327,7 +337,7 @@ const UpdateProfile = (props) => {
                         value={userData.last_name && userData.last_name}
                         placeholder="Last name"
                         name="last_name"
-                        id="outlined-email"
+                        id="last_name"
                         onChange={handleChange}
                         error={isError}
                       />
@@ -354,7 +364,7 @@ const UpdateProfile = (props) => {
                         type="password"
                         placeholder="Actual password"
                         name="full_name"
-                        id="outlined-name"
+                        id="actual-password"
                         onChange={handleChange}
                         error={isError}
                       />
@@ -367,7 +377,7 @@ const UpdateProfile = (props) => {
                         type="password"
                         placeholder="New password"
                         name="password"
-                        id="outlined-name"
+                        id="new-password"
                         onChange={handleChange}
                         error={isPassword}
                       />
@@ -380,7 +390,7 @@ const UpdateProfile = (props) => {
                         type="password"
                         placeholder="Create new password"
                         name="newPassword"
-                        id="outlined-name"
+                        id="newPassword"
                         onChange={handleChange}
                         error={isPassword}
                         helperText={isPassword && "Password is not match"}
@@ -395,11 +405,12 @@ const UpdateProfile = (props) => {
               <Grid item xs={12} md={5}>
                 <Grid container spacing={3}>
                   <Grid item xs={12} md={12}>
-                    <FormControl>
+                    <FormControl variant="outlined">
                       <SelectComponent
-                        value={userData.country && userData.country}
+                        value={(userData.country && userData.country) || ""}
                         onChange={handleChange}
                         name="country"
+                        label="Select a country"
                       >
                         {options.map((m, i) => (
                           <MenuItem key={i} value={m.label}>
@@ -410,25 +421,28 @@ const UpdateProfile = (props) => {
                     </FormControl>
                   </Grid>
                   <Grid item xs={12} md={6}>
-                    <FormControl>
-                      <InputLabel id="demo-customized-select-label">
-                        Select new language
-                      </InputLabel>
+                    <FormControl variant="outlined">
                       <SelectComponent
                         name="languages"
+                        label="Select a language"
                         multiple
-                        value={userData.languages && userData.languages}
+                        value={
+                          Array.isArray(userData.languages)
+                            ? userData.languages
+                            : []
+                        }
                         onChange={handleChange}
                         input={<Input2 />}
                         renderValue={(selected) => selected.join(", ")}
                         MenuProps={MenuProps}
-                        options={languages}
+                        options={languages || []}
                       >
                         {options.map((l) => {
                           return (
                             <MenuItem key={l.value} value={l.label}>
                               <Checkbox
                                 checked={
+                                  userData.languages &&
                                   userData.languages.indexOf(l.label) > -1
                                 }
                               />
@@ -440,14 +454,16 @@ const UpdateProfile = (props) => {
                     </FormControl>
                   </Grid>
                   <Grid item xs={12} md={6}>
-                    <FormControl>
-                      <InputLabel id="demo-customized-select-label">
-                        Select new language
-                      </InputLabel>
+                    <FormControl variant="outlined">
                       <SelectComponent
                         name="languages"
+                        label="Add new language"
                         multiple
-                        value={userData.languages && userData.languages}
+                        value={
+                          Array.isArray(userData.languages)
+                            ? userData.languages
+                            : []
+                        }
                         onChange={handleChange}
                         input={<Input2 />}
                         renderValue={(selected) => selected.join(", ")}
@@ -459,6 +475,7 @@ const UpdateProfile = (props) => {
                             <MenuItem key={l.value} value={l.label}>
                               <Checkbox
                                 checked={
+                                  userData.languages &&
                                   userData.languages.indexOf(l.label) > -1
                                 }
                               />
@@ -488,7 +505,7 @@ const UpdateProfile = (props) => {
                         type="email"
                         placeholder="Actual Email"
                         name="full_name"
-                        id="outlined-name"
+                        id="outlined-Email"
                         onChange={handleChange}
                       />
                     </FormControl>
@@ -500,7 +517,7 @@ const UpdateProfile = (props) => {
                         type="email"
                         placeholder="Enter new E-mail"
                         name="full_name"
-                        id="outlined-name"
+                        id="Email"
                         onChange={handleChange}
                       />
                     </FormControl>
@@ -903,8 +920,89 @@ const UpdateProfile = (props) => {
               </FormControl>
             </DialogContent>
           </DialogComponent>
+          <DialogComponent
+            onClose={(e) => {
+              e.stopPropagation();
+              setImageOpen(false);
+            }}
+            open={openImage}
+            title="Change picture"
+            maxHeight={490}
+          >
+            <DialogContent style={{ textAlign: "center" }}>
+              <FormControl className="image-upload">
+                <div className="profile-image-tag">
+                  <img
+                    alt="Profile"
+                    id="output"
+                    src={ProfilePic}
+                    style={{
+                      width: "200px",
+                      height: "200px",
+                      borderRadius: "100%",
+                    }}
+                  />
+                  <input
+                    type="file"
+                    id="upload-button"
+                    style={{ display: "none" }}
+                    onChange={(event) => handleUploadClick(event)}
+                  />
+                </div>
+                <div className="profile-image-button">
+                  <ButtonComponent
+                    variant="contained"
+                    color="primary"
+                    type="button"
+                    style={{
+                      backgroundColor: "#FF0000",
+                      width: "100%",
+                      maxWidth: "170px",
+                    }}
+                    title="Remove picture"
+                    onClick={() => {
+                      var output = document.getElementById("output");
+                      output.src = null;
+                      setUserData({
+                        ...userData,
+                        image: null,
+                      });
+                    }}
+                  />
+                  <ButtonComponent
+                    variant="contained"
+                    color="primary"
+                    type="button"
+                    title="Change picture"
+                    style={{ width: "100%", maxWidth: "170px" }}
+                    onClick={() => {
+                      document.getElementById("upload-button").click();
+                    }}
+                  />
+                </div>
+                {isImageSize && (
+                  <TypographyComponent
+                    variant="h4"
+                    title="Sorry! Image size is too big. It must be 2MB or smaller."
+                    style={{
+                      color: "#FF0000",
+                      marginTop: 20,
+                    }}
+                  />
+                )}
+              </FormControl>
+            </DialogContent>
+          </DialogComponent>
         </React.Fragment>
       )}
+      <SnackbarComponent
+        type="error"
+        open={openErrorSnackBar}
+        message={resError.message}
+        handleClose={() => {
+          setOpenSnackBar(false);
+        }}
+      />
     </div>
   );
 };

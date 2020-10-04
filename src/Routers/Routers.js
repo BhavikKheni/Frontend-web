@@ -4,7 +4,7 @@ import { Switch, Route, Redirect } from "react-router-dom";
 import Dashboard from "../Views/Dashboard/Dashboard";
 import Services from "../Views/Services/Services";
 import Profile from "../Views/Profile/ProfileWrapper";
-
+import CreateService from "../Views/Services/CreateService";
 import { SessionContext } from "../Provider/Provider.js";
 const useSession = () => React.useContext(SessionContext);
 const ProtectedRoute = ({ component: Component, ...rest }) => {
@@ -31,6 +31,7 @@ const CreateRoutes = () => {
     <Switch>
       <Route exact path="/dashboard" component={Dashboard} />
       <Route exact path="/services" component={Services} />
+      <Route exact path="/create-services" component={CreateService} />
       <ProtectedRoute path="/profile" component={Profile} />
     </Switch>
   );
