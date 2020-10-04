@@ -16,10 +16,11 @@ import MailIcon from "@material-ui/icons/Mail";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import MoreIcon from "@material-ui/icons/MoreVert";
 import Button from "@material-ui/core/Button";
-import ForgotPassword from "../Auth/ForgotPassword/ForgotPassword";
 import SignIn from "../Auth/SignIn/SignIn";
 import SignUp from "../Auth/SignUp/SignUp";
-import { onIsLoggedIn } from "../../Services/Auth.service";
+import { onIsLoggedIn, onLogout } from "../../Services/Auth.service";
+import ForgotPassword from "../Auth/ForgotPassword/ForgotPassword";
+import TypographyComponent from "../../Components/Typography/Typography";
 import { SessionContext } from "../../Provider/Provider";
 
 const useSession = () => React.useContext(SessionContext);
@@ -82,6 +83,7 @@ const useStyles = makeStyles((theme) => ({
     display: "none",
     [theme.breakpoints.up("md")]: {
       display: "flex",
+      alignItems: "center",
     },
   },
   sectionMobile: {
@@ -99,7 +101,14 @@ const OweraHeader = (props) => {
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
   let { pathname } = props.location;
+  const { logout } = useSession();
 
+  const [openSignIn, setOpenSignIn] = React.useState(false);
+  const [openSignUp, setOpenSignUp] = React.useState(false);
+  const [openForgotPassword, setForgotPasswordDialog] = React.useState(false);
+  let { isLoggedIn, doLogin, user } = useSession();
+
+  const { history } = props;
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -116,7 +125,11 @@ const OweraHeader = (props) => {
   const handleMobileMenuOpen = (event) => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
-
+  const handleLogout = () => {
+    onLogout(props).then((result) => {
+      logout();
+    });
+  };
   const menuId = "primary-search-account-menu";
 
   const renderMenu = (
@@ -176,12 +189,6 @@ const OweraHeader = (props) => {
     </Menu>
   );
 
-  const [openSignIn, setOpenSignIn] = React.useState(false);
-  const [openSignUp, setOpenSignUp] = React.useState(false);
-  const [openForgotPassword, setForgotPasswordDialog] = React.useState(false);
-  let { isLoggedIn, doLogin, user } = useSession();
-
-  const { history } = props;
   const openSignInDialog = () => {
     setOpenSignIn(true);
   };
@@ -241,7 +248,22 @@ const OweraHeader = (props) => {
             >
               Services
             </MenuItem>
-
+            <MenuItem
+              component={RouterLink}
+              to="/create-services"
+              selected={pathname === "/create-service"}
+            >
+              Create service
+            </MenuItem>
+            {isLoggedIn && (
+              <MenuItem
+                component={RouterLink}
+                to="/profile"
+                selected={pathname === "/profile"}
+              >
+                Profile
+              </MenuItem>
+            )}
             <div className={classes.grow} />
             <div className={classes.search}>
               <div className={classes.searchIcon}>
@@ -278,14 +300,17 @@ const OweraHeader = (props) => {
                 </React.Fragment>
               ) : (
                 <React.Fragment>
-                  <IconButton
-                    aria-label="show 17 new notifications"
-                    color="inherit"
-                  >
-                    <Badge badgeContent={17} color="secondary">
-                      <NotificationsIcon />
-                    </Badge>
-                  </IconButton>
+                  <TypographyComponent
+                    variant="h4"
+                    style={{
+                      fontSize: 16,
+                      cursor:'pointer',
+                    }}
+                    title="Logout"
+                    onClick={() => {
+                      handleLogout();
+                    }}
+                  />
                   <IconButton
                     edge="end"
                     aria-label="account of current user"

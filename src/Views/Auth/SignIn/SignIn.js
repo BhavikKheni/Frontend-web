@@ -1,15 +1,16 @@
-import React, { useState } from "react";
+import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 import { FormControl } from "@material-ui/core";
 import Link from "@material-ui/core/Link";
-import Snackbar from "@material-ui/core/Snackbar";
 import MuiDialogContent from "@material-ui/core/DialogContent";
 import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
-import MuiAlert from "@material-ui/lab/Alert";
 import { login, setLocalStorage } from "../../../Services/Auth.service";
 import InputComponent from "../../../Components/Forms/Input";
 import ButtonComponent from "../../../Components/Forms/Button";
 import DialogComponent from "../../../Components/Dialog/Dialog";
+import SnackBraComponent from "../../../Components/SnackBar/SnackBar";
+import { Formik } from "formik";
+import * as Yup from "yup";
 import "./signin.css";
 
 const DialogContent = withStyles((theme) => ({
@@ -17,9 +18,7 @@ const DialogContent = withStyles((theme) => ({
     padding: theme.spacing(2),
   },
 }))(MuiDialogContent);
-function Alert(props) {
-  return <MuiAlert elevation={6} variant="filled" {...props} />;
-}
+
 const SignIn = (props) => {
   const {
     openSignIn,
@@ -29,52 +28,26 @@ const SignIn = (props) => {
     setLogin,
   } = props;
 
-  const [isValid, setValid] = useState(false);
-  const [isError, setError] = useState(false);
-  const [isLoading, setLoading] = useState(false);
-  const [isDisabled, setDisabled] = useState(false);
   const [open, setOpen] = React.useState(false);
-
-  const [state, setState] = useState({
-    email: null,
-    password: null,
-  });
-
-  const handleChange = (e) => {
-    setState({
-      ...state,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const onSubmit = (e) => {
-    e.preventDefault();
-    if (state.email && state.password) {
-      setValid(false);
-      setDisabled(true);
-      setError(false);
-      login(state.email, state.password)
-        .then((res) => {
-          setDisabled(false);
-          if (res && res.type === "SUCCESS") {
-            setLocalStorage({
-              ...((res && res.user) || {}),
-              token: res.auth_token,
-            });
-            setOpen(true);
-            setLogin(res && res.user);
-            handleCloseSignIn();
-          } else {
-            console.log(res.message);
-          }
-        })
-        .catch((error) => {
-          setDisabled(false);
-        });
-    } else {
-      setValid(true);
-      setError(true);
-    }
+  const [setRes, setTypeRes] = React.useState("");
+  const onSubmit = (values) => {
+    login(values.email, values.password)
+      .then((res) => {
+        if (res && res.type === "SUCCESS") {
+          setLocalStorage({
+            ...((res && res.user) || {}),
+            token: res.auth_token,
+          });
+          setOpen(true);
+          setLogin(res && res.user);
+          handleCloseSignIn();
+          setTypeRes(res);
+        } else {
+          setOpen(true)
+          setTypeRes(res);
+        }
+      })
+      .catch((error) => {});
   };
 
   const handleClose = (event, reason) => {
@@ -89,7 +62,6 @@ const SignIn = (props) => {
         onClose={(e) => {
           e.stopPropagation();
           handleCloseSignIn();
-          setState(null)
         }}
         open={openSignIn}
         title="Sign in"
@@ -100,82 +72,95 @@ const SignIn = (props) => {
           handleCloseSignIn();
           openSignUpDialog();
         }}
-        maxHeight={328}
+        maxHeight={340}
       >
         <DialogContent style={{ textAlign: "center" }}>
-          <form onSubmit={onSubmit} noValidate autoComplete="off">
-            <FormControl className="login-form-control">
-              <InputComponent
-                label="Email"
-                type="email"
-                placeholder="Email"
-                name="email"
-                id="outlined-email"
-                autoFocus
-                required={isValid}
-                onChange={handleChange}
-                error={isError}
-                styles={{
-                  border: isError && isValid ? "1px solid red" : "initial",
-                }}
-              />
-              <InputComponent
-                label="Password"
-                type="password"
-                placeholder="Password"
-                name="password"
-                id="outlined-password"
-                required={isValid}
-                onChange={handleChange}
-                error={isError}
-                styles={{
-                  border: isError && isValid ? "1px solid red" : "initial",
-                }}
-              />
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <Link
-                  href="#"
-                  className={"forgot-password"}
-                  onClick={() => {
-                    handleCloseSignIn();
-                    openForgotPasswordDialog();
-                  }}
-                >
-                  Forgot Password?
-                </Link>
-                <ButtonComponent
-                  variant="contained"
-                  color="primary"
-                  type="submit"
-                  disabled={isDisabled}
-                  className="login"
-                  endIcon={<ArrowForwardIosIcon />}
-                  title="Log in"
-                />
-              </div>
-            </FormControl>
-          </form>
+          <Formik
+            initialValues={{ email: "", password: "" }}
+            validate={(values) => {
+              const errors = {};
+              if (!values.email) {
+                errors.email = "Required";
+              } else if (
+                !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
+              ) {
+                errors.email = "Invalid email address";
+              }
+              return errors;
+            }}
+            onSubmit={(values, { setSubmitting }) => {
+              onSubmit(values);
+            }}
+            validationSchema={Yup.object().shape({
+              password: Yup.string()
+                .required("Password is required")
+            })}
+          >
+            {({ values, errors, handleChange, handleSubmit, isSubmitting }) => (
+              <form onSubmit={handleSubmit} className="login-form">
+                <FormControl className="login-form-control">
+                  <InputComponent
+                    label="Email"
+                    type="email"
+                    placeholder="Email"
+                    name="email"
+                    value={values.email}
+                    id="outlined-email"
+                    autoFocus
+                    onChange={handleChange}
+                    error={errors.email ? true : false}
+                    helperText={errors.email && `${errors.email}`}
+                    styles={{ maxHeight: 80, height: "100%" }}
+                  />
+                  <InputComponent
+                    label="Password"
+                    type="password"
+                    placeholder="Password"
+                    name="password"
+                    id="outlined-password"
+                    value={values.password}
+                    onChange={handleChange}
+                    error={errors.password ? true : false}
+                    helperText={errors.password && `${errors.password}`}
+                    styles={{ marginTop: 10, maxHeight: 80, height: "100%" }}
+                  />
+                  <div className="signin-button-bottom">
+                    <Link
+                      href="#"
+                      className={"forgot-password"}
+                      onClick={() => {
+                        handleCloseSignIn();
+                        openForgotPasswordDialog();
+                      }}
+                    >
+                      Send new password?
+                    </Link>
+                    <ButtonComponent
+                      variant="contained"
+                      color="primary"
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="signin-button"
+                      endIcon={<ArrowForwardIosIcon />}
+                      title="Login"
+                    />
+                  </div>
+                </FormControl>
+              </form>
+            )}
+          </Formik>
         </DialogContent>
       </DialogComponent>
-      <Snackbar
+      <SnackBraComponent
         open={open}
-        autoHideDuration={3000}
         onClose={handleClose}
         anchorOrigin={{
           vertical: "top",
           horizontal: "center",
         }}
-      >
-        <Alert onClose={handleClose} severity="success">
-          Login Successfully
-        </Alert>
-      </Snackbar>
+        message={setRes.message}
+        type={setRes.type && setRes.type.toLowerCase()}
+      ></SnackBraComponent>
     </React.Fragment>
   );
 };

@@ -2,11 +2,14 @@ export const colorValues = {
   primary: "#6772E5",
   secondary: "#6772E5",
   black: "#000",
-  white: '#FFFFFF',
-  whiteSmoke:"#F5F5F5",// use in signin sub-title
-  orange: "#FF7A00",// use in sign in title
-  green: "#2FB41A",// use in button
-  Nero:'#191919',
+  white: "#FFFFFF",
+  whiteSmoke: "#F5F5F5", // use in signin sub-title
+  orange: "#FF7A00", // use in sign in title
+  green: "#2FB41A", // use in button
+  nero: "#191919", // use in input focus label color
+  darkGray: "#303030",
+  matterhorn: "#4F4F4F",
+  gray: "#949494",
   transparent: "transparent",
 };
 
@@ -14,7 +17,10 @@ const fontFamily = `'Rubik', 'Montserrat'`;
 
 const fontSize = {
   fontSize12: "0.75rem",
+  fontSize14: "0.875rem",
   fontSize16: "1rem",
+  fontSize18: "1.125rem",
+  fontSize24: "1.5rem",
   fontSize36: "2.25rem",
 };
 const fonts = {
@@ -24,7 +30,7 @@ const fonts = {
     fontStyle: "normal",
     fontWeight: "normal",
     lineHeight: 24,
-    letterSpacing: '0.02em',
+    letterSpacing: "0.02em",
     color: colorValues.white,
   },
   h2: {
@@ -32,28 +38,46 @@ const fonts = {
     fontSize: fontSize.fontSize16,
     fontStyle: "normal",
     fontWeight: "normal",
-    lineHeight: '24px',
-    letterSpacing: '0.02em',
+    lineHeight: "24px",
+    letterSpacing: "0.02em",
     color: colorValues.whiteSmoke,
   },
   //use in signin title
   h3: {
     fontFamily: fontFamily,
     fontSize: fontSize.fontSize36,
-    lineHeight: '30px',
-    fontWeight: '600px',
-    letterSpacing: '-0.015em',
-    color: colorValues.orange
+    fontStyle: "normal",
+    lineHeight: "30px",
+    fontWeight: "600px",
+    letterSpacing: "-0.015em",
+    color: colorValues.orange,
   },
+  //use in my profile title
   h4: {
     fontFamily: fontFamily,
-    fontSize: "0.9rem",
-    lineHeight: "1.33",
-    fontWeight: "600",
-    color: colorValues.black,
-    fontStyle: "italic",
-    paddingTop: "16px",
-    paddingBottom: "4px",
+    fontSize: fontSize.fontSize14,
+    lineHeight: "24px",
+    fontWeight: "500px",
+    letterSpacing: "0.02em",
+    color: colorValues.darkGray,
+  },
+  //use in my profile change profile picture
+  h5: {
+    fontFamily: fontFamily,
+    fontSize: fontSize.fontSize24,
+    lineHeight: "48px",
+    fontWeight: "500px",
+    letterSpacing: "0.02em",
+    color: colorValues.matterhorn,
+  },
+  h6: {
+    fontFamily: fontFamily,
+    fontSize: fontSize.fontSize18,
+    lineHeight: "30px",
+    fontStyle: "normal",
+    fontWeight: "normal",
+    letterSpacing: "0.02em",
+    color: colorValues.matterhorn,
   },
   p: {
     fontFamily: fontFamily,
@@ -91,7 +115,10 @@ export const themes = {
       white: colorValues.white,
       whiteSmoke: colorValues.whiteSmoke,
       orange: colorValues.orange,
-      Nero: colorValues.Nero,
+      nero: colorValues.nero,
+      darkGray: colorValues.darkGray,
+      matterhorn: colorValues.matterhorn,
+      gray: colorValues.gray,
       background: {
         main: colorValues.white,
       },

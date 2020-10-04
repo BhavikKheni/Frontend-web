@@ -1,0 +1,79 @@
+.stripe-verification-item {
+  display: flex;
+  flex-direction: column;
+}
+.stripe-item {
+  display: flex;
+  margin-top: 10px;
+  align-items: center;
+}
+.email-verify {
+  width: 100%;
+  max-width: 458px;
+}
+.email-verify .phone-number-otp {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  background: #f5f5f5;
+  border: 1px solid #303030;
+  border-radius: 10px;
+  height: 48px;
+  align-items: center;
+  padding: 10px;
+}
+.timer {
+  border-left: 1px solid #303030;
+  display: flex;
+  align-items: center;
+  height: inherit;
+}
+.resend-button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 24px;
+}
+.send-code {
+  width: 100%;
+  max-width: 137px;
+  height: 48px;
+}
+.update-profile {
+  width: 100%;
+  max-width: 295px;
+  height: 48px;
+}
+input[type="file"] {
+  position: absolute;
+  left: 0;
+  opacity: 0;
+  top: 0;
+  bottom: 0;
+}
+
+.change-picture {
+  display: inline-block;
+  position: relative;
+  width: 200px;
+  text-align: center;
+  margin-top: 10px;
+}
+.profile-form-control .MuiFormHelperText-root {
+  color: red;
+}
+.MuiInputBase-root {
+  width: 100%;
+}
+.react-tel-input .country-list {
+  width: 458px;
+  text-align: left;
+}
+
+.profile-image-tag {
+  text-align: center;
+}
+.profile-image-button {
+  margin-top: 20px;
+}
+

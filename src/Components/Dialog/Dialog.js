@@ -1,5 +1,5 @@
 import React from "react";
-import { withStyles, makeStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import Dialog from "@material-ui/core/Dialog";
 import MuiDialogTitle from "@material-ui/core/DialogTitle";
 import CloseIcon from "@material-ui/icons/Close";
@@ -7,7 +7,7 @@ import IconButton from "@material-ui/core/IconButton";
 import TypographyComponent from "../../Components/Typography/Typography";
 import "./Dialog.css";
 
-const styles = (theme) => ({
+const styles = makeStyles((theme) => ({
   root: {
     margin: 0,
     padding: theme.spacing(2),
@@ -23,30 +23,39 @@ const styles = (theme) => ({
     width: "100%",
     maxWidth: 458,
     display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
+    justifyContent: (props) => props.header.justifyContent || "space-between",
+    alignItems: (props) => props.header.alignItems || "center",
+    flexDirection: (props) => props.header.flexDirection || "row",
     flexFlow: "row wrap",
   },
-});
-
-const DialogTitle = withStyles(styles)((props) => {
+}));
+const DialogTitle = (props) => {
   const {
     children,
-    classes,
     title,
     subTitle1,
     subTitle2,
     onSubTitle2,
     onClose,
+    justifyContent,
+    alignItems,
+    flexDirection,
     ...other
   } = props;
 
+  const classes1 = styles({
+    header: {
+      justifyContent: justifyContent,
+      alignItems: alignItems,
+      flexDirection: flexDirection,
+    },
+  });
   return (
-    <MuiDialogTitle disableTypography className={classes.root} {...other}>
+    <MuiDialogTitle disableTypography className={classes1.root} {...other}>
       <div
         style={{ maxWidth: 140, width: "100%", display: "flex", flex: 1 }}
       ></div>
-      <div className={classes.header}>
+      <div className={classes1.header}>
         <div>
           <TypographyComponent title={title} variant="h3" />
         </div>
@@ -65,7 +74,7 @@ const DialogTitle = withStyles(styles)((props) => {
       <div style={{ maxWidth: 140, width: "100%", display: "flex", flex: 1 }}>
         <IconButton
           aria-label="close"
-          className={classes.closeButton}
+          className={classes1.closeButton}
           onClick={onClose}
         >
           <CloseIcon />
@@ -73,7 +82,7 @@ const DialogTitle = withStyles(styles)((props) => {
       </div>
     </MuiDialogTitle>
   );
-});
+};
 
 const DialogStyle = makeStyles((theme) => ({
   paperWidthSm: {
@@ -98,6 +107,9 @@ const DialogComponent = (props) => {
     onSubTitle2,
     maxHeight,
     maxWidth,
+    justifyContent,
+    alignItems,
+    flexDirection,
   } = props;
   const classes1 = DialogStyle({ maxHeight: maxHeight, maxWidth: maxWidth });
   return (
@@ -117,6 +129,9 @@ const DialogComponent = (props) => {
           subTitle2={subTitle2}
           onSubTitle2={onSubTitle2}
           onClose={onClose}
+          justifyContent={justifyContent}
+          alignItems={alignItems}
+          flexDirection={flexDirection}
         ></DialogTitle>
         {children}
       </Dialog>

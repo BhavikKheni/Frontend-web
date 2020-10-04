@@ -1,45 +1,17 @@
 import React, { useState } from "react";
-import Dialog from "@material-ui/core/Dialog";
-import MuiDialogTitle from "@material-ui/core/DialogTitle";
-import Typography from "@material-ui/core/Typography";
-import CloseIcon from "@material-ui/icons/Close";
-import IconButton from "@material-ui/core/IconButton";
-import { FormControl } from "@material-ui/core";
-import InputComponent from "../../../Components/Forms/Input";
+import MuiFormControl from "@material-ui/core/FormControl";
 import { withStyles } from "@material-ui/core/styles";
 import MuiDialogContent from "@material-ui/core/DialogContent";
+import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
+import { Formik } from "formik";
+import InputComponent from "../../../Components/Forms/Input";
+import TypographyComponent from "../../../Components/Typography/Typography";
 import { add } from "../../../Services/Auth.service";
 import ButtonComponent from "../../../Components/Forms/Button";
-const styles = (theme) => ({
-  root: {
-    margin: 0,
-    padding: theme.spacing(2),
-  },
-  closeButton: {
-    position: "absolute",
-    right: theme.spacing(1),
-    top: theme.spacing(1),
-    color: theme.palette.grey[500],
-  },
-});
+import DialogComponent from "../../../Components/Dialog/Dialog";
+import * as Yup from "yup";
 
-const DialogTitle = withStyles(styles)((props) => {
-  const { children, classes, onClose, ...other } = props;
-  return (
-    <MuiDialogTitle disableTypography className={classes.root} {...other}>
-      <Typography variant="h6">{children}</Typography>
-      {onClose ? (
-        <IconButton
-          aria-label="close"
-          className={classes.closeButton}
-          onClick={onClose}
-        >
-          <CloseIcon />
-        </IconButton>
-      ) : null}
-    </MuiDialogTitle>
-  );
-});
+import "./ForgotPassword.css";
 
 const DialogContent = withStyles((theme) => ({
   root: {
@@ -47,97 +19,118 @@ const DialogContent = withStyles((theme) => ({
   },
 }))(MuiDialogContent);
 
+const FormControl = withStyles((theme) => ({
+  root: {
+    width: "100%",
+    maxWidth: 458,
+  },
+}))(MuiFormControl);
+
 const ForgotPassword = (props) => {
   const {
     closeForgotPasswordDialog,
     openForgotPassword,
     openSignInDialog,
   } = props;
-  const [isLoading, setLoading] = useState(false);
   const [isDisabled, setDisabled] = useState(false);
-  const [email, setEmail] = useState(null);
-  const [isValid, setValid] = useState(false);
-
-  const handleChange = (e) => {
-    setEmail(e.target.value);
-  };
-
-  const onFinish = () => {
-    console.log(email);
-    if (email) {
-      setValid(false);
-      setDisabled(true);
-      add("/forgot", { email: email })
-        .then((res) => {
-          if (res && res.type === "SUCCESS") {
-            setDisabled(false);
-            closeForgotPasswordDialog();
-          } else {
-            setTimeout(() => {
-              setDisabled(false);
-            }, 2000);
-          }
-        })
-        .catch((error) => {
+  const onFinish = (email) => {
+    add("/forgot", { email: email })
+      .then((res) => {
+        if (res && res.type === "SUCCESS") {
+          setDisabled(false);
+          closeForgotPasswordDialog();
+        } else {
           setTimeout(() => {
             setDisabled(false);
           }, 2000);
-        });
-    } else {
-      setValid(true);
-    }
+        }
+      })
+      .catch((error) => {
+        setTimeout(() => {
+          setDisabled(false);
+        }, 2000);
+      });
   };
 
   return (
     <React.Fragment>
-      <Dialog
+      <DialogComponent
         onClose={closeForgotPasswordDialog}
         disableBackdropClick
         aria-labelledby="customized-dialog-title"
         open={openForgotPassword}
-        className={"modal-dialog form_modal"}
+        title="Reset password"
+        maxHeight={267}
       >
-        <DialogTitle
-          id="customized-dialog-title"
-          onClose={closeForgotPasswordDialog}
-        >
-          FORGOT PASSWORD
-        </DialogTitle>
-        <DialogContent className={"form_wrapper"} dividers>
-          <FormControl>
-            <InputComponent
-              label="Email Address"
-              type="email"
-              placeholder="Email Address"
-              name="email"
-              id="outlined-email"
-              autoFocus
-              required={isValid}
-              onChange={handleChange}
-            />
-            <ButtonComponent
-              variant="contained"
-              color="primary"
-              disabled={isDisabled}
-              onClick={onFinish}
-              title="RESET PASSWORD"
-            />
-          </FormControl>
+        <DialogContent>
+          <Formik
+            initialValues={{ email: "" }}
+            onSubmit={async (values) => {
+              onFinish(values.email);
+            }}
+            validationSchema={Yup.object().shape({
+              email: Yup.string().email().required("Use your sign up E-Mail"),
+            })}
+          >
+            {(props) => {
+              const {
+                values,
+                touched,
+                errors,
+                handleChange,
+                handleSubmit,
+              } = props;
+              return (
+                <form onSubmit={handleSubmit} className="forgot-password-form">
+                  <FormControl className="forgot-password-form-control">
+                    <InputComponent
+                      label="E-Mail"
+                      type="email"
+                      value={values.email}
+                      placeholder=" E-Mail"
+                      name="email"
+                      id="outlined-name"
+                      onChange={handleChange}
+                      error={errors.email ? true : false}
+                      helperText={
+                        errors.email && touched.email && `${errors.email}`
+                      }
+                      styles={{ maxHeight: 80, height: "100%" }}
+                    />
+
+                    <div className="forrgot-form-button">
+                      <TypographyComponent
+                        variant="h2"
+                        title="Back to sign in."
+                        onClick={() => {
+                          openSignInDialog();
+                          closeForgotPasswordDialog();
+                        }}
+                        style={{
+                          cursor: "pointer",
+                        }}
+                      />
+                      <ButtonComponent
+                        variant="contained"
+                        color="primary"
+                        disabled={isDisabled}
+                        type="submit"
+                        endIcon={<ArrowForwardIosIcon />}
+                        title="Send new password"
+                        style={{
+                          maxWidth: 213,
+                          height: 48,
+                          borderRadius: 10,
+                        }}
+                      />
+                    </div>
+                  </FormControl>
+                </form>
+              );
+            }}
+          </Formik>
         </DialogContent>
-        <DialogContent dividers className={"text-center"}>
-          <span>
-            Already have an account? <br />
-            <ButtonComponent
-              color="primary"
-              onClick={() => {
-                closeForgotPasswordDialog();
-                openSignInDialog();
-              }}
-              title="Sign In"
-            />
-          </span>
-        </DialogContent>
-      </Dialog>
+      </DialogComponent>
     </React.Fragment>
   );
 };
