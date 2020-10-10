@@ -20,10 +20,9 @@ const BootstrapInput = withStyles((theme) => ({
   },
 }))(InputBase);
 
-
 const Select = withStyles((theme) => ({
   root: {
-    borderRadius:10
+    borderRadius: 10,
   },
 }))(MuiSelect);
 export default function SelectComponent(props) {
@@ -37,10 +36,10 @@ export default function SelectComponent(props) {
     MenuProps,
     label,
   } = props;
-  
+
   return (
     <React.Fragment>
-      <InputLabel>{label}</InputLabel>
+      <InputLabel style={{ marginTop: 10 }}>{label}</InputLabel>
       <Select
         labelId={name}
         id={name}

@@ -16,11 +16,10 @@
 }
 .terms-condition-form {
   height: 100%;
-  max-height: 811px;
+  max-height: 711px;
 }
 .terms-condition-item{
   height: 100%;
-  max-height:196px;
 }
 .terms-condition-control .item {
   display: flex;
@@ -85,7 +84,7 @@
 }
 
 .Content {
-  height: 537px;
+  height: 410px;
   font-family: Rubik;
   font-style: normal;
   font-weight: normal;

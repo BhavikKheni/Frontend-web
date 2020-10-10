@@ -16,6 +16,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import "./Signup.css";
 
+import FormHelperText from "@material-ui/core/FormHelperText";
 const DialogContent = withStyles((theme) => ({
   root: {
     padding: theme.spacing(2),
@@ -35,13 +36,13 @@ const CustomCheckbox = withStyles({
 const SignUp = (props) => {
   const { handleCloseSignUp, openSignUp, openSignInDialog } = props;
   const [isDisabled, setDisabled] = useState(false);
-  const [isChecked, setChecked] = useState(false);
   const [openTermsCondition, setTermsCondition] = useState(false);
   const formik = useFormik({
     initialValues: {
       full_name: "",
       email: "",
       password: "",
+      checked: false,
     },
     onSubmit: (values) => {
       onSubmit(values);
@@ -58,14 +59,9 @@ const SignUp = (props) => {
       return errors;
     },
     validationSchema: Yup.object().shape({
-      password: Yup.string()
-        .required("Password is required")
-        .min(8, "Password is too short - should be 8 chars minimum.")
-        .matches(
-          /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{7,}$/,
-          "8 characters or longer. Combine upper and lowercase and numbers."
-        ),
+      password: Yup.string().required("Password is required"),
       full_name: Yup.string().required("Required"),
+      checked: Yup.boolean().required("Required").oneOf([true], "Error"),
     }),
   });
 
@@ -82,12 +78,15 @@ const SignUp = (props) => {
   };
   const handleCloseTermsCondition = () => {
     setTermsCondition(false);
+    formik.resetForm();
   };
-
   return (
     <React.Fragment>
       <DialogComponent
-        onClose={handleCloseSignUp}
+        onClose={() => {
+          handleCloseSignUp();
+          formik.resetForm();
+        }}
         open={openSignUp}
         title="Sign up"
         subTitle1="Already have an account?"
@@ -148,10 +147,13 @@ const SignUp = (props) => {
                   <FormControlLabel
                     control={
                       <CustomCheckbox
-                        checked={isChecked}
+                        checked={formik.values.checked}
                         name="checked"
                         onChange={() => {
-                          setChecked(!isChecked);
+                          formik.setFieldValue(
+                            "checked",
+                            !formik.values.checked
+                          );
                         }}
                         size="medium"
                       />
@@ -192,12 +194,17 @@ const SignUp = (props) => {
                     endIcon={<ArrowForwardIosIcon />}
                     title="go"
                     style={{
-                      backgroundColor: isChecked ? "#2FB41A" : "#949494",
+                      backgroundColor: formik.values.checked
+                        ? "#2FB41A"
+                        : "#949494",
                       height: 48,
                     }}
                   />
                 </div>
               </div>
+              <FormHelperText style={{ color: "red" }}>
+                {formik.errors.checked && `${formik.errors.checked}`}
+              </FormHelperText>
             </FormControl>
           </form>
         </DialogContent>
@@ -205,13 +212,30 @@ const SignUp = (props) => {
       <DialogComponent
         onClose={handleCloseTermsCondition}
         open={openTermsCondition}
-        title="Terms & condtitions"
         maxHeight={892}
         maxWidth={1269}
       >
         <DialogContent style={{ textAlign: "center" }}>
-          <form onSubmit={formik.handleSubmit} noValidate autoComplete="off" className="terms-condition-form">
+          <form
+            onSubmit={formik.handleSubmit}
+            noValidate
+            autoComplete="off"
+            className="terms-condition-form"
+          >
             <FormControl className="terms-condition-control">
+              <Grid container spacing={3}>
+                <Grid item xs={12} sm={6} md={6} lg={6} xl={6}>
+                  <TypographyComponent
+                    variant="h3"
+                    title="Terms & conditions"
+                    style={{
+                      marginTop: 20,
+                      marginBottom: 20,
+                      textAlign: "left",
+                    }}
+                  />
+                </Grid>
+              </Grid>
               <Grid container spacing={3} className="terms-condition-item">
                 <Grid item xs={12} sm={6} md={6} lg={6} xl={6}>
                   <InputComponent
@@ -228,6 +252,7 @@ const SignUp = (props) => {
                       formik.errors.full_name && `${formik.errors.full_name}`
                     }
                     className="terms-condition-fullName"
+                    styles={{ maxHeight: 80, height: "100%" }}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6} md={6} lg={6} xl={6}>
@@ -268,10 +293,13 @@ const SignUp = (props) => {
                       <FormControlLabel
                         control={
                           <CustomCheckbox
-                            checked={isChecked}
+                            checked={formik.values.checked}
                             name="checked"
                             onChange={() => {
-                              setChecked(!isChecked);
+                              formik.setFieldValue(
+                                "checked",
+                                !formik.values.checked
+                              );
                             }}
                             size="medium"
                           />
@@ -309,7 +337,9 @@ const SignUp = (props) => {
                         endIcon={<ArrowForwardIosIcon />}
                         title="go"
                         style={{
-                          backgroundColor: isChecked ? "#2FB41A" : "#949494",
+                          backgroundColor: formik.values.checked
+                            ? "#2FB41A"
+                            : "#949494",
                           height: 48,
                         }}
                       />
@@ -317,40 +347,44 @@ const SignUp = (props) => {
                   </div>
                 </Grid>
               </Grid>
-              <div className="Container Flipped">
-                <div className="Content">
-                  GeeksforGeeks is a Computer Science portal for geeks. It
-                  contains well written, well thought and well explained
-                  computer science and programming articles, quizzes etc.
-                  GeeksforGeeks is a Computer Science portal for geeks. It
-                  contains well written, well thought and well explained
-                  computer science and programming articles, quizzes etc.
-                  GeeksforGeeks is a Computer Science portal for geeks. It
-                  contains well written, well thought and well explained
-                  computer science and programming articles, quizzes etc.
-                  GeeksforGeeks is a Computer Science portal for geeks. It
-                  contains well written, well thought and well explained
-                  computer science and programming articles, quizzes etc.
-                  GeeksforGeeks is a Computer Science portal for geeks. It
-                  contains well written, well thought and well explained
-                  computer science and programming articles, quizzes etc.
-                  GeeksforGeeks is a Computer Science portal for geeks. It
-                  contains well written, well thought and well explained
-                  computer science and programming articles, quizzes etc.
-                  GeeksforGeeks is a Computer Science portal for geeks. It
-                  contains well written, well thought and well explained
-                  computer science and programming articles, quizzes etc.
-                  GeeksforGeeks is a Computer Science portal for geeks. It
-                  contains well written, well thought and well explained
-                  computer science and programming articles, quizzes etc.
-                  GeeksforGeeks is a Computer Science portal for geeks. It
-                  contains well written, well thought and well explained
-                  computer science and programming articles, quizzes etc.
-                  GeeksforGeeks is a Computer Science portal for geeks. It
-                  contains well written, well thought and well explained
-                  computer science and programming articles, quizzes etc.
-                </div>
-              </div>
+              <Grid container spacing={3}>
+                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                  <div className="Container Flipped">
+                    <div className="Content">
+                      GeeksforGeeks is a Computer Science portal for geeks. It
+                      contains well written, well thought and well explained
+                      computer science and programming articles, quizzes etc.
+                      GeeksforGeeks is a Computer Science portal for geeks. It
+                      contains well written, well thought and well explained
+                      computer science and programming articles, quizzes etc.
+                      GeeksforGeeks is a Computer Science portal for geeks. It
+                      contains well written, well thought and well explained
+                      computer science and programming articles, quizzes etc.
+                      GeeksforGeeks is a Computer Science portal for geeks. It
+                      contains well written, well thought and well explained
+                      computer science and programming articles, quizzes etc.
+                      GeeksforGeeks is a Computer Science portal for geeks. It
+                      contains well written, well thought and well explained
+                      computer science and programming articles, quizzes etc.
+                      GeeksforGeeks is a Computer Science portal for geeks. It
+                      contains well written, well thought and well explained
+                      computer science and programming articles, quizzes etc.
+                      GeeksforGeeks is a Computer Science portal for geeks. It
+                      contains well written, well thought and well explained
+                      computer science and programming articles, quizzes etc.
+                      GeeksforGeeks is a Computer Science portal for geeks. It
+                      contains well written, well thought and well explained
+                      computer science and programming articles, quizzes etc.
+                      GeeksforGeeks is a Computer Science portal for geeks. It
+                      contains well written, well thought and well explained
+                      computer science and programming articles, quizzes etc.
+                      GeeksforGeeks is a Computer Science portal for geeks. It
+                      contains well written, well thought and well explained
+                      computer science and programming articles, quizzes etc.
+                    </div>
+                  </div>
+                </Grid>
+              </Grid>
             </FormControl>
           </form>
         </DialogContent>

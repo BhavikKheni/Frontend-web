@@ -13,11 +13,15 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
+import Divider from "@material-ui/core/Divider";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
 import JobCardComponent from "../../Components/Jobs/JobCard/JobCard";
 import Spinner from "../../Components/Spinner/Spinner";
 import { search } from "../../Services/Auth.service";
 import RatingComponent from "../../Components/Rating/Rating";
-
+import { useSidebar } from "../../Provider/SidebarProvider";
 const limit = 10;
 const Dashboard = (props) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -28,47 +32,10 @@ const Dashboard = (props) => {
   const [upcomingoffset, setUpcomingOffset] = useState(0);
   const [isUpcomingLoading, setUpcomingLoading] = useState(false);
   const [deActivateDialog, setDeActivateDialog] = useState(false);
-
-  useEffect(() => {
-    async function searchJobs() {
-      setIsLoading(true);
-      const res = await search("/job/list", {
-        limit: limit,
-        offset: 0,
-      });
-      const { data, stopped_at, type } = res || {};
-      if (type === "ERROR") {
-        setUpcomingMoreData(false);
-        setIsLoading(false);
-        return;
-      }
-      setUpcomingOffset(stopped_at);
-      setJobs(data || []);
-      setIsLoading(false);
-    }
-    searchJobs();
-  }, []);
-  const onMore = async (path, offset, criteria = {}) => {
-    setUpcomingLoading(true);
-    let res = await search(path, {
-      limit: limit,
-      offset: offset,
-      ...criteria,
-    });
-    if (res) {
-      const { data, stopped_at, type } = res || {};
-      if (type === "ERROR") {
-        setUpcomingMoreData(false);
-        return;
-      }
-      setUpcomingOffset(stopped_at);
-      setJobs((jobs) => [...(jobs || []), ...(data || [])]);
-      setUpcomingLoading(false);
-    }
-  };
-
-  return (
-    <React.Fragment>
+  const { setSidebarContent,setSidebar } = useSidebar();
+  React.useEffect(() => {
+    setSidebar(true)
+    setSidebarContent(
       <div>
         <Typography variant="caption" color="textSecondary" component="p">
           <span>Simpathy</span>
@@ -131,12 +98,60 @@ const Dashboard = (props) => {
           <KeyboardArrowDown />
         </div>
       </div>
+    );
+  }, [setSidebarContent]);
+  useEffect(() => {
+    async function searchJobs() {
+      setIsLoading(true);
+      const res = await search("/job/list", {
+        limit: limit,
+        offset: 0,
+      });
+      const { data, stopped_at, type } = res || {};
+      if (type === "ERROR") {
+        setUpcomingMoreData(false);
+        setIsLoading(false);
+        return;
+      }
+      setUpcomingOffset(stopped_at);
+      setJobs(data || []);
+      setIsLoading(false);
+    }
+    searchJobs();
+  }, []);
+  const onMore = async (path, offset, criteria = {}) => {
+    setUpcomingLoading(true);
+    let res = await search(path, {
+      limit: limit,
+      offset: offset,
+      ...criteria,
+    });
+    if (res) {
+      const { data, stopped_at, type } = res || {};
+      if (type === "ERROR") {
+        setUpcomingMoreData(false);
+        return;
+      }
+      setUpcomingOffset(stopped_at);
+      setJobs((jobs) => [...(jobs || []), ...(data || [])]);
+      setUpcomingLoading(false);
+    }
+  };
+
+  return (
+    <React.Fragment>
       {isLoading ? (
         <div style={{ textAlign: "center" }}>
           <Spinner />
         </div>
       ) : (
-        <div style={{ display:'flex',flexDirection:'row',flexFlow:'row wrap' }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            flexFlow: "row wrap",
+          }}
+        >
           {jobs &&
             jobs.map((element, index) => (
               <JobCardComponent

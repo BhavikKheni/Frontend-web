@@ -8,6 +8,7 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1),
     height: 48,
     fontFamily: "Rubik",
+    borderRadius: '10px',
   },
   primary: {
     backgroundColor: "#2fb41a",
@@ -38,11 +39,7 @@ const ButtonComponent = (props) => {
       <Button
         variant={variant}
         color={color}
-        className={clsx(
-          classes.primary,
-          classes.button,
-          className
-        )}
+        className={clsx(classes.primary, classes.button, className)}
         endIcon={endIcon}
         onClick={onClick}
         type={type}

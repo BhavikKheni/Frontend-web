@@ -18,16 +18,16 @@ const useStyles = makeStyles((theme) => ({
 
 const SnackbarComponent = (props) => {
   const classes = useStyles();
-  const { open, handleClose, message, type, anchorOrigin } = props;
+  const { open, onClose, message, type, anchorOrigin } = props;
   return (
     <div className={classes.root}>
       <Snackbar
         open={open}
         anchorOrigin={anchorOrigin}
-        autoHideDuration={6000}
-        onClose={handleClose}
+        autoHideDuration={2000}
+        onClose={onClose}
       >
-        <Alert onClose={handleClose} severity={type}>
+        <Alert onClose={onClose} severity={type}>
           {message}
         </Alert>
       </Snackbar>

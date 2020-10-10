@@ -4,7 +4,6 @@ import {
   ExpandMore,
   KeyboardArrowDown,
 } from "@material-ui/icons";
-
 import MuiDialogContent from "@material-ui/core/DialogContent";
 import { withStyles } from "@material-ui/core/styles";
 import StarBorderIcon from "@material-ui/icons/StarBorder";
@@ -24,7 +23,9 @@ import InputComponent from "../../Components/Forms/Input";
 import ButtonComponent from "../../Components/Forms/Button";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import './service.css';
+import { useSidebar } from "../../Provider/SidebarProvider";
+import "./service.css";
+
 const limit = 10;
 const DialogContent = withStyles((theme) => ({
   root: {
@@ -41,47 +42,10 @@ const Services = (props) => {
   const [isUpcomingLoading, setUpcomingLoading] = useState(false);
   const [deActivateDialog, setDeActivateDialog] = useState(false);
   const [openResetPassword, setOpenResetPassword] = useState(false);
-  useEffect(() => {
-    async function searchJobs() {
-      setIsLoading(true);
-      const res = await search("/job/list", {
-        limit: limit,
-        offset: 0,
-      });
-      const { data, stopped_at, type } = res || {};
-      if (type === "ERROR") {
-        setUpcomingMoreData(false);
-        setIsLoading(false);
-        return;
-      }
-      setUpcomingOffset(stopped_at);
-      setJobs(data || []);
-      setIsLoading(false);
-    }
-    searchJobs();
-  }, []);
-  const onMore = async (path, offset, criteria = {}) => {
-    setUpcomingLoading(true);
-    let res = await search(path, {
-      limit: limit,
-      offset: offset,
-      ...criteria,
-    });
-    if (res) {
-      const { data, stopped_at, type } = res || {};
-      if (type === "ERROR") {
-        setUpcomingMoreData(false);
-        return;
-      }
-      setUpcomingOffset(stopped_at);
-      setJobs((jobs) => [...(jobs || []), ...(data || [])]);
-      setUpcomingLoading(false);
-    }
-  };
-  const onResetPassword = () => {};
-  
-  return (
-    <React.Fragment>
+  const { setSidebarContent,setSidebar } = useSidebar();
+  React.useEffect(() => {
+    setSidebar(false)
+    setSidebarContent(
       <div>
         <Typography variant="caption" color="textSecondary" component="p">
           <span>Simpathy</span>
@@ -144,6 +108,49 @@ const Services = (props) => {
           <KeyboardArrowDown />
         </div>
       </div>
+    );
+  }, [setSidebarContent]);
+  useEffect(() => {
+    async function searchJobs() {
+      setIsLoading(true);
+      const res = await search("/job/list", {
+        limit: limit,
+        offset: 0,
+      });
+      const { data, stopped_at, type } = res || {};
+      if (type === "ERROR") {
+        setUpcomingMoreData(false);
+        setIsLoading(false);
+        return;
+      }
+      setUpcomingOffset(stopped_at);
+      setJobs(data || []);
+      setIsLoading(false);
+    }
+    searchJobs();
+  }, []);
+  const onMore = async (path, offset, criteria = {}) => {
+    setUpcomingLoading(true);
+    let res = await search(path, {
+      limit: limit,
+      offset: offset,
+      ...criteria,
+    });
+    if (res) {
+      const { data, stopped_at, type } = res || {};
+      if (type === "ERROR") {
+        setUpcomingMoreData(false);
+        return;
+      }
+      setUpcomingOffset(stopped_at);
+      setJobs((jobs) => [...(jobs || []), ...(data || [])]);
+      setUpcomingLoading(false);
+    }
+  };
+  const onResetPassword = () => {};
+
+  return (
+    <React.Fragment>
       {isLoading ? (
         <div style={{ textAlign: "center" }}>
           <Spinner />

@@ -8,7 +8,7 @@ import { login, setLocalStorage } from "../../../Services/Auth.service";
 import InputComponent from "../../../Components/Forms/Input";
 import ButtonComponent from "../../../Components/Forms/Button";
 import DialogComponent from "../../../Components/Dialog/Dialog";
-import SnackBraComponent from "../../../Components/SnackBar/SnackBar";
+import SnackBarComponent from "../../../Components/SnackBar/SnackBar";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import "./signin.css";
@@ -43,7 +43,7 @@ const SignIn = (props) => {
           handleCloseSignIn();
           setTypeRes(res);
         } else {
-          setOpen(true)
+          setOpen(true);
           setTypeRes(res);
         }
       })
@@ -57,7 +57,7 @@ const SignIn = (props) => {
     setOpen(false);
   };
   return (
-    <React.Fragment>
+    <div>
       <DialogComponent
         onClose={(e) => {
           e.stopPropagation();
@@ -151,7 +151,7 @@ const SignIn = (props) => {
           </Formik>
         </DialogContent>
       </DialogComponent>
-      <SnackBraComponent
+      <SnackBarComponent
         open={open}
         onClose={handleClose}
         anchorOrigin={{
@@ -160,8 +160,8 @@ const SignIn = (props) => {
         }}
         message={setRes.message}
         type={setRes.type && setRes.type.toLowerCase()}
-      ></SnackBraComponent>
-    </React.Fragment>
+      ></SnackBarComponent>
+    </div>
   );
 };
 export default SignIn;

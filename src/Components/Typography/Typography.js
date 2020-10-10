@@ -4,14 +4,13 @@ import Typography from "@material-ui/core/Typography";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 import { makeStyles } from "@material-ui/core/styles";
 import { themes } from "../../themes";
+
 const theme = createMuiTheme({
   typography: {
     h1: {
       ...themes.default.fonts.h1,
     },
-    h2: {
-      ...themes.default.fonts.h2,
-    },
+    h2: { ...themes.default.fonts.h2 },
     h3: {
       ...themes.default.fonts.h3,
     },
@@ -34,18 +33,16 @@ const TypographyComponent = (props) => {
   const classes = useStyles();
   const { title, variant, onClick, style, className } = props;
   return (
-    <React.Fragment>
-      <ThemeProvider theme={theme}>
-        <Typography
-          variant={variant}
-          className={clsx(classes.primary, className)}
-          onClick={onClick}
-          style={{ ...style }}
-        >
-          {title}
-        </Typography>
-      </ThemeProvider>
-    </React.Fragment>
+    <ThemeProvider theme={theme}>
+      <Typography
+        variant={variant}
+        className={clsx(classes.primary, className)}
+        onClick={onClick}
+        style={{ ...style }}
+      >
+        {title}
+      </Typography>
+    </ThemeProvider>
   );
 };
 export default TypographyComponent;

@@ -3,20 +3,6 @@ import { createMuiTheme, ThemeProvider } from "@material-ui/core";
 import TextField from "@material-ui/core/TextField";
 import { withStyles, makeStyles } from "@material-ui/core/styles";
 import clsx from "clsx";
-import { themes } from "../../themes";
-const theme = createMuiTheme({
-  overrides: {
-    MuiInputLabel: {
-      root: {
-        "&$focused": {
-          color: themes.default.colors.nero,
-        },
-        fontFamily: "Rubik",
-        color: themes.default.colors.nero,
-      },
-    },
-  },
-});
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -61,28 +47,26 @@ const InputComponent = (props) => {
 
   return (
     <React.Fragment>
-      <ThemeProvider theme={theme}>
-        <ValidationTextField
-          id={props.id}
-          error={props.error}
-          className={clsx(classes.marginBottom, props.className)}
-          name={props.name}
-          label={props.label}
-          defaultValue={props.defaultValue}
-          value={props.value}
-          placeholder={props.placeholder}
-          type={props.type}
-          required={props.required}
-          onChange={props.onChange}
-          autoFocus={props.autoFocus}
-          helperText={props.helperText}
-          variant="filled"
-          multiline={props.multiline}
-          rows={props.rows}
-          style={{ ...props.styles }}
-          inputProps={props.inputProps}
-        />
-      </ThemeProvider>
+      <ValidationTextField
+        id={props.id}
+        error={props.error}
+        className={clsx(classes.marginBottom, props.className)}
+        name={props.name}
+        label={props.label}
+        defaultValue={props.defaultValue}
+        value={props.value}
+        placeholder={props.placeholder}
+        type={props.type}
+        required={props.required}
+        onChange={props.onChange}
+        autoFocus={props.autoFocus}
+        helperText={props.helperText}
+        variant="filled"
+        multiline={props.multiline}
+        rows={props.rows}
+        style={{ ...props.styles }}
+        inputProps={props.inputProps}
+      />
     </React.Fragment>
   );
 };

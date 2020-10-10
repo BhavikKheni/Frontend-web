@@ -3,12 +3,9 @@ import { withRouter } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
-import InputBase from "@material-ui/core/InputBase";
-import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import Checkbox from "@material-ui/core/Checkbox";
-import Avatar from "@material-ui/core/Avatar";
 import CheckIcon from "@material-ui/icons/Check";
 import MuiDialogContent from "@material-ui/core/DialogContent";
 import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
@@ -20,8 +17,10 @@ import countryList from "react-select-country-list";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import MuiFormControl from "@material-ui/core/FormControl";
 import Input from "@material-ui/core/Input";
-import Hidden from "@material-ui/core/Hidden";
-import Dropzone from "react-dropzone";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import MailIcon from "@material-ui/icons/Mail";
 import ProfilePic from "../../profile-image.png";
 import TypographyComponent from "../../Components/Typography/Typography";
 import SelectComponent from "../../Components/Forms/Select";
@@ -31,6 +30,7 @@ import DialogComponent from "../../Components/Dialog/Dialog";
 import SnackbarComponent from "../../Components/SnackBar/SnackBar";
 import { themes } from "../../themes";
 import { SessionContext } from "../../Provider/Provider";
+import { useSidebar } from "../../Provider/SidebarProvider";
 import { get } from "../../Services/Auth.service";
 import Service from "../../Services/index";
 import "react-phone-input-2/lib/style.css";
@@ -78,6 +78,7 @@ const UpdateProfile = (props) => {
     newPassword: null,
     languages: [],
   });
+  const { setSidebarContent, setSidebar } = useSidebar();
   const [isLoading, setLoading] = useState(false);
   const [openEmail, setEmail] = React.useState(false);
   const [verify, setVerify] = React.useState(false);
@@ -92,6 +93,27 @@ const UpdateProfile = (props) => {
   const [openErrorSnackBar, setOpenSnackBar] = useState(false);
   const [resError, setResError] = useState("");
   const [isImageSize, isSetImageSize] = useState(false);
+
+  React.useEffect(() => {
+    setSidebar(true);
+    setSidebarContent(
+      <List>
+        {[
+          "Messages",
+          "My calendar",
+          "Next bookings",
+          "My service history",
+          "My profile",
+          "Payment methods",
+        ].map((text, index) => (
+          <ListItem button key={text}>
+            <ListItemIcon>{<MailIcon />}</ListItemIcon>
+            <ListItemText primary={text} />
+          </ListItem>
+        ))}
+      </List>
+    );
+  }, [setSidebarContent, setSidebar]);
   useEffect(() => {
     async function getData() {
       setLoading(true);
@@ -117,17 +139,7 @@ const UpdateProfile = (props) => {
     fetchLanguages();
     getData();
   }, [user]);
-  const ITEM_HEIGHT = 48;
-  const ITEM_PADDING_TOP = 8;
 
-  const MenuProps = {
-    PaperProps: {
-      style: {
-        maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-        width: 250,
-      },
-    },
-  };
   const handleChange = (e) => {
     setUserData({ ...userData, [e.target.name]: e.target.value });
   };
@@ -138,11 +150,6 @@ const UpdateProfile = (props) => {
       if (FileSize > 2) {
         isSetImageSize(true);
       } else {
-        var output = document.getElementById("output");
-        output.src = URL.createObjectURL(event.target.files[0]);
-        output.onload = function () {
-          URL.revokeObjectURL(output.src);
-        };
         setUserData({
           ...userData,
           [event.target.name]: event.target.files[0],
@@ -223,7 +230,7 @@ const UpdateProfile = (props) => {
           <CircularProgress />
         </div>
       ) : (
-        <React.Fragment>
+        <div>
           <TypographyComponent
             variant="h4"
             title="My profile"
@@ -235,7 +242,7 @@ const UpdateProfile = (props) => {
             alignItems="center"
             style={{ marginTop: 20 }}
           >
-            <Grid item xs={12} sm={6} md={4} lg={4} xl={4}>
+            <Grid item xs={12} md={2}>
               <img
                 alt="profile"
                 src={ProfilePic}
@@ -254,7 +261,7 @@ const UpdateProfile = (props) => {
                 }}
               />
             </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={4} xl={4}>
+            <Grid item xs={12} md={2}>
               <TypographyComponent
                 variant="h3"
                 title="Juile Ann"
@@ -271,14 +278,20 @@ const UpdateProfile = (props) => {
                   style={{ marginLeft: 5 }}
                 />
               </Grid>
-              <Grid style={{ marginTop: 10 }}>
+              <Grid
+                style={{
+                  marginTop: 10,
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
                 {userData.languages &&
                   userData.languages.map((language, i) => (
                     <span key={i}>{language}</span>
                   ))}
               </Grid>
             </Grid>
-            <Grid item xs={4} sm={4} md={4} lg={4} xl={4}>
+            <Grid item xs={12} md={4}>
               <TypographyComponent variant="h4" title="Employer Verfication" />
               <Grid style={{ display: "flex", marginTop: 10 }}>
                 <CheckIcon />
@@ -288,20 +301,22 @@ const UpdateProfile = (props) => {
                   style={{ marginLeft: 5 }}
                 />
               </Grid>
-              <Grid style={{ display: "flex" }}>
-                <CheckIcon />
-                <TypographyComponent
-                  variant="h4"
-                  title="Mobile verified"
-                  style={{ marginLeft: 5 }}
-                />
-              </Grid>
-              <Grid style={{ display: "flex" }}>
+
+              <Grid style={{ display: "flex", alignItems: "center" }}>
                 <CheckIcon />
                 <TypographyComponent
                   variant="h4"
                   title="E-Mail verified"
                   style={{ marginLeft: 5 }}
+                />
+                <ButtonComponent
+                  title="Verify"
+                  style={{
+                    backgroundColor: themes.default.colors.white,
+                    color: themes.default.colors.orange,
+                    border: `1px solid ${themes.default.colors.orange}`,
+                    width: 100,
+                  }}
                 />
               </Grid>
             </Grid>
@@ -318,109 +333,18 @@ const UpdateProfile = (props) => {
                   <Grid item xs={12} md={12}>
                     <FormControl>
                       <InputComponent
-                        label="First name"
+                        label="Full name"
                         type="text"
                         value={userData.first_name && userData.first_name}
-                        placeholder="First name"
-                        name="first_name"
-                        id="first_name"
-                        onChange={handleChange}
-                        error={isError}
-                      />
-                    </FormControl>
-                  </Grid>
-                  <Grid item xs={12} md={12}>
-                    <FormControl>
-                      <InputComponent
-                        label="Last name"
-                        type="text"
-                        value={userData.last_name && userData.last_name}
-                        placeholder="Last name"
-                        name="last_name"
-                        id="last_name"
-                        onChange={handleChange}
-                        error={isError}
-                      />
-                    </FormControl>
-                  </Grid>
-                </Grid>
-                <Grid container spacing={3}>
-                  <Grid item xs={12} md={12}>
-                    <FormControl>
-                      <TypographyComponent
-                        title="Change password"
-                        variant="h4"
-                        style={{
-                          fontWeight: 500,
-                          marginBottom: 10,
-                        }}
-                      />
-                    </FormControl>
-                  </Grid>
-                  <Grid item xs={12} md={12}>
-                    <FormControl>
-                      <InputComponent
-                        label="Actual password"
-                        type="password"
-                        placeholder="Actual password"
+                        placeholder="Full name"
                         name="full_name"
-                        id="actual-password"
+                        id="full_name"
                         onChange={handleChange}
                         error={isError}
                       />
                     </FormControl>
                   </Grid>
-                  <Grid item xs={12} md={12}>
-                    <FormControl>
-                      <InputComponent
-                        label="New password"
-                        type="password"
-                        placeholder="New password"
-                        name="password"
-                        id="new-password"
-                        onChange={handleChange}
-                        error={isPassword}
-                      />
-                    </FormControl>
-                  </Grid>
-                  <Grid item xs={12} md={12}>
-                    <FormControl>
-                      <InputComponent
-                        label="Create new password"
-                        type="password"
-                        placeholder="Create new password"
-                        name="newPassword"
-                        id="newPassword"
-                        onChange={handleChange}
-                        error={isPassword}
-                        helperText={isPassword && "Password is not match"}
-                      />
-                    </FormControl>
-                  </Grid>
-                </Grid>
-              </Grid>
-              <Hidden smDown>
-                <Grid item md={1}></Grid>
-              </Hidden>
-              <Grid item xs={12} md={5}>
-                <Grid container spacing={3}>
-                  <Grid item xs={12} md={12}>
-                    <FormControl variant="outlined">
-                      <SelectComponent
-                        value={(userData.country && userData.country) || ""}
-                        onChange={handleChange}
-                        name="country"
-                        label="Select a country"
-                      >
-                        {options.map((m, i) => (
-                          <MenuItem key={i} value={m.label}>
-                            <ListItemText primary={m.label} />
-                          </MenuItem>
-                        ))}
-                      </SelectComponent>
-                    </FormControl>
-                  </Grid>
-                  <Grid item xs={12} md={6}>
+                  <Grid item xs={12} md={5}>
                     <FormControl variant="outlined">
                       <SelectComponent
                         name="languages"
@@ -434,30 +358,34 @@ const UpdateProfile = (props) => {
                         onChange={handleChange}
                         input={<Input2 />}
                         renderValue={(selected) => selected.join(", ")}
-                        MenuProps={MenuProps}
-                        options={languages || []}
                       >
-                        {options.map((l) => {
-                          return (
-                            <MenuItem key={l.value} value={l.label}>
-                              <Checkbox
-                                checked={
-                                  userData.languages &&
-                                  userData.languages.indexOf(l.label) > -1
-                                }
-                              />
-                              <ListItemText primary={l.label} />
-                            </MenuItem>
-                          );
-                        })}
+                        {languages &&
+                          languages.map((l) => {
+                            return (
+                              <MenuItem
+                                key={l.id_language}
+                                value={l.language_name}
+                              >
+                                <Checkbox
+                                  checked={
+                                    userData.languages &&
+                                    userData.languages.indexOf(
+                                      l.language_name
+                                    ) > -1
+                                  }
+                                />
+                                <ListItemText primary={l.language_name} />
+                              </MenuItem>
+                            );
+                          })}
                       </SelectComponent>
                     </FormControl>
                   </Grid>
-                  <Grid item xs={12} md={6}>
+                  <Grid item xs={12} sm={12} md={4}>
                     <FormControl variant="outlined">
                       <SelectComponent
                         name="languages"
-                        label="Add new language"
+                        label="Select level"
                         multiple
                         value={
                           Array.isArray(userData.languages)
@@ -467,7 +395,6 @@ const UpdateProfile = (props) => {
                         onChange={handleChange}
                         input={<Input2 />}
                         renderValue={(selected) => selected.join(", ")}
-                        MenuProps={MenuProps}
                         options={languages}
                       >
                         {options.map((l) => {
@@ -486,10 +413,53 @@ const UpdateProfile = (props) => {
                       </SelectComponent>
                     </FormControl>
                   </Grid>
+                  <Grid item xs={3} md={3}>
+                    <FormControl>
+                      <ButtonComponent
+                        title="Add"
+                        style={{
+                          color: "#fff",
+                        }}
+                      ></ButtonComponent>
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={12} md={12}>
+                    <FormControl variant="outlined">
+                      <SelectComponent
+                        value={(userData.country && userData.country) || ""}
+                        onChange={handleChange}
+                        name="country"
+                        label="Select a country"
+                      >
+                        {options.map((m, i) => (
+                          <MenuItem key={i} value={m.label}>
+                            <ListItemText primary={m.label} />
+                          </MenuItem>
+                        ))}
+                      </SelectComponent>
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={12} md={12}>
+                    <FormControl variant="outlined">
+                      <SelectComponent
+                        value={(userData.country && userData.country) || ""}
+                        onChange={handleChange}
+                        name="country"
+                        label="Select your time zone"
+                      >
+                        {options.map((m, i) => (
+                          <MenuItem key={i} value={m.label}>
+                            <ListItemText primary={m.label} />
+                          </MenuItem>
+                        ))}
+                      </SelectComponent>
+                    </FormControl>
+                  </Grid>
+
                   <Grid item xs={12} md={12}>
                     <FormControl>
                       <TypographyComponent
-                        title="Change E-Mail"
+                        title="Change password"
                         variant="h4"
                         style={{
                           fontWeight: 500,
@@ -498,137 +468,18 @@ const UpdateProfile = (props) => {
                       />
                     </FormControl>
                   </Grid>
-                  <Grid item xs={12} md={12}>
-                    <FormControl>
-                      <InputComponent
-                        label="Actual Email"
-                        type="email"
-                        placeholder="Actual Email"
-                        name="full_name"
-                        id="outlined-Email"
-                        onChange={handleChange}
-                      />
-                    </FormControl>
-                  </Grid>
-                  <Grid item xs={12} md={12}>
-                    <FormControl>
-                      <InputComponent
-                        label="Enter new E-mail"
-                        type="email"
-                        placeholder="Enter new E-mail"
-                        name="full_name"
-                        id="Email"
-                        onChange={handleChange}
-                      />
+                  <Grid item xs={12} md={6}>
+                    <FormControl variant="outlined">
+                      <ButtonComponent
+                        title="Change password"
+                        style={{
+                          border: "1px solid rgba(25, 25, 25, 0.9)",
+                          backgroundColor: "#fff",
+                        }}
+                      ></ButtonComponent>
                     </FormControl>
                   </Grid>
                 </Grid>
-              </Grid>
-              <Hidden smDown>
-                <Grid item md={1}></Grid>
-              </Hidden>
-            </Grid>
-            <Grid
-              container
-              spacing={3}
-              direction="column"
-              style={{ margin: 2, marginTop: 20 }}
-            >
-              <TypographyComponent
-                title="Stripe verification"
-                variant="h4"
-                style={{
-                  fontWeight: 500,
-                  marginBottom: 10,
-                }}
-              />
-              <Grid className="stripe-verification-item">
-                <Grid className="stripe-item">
-                  <CheckIcon />
-                  <TypographyComponent
-                    variant="h4"
-                    title="Stripe verification"
-                    style={{ marginLeft: 5 }}
-                  />
-                </Grid>
-                <Grid className="stripe-item">
-                  <CheckIcon />
-                  <TypographyComponent
-                    variant="h4"
-                    title="ID verified"
-                    style={{ marginLeft: 5 }}
-                  />
-                </Grid>
-                <Grid className="stripe-item">
-                  <TypographyComponent
-                    variant="h4"
-                    title="E-Mail verified"
-                    style={{ marginLeft: 25 }}
-                  />
-                  <ButtonComponent
-                    title="Verify"
-                    onClick={() => {
-                      onEmail();
-                    }}
-                    style={{
-                      backgroundColor: themes.default.colors.white,
-                      color: themes.default.colors.orange,
-                      borderRadius: 10,
-                      border: `1px solid ${themes.default.colors.orange}`,
-                    }}
-                    variant="outlined"
-                  />
-                </Grid>
-                <Grid className="stripe-item">
-                  <TypographyComponent
-                    variant="h4"
-                    title="Phone number"
-                    style={{ marginLeft: 25 }}
-                  />
-                  <ButtonComponent
-                    title="Verify"
-                    variant="outlined"
-                    onClick={() => {
-                      setPhone(true);
-                    }}
-                    style={{
-                      backgroundColor: themes.default.colors.white,
-                      color: themes.default.colors.orange,
-                      borderRadius: 10,
-                      border: `1px solid ${themes.default.colors.orange}`,
-                    }}
-                  />
-                </Grid>
-              </Grid>
-
-              <Grid container spacing={3}>
-                <Grid item xs={12} md={5}>
-                  <Grid container spacing={3}></Grid>
-                  <Grid container spacing={3}></Grid>
-                </Grid>
-                <Hidden smDown>
-                  <Grid item md={1}></Grid>
-                </Hidden>
-                <Grid item xs={12} md={5}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={12}></Grid>
-                    <Grid item xs={12} md={6}></Grid>
-                    <Grid item xs={12} md={6}>
-                      <FormControl>
-                        <ButtonComponent
-                          variant="contained"
-                          color="primary"
-                          type="submit"
-                          className="update-profile"
-                          title="Update my profile"
-                        />
-                      </FormControl>
-                    </Grid>
-                  </Grid>
-                </Grid>
-                <Hidden smDown>
-                  <Grid item md={1}></Grid>
-                </Hidden>
               </Grid>
             </Grid>
           </form>
@@ -935,7 +786,7 @@ const UpdateProfile = (props) => {
                   <img
                     alt="Profile"
                     id="output"
-                    src={ProfilePic}
+                    src=""
                     style={{
                       width: "200px",
                       height: "200px",
@@ -946,6 +797,7 @@ const UpdateProfile = (props) => {
                     type="file"
                     id="upload-button"
                     style={{ display: "none" }}
+                    name="image"
                     onChange={(event) => handleUploadClick(event)}
                   />
                 </div>
@@ -973,7 +825,11 @@ const UpdateProfile = (props) => {
                     variant="contained"
                     color="primary"
                     type="button"
-                    title="Change picture"
+                    title={
+                      userData.image !== null
+                        ? "Upload picture"
+                        : "Change picture"
+                    }
                     style={{ width: "100%", maxWidth: "170px" }}
                     onClick={() => {
                       document.getElementById("upload-button").click();
@@ -993,7 +849,7 @@ const UpdateProfile = (props) => {
               </FormControl>
             </DialogContent>
           </DialogComponent>
-        </React.Fragment>
+        </div>
       )}
       <SnackbarComponent
         type="error"

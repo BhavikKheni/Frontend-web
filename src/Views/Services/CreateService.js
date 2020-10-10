@@ -16,6 +16,7 @@ import { SessionContext } from "../../Provider/Provider";
 import { get } from "../../Services/Auth.service";
 import Service from "../../Services/index";
 import * as Yup from "yup";
+import { useSidebar } from "../../Provider/SidebarProvider";
 import "./CreateSerive.css";
 const service = new Service();
 const useSession = () => React.useContext(SessionContext);
@@ -51,7 +52,10 @@ const CreateService = (props) => {
   const { job = {} } = props;
   const [category, setCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
+  const { setSidebarContent } = useSidebar();
 
+  useEffect(() => setSidebarContent(<div></div>), [setSidebarContent]);
+  
   useEffect(() => {
     async function fetchCategory() {
       const res = await get("/categories/listcategories");
@@ -107,7 +111,7 @@ const CreateService = (props) => {
 
   return (
     <div style={{ width: "100%" }}>
-      <React.Fragment>
+      <div>
         <Grid
           container
           spacing={3}
@@ -452,7 +456,7 @@ const CreateService = (props) => {
             </form>
           )}
         </Formik>
-      </React.Fragment>
+      </div>
 
       <SnackbarComponent
         open={open}
