@@ -5,7 +5,7 @@ import CreateRoutes from "../../Routers/Routers";
 const useStyles = makeStyles((theme) => ({
   content: {
     flexGrow: 1,
-    padding: theme.spacing(4),
+    // padding: theme.spacing(4),
   },
   contentShift: {
     transition: theme.transitions.create("margin", {
@@ -29,7 +29,7 @@ function DefaultLayout(props) {
         [classes.contentShift]: sidebarOpen,
       })}
     >
-      <div className={classes.drawerHeader} />
+      {/* <div className={classes.drawerHeader} /> */}
       <CreateRoutes />
     </main>
   );

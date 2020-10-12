@@ -20,3 +20,6 @@
   max-width: 122px;
   width: 100%;
 }
+.sidebar-input.MuiFilledInput-input{
+  padding:10px 12px 10px
+}

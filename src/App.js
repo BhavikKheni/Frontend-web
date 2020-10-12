@@ -14,16 +14,26 @@ const theme = createMuiTheme({
         "&$focused": {
           color: themes.default.colors.nero,
         },
-        fontFamily: "Rubik",
+        fontFamily: themes.default.fontFamily,
         color: themes.default.colors.nero,
+      },
+    },
+    MuiMenuItem: {
+      root: {
+        background: "transparent",
+        fontFamily: themes.default.fontFamily,
+        color: themes.default.colors.darkGray,
+        "&$selected": {
+          backgroundColor: "transparent",
+          fontWeight: 500,
+          borderBottom: "3px solid #303030",
+        },
       },
     },
   },
 });
 
-
 const App = (props) => {
-  
   return (
     <AppProvider>
       <ThemeProvider theme={theme}>

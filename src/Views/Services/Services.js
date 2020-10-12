@@ -1,37 +1,66 @@
 import React, { useState, useEffect } from "react";
 import {
-  ArrowForward,
   ExpandMore,
-  KeyboardArrowDown,
 } from "@material-ui/icons";
 import MuiDialogContent from "@material-ui/core/DialogContent";
 import { withStyles } from "@material-ui/core/styles";
-import StarBorderIcon from "@material-ui/icons/StarBorder";
-import TextField from "@material-ui/core/TextField";
-import Typography from "@material-ui/core/Typography";
+import MenuItem from "@material-ui/core/MenuItem";
+import ListItemText from "@material-ui/core/ListItemText";
+import MuiFormControl from "@material-ui/core/FormControl";
+import Input from "@material-ui/core/Input";
+import Checkbox from "@material-ui/core/Checkbox";
+import Rating from "@material-ui/lab/Rating";
 import Radio from "@material-ui/core/Radio";
-import RadioGroup from "@material-ui/core/RadioGroup";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
+import TextField from "@material-ui/core/TextField";
 import FormControl from "@material-ui/core/FormControl";
 import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
-import JobCardComponent from "../../Components/Jobs/JobCard/JobCard";
+import countryList from "react-select-country-list";
+import { get } from "../../Services/Auth.service";
+import ServiceCardComponent from "../../Components/ServiceCard/ServiceCard";
 import Spinner from "../../Components/Spinner/Spinner";
 import { search } from "../../Services/Auth.service";
-import RatingComponent from "../../Components/Rating/Rating";
 import DialogComponent from "../../Components/Dialog/Dialog";
 import InputComponent from "../../Components/Forms/Input";
 import ButtonComponent from "../../Components/Forms/Button";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { useSidebar } from "../../Provider/SidebarProvider";
+import SelectComponent from "../../Components/Forms/Select";
+import TypographyComponent from "../../Components/Typography/Typography";
+import { themes } from "../../themes";
 import "./service.css";
-
 const limit = 10;
 const DialogContent = withStyles((theme) => ({
   root: {
     padding: theme.spacing(2),
   },
 }))(MuiDialogContent);
+const FormControl1 = withStyles((theme) => ({
+  root: {
+    width: "100%",
+  },
+}))(MuiFormControl);
+const Input2 = withStyles((theme) => ({
+  root: {
+    width: "100%",
+  },
+}))(Input);
+const MuiTextField = withStyles((theme) => ({
+  root: {
+    "& .MuiOutlinedInput-input": {
+      padding: "10px 14px",
+      border: `1px solid ${themes.default.colors.darkGray}`,
+      borderRadius: 10,
+    },
+    "& .MuiOutlinedInput-root": {
+      borderRadius: 10,
+      fontFamily: themes.default.fontFamily,
+      fontWeight: 500,
+      maxWidth: 100,
+    },
+  },
+}))(TextField);
+const options = countryList().getData();
 const Services = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -42,75 +71,145 @@ const Services = (props) => {
   const [isUpcomingLoading, setUpcomingLoading] = useState(false);
   const [deActivateDialog, setDeActivateDialog] = useState(false);
   const [openResetPassword, setOpenResetPassword] = useState(false);
-  const { setSidebarContent,setSidebar } = useSidebar();
+  const [country, setCountry] = useState("");
+  const { setSidebarContent, setSidebar } = useSidebar();
+  const [languages, setLanguages] = useState([]);
+  const [lng, setLng] = useState([]);
+  const [value1, setValue1] = useState("");
+  const [value2, setValue2] = useState("");
   React.useEffect(() => {
-    setSidebar(false)
+    setSidebar(true);
     setSidebarContent(
-      <div>
-        <Typography variant="caption" color="textSecondary" component="p">
-          <span>Simpathy</span>
-          <span>
-            <RatingComponent
-              name="Simpathy"
-              precision={0.5}
-              defaultValue={3.5}
-              readOnly
-              emptyIcon={<StarBorderIcon fontSize="inherit" />}
-            />
-          </span>
-        </Typography>
-        <Typography variant="caption" color="textSecondary" component="p">
-          <span>Service Quality</span>
-          <span>
-            <RatingComponent
-              name="Quality"
-              defaultValue={2.5}
-              precision={0.5}
-              readOnly
-              emptyIcon={<StarBorderIcon fontSize="inherit" />}
-            />
-          </span>
-        </Typography>
-        <span>Price</span>
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <TextField
-            id="outlined-basic"
+      <div style={{ margin: 20 }}>
+        <FormControl1 variant="outlined">
+          <SelectComponent
+            value={(country && country) || ""}
+            onChange={(e) => setCountry({ [e.target.name]: e.target.value })}
+            name="country"
+            label="Select a country"
+          >
+            {options.map((m, i) => (
+              <MenuItem key={i} value={m.label}>
+                <ListItemText primary={m.label} />
+              </MenuItem>
+            ))}
+          </SelectComponent>
+        </FormControl1>
+        <FormControl1 variant="outlined" style={{ marginTop: 20 }}>
+          <SelectComponent
+            name="languages"
+            label="Select a language"
+            multiple
+            value={Array.isArray(lng.languages) ? lng.languages : []}
+            onChange={(e) => {
+              setLng(e.target.value);
+            }}
+            input={<Input2 />}
+            renderValue={(selected) => selected.join(", ")}
+          >
+            {languages &&
+              languages.map((l) => {
+                return (
+                  <MenuItem key={l.id_language} value={l.language_name}>
+                    <Checkbox
+                      checked={
+                        languages && languages.indexOf(l.language_name) > -1
+                      }
+                    />
+                    <ListItemText primary={l.language_name} />
+                  </MenuItem>
+                );
+              })}
+          </SelectComponent>
+        </FormControl1>
+        <TypographyComponent
+          title="Price per hour"
+          style={{ marginTop: 20 }}
+        ></TypographyComponent>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginTop: 20,
+          }}
+        >
+          <MuiTextField
+            type="text"
+            value={value1 && value1}
+            placeholder="0.00$"
+            name="value1"
+            id="value1"
+            onChange={(e) => {
+              setValue1(e.target.value);
+            }}
             variant="outlined"
-            value="0.5$"
-            size="small"
-            style={{ width: 120 }}
           />
-          <span style={{ margin: 5 }}>to</span>
-          <TextField
-            id="outlined-basic"
+
+          <div>
+            <span>To</span>
+          </div>
+          <MuiTextField
+            type="text"
+            value={value2 && value2}
+            placeholder="0.00$"
+            name="value2"
+            id="value2"
+            onChange={(e) => {
+              setValue2(e.target.value);
+            }}
             variant="outlined"
-            value="100$"
-            size="small"
-            style={{ width: 120 }}
           />
         </div>
-        <FormControl component="fieldset">
-          <RadioGroup aria-label="gender" name="gender1">
-            <FormControlLabel
-              value="Live service"
-              control={<Radio />}
-              label="Live service"
-            />
-            <FormControlLabel
-              value="book"
-              control={<Radio />}
-              label="Book service"
-            />
-          </RadioGroup>
-        </FormControl>
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <Typography> Provider language</Typography>
-          <KeyboardArrowDown />
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            marginTop: 20,
+          }}
+        >
+          <TypographyComponent title="Service quality"></TypographyComponent>
+          <Rating name="quality" disabled />
+        </div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            marginTop: 20,
+          }}
+        >
+          <TypographyComponent title="Service quality"></TypographyComponent>
+          <Rating name="Simpathy" disabled />
+        </div>
+        <div style={{ display: "flex", alignItems: "center", marginTop: 20 }}>
+          <Radio value="a" name="live" inputProps={{ "aria-label": "A" }} />
+          <TypographyComponent title="Live service"></TypographyComponent>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", marginTop: 20 }}>
+          <Radio value="a" name="book" inputProps={{ "aria-label": "A" }} />
+          <TypographyComponent title="Book service"></TypographyComponent>
         </div>
       </div>
     );
-  }, [setSidebarContent]);
+  }, [
+    setSidebarContent,
+    setSidebar,
+    country,
+    lng.languages,
+    setValue2,
+    setValue1,
+    languages,
+    value1,
+    value2,
+  ]);
   useEffect(() => {
+    async function fetchLanguages() {
+      const res = await get("/languages/list");
+      if (res) {
+        setLanguages(res);
+      }
+    }
+    fetchLanguages();
     async function searchJobs() {
       setIsLoading(true);
       const res = await search("/job/list", {
@@ -148,9 +247,11 @@ const Services = (props) => {
     }
   };
   const onResetPassword = () => {};
+  const onPhone = () => {};
+  const onCalendar = () => {};
 
   return (
-    <React.Fragment>
+    <div>
       {isLoading ? (
         <div style={{ textAlign: "center" }}>
           <Spinner />
@@ -159,25 +260,21 @@ const Services = (props) => {
         <div
           style={{
             display: "flex",
-            flexDirection: "row",
             flexFlow: "row wrap",
+            justifyContent: "space-between",
           }}
         >
           {jobs &&
             jobs.map((element, index) => (
-              <JobCardComponent
+              <ServiceCardComponent
                 key={index}
-                image={element.image}
+                images={element.image}
                 title={element.title}
-                header={element.PorviderName}
+                providerName={element.PorviderName}
                 description={element.description}
                 price={element.price}
-                footerTitle={element.active ? "Deactivate job" : "Activate job"}
-                footerLeftIcon={<ArrowForward />}
-                footerRightTitle="Edit job"
-                footerRightIcon={<ArrowForward />}
-                // onRightIconClick={() => editJob(element)}
-                // onLeftIconClick={() => onDeActivate(element)}
+                onPhone={onPhone}
+                onCalendar={onCalendar}
               />
             ))}
         </div>
@@ -260,7 +357,7 @@ const Services = (props) => {
           </Formik>
         </DialogContent>
       </DialogComponent>
-    </React.Fragment>
+    </div>
   );
 };
 

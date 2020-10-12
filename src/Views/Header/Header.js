@@ -1,14 +1,17 @@
 import React, { useState } from "react";
 import { withRouter, Link as RouterLink } from "react-router-dom";
+import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
 import Grid from "@material-ui/core/Grid";
+import Hidden from "@material-ui/core/Hidden";
 import MenuItem from "@material-ui/core/MenuItem";
 import InputBase from "@material-ui/core/InputBase";
 import ReactFlagsSelect from "react-flags-select";
+import NotificationsNoneIcon from "@material-ui/icons/NotificationsNone";
 import SearchIcon from "@material-ui/icons/Search";
 import { useTranslation } from "react-i18next";
 import { SessionContext } from "../../Provider/Provider";
@@ -19,9 +22,8 @@ import { themes } from "../../themes.js";
 import SignIn from "../Auth/SignIn/SignIn";
 import SignUp from "../Auth/SignUp/SignUp";
 import ForgotPassword from "../Auth/ForgotPassword/ForgotPassword";
-
 import "react-flags-select/css/react-flags-select.css";
-
+import OweraHeaderPic from "../../Group 135.png";
 const useSession = () => React.useContext(SessionContext);
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -31,7 +33,15 @@ const useStyles = makeStyles((theme) => ({
       duration: theme.transitions.duration.leavingScreen,
     }),
   },
+  colorPrimary: {
+    color: themes.default.colors.darkGray,
+  },
+  colorDefault: {
+    backgroundColor: "#FFFFFF",
+    boxShadow: "0px 6px 8px rgba(48, 48, 48, 0.25)",
+  },
   menuButton: {
+    color: "#000",
     marginRight: theme.spacing(2),
     [theme.breakpoints.up("sm")]: {
       display: "none",
@@ -40,6 +50,11 @@ const useStyles = makeStyles((theme) => ({
   toolbar: theme.mixins.toolbar,
   search: {
     display: "flex",
+    background: "#FFFFFF",
+    border: "2px solid #303030",
+    borderRadius: 25,
+    maxWidth: 458,
+    width: "100%",
   },
   searchIcon: {
     padding: theme.spacing(0, 2),
@@ -51,7 +66,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "center",
   },
   inputRoot: {
-    color: "inherit",
+    color: themes.default.colors.darkGray,
   },
   inputInput: {
     padding: theme.spacing(1, 1, 1, 0),
@@ -112,7 +127,7 @@ const OweraHeader = (props) => {
       }
     });
   };
-  
+
   const onSelectFlag = (countryCode) => {
     i18n.changeLanguage(countryCode.toLowerCase());
   };
@@ -124,10 +139,13 @@ const OweraHeader = (props) => {
   };
   return (
     <div>
-      <AppBar position="fixed" className={classes.appBar}>
+      <AppBar
+        position="fixed"
+        className={clsx(classes.appBar, classes.colorDefault)}
+      >
         <Toolbar>
           <Grid container spacing={3} alignItems="center">
-            <Grid item xs={12} md={2}>
+            <Grid item xs={12} md={3}>
               <IconButton
                 color="inherit"
                 aria-label="open drawer"
@@ -137,12 +155,13 @@ const OweraHeader = (props) => {
               >
                 <MenuIcon />
               </IconButton>
-              <TypographyComponent title={t("title")} />
+              <img src={OweraHeaderPic} alt="header"></img>
+              {/* <TypographyComponent title={t("title")} style={{color:'black'}}/> */}
             </Grid>
-            <Grid item xs={12} md={7}>
+            <Grid item xs={12} md={6}>
               <div className={classes.search}>
                 <InputBase
-                  placeholder="Search…"
+                  placeholder="Search"
                   classes={{
                     root: classes.inputRoot,
                     input: classes.inputInput,
@@ -152,6 +171,10 @@ const OweraHeader = (props) => {
                 <SearchIcon />
               </div>
               <div className={classes.menuName}>
+                <MenuItem>
+                  <NotificationsNoneIcon className={classes.colorPrimary} />
+                </MenuItem>
+
                 <MenuItem
                   component={RouterLink}
                   to="/dashboard"
@@ -161,8 +184,8 @@ const OweraHeader = (props) => {
                 </MenuItem>
                 <MenuItem
                   component={RouterLink}
-                  to="/services"
-                  selected={pathname === "/services"}
+                  to="/"
+                  selected={pathname === "/"}
                 >
                   Services
                 </MenuItem>
@@ -178,15 +201,16 @@ const OweraHeader = (props) => {
                     component={RouterLink}
                     to="/profile"
                     selected={pathname === "/profile"}
+                    className={clsx(classes.selected)}
                   >
                     Profile
                   </MenuItem>
                 )}
               </div>
             </Grid>
-            <Grid item xs={12} md={3}>
+            <Grid item xs={12} md={3} >
               {!isLoggedIn ? (
-                <div>
+                <div style={{ display: "flex"}}>
                   <ButtonComponent
                     size="small"
                     color="inherit"

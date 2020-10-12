@@ -1,0 +1,55 @@
+.slider {
+  height: 237px;
+}
+.card-slider-item {
+  position: absolute;
+  bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 455px;
+  align-items: center;
+  margin:20px;
+}
+.service-quality {
+  margin-top: 10px;
+}
+.card-buttons {
+  display: flex;
+  margin-right: 20px;
+}
+.card-actions-title {
+  display: flex;
+  align-items: center;
+}
+.service {
+  display: flex;
+  color: white;
+}
+.phoneIconCard {
+  background-color: #1ab900;
+  padding: 10px;
+  border-radius: 34px;
+  margin-right: 10px;
+  height: 48px;
+  width: 48px;
+  text-align: center;
+}
+.calendarIconCard {
+  background-color: #0038ff;
+  padding: 10px;
+  border-radius: 10px;
+  margin-right: 10px;
+  height: 48px;
+  width: 48px;
+  text-align: center;
+}
+
+.card_ratings {
+  justify-content: space-between;
+  margin: 10px;
+}
+.card-actions {
+  display: flex;
+  flex-direction: column;
+}

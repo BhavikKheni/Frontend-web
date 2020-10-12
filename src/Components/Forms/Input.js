@@ -1,5 +1,4 @@
 import React from "react";
-import { createMuiTheme, ThemeProvider } from "@material-ui/core";
 import TextField from "@material-ui/core/TextField";
 import { withStyles, makeStyles } from "@material-ui/core/styles";
 import clsx from "clsx";
@@ -46,28 +45,26 @@ const InputComponent = (props) => {
   const classes = useStyles();
 
   return (
-    <React.Fragment>
-      <ValidationTextField
-        id={props.id}
-        error={props.error}
-        className={clsx(classes.marginBottom, props.className)}
-        name={props.name}
-        label={props.label}
-        defaultValue={props.defaultValue}
-        value={props.value}
-        placeholder={props.placeholder}
-        type={props.type}
-        required={props.required}
-        onChange={props.onChange}
-        autoFocus={props.autoFocus}
-        helperText={props.helperText}
-        variant="filled"
-        multiline={props.multiline}
-        rows={props.rows}
-        style={{ ...props.styles }}
-        inputProps={props.inputProps}
-      />
-    </React.Fragment>
+    <ValidationTextField
+      id={props.id}
+      error={props.error}
+      className={clsx(classes.marginBottom, props.className)}
+      name={props.name}
+      label={props.label}
+      defaultValue={props.defaultValue}
+      value={props.value}
+      placeholder={props.placeholder}
+      type={props.type}
+      required={props.required}
+      onChange={props.onChange}
+      autoFocus={props.autoFocus}
+      helperText={props.helperText}
+      variant="filled"
+      multiline={props.multiline}
+      rows={props.rows}
+      style={{ ...props.styles }}
+      inputProps={props.inputProps}
+    />
   );
 };
 export default InputComponent;

@@ -6,6 +6,8 @@ import OweraHeader from "../Header/Header";
 import Sidebar from "../SideBar/Sidebar";
 import Layout from "./Layout";
 import { useSidebar } from "../../Provider/SidebarProvider";
+import Footer from "../Footer/Footer";
+import "./LayoutWrapper.css";
 const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
@@ -14,30 +16,33 @@ const useStyles = makeStyles((theme) => ({
 
 const LayoutWrapper = () => {
   const classes = useStyles();
-  const { isSideBar } = useSidebar();
+  const { isSideBar, setSidebar } = useSidebar();
   const [mobileOpen, setMobileOpen] = React.useState(true);
-  
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
+    setSidebar(!isSideBar);
   };
 
   return (
     <div>
-      <div className={classes.root}>
-        <CssBaseline />
-        <OweraHeader
-          open={mobileOpen}
-          handleDrawerToggle={handleDrawerToggle}
-        />
+      <CssBaseline />
+      <OweraHeader open={mobileOpen} handleDrawerToggle={handleDrawerToggle} />
+      <div className="content-wrapper">
+        <div className="main-content">
+          <Hidden
+            xsDown={isSideBar}
+            smUp={!isSideBar}
+            implementation="css"
+            className="sidebar-wrapper"
+          >
+            <Sidebar open={mobileOpen} onClose={handleDrawerToggle} />
+          </Hidden>
+          <Layout sidebarOpen={mobileOpen} />
+        </div>
 
-        <Hidden xsDown={isSideBar} smUp={!isSideBar} implementation="css">
-          <Sidebar open={mobileOpen} onClose={handleDrawerToggle} />
-        </Hidden>
-
-        <Layout sidebarOpen={mobileOpen} />
+        <Footer />
       </div>
-      <footer className="main_footer">hello</footer>
     </div>
   );
 };

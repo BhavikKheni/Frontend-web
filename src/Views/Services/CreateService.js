@@ -52,10 +52,13 @@ const CreateService = (props) => {
   const { job = {} } = props;
   const [category, setCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
-  const { setSidebarContent } = useSidebar();
+  const { setSidebarContent, setSidebar } = useSidebar();
 
-  useEffect(() => setSidebarContent(<div></div>), [setSidebarContent]);
-  
+  useEffect(() => {
+    setSidebar(false);
+    setSidebarContent(<div></div>);
+  }, [setSidebarContent, setSidebar]);
+
   useEffect(() => {
     async function fetchCategory() {
       const res = await get("/categories/listcategories");

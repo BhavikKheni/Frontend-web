@@ -10,6 +10,8 @@ export const colorValues = {
   darkGray: "#303030",
   matterhorn: "#4F4F4F",
   gray: "#949494",
+  gray20: "#333333",
+  silver: "#BDBDBD",
   transparent: "transparent",
 };
 
@@ -117,8 +119,10 @@ export const themes = {
       orange: colorValues.orange,
       nero: colorValues.nero,
       darkGray: colorValues.darkGray,
+      silver: colorValues.silver,
       matterhorn: colorValues.matterhorn,
       gray: colorValues.gray,
+      gray20: colorValues.gray20,
       background: {
         main: colorValues.white,
       },

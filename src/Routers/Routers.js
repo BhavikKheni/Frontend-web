@@ -29,8 +29,8 @@ const CreateRoutes = () => {
   if (loading) return <p>Loading...</p>;
   return (
     <Switch>
+      <Route exact path="/" component={Services} />
       <Route exact path="/dashboard" component={Dashboard} />
-      <Route exact path="/services" component={Services} />
       <Route exact path="/create-services" component={CreateService} />
       <ProtectedRoute path="/profile" component={Profile} />
     </Switch>
