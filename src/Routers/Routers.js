@@ -30,6 +30,7 @@ const CreateRoutes = () => {
   return (
     <Switch>
       <Route exact path="/" component={Services} />
+      <Route exact path="/?forgotPassword=true" component={Services} />
       <Route exact path="/dashboard" component={Dashboard} />
       <Route exact path="/create-services" component={CreateService} />
       <ProtectedRoute path="/profile" component={Profile} />

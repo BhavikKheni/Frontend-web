@@ -14,8 +14,8 @@ import DialogComponent from "../../../Components/Dialog/Dialog";
 import { themes } from "../../../themes";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { useTranslation } from "react-i18next";
 import "./Signup.css";
-
 import FormHelperText from "@material-ui/core/FormHelperText";
 const DialogContent = withStyles((theme) => ({
   root: {
@@ -34,6 +34,7 @@ const CustomCheckbox = withStyles({
 })((props) => <Checkbox color="default" {...props} />);
 
 const SignUp = (props) => {
+  const { t } = useTranslation();
   const { handleCloseSignUp, openSignUp, openSignInDialog } = props;
   const [isDisabled, setDisabled] = useState(false);
   const [openTermsCondition, setTermsCondition] = useState(false);
@@ -50,17 +51,17 @@ const SignUp = (props) => {
     validate: (values) => {
       const errors = {};
       if (!values.email) {
-        errors.email = "Required";
+        errors.email =  t('validation.email');
       } else if (
         !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
       ) {
-        errors.email = "Invalid email address";
+        errors.email = t('validation.inValidateEmail');
       }
       return errors;
     },
     validationSchema: Yup.object().shape({
-      password: Yup.string().required("Password is required"),
-      full_name: Yup.string().required("Required"),
+      password: Yup.string().required(t('validation.password')),
+      full_name: Yup.string().required(t('validation.fullName')),
       checked: Yup.boolean().required("Required").oneOf([true], "Error"),
     }),
   });
@@ -88,9 +89,9 @@ const SignUp = (props) => {
           formik.resetForm();
         }}
         open={openSignUp}
-        title="Sign up"
-        subTitle1="Already have an account?"
-        subTitle2="Login"
+        title={t('signup.title')}
+        subTitle1={t('signup.alreadyHaveAccount')}
+        subTitle2={t('login.title')}
         onSubTitle2={(e) => {
           e.stopPropagation();
           handleCloseSignUp();
@@ -161,7 +162,7 @@ const SignUp = (props) => {
                   />
                   <div className="item-1">
                     <TypographyComponent
-                      title="With your registration you agree to our"
+                      title={t('signup.registrationAgree')}
                       variant="h1"
                       style={{
                         lineHeight: 4,
@@ -169,7 +170,7 @@ const SignUp = (props) => {
                     />
 
                     <TypographyComponent
-                      title="terms & conditions"
+                       title={t('signup.termsConditions')}
                       variant="h1"
                       onClick={() => {
                         setTermsCondition(true);
@@ -192,7 +193,7 @@ const SignUp = (props) => {
                     disabled={isDisabled}
                     className="go"
                     endIcon={<ArrowForwardIosIcon />}
-                    title="go"
+                    title={t("signup.go")}
                     style={{
                       backgroundColor: formik.values.checked
                         ? "#2FB41A"
@@ -227,7 +228,7 @@ const SignUp = (props) => {
                 <Grid item xs={12} sm={6} md={6} lg={6} xl={6}>
                   <TypographyComponent
                     variant="h3"
-                    title="Terms & conditions"
+                    title={t('signup.termsConditions')}
                     style={{
                       marginTop: 20,
                       marginBottom: 20,
@@ -307,7 +308,7 @@ const SignUp = (props) => {
                       />
                       <div className="item-1">
                         <TypographyComponent
-                          title="With your registration you agree to our"
+                          title={t('signup.registrationAgree')}
                           variant="h1"
                           style={{
                             lineHeight: 4,
@@ -315,7 +316,7 @@ const SignUp = (props) => {
                         />
 
                         <TypographyComponent
-                          title="terms & conditions"
+                          title={t('signup.termsConditions')}
                           variant="h1"
                           style={{
                             lineHeight: 0,
@@ -335,7 +336,7 @@ const SignUp = (props) => {
                         disabled={isDisabled}
                         className="go"
                         endIcon={<ArrowForwardIosIcon />}
-                        title="go"
+                        title={t("signup.go")}
                         style={{
                           backgroundColor: formik.values.checked
                             ? "#2FB41A"

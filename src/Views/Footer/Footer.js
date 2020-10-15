@@ -14,6 +14,7 @@ import FacebookIcon from "@material-ui/icons/Facebook";
 import TwitterIcon from "@material-ui/icons/Twitter";
 import { themes } from "../../themes";
 import * as Yup from "yup";
+import { useTranslation } from "react-i18next";
 const TextField = withStyles((theme) => ({
   root: {
     "& .MuiOutlinedInput-input": {
@@ -27,6 +28,10 @@ const TextField = withStyles((theme) => ({
   },
 }))(MuiTextField);
 const useStyles = makeStyles((theme) => ({
+  footer: {
+    backgroundColor: themes.default.colors.gray20,
+    padding: 30,
+  },
   logo: {
     width: "100%",
     maxWidth: 315,
@@ -63,12 +68,16 @@ const useStyles = makeStyles((theme) => ({
     color: themes.default.colors.silver,
   },
   grid3: {
+    textAlign: "right",
+    paddingRight: 20,
     borderRight: `1px solid ${themes.default.colors.gray}`,
     [theme.breakpoints.down("sm")]: {
       margin: 20,
+      textAlign: "left",
     },
   },
   grid4: {
+    paddingLeft: 20,
     [theme.breakpoints.down("sm")]: {
       margin: 20,
     },
@@ -76,32 +85,38 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Footer = (props) => {
+  const { t } = useTranslation();
   const classes = useStyles(props);
   return (
-    <div
-      style={{
-        backgroundColor: themes.default.colors.gray20,
-        height: "100%",
-      }}
-    >
+    <div className={classes.footer}>
       <Grid container spacing={3} alignItems="center">
         <Grid item xs={12} md={4}>
           <img alt="footer" src={FooterIcon} className={classes.logo} />
         </Grid>
         <Grid item xs={12} md={2} style={{ display: "flex" }}>
           <div>
-            <MenuItem className={classes.fontColor}>About us</MenuItem>
-            <MenuItem className={classes.fontColor}>History</MenuItem>
-            <MenuItem className={classes.fontColor}>Support</MenuItem>
+          <MenuItem className={classes.fontColor}>
+              {t("footer.navigationLink.aboutUs")}
+            </MenuItem>
+            <MenuItem className={classes.fontColor}>
+              {t("footer.navigationLink.history")}
+            </MenuItem>
+            <MenuItem className={classes.fontColor}>
+              {t("footer.navigationLink.support")}
+            </MenuItem>
           </div>
           <div>
-            <MenuItem className={classes.fontColor}>FAQ</MenuItem>
-            <MenuItem className={classes.fontColor}>Feedback</MenuItem>
+          <MenuItem className={classes.fontColor}>
+              {t("footer.navigationLink.faq")}
+            </MenuItem>
+            <MenuItem className={classes.fontColor}>
+              {t("footer.navigationLink.feedback")}
+            </MenuItem>
           </div>
         </Grid>
         <Grid item xs={12} md={3} className={classes.grid3}>
           <TypographyComponent
-            title="The app for on the go"
+            title={t("footer.navigationLink.theForGo")}
             className={classes.appForGo}
           />
           <img alt="app store" src={AppStore} className={classes.appIcon} />
@@ -110,7 +125,7 @@ const Footer = (props) => {
         <Grid item xs={12} md={3} className={classes.grid4}>
           <div style={{ display: "flex" }}>
             <TypographyComponent
-              title="Follow us:"
+              title={t("footer.navigationLink.followUs")}
               className={classes.iconColor}
             />
             <div className={classes.icons}>
@@ -161,7 +176,7 @@ const Footer = (props) => {
                     }}
                   />
                   <ButtonComponent
-                    title="Subscribe"
+                    title={t("footer.navigationLink.subscribe")}
                     disabled={isSubmitting}
                     className={classes.subscribe}
                   />

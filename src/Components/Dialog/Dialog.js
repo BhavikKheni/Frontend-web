@@ -40,6 +40,8 @@ const DialogTitle = (props) => {
     justifyContent,
     alignItems,
     flexDirection,
+    titleColor,
+    iconColor,
     ...other
   } = props;
 
@@ -57,7 +59,11 @@ const DialogTitle = (props) => {
       ></div>
       <div className={classes1.header}>
         <div>
-          <TypographyComponent title={title} variant="h3" />
+          <TypographyComponent
+            title={title}
+            variant="h3"
+            style={{ color: titleColor }}
+          />
         </div>
         <div style={{ display: "flex" }}>
           <TypographyComponent title={subTitle1} variant="h2" />
@@ -76,6 +82,7 @@ const DialogTitle = (props) => {
           aria-label="close"
           className={classes1.closeButton}
           onClick={onClose}
+          style={{ color: iconColor }}
         >
           <CloseIcon />
         </IconButton>
@@ -110,6 +117,8 @@ const DialogComponent = (props) => {
     justifyContent,
     alignItems,
     flexDirection,
+    titleColor,
+    iconColor,
   } = props;
   const classes1 = DialogStyle({ maxHeight: maxHeight, maxWidth: maxWidth });
   return (
@@ -132,6 +141,8 @@ const DialogComponent = (props) => {
           justifyContent={justifyContent}
           alignItems={alignItems}
           flexDirection={flexDirection}
+          titleColor={titleColor}
+          iconColor={iconColor}
         ></DialogTitle>
         {children}
       </Dialog>

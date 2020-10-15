@@ -3,7 +3,7 @@ import { initReactI18next } from "react-i18next";
 import backend from "i18next-xhr-backend";
 
 const navigatorLanguage = navigator.language;
-const defaultLanguage = navigatorLanguage.includes("guj") ? "guj" : "en";
+const defaultLanguage = navigatorLanguage.includes("fr") ? "fr" : "en";
 
 i18n
   .use(backend)

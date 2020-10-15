@@ -53,6 +53,7 @@ const ServiceCardComponent = (props) => {
     price,
     onPhone,
     onCalendar,
+    onJobTitle
   } = props;
   return (
     <Card className={classes.root}>
@@ -91,7 +92,7 @@ const ServiceCardComponent = (props) => {
       </Slider>
       <CardActions disableSpacing className={"card_ratings"}>
         <div className="card-actions">
-          <div className="card-actions-title">
+          <div className="card-actions-title" onClick={onJobTitle}>
             <span>{title}</span>
             <ArrowForwardIosIcon style={{ marginLeft: 5 }} />
           </div>

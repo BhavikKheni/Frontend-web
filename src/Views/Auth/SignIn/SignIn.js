@@ -10,6 +10,7 @@ import ButtonComponent from "../../../Components/Forms/Button";
 import DialogComponent from "../../../Components/Dialog/Dialog";
 import SnackBarComponent from "../../../Components/SnackBar/SnackBar";
 import { Formik } from "formik";
+import { useTranslation } from "react-i18next";
 import * as Yup from "yup";
 import "./signin.css";
 
@@ -27,7 +28,7 @@ const SignIn = (props) => {
     openSignUpDialog,
     setLogin,
   } = props;
-
+  const { t } = useTranslation();
   const [open, setOpen] = React.useState(false);
   const [setRes, setTypeRes] = React.useState("");
   const onSubmit = (values) => {
@@ -64,9 +65,9 @@ const SignIn = (props) => {
           handleCloseSignIn();
         }}
         open={openSignIn}
-        title="Sign in"
-        subTitle1="Don't have account?"
-        subTitle2="Sign up"
+        title={t("login.signin")}
+        subTitle1={t("login.donHaveAccount")}
+        subTitle2={t("login.signup")}
         onSubTitle2={(e) => {
           e.stopPropagation();
           handleCloseSignIn();
@@ -80,11 +81,11 @@ const SignIn = (props) => {
             validate={(values) => {
               const errors = {};
               if (!values.email) {
-                errors.email = "Required";
+                errors.email = errors.email = t("validation.email");
               } else if (
                 !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
               ) {
-                errors.email = "Invalid email address";
+                errors.email = t("validation.inValidateEmail");
               }
               return errors;
             }}
@@ -93,7 +94,7 @@ const SignIn = (props) => {
             }}
             validationSchema={Yup.object().shape({
               password: Yup.string()
-                .required("Password is required")
+                .required(t("validation.password"))
             })}
           >
             {({ values, errors, handleChange, handleSubmit, isSubmitting }) => (
@@ -133,7 +134,7 @@ const SignIn = (props) => {
                         openForgotPasswordDialog();
                       }}
                     >
-                      Send new password?
+                       {t("login.sendNewPassword")}
                     </Link>
                     <ButtonComponent
                       variant="contained"
@@ -142,7 +143,7 @@ const SignIn = (props) => {
                       disabled={isSubmitting}
                       className="signin-button"
                       endIcon={<ArrowForwardIosIcon />}
-                      title="Login"
+                      title={t("login.button")}
                     />
                   </div>
                 </FormControl>

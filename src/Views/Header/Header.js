@@ -1,22 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { withRouter, Link as RouterLink } from "react-router-dom";
 import clsx from "clsx";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, withStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
 import Grid from "@material-ui/core/Grid";
-import Hidden from "@material-ui/core/Hidden";
+import MuiDialogContent from "@material-ui/core/DialogContent";
 import MenuItem from "@material-ui/core/MenuItem";
 import InputBase from "@material-ui/core/InputBase";
 import ReactFlagsSelect from "react-flags-select";
+import { FormControl } from "@material-ui/core";
 import NotificationsNoneIcon from "@material-ui/icons/NotificationsNone";
 import SearchIcon from "@material-ui/icons/Search";
 import { useTranslation } from "react-i18next";
+import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
 import { SessionContext } from "../../Provider/Provider";
-import ButtonComponent from "../../Components/Forms/Button";
 import TypographyComponent from "../../Components/Typography/Typography";
+import ButtonComponent from "../../Components/Forms/Button";
 import { onIsLoggedIn, onLogout } from "../../Services/Auth.service";
 import { themes } from "../../themes.js";
 import SignIn from "../Auth/SignIn/SignIn";
@@ -24,6 +26,7 @@ import SignUp from "../Auth/SignUp/SignUp";
 import ForgotPassword from "../Auth/ForgotPassword/ForgotPassword";
 import "react-flags-select/css/react-flags-select.css";
 import OweraHeaderPic from "../../Group 135.png";
+import DialogComponent from "../../Components/Dialog/Dialog";
 const useSession = () => React.useContext(SessionContext);
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -56,14 +59,19 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: 458,
     width: "100%",
   },
+  searchIconItem: {
+    width: "100%",
+    maxWidth: 60,
+    backgroundColor: themes.default.colors.darkGray,
+    borderTopRightRadius: 15,
+    borderBottomRightRadius: 15,
+  },
   searchIcon: {
-    padding: theme.spacing(0, 2),
-    height: "100%",
-    position: "absolute",
+    marginLeft: 15,
+    marginTop: 5,
     pointerEvents: "none",
     display: "flex",
     alignItems: "center",
-    justifyContent: "center",
   },
   inputRoot: {
     color: themes.default.colors.darkGray,
@@ -74,14 +82,29 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
     transition: theme.transitions.create("width"),
     width: "100%",
-    [theme.breakpoints.up("md")]: {
-      width: "20ch",
-    },
   },
   menuName: {
     display: "flex",
   },
+  logoutDialog: {
+    textAlign: "center",
+    height: "100%",
+    width: "100%",
+    maxWidth: 458,
+    maxHeight: 240,
+  },
+  logoutDescription: {
+    fontSize: 36,
+    fontWeight: 500,
+    color: themes.default.colors.white,
+    textAlign: "left",
+  },
 }));
+const DialogContent = withStyles((theme) => ({
+  root: {
+    padding: theme.spacing(2),
+  },
+}))(MuiDialogContent);
 
 const OweraHeader = (props) => {
   const classes = useStyles();
@@ -91,8 +114,20 @@ const OweraHeader = (props) => {
   const [openSignUp, setOpenSignUp] = useState(false);
   const [openForgotPassword, setForgotPasswordDialog] = useState(false);
   let { isLoggedIn, doLogin, logout } = useSession();
+  const [search, setSearch] = useState(false);
+  const [openLogout, setLogout] = useState(false);
   let { pathname } = props.location;
   const { history } = props;
+  const intervalRef = useRef(null);
+
+  useEffect(() => {
+    if (search.length > 3) {
+      intervalRef.current = setTimeout(() => {}, 1000);
+    } else {
+      clearTimeout(intervalRef.current);
+    }
+    return () => clearTimeout(intervalRef.current);
+  }, [search]);
 
   const openSignInDialog = (e) => {
     e.stopPropagation();
@@ -137,6 +172,16 @@ const OweraHeader = (props) => {
       logout();
     });
   };
+
+  const changeSearch = (e) => {
+    const searchValue = e.target.value;
+    setSearch(searchValue);
+  };
+
+  const onSearch = (e) => {
+    e.preventDefault();
+  };
+
   return (
     <div>
       <AppBar
@@ -156,7 +201,6 @@ const OweraHeader = (props) => {
                 <MenuIcon />
               </IconButton>
               <img src={OweraHeaderPic} alt="header"></img>
-              {/* <TypographyComponent title={t("title")} style={{color:'black'}}/> */}
             </Grid>
             <Grid item xs={12} md={6}>
               <div className={classes.search}>
@@ -167,8 +211,11 @@ const OweraHeader = (props) => {
                     input: classes.inputInput,
                   }}
                   inputProps={{ "aria-label": "search" }}
+                  onChange={changeSearch}
                 />
-                <SearchIcon />
+                <span className={classes.searchIconItem} onClick={onSearch}>
+                  <SearchIcon className={classes.searchIcon} />
+                </span>
               </div>
               <div className={classes.menuName}>
                 <MenuItem>
@@ -208,9 +255,9 @@ const OweraHeader = (props) => {
                 )}
               </div>
             </Grid>
-            <Grid item xs={12} md={3} >
+            <Grid item xs={12} md={3}>
               {!isLoggedIn ? (
-                <div style={{ display: "flex"}}>
+                <div style={{ display: "flex" }}>
                   <ButtonComponent
                     size="small"
                     color="inherit"
@@ -219,7 +266,7 @@ const OweraHeader = (props) => {
                       maxWidth: "116px",
                       width: "100%",
                     }}
-                    title={t("signin")}
+                    title={t("loginButton")}
                   />
                   <ButtonComponent
                     size="small"
@@ -230,20 +277,22 @@ const OweraHeader = (props) => {
                       width: "100%",
                     }}
                     onClick={openSignUpDialog}
-                    title={t("signup")}
+                    title={t("signUpButton")}
                   />
                 </div>
               ) : (
                 <div>
-                  <TypographyComponent
-                    variant="h4"
+                  <ButtonComponent
                     style={{
                       fontSize: 16,
+                      width: 116,
                       cursor: "pointer",
+                      backgroundColor: themes.default.colors.purple,
+                      color: themes.default.colors.white,
                     }}
-                    title="Logout"
+                    title={t("logout")}
                     onClick={() => {
-                      handleLogout();
+                      setLogout(true);
                     }}
                   />
                 </div>
@@ -265,6 +314,42 @@ const OweraHeader = (props) => {
           </Grid>
         </Toolbar>
       </AppBar>
+      <DialogComponent
+        onClose={(e) => {
+          e.stopPropagation();
+          setLogout(false);
+        }}
+        open={openLogout}
+        title={t("logout")}
+        onSubTitle2={(e) => {
+          e.stopPropagation();
+        }}
+        maxHeight={241}
+        titleColor={themes.default.colors.green}
+        iconColor={themes.default.colors.green}
+      >
+        <DialogContent style={{ textAlign: "center" }}>
+          <FormControl className={classes.logoutDialog}>
+            <TypographyComponent
+              title="a warmly good bye..."
+              className={classes.logoutDescription}
+            />
+            <div style={{ textAlign: "right" }}>
+              <ButtonComponent
+                variant="contained"
+                color="primary"
+                type="button"
+                endIcon={<ArrowForwardIosIcon />}
+                title={t("Logout")}
+                style={{
+                  backgroundColor: themes.default.colors.orange,
+                }}
+                onClick={handleLogout}
+              />
+            </div>
+          </FormControl>
+        </DialogContent>
+      </DialogComponent>
       <SignIn
         onClose={handleCloseSignIn}
         openSignIn={openSignIn}

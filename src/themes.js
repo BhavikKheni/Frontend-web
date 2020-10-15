@@ -12,6 +12,7 @@ export const colorValues = {
   gray: "#949494",
   gray20: "#333333",
   silver: "#BDBDBD",
+  purple:"#AD00FF",
   transparent: "transparent",
 };
 
@@ -123,6 +124,7 @@ export const themes = {
       matterhorn: colorValues.matterhorn,
       gray: colorValues.gray,
       gray20: colorValues.gray20,
+      purple:colorValues.purple,
       background: {
         main: colorValues.white,
       },

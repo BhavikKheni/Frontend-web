@@ -77,6 +77,7 @@ const Services = (props) => {
   const [lng, setLng] = useState([]);
   const [value1, setValue1] = useState("");
   const [value2, setValue2] = useState("");
+  const { history } = props;
   React.useEffect(() => {
     setSidebar(true);
     setSidebarContent(
@@ -203,6 +204,13 @@ const Services = (props) => {
     value2,
   ]);
   useEffect(() => {
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const forgotPassword = urlParams.get("forgotPassword");
+
+    if (Boolean(forgotPassword) === true) {
+      setOpenResetPassword(true);
+    }
     async function fetchLanguages() {
       const res = await get("/languages/list");
       if (res) {
@@ -249,7 +257,9 @@ const Services = (props) => {
   const onResetPassword = () => {};
   const onPhone = () => {};
   const onCalendar = () => {};
-
+  const onJobTitle = () => {
+    history.push("/create-service");
+  };
   return (
     <div>
       {isLoading ? (
@@ -275,6 +285,7 @@ const Services = (props) => {
                 price={element.price}
                 onPhone={onPhone}
                 onCalendar={onCalendar}
+                onJobTitle={onJobTitle}
               />
             ))}
         </div>

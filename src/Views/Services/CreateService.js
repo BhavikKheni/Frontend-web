@@ -17,6 +17,7 @@ import { get } from "../../Services/Auth.service";
 import Service from "../../Services/index";
 import * as Yup from "yup";
 import { useSidebar } from "../../Provider/SidebarProvider";
+import { useTranslation } from "react-i18next";
 import "./CreateSerive.css";
 const service = new Service();
 const useSession = () => React.useContext(SessionContext);
@@ -27,6 +28,9 @@ const useStyles = makeStyles((theme) => ({
     "& > *": {
       margin: theme.spacing(1),
     },
+  },
+  content: {
+    padding: theme.spacing(2),
   },
 }));
 const useStyles1 = makeStyles((theme) => ({
@@ -53,11 +57,18 @@ const CreateService = (props) => {
   const [category, setCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
   const { setSidebarContent, setSidebar } = useSidebar();
-
-  useEffect(() => {
-    setSidebar(false);
-    setSidebarContent(<div></div>);
-  }, [setSidebarContent, setSidebar]);
+  const { t } = useTranslation();
+  React.useEffect(() => {
+    setSidebar(true);
+    setSidebarContent(
+      <div style={{ margin: 20 }}>
+        <MenuItem>{t("service.create-service.startWork")}</MenuItem>
+        <MenuItem>{t("service.create-service.myServiceLibrary")}</MenuItem>
+        <MenuItem>{t("service.create-service.addBookingSpace")}</MenuItem>
+        <MenuItem>{t("service.create-service.createSpace")}</MenuItem>
+      </div>
+    );
+  }, [setSidebarContent, setSidebar, t]);
 
   useEffect(() => {
     async function fetchCategory() {
@@ -113,353 +124,346 @@ const CreateService = (props) => {
   };
 
   return (
-    <div style={{ width: "100%" }}>
-      <div>
-        <Grid
-          container
-          spacing={3}
-          alignItems="center"
-          style={{ marginTop: 20 }}
-        >
-          <Grid item xs={4} sm={4} md={4} lg={4} xl={4}>
+    <div className={classes.content}>
+      <Grid container spacing={3} alignItems="center">
+        <Grid item xs={5} sm={5} md={5} lg={5} xl={5}>
+          <TypographyComponent
+            title={t("service.create-service.createService")}
+            variant="h3"
+            style={{
+              color: themes.default.colors.darkGray,
+            }}
+          />
+        </Grid>
+      </Grid>
+      <Formik
+        initialValues={{
+          image_1: null,
+          image_2: null,
+          image_3: null,
+          image_4: null,
+          skills: "",
+          category: "",
+          subcategory: "",
+          title: "",
+          languages: [],
+          price: "",
+          description: "",
+        }}
+        onSubmit={async (values) => onSubmit(values)}
+        validationSchema={Yup.object().shape({
+          title: Yup.string().required(t("validation.serviceTitle")),
+          category: Yup.string().required(t("validation.Category")),
+          subcategory: Yup.string().required(t("validation.SubCategory")),
+        })}
+      >
+        {({
+          values,
+          errors,
+          setFieldValue,
+          handleChange,
+          handleSubmit,
+          isSubmitting,
+        }) => (
+          <form
+            onSubmit={handleSubmit}
+            noValidate
+            autoComplete="off"
+            style={{ marginTop: 20 }}
+          >
             <TypographyComponent
-              title="Create a service"
-              variant="h3"
+              title={t("service.create-service.nameAllocation")}
+              variant="h2"
               style={{
                 color: themes.default.colors.darkGray,
+                fontWeight: 500,
+                marginBottom: 10,
               }}
             />
-          </Grid>
-        </Grid>
-        <Formik
-          initialValues={{
-            image_1: null,
-            image_2: null,
-            image_3: null,
-            image_4: null,
-            skills: "",
-            category: "",
-            subcategory: "",
-            title: "",
-            languages: [],
-            price: "",
-            description: "",
-          }}
-          onSubmit={async (values) => onSubmit(values)}
-          validationSchema={Yup.object().shape({
-            title: Yup.string().required("Title is required"),
-            category: Yup.string().required("Category is required"),
-            subcategory: Yup.string().required("Sub-Category is required"),
-          })}
-        >
-          {({
-            values,
-            errors,
-            setFieldValue,
-            handleChange,
-            handleSubmit,
-            isSubmitting,
-          }) => (
-            <form
-              onSubmit={handleSubmit}
-              noValidate
-              autoComplete="off"
-              style={{ marginTop: 20 }}
-            >
-              <TypographyComponent
-                title="Name and allocation"
-                variant="h2"
-                style={{
-                  color: themes.default.colors.darkGray,
-                  fontWeight: 500,
-                  marginBottom: 10,
-                }}
-              />
-              <Grid container spacing={3}>
-                <Grid item xs={12} md={5}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={12}>
-                      <FormControl>
-                        <InputComponent
-                          label="Sevice name"
-                          type="text"
-                          placeholder="Service name"
-                          name="title"
-                          autoFocus
-                          value={values.title}
-                          onChange={handleChange}
-                          error={errors.title ? true : false}
-                          helperText={errors.title && `${errors.title}`}
-                          styles={{ maxHeight: 80, height: "100%" }}
-                        />
-                      </FormControl>
-                    </Grid>
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={5} xl={4}>
+                <Grid container spacing={3}>
+                  <Grid item xs={12} md={12}>
+                    <FormControl>
+                      <InputComponent
+                        label="Sevice name"
+                        type="text"
+                        placeholder="Service name"
+                        name="title"
+                        autoFocus
+                        value={values.title}
+                        onChange={handleChange}
+                        error={errors.title ? true : false}
+                        helperText={errors.title && `${errors.title}`}
+                        styles={{ maxHeight: 80, height: "100%" }}
+                      />
+                    </FormControl>
                   </Grid>
                 </Grid>
-                <Hidden smDown>
-                  <Grid item md={1}></Grid>
-                </Hidden>
-                <Grid item xs={12} md={5}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={12}>
-                      <FormControl
-                        variant="outlined"
-                        className={classes1.formControl}
+              </Grid>
+              <Hidden smDown>
+                <Grid item md={1} xl={1}></Grid>
+              </Hidden>
+              <Grid item xs={12} md={5} xl={4}>
+                <Grid container spacing={3}>
+                  <Grid item xs={12} md={12}>
+                    <FormControl
+                      variant="outlined"
+                      className={classes1.formControl}
+                      error={errors.category ? true : false}
+                    >
+                      <SelectComponent
+                        name="category"
+                        label="Category"
+                        value={values.category}
+                        onChange={(e) => {
+                          setFieldValue("category", e.target.value);
+                          const sub =
+                            category &&
+                            category.filter(
+                              (f) => Number(f.id) === e.target.value
+                            );
+                          setSubCategories(sub[0].sub_categories);
+
+                          setFieldValue(
+                            "subcategory",
+                            sub[0].sub_categories[0].id_category
+                          );
+                        }}
                         error={errors.category ? true : false}
                       >
-                        <SelectComponent
-                          name="category"
-                          label="Category"
-                          value={values.category}
-                          onChange={(e) => {
-                            setFieldValue("category", e.target.value);
-                            const sub =
-                              category &&
-                              category.filter(
-                                (f) => Number(f.id) === e.target.value
-                              );
-                            setSubCategories(sub[0].sub_categories);
+                        {category &&
+                          category.map((m, i) => (
+                            <MenuItem
+                              key={Number(m.id)}
+                              value={Number(m.id)}
+                              className={classes.formControl}
+                            >
+                              {m.name}
+                            </MenuItem>
+                          ))}
+                      </SelectComponent>
+                    </FormControl>
+                  </Grid>
 
-                            setFieldValue(
-                              "subcategory",
-                              sub[0].sub_categories[0].id_category
-                            );
-                          }}
-                          error={errors.category ? true : false}
-                        >
-                          {category &&
-                            category.map((m, i) => (
-                              <MenuItem
-                                key={Number(m.id)}
-                                value={Number(m.id)}
-                                className={classes.formControl}
-                              >
-                                {m.name}
-                              </MenuItem>
-                            ))}
-                        </SelectComponent>
-                      </FormControl>
-                    </Grid>
-
-                    <Grid item xs={12} md={12}>
-                      <FormControl
-                        variant="outlined"
-                        className={classes.formControl}
-                        error={errors.subcategory ? true : false}
+                  <Grid item xs={12} md={12}>
+                    <FormControl
+                      variant="outlined"
+                      className={classes.formControl}
+                      error={errors.subcategory ? true : false}
+                    >
+                      <SelectComponent
+                        name="subcategory"
+                        label="Sub-Category"
+                        value={values.subcategory}
+                        onChange={handleChange}
                       >
-                        <SelectComponent
-                          name="subcategory"
-                          label="Sub-Category"
-                          value={values.subcategory}
-                          onChange={handleChange}
-                        >
-                          {subCategories &&
-                            subCategories.map((m, i) => (
-                              <MenuItem
-                                key={Number(m.id_category)}
-                                value={Number(m.id_category)}
-                              >
-                                {m.category_name}
-                              </MenuItem>
-                            ))}
-                        </SelectComponent>
-                      </FormControl>
-                    </Grid>
+                        {subCategories &&
+                          subCategories.map((m, i) => (
+                            <MenuItem
+                              key={Number(m.id_category)}
+                              value={Number(m.id_category)}
+                            >
+                              {m.category_name}
+                            </MenuItem>
+                          ))}
+                      </SelectComponent>
+                    </FormControl>
                   </Grid>
                 </Grid>
-                <Hidden smDown>
-                  <Grid item md={1}></Grid>
-                </Hidden>
               </Grid>
-              <Grid container spacing={3}>
-                <Grid item xs={12} md={11}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={12}>
-                      <FormControl>
-                        <TypographyComponent
-                          variant="h2"
-                          title="Description"
+              <Hidden smDown>
+                <Grid item md={1} xl={3}></Grid>
+              </Hidden>
+            </Grid>
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={11} xl={9}>
+                <Grid container spacing={3}>
+                  <Grid item xs={12} md={12}>
+                    <FormControl>
+                      <TypographyComponent
+                        variant="h2"
+                        title="Description"
+                        style={{
+                          color: themes.default.colors.darkGray,
+                          fontWeight: "500",
+                        }}
+                      />
+                      <InputComponent
+                        type="text"
+                        name="description"
+                        value={values.description}
+                        onChange={handleChange}
+                        multiline
+                        rows={10}
+                      />
+                    </FormControl>
+                  </Grid>
+                </Grid>
+              </Grid>
+
+              <Hidden smDown>
+                <Grid item md={1} xl={3}></Grid>
+              </Hidden>
+            </Grid>
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={11} xl={9}>
+                <Grid container spacing={3}>
+                  <Grid item xs={12} md={12}>
+                    <FormControl>
+                      <TypographyComponent
+                        variant="h2"
+                        title="Price setting"
+                        style={{
+                          color: themes.default.colors.darkGray,
+                          fontWeight: 500,
+                        }}
+                      />
+                    </FormControl>
+                  </Grid>
+                </Grid>
+              </Grid>
+
+              <Hidden smDown>
+                <Grid item md={1} xl={3}></Grid>
+              </Hidden>
+            </Grid>
+
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={6} xl={5}>
+                <div className="service-rate-item">
+                  <TypographyComponent
+                    variant="h2"
+                    title="My hourly price"
+                    style={{
+                      color: themes.default.colors.darkGray,
+                    }}
+                  />
+                  <InputComponent
+                    name="price"
+                    value={values.price}
+                    onChange={handleChange}
+                    styles={{ maxHeight: 38, height: "100%", maxWidth: 91 }}
+                    className="service-price"
+                  />
+                </div>
+                <div className="service-rate-item mt">
+                  <TypographyComponent
+                    variant="h2"
+                    title="Total price"
+                    style={{
+                      color: themes.default.colors.darkGray,
+                    }}
+                  />
+                  <TypographyComponent
+                    variant="h2"
+                    title="00.00£"
+                    style={{
+                      color: themes.default.colors.darkGray,
+                    }}
+                  />
+                </div>
+              </Grid>
+              <Grid item xs={12} md={5} xl={4}>
+                <div className="service-rate-item">
+                  <TypographyComponent
+                    variant="h2"
+                    title="Payment service provider"
+                    style={{
+                      color: themes.default.colors.darkGray,
+                    }}
+                  />
+                  <TypographyComponent
+                    variant="h2"
+                    title="00.0%"
+                    style={{
+                      color: themes.default.colors.gray,
+                    }}
+                  />
+                </div>
+                <div className="service-rate-item cost">
+                  <TypographyComponent
+                    variant="h2"
+                    title="Owera organisation costs"
+                    style={{
+                      color: themes.default.colors.darkGray,
+                    }}
+                  />
+                  <TypographyComponent
+                    variant="h2"
+                    title="00.0%"
+                    style={{
+                      color: themes.default.colors.gray,
+                    }}
+                  />
+                </div>
+              </Grid>
+              <Hidden smDown>
+                <Grid item md={1} xl={2}></Grid>
+              </Hidden>
+            </Grid>
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={11}>
+                <Grid container spacing={3}>
+                  <Grid item xs={12} md={12}>
+                    <FormControl>
+                      <TypographyComponent
+                        variant="h2"
+                        title="Pictures"
+                        style={{
+                          color: themes.default.colors.darkGray,
+                          fontWeight: "bold",
+                        }}
+                      />
+                      <div></div>
+                      <div></div>
+                      <div></div>
+                      <div></div>
+                    </FormControl>
+                  </Grid>
+                </Grid>
+              </Grid>
+
+              <Hidden smDown>
+                <Grid item md={1}></Grid>
+              </Hidden>
+            </Grid>
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={11}>
+                <Grid container spacing={3}>
+                  <Grid item xs={12} md={12}>
+                    <FormControl>
+                      <div>
+                        <ButtonComponent
+                          title="Delete service"
+                          onClick={() => {}}
+                          variant="outlined"
                           style={{
-                            color: themes.default.colors.darkGray,
-                            fontWeight: "500",
+                            backgroundColor: "#fff",
+                            border: "1px solid #FF0000",
+                            color: "#FF0000",
                           }}
                         />
-                        <InputComponent
-                          type="text"
-                          name="description"
-                          value={values.description}
-                          onChange={handleChange}
-                          multiline
-                          rows={10}
+                        <ButtonComponent
+                          variant="contained"
+                          color="primary"
+                          type="submit"
+                          disabled={isSubmitting}
+                          title="Save changes"
                         />
-                      </FormControl>
-                    </Grid>
+                      </div>
+                    </FormControl>
                   </Grid>
                 </Grid>
-
-                <Hidden smDown>
-                  <Grid item md={1}></Grid>
-                </Hidden>
-              </Grid>
-              <Grid container spacing={3}>
-                <Grid item xs={12} md={11}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={12}>
-                      <FormControl>
-                        <TypographyComponent
-                          variant="h2"
-                          title="Price setting"
-                          style={{
-                            color: themes.default.colors.darkGray,
-                            fontWeight: 500,
-                          }}
-                        />
-                      </FormControl>
-                    </Grid>
-                  </Grid>
-                </Grid>
-
-                <Hidden smDown>
-                  <Grid item md={1}></Grid>
-                </Hidden>
               </Grid>
 
-              <Grid container spacing={3}>
-                <Grid item xs={12} md={6}>
-                  <div className="service-rate-item">
-                    <TypographyComponent
-                      variant="h2"
-                      title="My hourly price"
-                      style={{
-                        color: themes.default.colors.darkGray,
-                      }}
-                    />
-                    <InputComponent
-                      name="price"
-                      value={values.price}
-                      onChange={handleChange}
-                      styles={{ maxHeight: 38, height: "100%", maxWidth: 91 }}
-                      className="service-price"
-                    />
-                  </div>
-                  <div className="service-rate-item mt">
-                    <TypographyComponent
-                      variant="h2"
-                      title="Total price"
-                      style={{
-                        color: themes.default.colors.darkGray,
-                      }}
-                    />
-                    <TypographyComponent
-                      variant="h2"
-                      title="00.00£"
-                      style={{
-                        color: themes.default.colors.darkGray,
-                      }}
-                    />
-                  </div>
-                </Grid>
-                <Grid item xs={12} md={5}>
-                  <div className="service-rate-item">
-                    <TypographyComponent
-                      variant="h2"
-                      title="Payment service provider"
-                      style={{
-                        color: themes.default.colors.darkGray,
-                      }}
-                    />
-                    <TypographyComponent
-                      variant="h2"
-                      title="00.0%"
-                      style={{
-                        color: themes.default.colors.gray,
-                      }}
-                    />
-                  </div>
-                  <div className="service-rate-item cost">
-                    <TypographyComponent
-                      variant="h2"
-                      title="Owera organisation costs"
-                      style={{
-                        color: themes.default.colors.darkGray,
-                      }}
-                    />
-                    <TypographyComponent
-                      variant="h2"
-                      title="00.0%"
-                      style={{
-                        color: themes.default.colors.gray,
-                      }}
-                    />
-                  </div>
-                </Grid>
-                <Hidden smDown>
-                  <Grid item md={1}></Grid>
-                </Hidden>
-              </Grid>
-              <Grid container spacing={3}>
-                <Grid item xs={12} md={11}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={12}>
-                      <FormControl>
-                        <TypographyComponent
-                          variant="h2"
-                          title="Pictures"
-                          style={{
-                            color: themes.default.colors.darkGray,
-                            fontWeight: "bold",
-                          }}
-                        />
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                      </FormControl>
-                    </Grid>
-                  </Grid>
-                </Grid>
-
-                <Hidden smDown>
-                  <Grid item md={1}></Grid>
-                </Hidden>
-              </Grid>
-              <Grid container spacing={3}>
-                <Grid item xs={12} md={11}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={12}>
-                      <FormControl>
-                        <div>
-                          <ButtonComponent
-                            title="Delete service"
-                            onClick={() => {}}
-                            variant="outlined"
-                            style={{
-                              backgroundColor: "#fff",
-                              border: "1px solid #FF0000",
-                              color: "#FF0000",
-                            }}
-                          />
-                          <ButtonComponent
-                            variant="contained"
-                            color="primary"
-                            type="submit"
-                            disabled={isSubmitting}
-                            title="Save changes"
-                          />
-                        </div>
-                      </FormControl>
-                    </Grid>
-                  </Grid>
-                </Grid>
-
-                <Hidden smDown>
-                  <Grid item md={1}></Grid>
-                </Hidden>
-              </Grid>
-            </form>
-          )}
-        </Formik>
-      </div>
+              <Hidden smDown>
+                <Grid item md={1}></Grid>
+              </Hidden>
+            </Grid>
+          </form>
+        )}
+      </Formik>
 
       <SnackbarComponent
         open={open}
