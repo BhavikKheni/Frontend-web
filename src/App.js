@@ -18,6 +18,13 @@ const theme = createMuiTheme({
         color: themes.default.colors.nero,
       },
     },
+    MuiOutlinedInput: {
+      root: {
+        "&$focused $notchedOutline": {
+          borderColor: "inherit !important",
+        },
+      },
+    },
     MuiMenuItem: {
       root: {
         background: "transparent",

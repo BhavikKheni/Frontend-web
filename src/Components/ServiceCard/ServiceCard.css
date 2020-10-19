@@ -9,7 +9,7 @@
   width: 100%;
   max-width: 455px;
   align-items: center;
-  margin:20px;
+  margin: 20px;
 }
 .service-quality {
   margin-top: 10px;
@@ -21,6 +21,7 @@
 .card-actions-title {
   display: flex;
   align-items: center;
+  cursor: pointer;
 }
 .service {
   display: flex;
@@ -44,12 +45,44 @@
   width: 48px;
   text-align: center;
 }
+polygon {
+  fill: #fff;
+}
+.slider a.previousButton,
+.slider a.nextButton {
+  display: none;
+}
 
 .card_ratings {
   justify-content: space-between;
-  margin: 10px;
+  background: rgba(101, 101, 101, 0.7);
+  box-shadow: 0px 6px 10px 4px rgba(0, 0, 0, 0.15);
+  color: #fff;
 }
 .card-actions {
   display: flex;
   flex-direction: column;
+}
+.price {
+  font-family: Rubik;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 20px;
+  line-height: 24px;
+  letter-spacing: 0.02em;
+  color: #ffffff;
+  margin-top: 10;
+}
+.live-now {
+  font-family: Rubik;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 24px;
+  letter-spacing: 0.02em;
+  color: #ffffff;
+  text-shadow: 2px 2px #1ab900;
+}
+.card_ratings.MuiCardActions-root {
+  padding: 10px 20px 10px 20px;
 }

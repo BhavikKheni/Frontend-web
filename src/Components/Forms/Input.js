@@ -59,11 +59,13 @@ const InputComponent = (props) => {
       onChange={props.onChange}
       autoFocus={props.autoFocus}
       helperText={props.helperText}
+      InputLabelProps={props.InputLabelProps}
       variant="filled"
       multiline={props.multiline}
       rows={props.rows}
       style={{ ...props.styles }}
       inputProps={props.inputProps}
+      fullWidth={props.fullWidth}
     />
   );
 };

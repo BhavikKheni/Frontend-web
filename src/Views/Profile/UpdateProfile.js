@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { withRouter } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 import { makeStyles } from "@material-ui/core/styles";
+import Hidden from "@material-ui/core/Hidden";
 import Grid from "@material-ui/core/Grid";
 import MenuItem from "@material-ui/core/MenuItem";
 import ListItemText from "@material-ui/core/ListItemText";
@@ -13,7 +14,6 @@ import Link from "@material-ui/core/Link";
 import TextField from "@material-ui/core/TextField";
 import PhoneInput from "react-phone-input-2";
 import { Formik } from "formik";
-import countryList from "react-select-country-list";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import MuiFormControl from "@material-ui/core/FormControl";
 import Input from "@material-ui/core/Input";
@@ -38,7 +38,7 @@ import "./UpdateProfile.css";
 import * as Yup from "yup";
 const service = new Service();
 const useSession = () => React.useContext(SessionContext);
-const options = countryList().getData();
+
 const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
@@ -69,13 +69,10 @@ const UpdateProfile = (props) => {
   const classes = useStyles();
   let { user } = useSession();
   let [userData, setUserData] = useState({
-    first_name: "",
-    last_name: "",
-    bio: "",
+    full_name: "",
+    timezone: "",
     country: "",
     image: null,
-    password: null,
-    newPassword: null,
     languages: [],
   });
   const { setSidebarContent, setSidebar } = useSidebar();
@@ -93,25 +90,22 @@ const UpdateProfile = (props) => {
   const [openErrorSnackBar, setOpenSnackBar] = useState(false);
   const [resError, setResError] = useState("");
   const [isImageSize, isSetImageSize] = useState(false);
-
+  const [countries, setCountries] = useState([]);
+  const [timezones, setTimezones] = useState([]);
   React.useEffect(() => {
     setSidebar(true);
     setSidebarContent(
-      <List>
-        {[
-          "Messages",
-          "My calendar",
-          "Next bookings",
-          "My service history",
-          "My profile",
-          "Payment methods",
-        ].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemIcon>{<MailIcon />}</ListItemIcon>
-            <ListItemText primary={text} />
-          </ListItem>
-        ))}
-      </List>
+      <div style={{ margin: 20 }}>
+        <MenuItem>Messages</MenuItem>
+        <MenuItem>My calendar</MenuItem>
+        <MenuItem>Next bookingsa</MenuItem>
+        <MenuItem>My service history</MenuItem>
+        <MenuItem>My profile</MenuItem>
+        <MenuItem>Payment methods</MenuItem>
+        <MenuItem>Feedback</MenuItem>
+        <MenuItem>FAQ</MenuItem>
+        <MenuItem>Support</MenuItem>
+      </div>
     );
   }, [setSidebarContent, setSidebar]);
   useEffect(() => {
@@ -120,7 +114,7 @@ const UpdateProfile = (props) => {
       const res = await get(`/profile/${user && user.id_user}`);
       if (res) {
         setUserData({
-          ...res,
+          ...res.data,
         });
         setLoading(false);
       } else {
@@ -129,7 +123,22 @@ const UpdateProfile = (props) => {
         setLoading(false);
       }
     }
-
+    async function countryList() {
+      const res = await get("/countries/list").catch((error) => {
+        console.log(error);
+      });
+      if (res) {
+        setCountries(res);
+      }
+    }
+    countryList();
+    async function fetchTimeZones() {
+      const res = await get("/timezones/list");
+      if (res) {
+        setTimezones(res);
+      }
+    }
+    fetchTimeZones();
     async function fetchLanguages() {
       const res = await get("/languages/list");
       if (res) {
@@ -185,12 +194,12 @@ const UpdateProfile = (props) => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    if (userData.password !== userData.newPassword) {
-      setPassword(true);
-    } else {
-      setPassword(false);
-    }
-    if (!userData.first_name || !userData.last_name) {
+    // if (userData.password !== userData.newPassword) {
+    //   setPassword(true);
+    // } else {
+    //   setPassword(false);
+    // }
+    if (!userData.full_name) {
       setError(true);
     } else {
       if (userData) {
@@ -200,8 +209,6 @@ const UpdateProfile = (props) => {
           formData.append("image", userData.image);
         }
         formData.append("id_user", user.id_user);
-        formData.append("fname", userData.first_name);
-        formData.append("lname", userData.last_name);
         formData.append("country", userData.country);
         const languageId = languages
           .filter((f) =>
@@ -222,9 +229,9 @@ const UpdateProfile = (props) => {
       setError(false);
     }
   };
-
+console.log(typeof userData.image)
   return (
-    <div style={{ width: "100%" }}>
+    <div style={{ width: "100%", margin: 20 }}>
       {isLoading ? (
         <div style={{ textAlign: "center" }}>
           <CircularProgress />
@@ -242,10 +249,10 @@ const UpdateProfile = (props) => {
             alignItems="center"
             style={{ marginTop: 20 }}
           >
-            <Grid item xs={12} md={2}>
+            <Grid item xs={12} md={3}>
               <img
                 alt="profile"
-                src={ProfilePic}
+                src={userData.image}
                 style={{
                   width: "200px",
                   height: "200px",
@@ -261,7 +268,7 @@ const UpdateProfile = (props) => {
                 }}
               />
             </Grid>
-            <Grid item xs={12} md={2}>
+            <Grid item xs={12} md={3}>
               <TypographyComponent
                 variant="h3"
                 title="Juile Ann"
@@ -271,7 +278,6 @@ const UpdateProfile = (props) => {
                 }}
               />
               <Grid style={{ display: "flex", marginTop: 10 }}>
-                <TypographyComponent variant="h6" title="Country " />
                 <TypographyComponent
                   variant="h6"
                   title={userData.country}
@@ -291,13 +297,13 @@ const UpdateProfile = (props) => {
                   ))}
               </Grid>
             </Grid>
-            <Grid item xs={12} md={4}>
+            <Grid item xs={12} md={6}>
               <TypographyComponent variant="h4" title="Employer Verfication" />
               <Grid style={{ display: "flex", marginTop: 10 }}>
                 <CheckIcon />
                 <TypographyComponent
                   variant="h4"
-                  title="Member since September 2009"
+                  title={userData.member_since}
                   style={{ marginLeft: 5 }}
                 />
               </Grid>
@@ -328,14 +334,14 @@ const UpdateProfile = (props) => {
             style={{ marginTop: 20 }}
           >
             <Grid container spacing={3}>
-              <Grid item xs={12} md={5}>
+              <Grid item xs={12} md={6}>
                 <Grid container spacing={3}>
                   <Grid item xs={12} md={12}>
                     <FormControl>
                       <InputComponent
                         label="Full name"
                         type="text"
-                        value={userData.first_name && userData.first_name}
+                        value={userData.full_name && userData.full_name}
                         placeholder="Full name"
                         name="full_name"
                         id="full_name"
@@ -344,6 +350,7 @@ const UpdateProfile = (props) => {
                       />
                     </FormControl>
                   </Grid>
+
                   <Grid item xs={12} md={5}>
                     <FormControl variant="outlined">
                       <SelectComponent
@@ -381,11 +388,11 @@ const UpdateProfile = (props) => {
                       </SelectComponent>
                     </FormControl>
                   </Grid>
-                  <Grid item xs={12} sm={12} md={4}>
+                  <Grid item xs={12} md={5}>
                     <FormControl variant="outlined">
                       <SelectComponent
                         name="languages"
-                        label="Select level"
+                        label="Add new language"
                         multiple
                         value={
                           Array.isArray(userData.languages)
@@ -397,65 +404,71 @@ const UpdateProfile = (props) => {
                         renderValue={(selected) => selected.join(", ")}
                         options={languages}
                       >
-                        {options.map((l) => {
-                          return (
-                            <MenuItem key={l.value} value={l.label}>
-                              <Checkbox
-                                checked={
-                                  userData.languages &&
-                                  userData.languages.indexOf(l.label) > -1
-                                }
-                              />
-                              <ListItemText primary={l.label} />
-                            </MenuItem>
-                          );
-                        })}
+                        {countries &&
+                          countries.map((l, i) => {
+                            return (
+                              <MenuItem key={i} value={l.label}>
+                                <Checkbox
+                                  checked={
+                                    userData.languages &&
+                                    userData.languages.indexOf(l.label) > -1
+                                  }
+                                />
+                                <ListItemText primary={l.label} />
+                              </MenuItem>
+                            );
+                          })}
                       </SelectComponent>
                     </FormControl>
                   </Grid>
-                  <Grid item xs={3} md={3}>
-                    <FormControl>
-                      <ButtonComponent
-                        title="Add"
-                        style={{
-                          color: "#fff",
-                        }}
-                      ></ButtonComponent>
-                    </FormControl>
+                  <Grid item xs={3} md={2}>
+                    <ButtonComponent
+                      title="Add"
+                      style={{
+                        color: "#fff",
+                      }}
+                    />
                   </Grid>
+                </Grid>
+                <Grid container spacing={3}>
                   <Grid item xs={12} md={12}>
                     <FormControl variant="outlined">
                       <SelectComponent
-                        value={(userData.country && userData.country) || ""}
+                        value={userData.country && userData.country}
                         onChange={handleChange}
                         name="country"
                         label="Select a country"
                       >
-                        {options.map((m, i) => (
-                          <MenuItem key={i} value={m.label}>
-                            <ListItemText primary={m.label} />
-                          </MenuItem>
-                        ))}
+                        {countries &&
+                          countries.map((m, i) => (
+                            <MenuItem key={i} value={m.country_id}>
+                              <ListItemText primary={m.country_name} />
+                            </MenuItem>
+                          ))}
                       </SelectComponent>
                     </FormControl>
                   </Grid>
+                </Grid>
+                <Grid container spacing={3}>
                   <Grid item xs={12} md={12}>
                     <FormControl variant="outlined">
                       <SelectComponent
-                        value={(userData.country && userData.country) || ""}
+                        value={userData.timezone && userData.timezone}
                         onChange={handleChange}
-                        name="country"
+                        name="timezone"
                         label="Select your time zone"
                       >
-                        {options.map((m, i) => (
-                          <MenuItem key={i} value={m.label}>
-                            <ListItemText primary={m.label} />
-                          </MenuItem>
-                        ))}
+                        {timezones &&
+                          timezones.map((m, i) => (
+                            <MenuItem key={i} value={m.id_timezone}>
+                              <ListItemText primary={m.relativity} />
+                            </MenuItem>
+                          ))}
                       </SelectComponent>
                     </FormControl>
                   </Grid>
-
+                </Grid>
+                <Grid container spacing={3}>
                   <Grid item xs={12} md={12}>
                     <FormControl>
                       <TypographyComponent
@@ -468,19 +481,82 @@ const UpdateProfile = (props) => {
                       />
                     </FormControl>
                   </Grid>
+
                   <Grid item xs={12} md={6}>
-                    <FormControl variant="outlined">
+                    <FormControl>
                       <ButtonComponent
                         title="Change password"
                         style={{
                           border: "1px solid rgba(25, 25, 25, 0.9)",
                           backgroundColor: "#fff",
                         }}
-                      ></ButtonComponent>
+                      />
                     </FormControl>
                   </Grid>
                 </Grid>
+                <Grid container spacing={3}>
+                  <Grid item xs={12} md={12}></Grid>
+                  <Grid item xs={12} md={12}></Grid>
+                </Grid>
               </Grid>
+              <Hidden smDown>
+                <Grid item md={1}></Grid>
+              </Hidden>
+              <Grid item xs={12} md={5}>
+                <Grid container spacing={3}>
+                  <Grid item xs={12} md={12}></Grid>
+                  <Grid item xs={12} md={6}></Grid>
+                  <Grid item xs={12} md={6}></Grid>
+                  <Grid item xs={12} md={12}></Grid>
+                  <Grid item xs={12} md={12}></Grid>
+                  <Grid item xs={12} md={12}></Grid>
+                </Grid>
+              </Grid>
+              <Hidden smDown>
+                <Grid item md={1}></Grid>
+              </Hidden>
+            </Grid>
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={8}>
+                <Grid container spacing={3}>
+                  <Grid item xs={12} md={6}>
+                    <ButtonComponent
+                      title="Delete profile"
+                      style={{
+                        border: "1px solid rgba(25, 25, 25, 0.9)",
+                        backgroundColor: "#fff",
+                      }}
+                    />
+                    <ButtonComponent
+                      title="Delete profile"
+                      style={{
+                        border: "1px solid rgba(25, 25, 25, 0.9)",
+                        backgroundColor: "#fff",
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={6}></Grid>
+                </Grid>
+              </Grid>
+              <Hidden smDown>
+                <Grid item md={1}></Grid>
+              </Hidden>
+              <Grid item xs={12} md={3}>
+                <Grid container spacing={3}>
+                  <Grid item xs={12} md={6}>
+                    <ButtonComponent
+                      variant="contained"
+                      color="primary"
+                      type="submit"
+                      className="update-profile"
+                      title="Update my profile"
+                    />
+                  </Grid>
+                </Grid>
+              </Grid>
+              <Hidden smDown>
+                <Grid item md={1}></Grid>
+              </Hidden>
             </Grid>
           </form>
           <DialogComponent
@@ -783,16 +859,16 @@ const UpdateProfile = (props) => {
             <DialogContent style={{ textAlign: "center" }}>
               <FormControl className="image-upload">
                 <div className="profile-image-tag">
-                  <img
+                  {/* <img
                     alt="Profile"
                     id="output"
-                    src=""
+                    src={userData.image && URL.createObjectURL(userData.image)}
                     style={{
                       width: "200px",
                       height: "200px",
                       borderRadius: "100%",
                     }}
-                  />
+                  /> */}
                   <input
                     type="file"
                     id="upload-button"
@@ -802,25 +878,27 @@ const UpdateProfile = (props) => {
                   />
                 </div>
                 <div className="profile-image-button">
-                  <ButtonComponent
-                    variant="contained"
-                    color="primary"
-                    type="button"
-                    style={{
-                      backgroundColor: "#FF0000",
-                      width: "100%",
-                      maxWidth: "170px",
-                    }}
-                    title="Remove picture"
-                    onClick={() => {
-                      var output = document.getElementById("output");
-                      output.src = null;
-                      setUserData({
-                        ...userData,
-                        image: null,
-                      });
-                    }}
-                  />
+                  {userData.image && (
+                    <ButtonComponent
+                      variant="contained"
+                      color="primary"
+                      type="button"
+                      style={{
+                        backgroundColor: "#FF0000",
+                        width: "100%",
+                        maxWidth: "170px",
+                      }}
+                      title="Remove picture"
+                      onClick={() => {
+                        var output = document.getElementById("output");
+                        output.src = null;
+                        setUserData({
+                          ...userData,
+                          image: null,
+                        });
+                      }}
+                    />
+                  )}
                   <ButtonComponent
                     variant="contained"
                     color="primary"

@@ -20,6 +20,11 @@
   max-width: 122px;
   width: 100%;
 }
-.sidebar-input.MuiFilledInput-input{
-  padding:10px 12px 10px
+.sidebar-input.MuiFilledInput-input {
+  padding: 10px 12px 10px;
+}
+.load-more {
+  background: rgba(130, 130, 130, 0.5);
+  border-radius: 10px;
+  text-align: center;
 }

@@ -1,20 +1,17 @@
 import React from "react";
 import Card from "@material-ui/core/Card";
+import { Typography } from "@material-ui/core/";
 import CardActions from "@material-ui/core/CardActions";
 import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
-import CardMedia from "@material-ui/core/CardMedia";
-import CardContent from "@material-ui/core/CardContent";
-import Avatar from "@material-ui/core/Avatar";
-import IconButton from "@material-ui/core/IconButton";
-import Typography from "@material-ui/core/Typography";
-import LaunchIcon from "@material-ui/icons/Launch";
 import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
 import PhoneIcon from "@material-ui/icons/Phone";
 import StarRateRounded from "@material-ui/icons/StarRateRounded";
 import { makeStyles } from "@material-ui/core/styles";
 import { red } from "@material-ui/core/colors";
 import Slider from "react-animated-slider";
+import TooltipComponent from "../Tooltip/Tooltip";
 import TypographyComponent from "../Typography/Typography";
+import { themes } from "../../themes";
 import Pic from "../../image 2.png";
 import "react-animated-slider/build/horizontal.css";
 import "./ServiceCard.css";
@@ -49,60 +46,112 @@ const ServiceCardComponent = (props) => {
     title,
     images,
     providerName,
-    description,
+    service_quality_rating,
+    sympathy_rating,
     price,
     onPhone,
     onCalendar,
-    onJobTitle
+    onJobTitle,
+    onProviderName,
   } = props;
+  const imageRender = () => {
+    return (
+      <div className="card-slider-item">
+        <div>
+          <div className="service">
+            <TypographyComponent
+              title="Service quality"
+              className="service-quality"
+            />
+            <TypographyComponent
+              title={service_quality_rating}
+              style={{ marginLeft: 5 }}
+            />
+            <StarRateRounded style={{ marginLeft: 5 }} />
+          </div>
+          <div className="service">
+            <TypographyComponent title="Simpathy" />
+            <TypographyComponent
+              title={sympathy_rating}
+              style={{ marginLeft: 5 }}
+            />
+            <StarRateRounded style={{ marginLeft: 5 }} />
+          </div>
+        </div>
+        <div className="card-buttons">
+          <div className="phoneIconCard" onClick={onPhone}>
+            <PhoneIcon style={{ color: "#fff" }} />
+          </div>
+          <div className="calendarIconCard" onClick={onCalendar}>
+            <CalendarTodayIcon style={{ color: "#fff" }} />
+          </div>
+        </div>
+      </div>
+    );
+  };
   return (
     <Card className={classes.root}>
       <Slider>
-        <div
-          style={{
-            background: ` URL('${Pic}') no-repeat  center  center `,
-          }}
-        >
-          <div className="card-slider-item">
-            <div>
-              <div className="service">
-                <TypographyComponent
-                  title="Service quality"
-                  className="service-quality"
-                />
-                <TypographyComponent title="4.5" style={{ marginLeft: 5 }} />
-                <StarRateRounded style={{ marginLeft: 5 }} />
-              </div>
-              <div className="service">
-                <TypographyComponent title="Simpathy" />
-                <TypographyComponent title="4.5" style={{ marginLeft: 5 }} />
-                <StarRateRounded style={{ marginLeft: 5 }} />
-              </div>
+        {images.length > 0 ? (
+          images.map((image, i) => (
+            <div
+              key={i}
+              style={{
+                background: ` URL('${image}') no-repeat  center  center `,
+              }}
+            >
+              {imageRender()}
             </div>
-            <div className="card-buttons">
-              <div className="phoneIconCard" onClick={onPhone}>
-                <PhoneIcon style={{ color: "#fff" }} />
-              </div>
-              <div className="calendarIconCard" onClick={onCalendar}>
-                <CalendarTodayIcon style={{ color: "#fff" }} />
-              </div>
-            </div>
+          ))
+        ) : (
+          <div
+            style={{
+              background: ` URL('${Pic}') no-repeat  center  center `,
+            }}
+            className="previousButton nextButton"
+          >
+            {imageRender()}
           </div>
-        </div>
+        )}
       </Slider>
       <CardActions disableSpacing className={"card_ratings"}>
         <div className="card-actions">
           <div className="card-actions-title" onClick={onJobTitle}>
-            <span>{title}</span>
-            <ArrowForwardIosIcon style={{ marginLeft: 5 }} />
+            <TooltipComponent title={title}>
+              <Typography
+                variant="h4"
+                noWrap
+                style={{
+                  fontSize: 20,
+                  color: themes.default.colors.white,
+                  fontWeight: 500,
+                  width: 115,
+                }}
+              >
+                {title}
+              </Typography>
+            </TooltipComponent>
+            <ArrowForwardIosIcon style={{ marginLeft: 5, marginTop: 10 }} />
           </div>
-          <div>
-            <span>Provider name</span>
+          <div style={{ cursor: "pointer" }} onClick={onProviderName}>
+            <TooltipComponent title={providerName}>
+              <Typography
+                variant="h6"
+                style={{
+                  fontWeight: "normal",
+                  color: themes.default.colors.white,
+                  width: 115,
+                }}
+                noWrap
+              >
+                {providerName}
+              </Typography>
+            </TooltipComponent>
           </div>
         </div>
         <div className="card-actions" style={{ marginTop: 5 }}>
-          <span>Live now</span>
-          <span>{price}/h</span>
+          <span className="live-now"> Live now</span>
+          <span className="price">{`${price}/h`}</span>
         </div>
       </CardActions>
     </Card>

@@ -31,7 +31,7 @@ const useStyles = makeStyles({
 
 const TypographyComponent = (props) => {
   const classes = useStyles();
-  const { title, variant, onClick, style, className } = props;
+  const { title, variant, onClick, style, className,noWrap } = props;
   return (
     <ThemeProvider theme={theme}>
       <Typography
@@ -39,6 +39,7 @@ const TypographyComponent = (props) => {
         className={clsx(classes.primary, className)}
         onClick={onClick}
         style={{ ...style }}
+        noWrap={noWrap}
       >
         {title}
       </Typography>

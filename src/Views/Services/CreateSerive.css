@@ -11,3 +11,24 @@
 .cost {
   margin-top: 30px;
 }
+.image-item {
+  background: #333333;
+  border-radius: 5px;
+  width: 100%;
+  height: 100%;
+}
+.image {
+  width: 100%;
+  height: 100%;
+  max-width: 262px;
+  max-height: 157px;
+}
+.image-delete {
+  position: absolute;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  top: 50%;
+  width:100%;
+  max-width:190px;
+}

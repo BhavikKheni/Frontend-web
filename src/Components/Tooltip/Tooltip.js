@@ -7,8 +7,8 @@ const TooltipComponent = (props) => {
     <Tooltip 
       title={props.title}
       placement="bottom" 
-      TransitionComponent={Fade} 
-      TransitionProps={{ timeout: 600 }} 
+      // TransitionComponent={Fade} 
+      // TransitionProps={{ timeout: 600 }} 
       arrow>
         {props.children}
     </Tooltip>

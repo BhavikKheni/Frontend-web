@@ -1,15 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { withRouter } from "react-router-dom";
+import { withRouter, Link } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
-import { CircularProgress } from "@material-ui/core";
+import { CircularProgress, MenuItem } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
-import Avatar from "@material-ui/core/Avatar";
 import CheckIcon from "@material-ui/icons/Check";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import MailIcon from "@material-ui/icons/Mail";
+import { useTranslation } from "react-i18next";
 import { SessionContext } from "../../Provider/Provider";
 import { get } from "../../Services/Auth.service";
 import ButtonComponent from "../../Components/Forms/Button";
@@ -29,6 +24,11 @@ const useStyles = makeStyles((theme) => ({
     width: theme.spacing(25),
     height: theme.spacing(25),
   },
+  selected: {
+    "&.MuiMenuItem-root.Mui-selected": {
+      borderBottom: "none",
+    },
+  },
 }));
 const ProfileView = (props) => {
   const classes = useStyles();
@@ -45,33 +45,35 @@ const ProfileView = (props) => {
     languages: [],
   });
   let { user } = useSession();
+  const { pathname } = props.location;
+  const { t } = useTranslation();
   React.useEffect(() => {
     setSidebar(true);
     setSidebarContent(
-      <List>
-        {[
-          "Messages",
-          "My calendar",
-          "Next bookings",
-          "My service history",
-          "My profile",
-          "Payment methods",
-        ].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemIcon>{<MailIcon />}</ListItemIcon>
-            <ListItemText primary={text} />
-          </ListItem>
-        ))}
-      </List>
+      <div style={{ margin: 20 }}>
+        <MenuItem>{t("home.messages")}</MenuItem>
+        <MenuItem>{t("home.myCalendar")}</MenuItem>
+        <MenuItem>{t("home.nextBookings")}</MenuItem>
+        <MenuItem>{t("home.myServiceHistory")}</MenuItem>
+        <MenuItem
+          component={Link}
+          to="/profile"
+          selected={pathname === "/profile"}
+          className={classes.selected}
+        >
+          {t("home.myProfile")}
+        </MenuItem>
+        <MenuItem>{t("home.paymentMethods")}</MenuItem>
+      </div>
     );
-  }, [setSidebarContent, setSidebar]);
+  }, [setSidebarContent, setSidebar, t, pathname, classes.selected]);
   useEffect(() => {
     async function getData() {
       setLoading(true);
       const res = await get(`/profile/${user && user.id_user}`);
       if (res) {
         setUserData({
-          ...res,
+          ...res.data,
         });
         setLoading(false);
       } else {
@@ -81,23 +83,18 @@ const ProfileView = (props) => {
     getData();
   }, [user]);
   return (
-    <div>
+    <div style={{ margin: 20 }}>
       <TypographyComponent variant="h4" title="My profile" />
       {isLoading ? (
         <div style={{ textAlign: "center" }}>
           <CircularProgress />
         </div>
       ) : (
-        <Grid
-          container
-          spacing={3}
-          alignItems="center"
-          style={{ marginTop: 20 }}
-        >
+        <Grid container spacing={3} style={{ marginTop: 20 }}>
           <Grid item xs={12} md={2}>
             <img
               alt="profile"
-              src={ProfilePic}
+              src={userData.image ? userData.image : ProfilePic}
               style={{
                 width: "200px",
                 height: "200px",
@@ -108,19 +105,25 @@ const ProfileView = (props) => {
           <Grid item xs={12} md={2}>
             <TypographyComponent
               variant="h3"
-              title="Juile Ann"
+              title={userData.full_name}
               style={{
                 fontWeight: "bold",
                 color: themes.default.colors.darkGray,
               }}
             />
             <Grid style={{ display: "flex", marginTop: 10 }}>
-              <TypographyComponent variant="h6" title="Country " />
-              <TypographyComponent
-                variant="h6"
-                title={userData.country}
-                style={{ marginLeft: 5 }}
-              />
+              <div>
+                <TypographyComponent
+                  variant="h6"
+                  title={userData.country}
+                  style={{ marginLeft: 5 }}
+                />
+                <TypographyComponent
+                  variant="h6"
+                  title={userData.timezone}
+                  style={{ marginLeft: 5 }}
+                />
+              </div>
             </Grid>
             <Grid
               style={{
@@ -152,13 +155,13 @@ const ProfileView = (props) => {
               />
             </Grid>
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={8}>
             <TypographyComponent variant="h4" title="Employer Verfication" />
             <Grid style={{ display: "flex", marginTop: 10 }}>
               <CheckIcon />
               <TypographyComponent
                 variant="h4"
-                title="Member since September 2009"
+                title={userData.member_since}
                 style={{ marginLeft: 5 }}
               />
             </Grid>

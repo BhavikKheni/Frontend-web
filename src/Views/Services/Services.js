@@ -1,20 +1,16 @@
-import React, { useState, useEffect } from "react";
-import {
-  ExpandMore,
-} from "@material-ui/icons";
+import React, { useState, useEffect, useCallback } from "react";
+import { makeStyles } from "@material-ui/core/styles";
+import { ExpandMore } from "@material-ui/icons";
 import MuiDialogContent from "@material-ui/core/DialogContent";
 import { withStyles } from "@material-ui/core/styles";
-import MenuItem from "@material-ui/core/MenuItem";
-import ListItemText from "@material-ui/core/ListItemText";
 import MuiFormControl from "@material-ui/core/FormControl";
 import Input from "@material-ui/core/Input";
-import Checkbox from "@material-ui/core/Checkbox";
 import Rating from "@material-ui/lab/Rating";
 import Radio from "@material-ui/core/Radio";
 import TextField from "@material-ui/core/TextField";
-import FormControl from "@material-ui/core/FormControl";
+import RadioGroup from "@material-ui/core/RadioGroup";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
 import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
-import countryList from "react-select-country-list";
 import { get } from "../../Services/Auth.service";
 import ServiceCardComponent from "../../Components/ServiceCard/ServiceCard";
 import Spinner from "../../Components/Spinner/Spinner";
@@ -35,16 +31,28 @@ const DialogContent = withStyles((theme) => ({
     padding: theme.spacing(2),
   },
 }))(MuiDialogContent);
-const FormControl1 = withStyles((theme) => ({
+
+const useStyles = makeStyles((theme) => ({
+  formControl: {
+    margin: theme.spacing(1),
+    width: "100%",
+  },
+  selectEmpty: {
+    marginTop: theme.spacing(2),
+    width: "100%",
+  },
+  margin: {
+    margin: theme.spacing(1),
+  },
+}));
+const FormControl = withStyles((theme) => ({
   root: {
     width: "100%",
+    "& .MuiOutlinedInput-root": {
+      borderRadius: "10px",
+    },
   },
 }))(MuiFormControl);
-const Input2 = withStyles((theme) => ({
-  root: {
-    width: "100%",
-  },
-}))(Input);
 const MuiTextField = withStyles((theme) => ({
   root: {
     "& .MuiOutlinedInput-input": {
@@ -60,69 +68,113 @@ const MuiTextField = withStyles((theme) => ({
     },
   },
 }))(TextField);
-const options = countryList().getData();
+
 const Services = (props) => {
+  const classes = useStyles();
   const [isLoading, setIsLoading] = useState(false);
-  const [visible, setVisible] = useState(false);
-  const [record, setRecord] = useState({});
   const [jobs, setJobs] = useState([]);
   const [isUpcomingMoreData, setUpcomingMoreData] = useState(true);
   const [upcomingoffset, setUpcomingOffset] = useState(0);
   const [isUpcomingLoading, setUpcomingLoading] = useState(false);
-  const [deActivateDialog, setDeActivateDialog] = useState(false);
   const [openResetPassword, setOpenResetPassword] = useState(false);
-  const [country, setCountry] = useState("");
+  const [country, setCountry] = useState();
   const { setSidebarContent, setSidebar } = useSidebar();
   const [languages, setLanguages] = useState([]);
-  const [lng, setLng] = useState([]);
-  const [value1, setValue1] = useState("");
-  const [value2, setValue2] = useState("");
+  const [provider_language, setProviderLanguage] = useState();
+  const [per_hour_rate_min, setperHourRateMin] = useState();
+  const [per_hour_rate_max, setperHourRateMax] = useState();
   const { history } = props;
+  const [value, setValue] = useState(true);
+  const [simpathy, setSimpathy] = useState();
+  const [serviceQuality, setServiceQuality] = useState();
+  const [countries, setCountries] = useState([]);
+  const handleChangeRadio = (event) => {
+    const value1 = event.target.value === "true" ? "true" : "false";
+    setValue(value1);
+  };
+
+  const searchJobs = useCallback(async () => {
+    setIsLoading(true);
+    const res = await search("/job/list", {
+      limit: limit,
+      offset: 0,
+      per_hour_rate_min: per_hour_rate_min,
+      per_hour_rate_max: per_hour_rate_max,
+      simpathy: simpathy,
+      service_quality: serviceQuality,
+      live_now: value,
+      country: country,
+      provider_language: provider_language,
+    }).catch((err) => {
+      console.log("Error", err);
+      setIsLoading(false);
+    });
+    const { data, stopped_at, type } = res || {};
+    if (data.offset === "0" && data.limit === "10") {
+      setJobs([]);
+    }
+    if (type === "ERROR") {
+      setUpcomingMoreData(false);
+      setIsLoading(false);
+      return;
+    }
+    setUpcomingOffset(stopped_at);
+    setJobs(data || []);
+    setIsLoading(false);
+  }, [
+    per_hour_rate_min,
+    per_hour_rate_max,
+    provider_language,
+    country,
+    serviceQuality,
+    simpathy,
+    value,
+  ]);
+
   React.useEffect(() => {
     setSidebar(true);
     setSidebarContent(
-      <div style={{ margin: 20 }}>
-        <FormControl1 variant="outlined">
+      <div style={{ marginLeft: 25, marginRight: 25 }}>
+        <FormControl variant="outlined" className={classes.formControl}>
           <SelectComponent
-            value={(country && country) || ""}
-            onChange={(e) => setCountry({ [e.target.name]: e.target.value })}
             name="country"
             label="Select a country"
+            value={(country && country) || ""}
+            onChange={(e) => setCountry(e.target.value)}
+            native
           >
-            {options.map((m, i) => (
-              <MenuItem key={i} value={m.label}>
-                <ListItemText primary={m.label} />
-              </MenuItem>
-            ))}
+            {countries &&
+              countries.map((m, i) => (
+                <option key={i} value={m.country_id}>
+                  {m.country_name}
+                </option>
+              ))}
           </SelectComponent>
-        </FormControl1>
-        <FormControl1 variant="outlined" style={{ marginTop: 20 }}>
+        </FormControl>
+        <FormControl
+          variant="outlined"
+          className={classes.formControl}
+          style={{ marginTop: 10 }}
+        >
           <SelectComponent
-            name="languages"
-            label="Select a language"
-            multiple
-            value={Array.isArray(lng.languages) ? lng.languages : []}
+            name="provider_language"
+            label="Provider language"
+            value={provider_language}
             onChange={(e) => {
-              setLng(e.target.value);
+              setProviderLanguage(e.target.value);
             }}
-            input={<Input2 />}
-            renderValue={(selected) => selected.join(", ")}
+            native
           >
             {languages &&
               languages.map((l) => {
                 return (
-                  <MenuItem key={l.id_language} value={l.language_name}>
-                    <Checkbox
-                      checked={
-                        languages && languages.indexOf(l.language_name) > -1
-                      }
-                    />
-                    <ListItemText primary={l.language_name} />
-                  </MenuItem>
+                  <option key={l.id_language} value={l.id_language}>
+                    {l.language_name}
+                  </option>
                 );
               })}
           </SelectComponent>
-        </FormControl1>
+        </FormControl>
         <TypographyComponent
           title="Price per hour"
           style={{ marginTop: 20 }}
@@ -137,12 +189,12 @@ const Services = (props) => {
         >
           <MuiTextField
             type="text"
-            value={value1 && value1}
+            value={per_hour_rate_min}
             placeholder="0.00$"
-            name="value1"
-            id="value1"
+            name="per_hour_rate_min"
+            id="per_hour_rate_min"
             onChange={(e) => {
-              setValue1(e.target.value);
+              setperHourRateMin(e.target.value);
             }}
             variant="outlined"
           />
@@ -152,12 +204,12 @@ const Services = (props) => {
           </div>
           <MuiTextField
             type="text"
-            value={value2 && value2}
+            value={per_hour_rate_max}
             placeholder="0.00$"
-            name="value2"
-            id="value2"
+            name="per_hour_rate_max"
+            id="per_hour_rate_max"
             onChange={(e) => {
-              setValue2(e.target.value);
+              setperHourRateMax(e.target.value);
             }}
             variant="outlined"
           />
@@ -170,38 +222,82 @@ const Services = (props) => {
           }}
         >
           <TypographyComponent title="Service quality"></TypographyComponent>
-          <Rating name="quality" disabled />
+          <Rating
+            name="quality"
+            value={serviceQuality}
+            onChange={(event, newValue) => {
+              setServiceQuality(newValue);
+            }}
+            size="small"
+          />
         </div>
         <div
           style={{
             display: "flex",
             justifyContent: "space-between",
             marginTop: 20,
+            marginBottom: 20,
           }}
         >
-          <TypographyComponent title="Service quality"></TypographyComponent>
-          <Rating name="Simpathy" disabled />
+          <TypographyComponent title="Simpathy"></TypographyComponent>
+          <Rating
+            name="simpathy"
+            value={simpathy}
+            onChange={(event, newValue) => {
+              setSimpathy(newValue);
+            }}
+            size="small"
+          />
         </div>
-        <div style={{ display: "flex", alignItems: "center", marginTop: 20 }}>
-          <Radio value="a" name="live" inputProps={{ "aria-label": "A" }} />
-          <TypographyComponent title="Live service"></TypographyComponent>
-        </div>
-        <div style={{ display: "flex", alignItems: "center", marginTop: 20 }}>
-          <Radio value="a" name="book" inputProps={{ "aria-label": "A" }} />
-          <TypographyComponent title="Book service"></TypographyComponent>
-        </div>
+        <RadioGroup
+          aria-label="live_now"
+          name="live_now"
+          value={String(value)}
+          onChange={handleChangeRadio}
+        >
+          <FormControlLabel
+            value="true"
+            control={<Radio />}
+            label="Live service"
+          />
+          <FormControlLabel
+            value="false"
+            control={<Radio />}
+            label="Book service"
+          />
+        </RadioGroup>
+        <ButtonComponent
+          title="Search"
+          className={classes.margin}
+          style={{
+            backgroundColor: themes.default.colors.white,
+            border: "1px solid rgba(25, 25, 25, 0.9)",
+            marginTop: 20,
+          }}
+          type="button"
+          size="large"
+          onClick={() => {
+            searchJobs();
+          }}
+        />
       </div>
     );
   }, [
     setSidebarContent,
     setSidebar,
     country,
-    lng.languages,
-    setValue2,
-    setValue1,
+    provider_language,
+    setperHourRateMax,
+    setperHourRateMin,
     languages,
-    value1,
-    value2,
+    per_hour_rate_min,
+    per_hour_rate_max,
+    value,
+    serviceQuality,
+    simpathy,
+    countries,
+    classes.formControl,
+    searchJobs,
   ]);
   useEffect(() => {
     const queryString = window.location.search;
@@ -218,22 +314,16 @@ const Services = (props) => {
       }
     }
     fetchLanguages();
-    async function searchJobs() {
-      setIsLoading(true);
-      const res = await search("/job/list", {
-        limit: limit,
-        offset: 0,
+
+    async function countryList() {
+      const res = await get("/countries/list").catch((error) => {
+        console.log(error);
       });
-      const { data, stopped_at, type } = res || {};
-      if (type === "ERROR") {
-        setUpcomingMoreData(false);
-        setIsLoading(false);
-        return;
+      if (res) {
+        setCountries(res);
       }
-      setUpcomingOffset(stopped_at);
-      setJobs(data || []);
-      setIsLoading(false);
     }
+    countryList();
     searchJobs();
   }, []);
   const onMore = async (path, offset, criteria = {}) => {
@@ -257,9 +347,15 @@ const Services = (props) => {
   const onResetPassword = () => {};
   const onPhone = () => {};
   const onCalendar = () => {};
-  const onJobTitle = () => {
-    history.push("/create-service");
+  const onJobTitle = (element) => {
+    history.push("/create-services", { job: element });
   };
+  const onProviderName = (element) => {
+    history.push("/profile-provider", {
+      userId: element.assigned_to,
+    });
+  };
+
   return (
     <div>
       {isLoading ? (
@@ -278,14 +374,16 @@ const Services = (props) => {
             jobs.map((element, index) => (
               <ServiceCardComponent
                 key={index}
-                images={element.image}
+                images={element.images}
                 title={element.title}
-                providerName={element.PorviderName}
-                description={element.description}
+                providerName={element.provider_name}
                 price={element.price}
+                service_quality_rating={element.service_quality_rating}
+                sympathy_rating={element.sympathy_rating}
                 onPhone={onPhone}
                 onCalendar={onCalendar}
-                onJobTitle={onJobTitle}
+                onJobTitle={() => onJobTitle(element)}
+                onProviderName={() => onProviderName(element)}
               />
             ))}
         </div>
@@ -295,12 +393,12 @@ const Services = (props) => {
           {isUpcomingLoading ? (
             <Spinner />
           ) : (
-            <React.Fragment>
-              <span onClick={() => onMore("/job/list", upcomingoffset, {})}>
-                Load more jobs
-              </span>
+            <div
+              className="load-more"
+              onClick={() => onMore("/job/list", upcomingoffset, {})}
+            >
               <ExpandMore />
-            </React.Fragment>
+            </div>
           )}
         </div>
       )}

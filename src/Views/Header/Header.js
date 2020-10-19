@@ -56,7 +56,6 @@ const useStyles = makeStyles((theme) => ({
     background: "#FFFFFF",
     border: "2px solid #303030",
     borderRadius: 25,
-    maxWidth: 458,
     width: "100%",
   },
   searchIconItem: {
@@ -170,6 +169,7 @@ const OweraHeader = (props) => {
   const handleLogout = () => {
     onLogout(props).then((result) => {
       logout();
+      setLogout(false);
     });
   };
 
@@ -190,7 +190,7 @@ const OweraHeader = (props) => {
       >
         <Toolbar>
           <Grid container spacing={3} alignItems="center">
-            <Grid item xs={12} md={3}>
+            <Grid item xs={12} md={2}>
               <IconButton
                 color="inherit"
                 aria-label="open drawer"
@@ -202,7 +202,7 @@ const OweraHeader = (props) => {
               </IconButton>
               <img src={OweraHeaderPic} alt="header"></img>
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={7}>
               <div className={classes.search}>
                 <InputBase
                   placeholder="Search"
@@ -221,14 +221,6 @@ const OweraHeader = (props) => {
                 <MenuItem>
                   <NotificationsNoneIcon className={classes.colorPrimary} />
                 </MenuItem>
-
-                <MenuItem
-                  component={RouterLink}
-                  to="/dashboard"
-                  selected={pathname === "/dashboard"}
-                >
-                  Dashboard
-                </MenuItem>
                 <MenuItem
                   component={RouterLink}
                   to="/"
@@ -238,10 +230,17 @@ const OweraHeader = (props) => {
                 </MenuItem>
                 <MenuItem
                   component={RouterLink}
-                  to="/create-services"
-                  selected={pathname === "/create-service"}
+                  to="/home"
+                  selected={pathname === "/home"}
                 >
-                  Create service
+                  Home
+                </MenuItem>
+                <MenuItem
+                  component={RouterLink}
+                  to="/create-services"
+                  selected={pathname === "/create-services"}
+                >
+                  Work
                 </MenuItem>
                 {isLoggedIn && (
                   <MenuItem
@@ -285,7 +284,8 @@ const OweraHeader = (props) => {
                   <ButtonComponent
                     style={{
                       fontSize: 16,
-                      width: 116,
+                      width: 100,
+                      height: 40,
                       cursor: "pointer",
                       backgroundColor: themes.default.colors.purple,
                       color: themes.default.colors.white,

@@ -12,7 +12,7 @@ export const colorValues = {
   gray: "#949494",
   gray20: "#333333",
   silver: "#BDBDBD",
-  purple:"#AD00FF",
+  purple: "#AD00FF",
   transparent: "transparent",
 };
 
@@ -22,6 +22,7 @@ const fontSize = {
   fontSize12: "0.75rem",
   fontSize14: "0.875rem",
   fontSize16: "1rem",
+  fontSize20: "1.25rem",
   fontSize18: "1.125rem",
   fontSize24: "1.5rem",
   fontSize36: "2.25rem",
@@ -124,7 +125,7 @@ export const themes = {
       matterhorn: colorValues.matterhorn,
       gray: colorValues.gray,
       gray20: colorValues.gray20,
-      purple:colorValues.purple,
+      purple: colorValues.purple,
       background: {
         main: colorValues.white,
       },

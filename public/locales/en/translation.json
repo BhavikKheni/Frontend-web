@@ -1,53 +1,73 @@
 {
-    "title": "OWERA",
-    "signin": "Log in",
-    "logout":"Logout",
-    "loginButton":"Log in",
-    "signUpButton":"Sign up",
-    "login": {
-        "title": "Login",
-        "signin": "Sign in",
-        "donHaveAccount": "Don't have account?",
-        "signup":"Sign up",
-        "button":"Login",
-        "sendNewPassword":"Send new password?"
-    },
-    "alreadyHaveAccount": "Already have an account?",
-    "signup": {
-      "title": "Sign up",
-      "registrationAgree": "With your registration you agree to our",
-      "termsConditions": "terms & conditions",
-      "go":"go"
-    },
-    "service":{
-      "create-service":{
-        "createService":"Create a service",
-        "nameAllocation":"Name and allocation",
-        "startWork":"StartWork",
-        "myServiceLibrary":"My service library",
-        "addBookingSpace":"Add booking space",
-        "createSpace":"Create a space"
-      }
-    },
-    "validation": {
-      "email": "Email is required",
-      "inValidateEmail": "Invalid email address",
-      "password": "Password is required",
-      "fullName": "FullName is required",
-      "serviceTitle":"Title is required",
-      "Category":"Category is required",
-      "SubCategory":"Sub-Category is required"
-    },
-    "footer":{
-        "navigationLink":{
-            "aboutUs":"About us",
-            "history":"History",
-            "support":"Support",
-            "faq":"FAQ",
-            "feedback":"Feedback",
-            "theForGo":"The app for on the go",
-            "followUs":"Follow us:",
-            "subscribe":"Subscribe"
-        }
+  "title": "OWERA",
+  "signin": "Log in",
+  "logout": "Logout",
+  "loginButton": "Log in",
+  "signUpButton": "Sign up",
+  "login": {
+    "title": "Login",
+    "signin": "Sign in",
+    "donHaveAccount": "Don't have account?",
+    "signup": "Sign up",
+    "button": "Login",
+    "sendNewPassword": "Send new password?"
+  },
+  "alreadyHaveAccount": "Already have an account?",
+  "signup": {
+    "title": "Sign up",
+    "registrationAgree": "With your registration you agree to our",
+    "termsConditions": "terms & conditions",
+    "go": "go"
+  },
+  "service": {
+    "create-service": {
+      "createService": "Create a service",
+      "nameAllocation": "Name and allocation",
+      "startWork": "StartWork",
+      "myServiceLibrary": "My service library",
+      "addBookingSpace": "Add booking space",
+      "createSpace": "Create a space"
     }
+  },
+  "validation": {
+    "email": "Email is required",
+    "inValidateEmail": "Invalid email address",
+    "password": "Password is required",
+    "fullName": "FullName is required",
+    "serviceTitle": "Title is required",
+    "Category": "Category is required",
+    "SubCategory": "Sub-Category is required"
+  },
+  "providerProfile": {
+    "offeredService": "Offered Services",
+    "serviceDetails": "Service details",
+    "serviceTitle": "Service title",
+    "serviceQuality": "Service quality",
+    "simpathy": "Simpathy",
+    "latestReview": "Latest reviews",
+    "bookService": "Book Service"
+  },
+  "home": {
+    "messages": "Messages",
+    "myCalendar": "My calendar",
+    "nextBookings": "Next bookings",
+    "myServiceHistory": "My service history",
+    "myProfile": "My profile",
+    "paymentMethods": "Payment methods",
+    "feedback": "Feedback ",
+    "faq": "FAQ",
+    "support": "Support"
+  },
+  "footer": {
+    "navigationLink": {
+      "aboutUs": "About us",
+      "history": "History",
+      "support": "Support",
+      "faq": "FAQ",
+      "feedback": "Feedback",
+      "theForGo": "The app for on the go",
+      "followUs": "Follow us:",
+      "subscribe": "Subscribe"
+    }
+  }
 }

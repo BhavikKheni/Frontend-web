@@ -33,6 +33,26 @@
     "password": "Password is required",
     "fullName": "FullName is required"
   },
+  "providerProfile": {
+    "offeredService": "Offered Services",
+    "serviceDetails": "Service details",
+    "serviceTitle": "Service title",
+    "serviceQuality": "Service quality",
+    "simpathy": "Simpathy",
+    "latestReview": "Latest reviews",
+    "bookService": "Book Service"
+  },
+  "home": {
+    "messages": "Messages",
+    "myCalendar": "My calendar",
+    "nextBookings": "Next bookings",
+    "myServiceHistory": "My service history",
+    "myProfile": "My profile",
+    "paymentMethods": "Payment methods",
+    "feedback": "Feedback ",
+    "faq": "FAQ",
+    "support": "Support"
+  },
   "footer": {
     "navigationLink": {
       "aboutUs": "About us",
