@@ -27,6 +27,7 @@ import ForgotPassword from "../Auth/ForgotPassword/ForgotPassword";
 import "react-flags-select/css/react-flags-select.css";
 import OweraHeaderPic from "../../Group 135.png";
 import DialogComponent from "../../Components/Dialog/Dialog";
+import "./Header.css";
 const useSession = () => React.useContext(SessionContext);
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -188,9 +189,12 @@ const OweraHeader = (props) => {
         position="fixed"
         className={clsx(classes.appBar, classes.colorDefault)}
       >
-        <Toolbar>
-          <Grid container spacing={3} alignItems="center">
-            <Grid item xs={12} md={2}>
+        <div class='container'>
+          <div class='header_inner'>
+            <div class="header_brand_wrapper">
+              <a href="/" class='header_brand'>
+                <img src={OweraHeaderPic} alt="header"></img>
+              </a>
               <IconButton
                 color="inherit"
                 aria-label="open drawer"
@@ -200,16 +204,11 @@ const OweraHeader = (props) => {
               >
                 <MenuIcon />
               </IconButton>
-              <img src={OweraHeaderPic} alt="header"></img>
-            </Grid>
-            <Grid item xs={12} md={7}>
-              <div className={classes.search}>
+            </div>
+            <div class="header_navbar_wrapper">
+              <div class="searchbar_wrapper">
                 <InputBase
                   placeholder="Search"
-                  classes={{
-                    root: classes.inputRoot,
-                    input: classes.inputInput,
-                  }}
                   inputProps={{ "aria-label": "search" }}
                   onChange={changeSearch}
                 />
@@ -217,8 +216,12 @@ const OweraHeader = (props) => {
                   <SearchIcon className={classes.searchIcon} />
                 </span>
               </div>
-              <div className={classes.menuName}>
-                <MenuItem>
+              <div className={clsx(classes.menuName, 'header_navbar')}>
+                <MenuItem
+                component={RouterLink}
+                to="javascript:void(0);"
+                selected={pathname === "javascript:void(0);"}
+                >
                   <NotificationsNoneIcon className={classes.colorPrimary} />
                 </MenuItem>
                 <MenuItem
@@ -253,40 +256,26 @@ const OweraHeader = (props) => {
                   </MenuItem>
                 )}
               </div>
-            </Grid>
-            <Grid item xs={12} md={3}>
+            </div>
+            <div class="header_button_wrapper">
               {!isLoggedIn ? (
-                <div style={{ display: "flex" }}>
+                <div class="login_button">
                   <ButtonComponent
-                    size="small"
-                    color="inherit"
                     onClick={openSignInDialog}
-                    style={{
-                      maxWidth: "116px",
-                      width: "100%",
-                    }}
                     title={t("loginButton")}
                   />
                   <ButtonComponent
-                    size="small"
                     style={{
                       backgroundColor: themes.default.colors.orange,
-                      color: "#fff",
-                      maxWidth: "116px",
-                      width: "100%",
                     }}
                     onClick={openSignUpDialog}
                     title={t("signUpButton")}
                   />
                 </div>
               ) : (
-                <div>
+                <div class="login_button">
                   <ButtonComponent
                     style={{
-                      fontSize: 16,
-                      width: 100,
-                      height: 40,
-                      cursor: "pointer",
                       backgroundColor: themes.default.colors.purple,
                       color: themes.default.colors.white,
                     }}
@@ -298,6 +287,7 @@ const OweraHeader = (props) => {
                 </div>
               )}
               <ReactFlagsSelect
+                className='country_flag'
                 countries={["US", "GB", "FR", "DE", "IT", "GU"]}
                 placeholder="Language"
                 customLabels={{
@@ -310,9 +300,10 @@ const OweraHeader = (props) => {
                 }}
                 onSelect={onSelectFlag}
               />
-            </Grid>
-          </Grid>
-        </Toolbar>
+            </div>
+        </div>
+        </div>
+        
       </AppBar>
       <DialogComponent
         onClose={(e) => {
