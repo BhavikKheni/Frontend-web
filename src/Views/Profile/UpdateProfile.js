@@ -21,7 +21,7 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import MailIcon from "@material-ui/icons/Mail";
-import ProfilePic from "../../profile-image.png";
+import ProfilePic from "../../images/profile-image.png";
 import TypographyComponent from "../../Components/Typography/Typography";
 import SelectComponent from "../../Components/Forms/Select";
 import ButtonComponent from "../../Components/Forms/Button";

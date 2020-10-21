@@ -12,7 +12,7 @@ import Slider from "react-animated-slider";
 import TooltipComponent from "../Tooltip/Tooltip";
 import TypographyComponent from "../Typography/Typography";
 import { themes } from "../../themes";
-import Pic from "../../image 2.png";
+import DefaultServiceImage from "../../images/defaultServiceImage.png";
 import "react-animated-slider/build/horizontal.css";
 import "./ServiceCard.css";
 const useStyles = makeStyles((theme) => ({
@@ -106,7 +106,7 @@ const ServiceCardComponent = (props) => {
         ) : (
           <div
             style={{
-              background: ` URL('${Pic}') no-repeat  center  center `,
+              background: ` URL('${DefaultServiceImage}') no-repeat  center  center `,
             }}
             className="previousButton nextButton"
           >
