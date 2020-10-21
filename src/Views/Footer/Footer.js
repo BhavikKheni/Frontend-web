@@ -1,5 +1,6 @@
 import React from "react";
 import { Formik } from "formik";
+import clsx from "clsx";
 import { withStyles, makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import MuiTextField from "@material-ui/core/TextField";
@@ -15,6 +16,7 @@ import TwitterIcon from "@material-ui/icons/Twitter";
 import { themes } from "../../themes";
 import * as Yup from "yup";
 import { useTranslation } from "react-i18next";
+import "./Footer.css";
 const TextField = withStyles((theme) => ({
   root: {
     "& .MuiOutlinedInput-input": {
@@ -88,109 +90,121 @@ const Footer = (props) => {
   const { t } = useTranslation();
   const classes = useStyles(props);
   return (
-    <div className={classes.footer}>
-      <Grid container spacing={3} alignItems="center">
-        <Grid item xs={12} md={4}>
-          <img alt="footer" src={FooterIcon} className={classes.logo} />
-        </Grid>
-        <Grid item xs={12} md={2} style={{ display: "flex" }}>
-          <div>
-          <MenuItem className={classes.fontColor}>
-              {t("footer.navigationLink.aboutUs")}
-            </MenuItem>
-            <MenuItem className={classes.fontColor}>
-              {t("footer.navigationLink.history")}
-            </MenuItem>
-            <MenuItem className={classes.fontColor}>
-              {t("footer.navigationLink.support")}
-            </MenuItem>
-          </div>
-          <div>
-          <MenuItem className={classes.fontColor}>
-              {t("footer.navigationLink.faq")}
-            </MenuItem>
-            <MenuItem className={classes.fontColor}>
-              {t("footer.navigationLink.feedback")}
-            </MenuItem>
-          </div>
-        </Grid>
-        <Grid item xs={12} md={3} className={classes.grid3}>
-          <TypographyComponent
-            title={t("footer.navigationLink.theForGo")}
-            className={classes.appForGo}
-          />
-          <img alt="app store" src={AppStore} className={classes.appIcon} />
-          <img alt="android" src={Android} className={classes.appIcon} />
-        </Grid>
-        <Grid item xs={12} md={3} className={classes.grid4}>
-          <div style={{ display: "flex" }}>
-            <TypographyComponent
-              title={t("footer.navigationLink.followUs")}
-              className={classes.iconColor}
-            />
-            <div className={classes.icons}>
-              <InstagramIcon className={classes.iconColor} />
-              <FacebookIcon className={classes.iconColor} />
-              <TwitterIcon className={classes.iconColor} />
+    <div className={clsx(classes.footer, 'footer')}>
+        <div class="footer_content">
+            <div class="footer_brand_wrapper">
+              <a href="/" class='footer_brand'>
+                <img alt="Owera" src={FooterIcon}/>
+              </a>
+            </div>
+            <div class="footer_page_links">
+              <div class="footer_page_link">
+                <MenuItem className={classes.fontColor}>
+                  {t("footer.navigationLink.aboutUs")}
+                </MenuItem>
+                <MenuItem className={classes.fontColor}>
+                  {t("footer.navigationLink.history")}
+                </MenuItem>
+                <MenuItem className={classes.fontColor}>
+                  {t("footer.navigationLink.support")}
+                </MenuItem>
+              </div>
+              <div class="footer_page_link">
+                <MenuItem className={classes.fontColor}>
+                  {t("footer.navigationLink.faq")}
+                </MenuItem>
+                <MenuItem className={classes.fontColor}>
+                  {t("footer.navigationLink.feedback")}
+                </MenuItem>
+              </div>
+            </div>
+            <div class="get_touch_links">
+              <div class="apps_link">
+                <TypographyComponent
+                  title={t("footer.navigationLink.theForGo")}
+                  className={classes.appForGo}
+                />
+                <a href="#">
+                  <img alt="app store" src={AppStore} className={classes.appIcon} />
+                </a>
+                <a href="#">
+                  <img alt="android" src={Android} className={classes.appIcon} />
+                </a>
+              </div>
+              <div class="follow_subscribe_link">
+                <div class="social_links">
+                  <TypographyComponent
+                    title={t("footer.navigationLink.followUs")}
+                    className={classes.iconColor}
+                  />
+                  <div className={classes.icons}>
+                    <a href="#">
+                      <InstagramIcon className={classes.iconColor} />
+                    </a>
+                    <a href="#">
+                      <FacebookIcon className={classes.iconColor} />
+                    </a>
+                    <a href="#">
+                      <TwitterIcon className={classes.iconColor} />
+                    </a>
+                  </div>
+                </div>
+                <div class="subscribe_form">
+                  <Formik
+                    initialValues={{
+                      email: "",
+                    }}
+                    validate={(values) => {
+                      const errors = {};
+                      if (!values.email) {
+                        errors.email = "Required";
+                      } else if (
+                        !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
+                      ) {
+                        errors.email = "Invalid email address";
+                      }
+                      return errors;
+                    }}
+                    onSubmit={async (values) => {}}
+                    validationSchema={Yup.object().shape({
+                      password: Yup.string().required("Password is required"),
+                    })}
+                  >
+                    {({
+                      values,
+                      errors,
+                      handleChange,
+                      handleSubmit,
+                      isSubmitting,
+                    }) => (
+                      <form onSubmit={handleSubmit} className={classes.footerForm}>
+                        <TextField
+                          id="type-email"
+                          placeholder="Type your email"
+                          variant="outlined"
+                          value={values.email}
+                          onChange={handleChange}
+                          error={errors.email ? true : false}
+                          helperText={errors.email && `${errors.email}`}
+                        />
+                        <ButtonComponent
+                          title={t("footer.navigationLink.subscribe")}
+                          disabled={isSubmitting}
+                          className={classes.subscribe}
+                        />
+                      </form>
+                    )}
+                  </Formik>
+                </div>
+              </div>
             </div>
           </div>
-          <div style={{ marginTop: 10 }}>
-            <Formik
-              initialValues={{
-                email: "",
-              }}
-              validate={(values) => {
-                const errors = {};
-                if (!values.email) {
-                  errors.email = "Required";
-                } else if (
-                  !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
-                ) {
-                  errors.email = "Invalid email address";
-                }
-                return errors;
-              }}
-              onSubmit={async (values) => {}}
-              validationSchema={Yup.object().shape({
-                password: Yup.string().required("Password is required"),
-              })}
-            >
-              {({
-                values,
-                errors,
-                handleChange,
-                handleSubmit,
-                isSubmitting,
-              }) => (
-                <form onSubmit={handleSubmit} className={classes.footerForm}>
-                  <TextField
-                    id="type-email"
-                    placeholder="Type your email"
-                    variant="outlined"
-                    value={values.email}
-                    onChange={handleChange}
-                    error={errors.email ? true : false}
-                    helperText={errors.email && `${errors.email}`}
-                    style={{
-                      borderRadius: 5,
-                    }}
-                  />
-                  <ButtonComponent
-                    title={t("footer.navigationLink.subscribe")}
-                    disabled={isSubmitting}
-                    className={classes.subscribe}
-                  />
-                </form>
-              )}
-            </Formik>
-          </div>
-        </Grid>
-      </Grid>
-      <TypographyComponent
-        title="OWERA, Inc. 2020. We love our users."
-        style={{ color: "#BDBDBD", textAlign: "center" }}
-      />
-    </div>
+          <TypographyComponent
+            title="© OWERA, Inc. 2020. We love our users."
+            style={{ color: "#BDBDBD", textAlign: "center" }}
+            className={'copyright_text'}
+          />
+        </div>
   );
 };
 

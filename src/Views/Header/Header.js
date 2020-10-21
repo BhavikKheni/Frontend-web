@@ -193,7 +193,7 @@ const OweraHeader = (props) => {
           <div class='header_inner'>
             <div class="header_brand_wrapper">
               <a href="/" class='header_brand'>
-                <img src={OweraHeaderPic} alt="header"></img>
+                <img src={OweraHeaderPic} alt="Owera"></img>
               </a>
               <IconButton
                 color="inherit"

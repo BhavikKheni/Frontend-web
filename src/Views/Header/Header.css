@@ -17,6 +17,7 @@
 
 .header_brand {
     max-width: 250px;
+    width: 100%;
     display: block;
 }
 
