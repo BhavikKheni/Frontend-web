@@ -1,4 +1,5 @@
 import React from "react";
+import clsx from "clsx";
 import { withStyles, makeStyles } from "@material-ui/core/styles";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import MuiSelect from "@material-ui/core/Select";
@@ -30,6 +31,7 @@ export default function SelectComponent(props) {
         value={value}
         name={name}
         onChange={onChange}
+        className={clsx(props.className, 'select_down_arrow')}
         inputProps={{
           name: name,
           id: name,

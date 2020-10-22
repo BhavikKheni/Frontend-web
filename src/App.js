@@ -1,4 +1,5 @@
-import React from "react";
+import React,{useEffect} from "react";
+import $ from 'jquery';
 import { BrowserRouter as Router } from "react-router-dom";
 import AppProvider from "./Provider/Provider";
 import SidebarProvider from "./Provider/SidebarProvider";
@@ -41,6 +42,13 @@ const theme = createMuiTheme({
 });
 
 const App = (props) => {
+  useEffect(()=>{
+    $(document).ready(function(){
+      var headerHeight = $('header').height();
+      $('.page_content').attr('style', 'height:calc(100vh - ' + headerHeight + 'px); margin-top:'+headerHeight + 'px');
+    });
+    
+  })
   return (
     <AppProvider>
       <ThemeProvider theme={theme}>

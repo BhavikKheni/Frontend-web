@@ -91,14 +91,14 @@ const Footer = (props) => {
   const classes = useStyles(props);
   return (
     <div className={clsx(classes.footer, 'footer')}>
-        <div class="footer_content">
-            <div class="footer_brand_wrapper">
-              <a href="/" class='footer_brand'>
+        <div className="footer_content">
+            <div className="footer_brand_wrapper">
+              <a href="/" className='footer_brand'>
                 <img alt="Owera" src={FooterIcon}/>
               </a>
             </div>
-            <div class="footer_page_links">
-              <div class="footer_page_link">
+            <div className="footer_page_links">
+              <div className="footer_page_link">
                 <MenuItem className={classes.fontColor}>
                   {t("footer.navigationLink.aboutUs")}
                 </MenuItem>
@@ -109,7 +109,7 @@ const Footer = (props) => {
                   {t("footer.navigationLink.support")}
                 </MenuItem>
               </div>
-              <div class="footer_page_link">
+              <div className="footer_page_link">
                 <MenuItem className={classes.fontColor}>
                   {t("footer.navigationLink.faq")}
                 </MenuItem>
@@ -118,8 +118,8 @@ const Footer = (props) => {
                 </MenuItem>
               </div>
             </div>
-            <div class="get_touch_links">
-              <div class="apps_link">
+            <div className="get_touch_links">
+              <div className="apps_link">
                 <TypographyComponent
                   title={t("footer.navigationLink.theForGo")}
                   className={classes.appForGo}
@@ -131,8 +131,8 @@ const Footer = (props) => {
                   <img alt="android" src={Android} className={classes.appIcon} />
                 </a>
               </div>
-              <div class="follow_subscribe_link">
-                <div class="social_links">
+              <div className="follow_subscribe_link">
+                <div className="social_links">
                   <TypographyComponent
                     title={t("footer.navigationLink.followUs")}
                     className={classes.iconColor}
@@ -149,7 +149,7 @@ const Footer = (props) => {
                     </a>
                   </div>
                 </div>
-                <div class="subscribe_form">
+                <div className="subscribe_form">
                   <Formik
                     initialValues={{
                       email: "",

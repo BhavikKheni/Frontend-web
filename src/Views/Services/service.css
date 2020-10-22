@@ -1,3 +1,111 @@
+.sidebar_wrapper {
+  max-width: 290px;
+  width: 100%;
+  border-right: 1px solid #BDBDBD;
+  padding-top: 30px;
+  padding-right: 45px;
+}
+.sidebar_wrapper .makeStyles-drawer-30 {
+  width: 100%;
+}
+.sidebar_row + .sidebar_row {
+  margin-top: 24px;
+}
+.sidebar_row.select_price_range {
+  margin-top: 50px;
+}
+.sidebar_wrapper .MuiDrawer-paperAnchorDockedLeft {
+  border: none;
+}
+.select_down_arrow .MuiSelect-select.MuiSelect-select {
+  padding: 14px 45px 14px 22px;
+  height: 52px;
+  width: 100%;
+  border: none;
+  color: #303030;
+}
+.select_down_arrow .MuiSelect-select.MuiSelect-select:focus {
+  background-color: transparent;
+}
+.sidebar_inner .MuiFormControl-root {
+  width: 100%;
+}
+.sidebar_inner .MuiOutlinedInput-notchedOutline {
+  border: 1px solid #303030;
+  border-radius: 10px;
+}
+.select_price_range p {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 30px;
+  font-family: Rubik;
+  letter-spacing: 0.02em;
+  color: #303030;
+}
+.select_price_range_inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 500;
+  font-size: 16px;
+}
+.select_price_range_inner .MuiFormControl-root {
+  max-width: 100px;
+  width: 100%;
+}
+.select_price_range_inner input {
+  font-weight: 500;
+  text-align: center;
+}
+.sidebar_inner input::-moz-placeholder {
+  color: #303030;
+  opacity: 1;
+}
+.sidebar_inner input:-moz-placeholder {
+  color: #303030;
+  opacity: 1;
+}
+.sidebar_inner input::-webkit-input-placeholder {
+  color: #303030;
+  opacity: 1;
+}
+.sidebar_inner input:-ms-input-placeholder {
+  color: #303030;
+  opacity: 1;
+}
+.sidebar_inner p {
+  font-size: 14px;
+  line-height: 30px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: #303030;
+}
+.sidebar_review {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  overflow: hidden;
+}
+.sidebar_review .MuiRating-sizeSmall {
+  font-size: 24px;
+}
+.sidebar_input_radio label span {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 30px;
+  color: #303030;
+}
+.sidebar_input_radio label span.Mui-checked + span {
+  text-decoration: underline;
+}
+.sidebar_input_radio label span svg {
+  width: 16px;
+  height: 14px;
+}
+
+
+
+
 .reset-password-form {
   height: 100%;
   max-height: 240px;

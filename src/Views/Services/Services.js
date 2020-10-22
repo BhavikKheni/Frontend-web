@@ -4,9 +4,6 @@ import { ExpandMore } from "@material-ui/icons";
 import MuiDialogContent from "@material-ui/core/DialogContent";
 import { withStyles } from "@material-ui/core/styles";
 import MuiFormControl from "@material-ui/core/FormControl";
-import Input from "@material-ui/core/Input";
-import MenuItem from "@material-ui/core/MenuItem";
-import ListItemText from "@material-ui/core/ListItemText";
 import Rating from "@material-ui/lab/Rating";
 import Radio from "@material-ui/core/Radio";
 import TextField from "@material-ui/core/TextField";
@@ -28,6 +25,8 @@ import SelectComponent from "../../Components/Forms/Select";
 import TypographyComponent from "../../Components/Typography/Typography";
 import { themes } from "../../themes";
 import { onLogout } from "../../Services/Auth.service";
+import Input from "@material-ui/core/Input";
+
 import "./service.css";
 const useSession = () => React.useContext(SessionContext);
 const limit = 10;
@@ -56,27 +55,13 @@ const useStyles = makeStyles((theme) => ({
 }));
 const FormControl = withStyles((theme) => ({
   root: {
-    width: "100%",
+    // width: "100%",
     "& .MuiOutlinedInput-root": {
-      borderRadius: "10px",
+      // borderRadius: "10px",
     },
   },
 }))(MuiFormControl);
-const MuiTextField = withStyles((theme) => ({
-  root: {
-    "& .MuiOutlinedInput-input": {
-      padding: "10px 14px",
-      border: `1px solid ${themes.default.colors.darkGray}`,
-      borderRadius: 10,
-    },
-    "& .MuiOutlinedInput-root": {
-      borderRadius: 10,
-      fontFamily: themes.default.fontFamily,
-      fontWeight: 500,
-      maxWidth: 100,
-    },
-  },
-}))(TextField);
+
 
 const Services = (props) => {
   const classes = useStyles();
@@ -146,145 +131,128 @@ const Services = (props) => {
   React.useEffect(() => {
     setSidebar(true);
     setSidebarContent(
-      <div style={{ marginLeft: 25, marginRight: 25 }}>
-        <FormControl variant="outlined" className={classes.formControl}>
-          <SelectComponent
-            name="country"
-            label="Select a country"
-            value={(country && country) || ""}
-            onChange={(e) => {
-              setCountry(e.target.value);
-              searchJobs();
-            }}
-            input={<Input2 />}
-          >
-            {countries &&
-              countries.map((m, i) => {
-                return (
-                  <MenuItem key={i} value={Number(m.country_id)}>
-                    <ListItemText primary={m.country_name} />
-                  </MenuItem>
-                );
-              })}
-          </SelectComponent>
-        </FormControl>
-        <FormControl
-          variant="outlined"
-          className={classes.formControl}
-          style={{ marginTop: 10 }}
-        >
-          <SelectComponent
-            name="provider_language"
-            label="Provider languag"
-            value={provider_language}
-            onChange={(e) => {
-              setProviderLanguage(e.target.value);
-              searchJobs();
-            }}
-            input={<Input2 />}
-          >
-            {languages &&
-              languages.map((m, i) => {
-                return (
-                  <MenuItem key={i} value={m.id_language}>
-                    <ListItemText primary={m.language_name} />
-                  </MenuItem>
-                );
-              })}
-          </SelectComponent>
-        </FormControl>
-        <TypographyComponent
-          title="Price per hour"
-          style={{ marginTop: 20 }}
-        ></TypographyComponent>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            marginTop: 20,
-          }}
-        >
-          <MuiTextField
-            type="text"
-            value={per_hour_rate_min}
-            placeholder="0.00$"
-            name="per_hour_rate_min"
-            id="per_hour_rate_min"
-            onChange={(e) => {
-              setperHourRateMin(e.target.value);
-              searchJobs();
-            }}
+      <div className='sidebar_inner'>
+        <div className='sidebar_row'>
+          <FormControl variant="outlined">
+            <SelectComponent
+              name="country"
+              label="Select a country"
+              value={(country && country) || ""}
+              onChange={(e) => {
+                setCountry(e.target.value);
+                searchJobs();
+              }}
+              native
+            >
+              {countries &&
+                countries.map((m, i) => (
+                  <option key={i} value={m.country_id}>
+                    {m.country_name}
+                  </option>
+                ))}
+            </SelectComponent>
+          </FormControl>
+        </div>
+        <div className='sidebar_row'>
+          <FormControl
             variant="outlined"
-          />
+          >
+            <SelectComponent
+              name="provider_language"
+              label="Provider language"
+              value={provider_language}
+              onChange={(e) => {
+                setProviderLanguage(e.target.value);
+                searchJobs();
+              }}
+              native
+            >
+              {languages &&
+                languages.map((l) => {
+                  return (
+                    <option key={l.id_language} value={l.id_language}>
+                      {l.language_name}
+                    </option>
+                  );
+                })}
+            </SelectComponent>
+          </FormControl>
+        </div>
+        <div className='sidebar_row select_price_range'>
+          <TypographyComponent
+            title="Price per hour"
+          ></TypographyComponent>
+          <div className="select_price_range_inner">
+            <TextField
+              type="text"
+              value={per_hour_rate_min}
+              placeholder="0.00$"
+              name="per_hour_rate_min"
+              id="per_hour_rate_min"
+              onChange={(e) => {
+                setperHourRateMin(e.target.value);
+              }}
+              variant="outlined"
+            />
 
-          <div>
             <span>To</span>
+
+            <TextField
+              type="text"
+              value={per_hour_rate_max}
+              placeholder="0.00$"
+              name="per_hour_rate_max"
+              id="per_hour_rate_max"
+              onChange={(e) => {
+                setperHourRateMax(e.target.value);
+              }}
+              variant="outlined"
+            />
           </div>
-          <MuiTextField
-            type="text"
-            value={per_hour_rate_max}
-            placeholder="0.00$"
-            name="per_hour_rate_max"
-            id="per_hour_rate_max"
-            onChange={(e) => {
-              setperHourRateMax(e.target.value);
-            }}
-            variant="outlined"
-          />
         </div>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            marginTop: 20,
-          }}
-        >
-          <TypographyComponent title="Service quality"></TypographyComponent>
-          <Rating
-            name="quality"
-            value={serviceQuality}
-            onChange={(event, newValue) => {
-              setServiceQuality(newValue);
-            }}
-            size="small"
-          />
+        <div className='sidebar_row'>
+          <div className="sidebar_review">
+            <TypographyComponent title="Service quality"></TypographyComponent>
+            <Rating
+              name="quality"
+              value={serviceQuality}
+              onChange={(event, newValue) => {
+                setServiceQuality(newValue);
+              }}
+              size="small"
+            />
+          </div>
+          <div className="sidebar_review">
+            <TypographyComponent title="Simpathy"></TypographyComponent>
+            <Rating
+              name="simpathy"
+              value={simpathy}
+              onChange={(event, newValue) => {
+                setSimpathy(newValue);
+              }}
+              size="small"
+            />
+          </div>
         </div>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            marginTop: 20,
-            marginBottom: 20,
-          }}
-        >
-          <TypographyComponent title="Simpathy"></TypographyComponent>
-          <Rating
-            name="simpathy"
-            value={simpathy}
-            onChange={(event, newValue) => {
-              setSimpathy(newValue);
-            }}
-            size="small"
-          />
+        <div className='sidebar_row sidebar_input_radio'>
+          <RadioGroup
+            aria-label="live_now"
+            name="live_now"
+            value={String(value)}
+            onChange={handleChangeRadio}
+          >
+            <FormControlLabel
+              value="true"
+              control={<Radio />}
+              label="Live service"
+            />
+            <FormControlLabel
+              value="false"
+              control={<Radio />}
+              label="Book service"
+            />
+          </RadioGroup>
         </div>
-        <RadioGroup
-          aria-label="live_now"
-          name="live_now"
-          value={String(value)}
-          onChange={handleChangeRadio}
-        >
-          <FormControlLabel
-            value="true"
-            control={<Radio />}
-            label="Live service"
-          />
-          <FormControlLabel
-            value="false"
-            control={<Radio />}
-            label="Book service"
-          />
-        </RadioGroup>
       </div>
     );
   }, [

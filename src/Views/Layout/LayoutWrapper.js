@@ -28,17 +28,21 @@ const LayoutWrapper = () => {
     <div>
       <CssBaseline />
       <OweraHeader open={mobileOpen} handleDrawerToggle={handleDrawerToggle} />
-      <div className="content-wrapper">
-        <div className="main-content">
-          <Hidden
-            xsDown={isSideBar}
-            smUp={!isSideBar}
-            implementation="css"
-            className="sidebar-wrapper"
-          >
-            <Sidebar open={mobileOpen} onClose={handleDrawerToggle} />
-          </Hidden>
-          <Layout sidebarOpen={mobileOpen} />
+      <div className="page_content">
+        <div className="container">
+          <div className="content_wrapper">
+            <Hidden
+              xsDown={isSideBar}
+              smUp={!isSideBar}
+              implementation="css"
+              className="sidebar_wrapper"
+            >
+              <Sidebar open={mobileOpen} onClose={handleDrawerToggle} />
+            </Hidden>
+            <div className="main_content">
+              <Layout sidebarOpen={mobileOpen} />
+            </div>
+          </div>
         </div>
 
         <Footer />

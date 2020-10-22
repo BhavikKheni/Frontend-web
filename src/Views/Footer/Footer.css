@@ -5,9 +5,6 @@
 .makeStyles-footer-155.footer {
     padding: 50px 30px 12px;
 }
-.container {
-    max-width: 1788px !important;
-}
 .footer_content {
     display: flex;
     justify-content: space-between;

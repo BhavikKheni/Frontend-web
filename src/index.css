@@ -25,9 +25,9 @@ body {
 /* common over */
 .content_wrapper {
   display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-  height: calc(100vh - 64px);
+  /* flex-direction: column; */
+  /* overflow-y: auto;
+  height: calc(100vh - 64px); */
 }
 .content_data {
   padding: 30px 0;
@@ -104,4 +104,24 @@ header button.MuiButtonBase-root ~ button {
 
 .form_wrapper .forgot-password {
   margin-bottom: 20px;
+}
+.select_down_arrow {
+  position: relative;
+}
+.select_down_arrow:after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 10px;
+  background-image: url('/static/media/select_arrow.a4396685.svg');
+  transition: all 0.3s ease-in-out 0s;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  right: 27px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.select_down_arrow svg.material-icons {
+  display: none;
 }

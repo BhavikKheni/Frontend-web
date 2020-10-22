@@ -189,10 +189,10 @@ const OweraHeader = (props) => {
         position="fixed"
         className={clsx(classes.appBar, classes.colorDefault)}
       >
-        <div class='container'>
-          <div class='header_inner'>
-            <div class="header_brand_wrapper">
-              <a href="/" class='header_brand'>
+        <div className='container'>
+          <div className='header_inner'>
+            <div className="header_brand_wrapper">
+              <a href="/" className='header_brand'>
                 <img src={OweraHeaderPic} alt="Owera"></img>
               </a>
               <IconButton
@@ -205,8 +205,8 @@ const OweraHeader = (props) => {
                 <MenuIcon />
               </IconButton>
             </div>
-            <div class="header_navbar_wrapper">
-              <div class="searchbar_wrapper">
+            <div className="header_navbar_wrapper">
+              <div className="searchbar_wrapper">
                 <InputBase
                   placeholder="Search"
                   inputProps={{ "aria-label": "search" }}
@@ -257,9 +257,9 @@ const OweraHeader = (props) => {
                 )}
               </div>
             </div>
-            <div class="header_button_wrapper">
+            <div className="header_button_wrapper">
               {!isLoggedIn ? (
-                <div class="login_button">
+                <div className="login_button">
                   <ButtonComponent
                     onClick={openSignInDialog}
                     title={t("loginButton")}
@@ -273,7 +273,7 @@ const OweraHeader = (props) => {
                   />
                 </div>
               ) : (
-                <div class="login_button">
+                <div className="login_button">
                   <ButtonComponent
                     style={{
                       backgroundColor: themes.default.colors.purple,

@@ -17,9 +17,7 @@ import "react-animated-slider/build/horizontal.css";
 import "./ServiceCard.css";
 const useStyles = makeStyles((theme) => ({
   root: {
-    maxWidth: 455,
-    width: "100%",
-    margin: 15,
+    
   },
   media: {
     height: 0,
