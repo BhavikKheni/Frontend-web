@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { withRouter, Link } from "react-router-dom";
+import { withRouter, Link, Route } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import { CircularProgress, MenuItem } from "@material-ui/core";
+import Breadcrumbs from "@material-ui/core/Breadcrumbs";
 import Grid from "@material-ui/core/Grid";
 import CheckIcon from "@material-ui/icons/Check";
+import ClearIcon from "@material-ui/icons/Clear";
+
 import { useTranslation } from "react-i18next";
 import { SessionContext } from "../../Provider/Provider";
 import { get } from "../../Services/Auth.service";
@@ -12,6 +15,7 @@ import TypographyComponent from "../../Components/Typography/Typography";
 import ProfilePic from "../../images/profile-image.png";
 import { themes } from "../../themes";
 import { useSidebar } from "../../Provider/SidebarProvider";
+import UpdateProfile from "./UpdateProfile";
 const useSession = () => React.useContext(SessionContext);
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -46,6 +50,7 @@ const ProfileView = (props) => {
   });
   let { user } = useSession();
   const { pathname } = props.location;
+  const { path } = props.match;
   const { t } = useTranslation();
   React.useEffect(() => {
     setSidebar(true);
@@ -56,10 +61,10 @@ const ProfileView = (props) => {
         <MenuItem>{t("home.nextBookings")}</MenuItem>
         <MenuItem>{t("home.myServiceHistory")}</MenuItem>
         <MenuItem
-          component={Link}
-          to="/profile"
-          selected={pathname === "/profile"}
-          className={classes.selected}
+        // component={Link}
+        // to="/profile"
+        // selected={pathname === "/profile"}
+        // className={classes.selected}
         >
           {t("home.myProfile")}
         </MenuItem>
@@ -67,6 +72,7 @@ const ProfileView = (props) => {
       </div>
     );
   }, [setSidebarContent, setSidebar, t, pathname, classes.selected]);
+
   useEffect(() => {
     async function getData() {
       setLoading(true);
@@ -82,9 +88,27 @@ const ProfileView = (props) => {
     }
     getData();
   }, [user]);
+
+  const newLng = (data) => {
+    setUserData({ ...userData, languages: [...userData.languages, ...data] });
+  };
+
+  const removeItem = (i) => {
+    const temp = [...userData.languages];
+    temp.splice(i, 1);
+    setUserData({ ...userData, languages: [...temp] });
+  };
+
   return (
     <div style={{ margin: 20 }}>
-      <TypographyComponent variant="h4" title="My profile" />
+      <Breadcrumbs aria-label="breadcrumb">
+        <Link to={path}>
+          <TypographyComponent variant="h4" title="My profile" />
+        </Link>
+        <Link to={`/profile/edit`}>
+          <TypographyComponent variant="h4" title="edit" />
+        </Link>
+      </Breadcrumbs>
       {isLoading ? (
         <div style={{ textAlign: "center" }}>
           <CircularProgress />
@@ -112,15 +136,21 @@ const ProfileView = (props) => {
               }}
             />
             <Grid style={{ display: "flex", marginTop: 10 }}>
-              <div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
                 <TypographyComponent
                   variant="h6"
-                  title={userData.country}
+                  title={userData.country_name}
                   style={{ marginLeft: 5 }}
                 />
                 <TypographyComponent
                   variant="h6"
-                  title={userData.timezone}
+                  title={userData.timezone_name}
                   style={{ marginLeft: 5 }}
                 />
               </div>
@@ -134,26 +164,37 @@ const ProfileView = (props) => {
             >
               {userData.languages &&
                 userData.languages.map((language, i) => (
-                  <span key={i}>{language}</span>
+                  <div
+                    key={i}
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <ClearIcon onClick={() => removeItem(i)} />
+                    <span>{language.language_name}</span>
+                    <span>{language.language_level}</span>
+                  </div>
                 ))}
             </Grid>
-            <Grid>
-              <ButtonComponent
-                title="Edit"
-                onClick={() => {
-                  const { history } = props;
-                  history.push("/profile/edit");
-                }}
-                style={{
-                  backgroundColor: themes.default.colors.orange,
-                  color: themes.default.colors.white,
-                  borderRadius: 10,
-                  height: 35,
-                  width: 80,
-                  marginTop: 10,
-                }}
-              />
-            </Grid>
+            {pathname !== "/profile/edit" && (
+              <Grid>
+                <div style={{ marginTop: 20 }}>
+                  <Link
+                    to={`/profile/edit`}
+                    style={{
+                      border: `1px solid ${themes.default.colors.orange}`,
+                      color: themes.default.colors.orange,
+                      textDecoration: "none",
+                      padding: "10px 20px 10px 20px",
+                      borderRadius: 10,
+                    }}
+                  >
+                    Edit
+                  </Link>
+                </div>
+              </Grid>
+            )}
           </Grid>
           <Grid item xs={12} md={8}>
             <TypographyComponent variant="h4" title="Employer Verfication" />
@@ -188,6 +229,10 @@ const ProfileView = (props) => {
           </Grid>
         </Grid>
       )}
+      <Route
+        path={`/profile/:edit`}
+        render={() => <UpdateProfile newLng={(data) => newLng(data)} languages={userData.languages}/>}
+      />
     </div>
   );
 };

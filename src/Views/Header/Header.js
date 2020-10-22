@@ -158,7 +158,7 @@ const OweraHeader = (props) => {
     onIsLoggedIn(true).then((res) => {
       if (res) {
         doLogin(res);
-        history.push(`/profile/${res.user.id_user}`);
+        history.push('/');
       }
     });
   };

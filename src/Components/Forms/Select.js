@@ -22,7 +22,6 @@ export default function SelectComponent(props) {
     MenuProps,
     label,
   } = props;
-
   return (
     <div>
       <Select

@@ -5,6 +5,8 @@ import MuiDialogContent from "@material-ui/core/DialogContent";
 import { withStyles } from "@material-ui/core/styles";
 import MuiFormControl from "@material-ui/core/FormControl";
 import Input from "@material-ui/core/Input";
+import MenuItem from "@material-ui/core/MenuItem";
+import ListItemText from "@material-ui/core/ListItemText";
 import Rating from "@material-ui/lab/Rating";
 import Radio from "@material-ui/core/Radio";
 import TextField from "@material-ui/core/TextField";
@@ -20,18 +22,25 @@ import InputComponent from "../../Components/Forms/Input";
 import ButtonComponent from "../../Components/Forms/Button";
 import { Formik } from "formik";
 import * as Yup from "yup";
+import { SessionContext } from "../../Provider/Provider";
 import { useSidebar } from "../../Provider/SidebarProvider";
 import SelectComponent from "../../Components/Forms/Select";
 import TypographyComponent from "../../Components/Typography/Typography";
 import { themes } from "../../themes";
+import { onLogout } from "../../Services/Auth.service";
 import "./service.css";
+const useSession = () => React.useContext(SessionContext);
 const limit = 10;
 const DialogContent = withStyles((theme) => ({
   root: {
     padding: theme.spacing(2),
   },
 }))(MuiDialogContent);
-
+const Input2 = withStyles((theme) => ({
+  root: {
+    width: "100%",
+  },
+}))(Input);
 const useStyles = makeStyles((theme) => ({
   formControl: {
     margin: theme.spacing(1),
@@ -71,31 +80,32 @@ const MuiTextField = withStyles((theme) => ({
 
 const Services = (props) => {
   const classes = useStyles();
+  let { logout } = useSession();
   const [isLoading, setIsLoading] = useState(false);
   const [jobs, setJobs] = useState([]);
   const [isUpcomingMoreData, setUpcomingMoreData] = useState(true);
   const [upcomingoffset, setUpcomingOffset] = useState(0);
   const [isUpcomingLoading, setUpcomingLoading] = useState(false);
   const [openResetPassword, setOpenResetPassword] = useState(false);
-  const [country, setCountry] = useState();
+  const [country, setCountry] = useState(214);
   const { setSidebarContent, setSidebar } = useSidebar();
   const [languages, setLanguages] = useState([]);
-  const [provider_language, setProviderLanguage] = useState();
-  const [per_hour_rate_min, setperHourRateMin] = useState();
-  const [per_hour_rate_max, setperHourRateMax] = useState();
+  const [provider_language, setProviderLanguage] = useState(50);
+  const [per_hour_rate_min, setperHourRateMin] = useState(10);
+  const [per_hour_rate_max, setperHourRateMax] = useState(99);
   const { history } = props;
   const [value, setValue] = useState(true);
   const [simpathy, setSimpathy] = useState();
   const [serviceQuality, setServiceQuality] = useState();
   const [countries, setCountries] = useState([]);
+
   const handleChangeRadio = (event) => {
     const value1 = event.target.value === "true" ? "true" : "false";
     setValue(value1);
   };
 
-  const searchJobs = useCallback(async () => {
-    setIsLoading(true);
-    const res = await search("/job/list", {
+  const getParams = useCallback(() => {
+    return {
       limit: limit,
       offset: 0,
       per_hour_rate_min: per_hour_rate_min,
@@ -105,31 +115,33 @@ const Services = (props) => {
       live_now: value,
       country: country,
       provider_language: provider_language,
-    }).catch((err) => {
-      console.log("Error", err);
-      setIsLoading(false);
-    });
-    const { data, stopped_at, type } = res || {};
-    if (data.offset === "0" && data.limit === "10") {
-      setJobs([]);
-    }
-    if (type === "ERROR") {
-      setUpcomingMoreData(false);
-      setIsLoading(false);
-      return;
-    }
-    setUpcomingOffset(stopped_at);
-    setJobs(data || []);
-    setIsLoading(false);
+    };
   }, [
     per_hour_rate_min,
     per_hour_rate_max,
-    provider_language,
-    country,
-    serviceQuality,
     simpathy,
+    serviceQuality,
     value,
+    country,
+    provider_language,
   ]);
+
+  const searchJobs = useCallback(async () => {
+    setIsLoading(true);
+    let res = await search("/job/list", getParams());
+    if (res) {
+      const { data, stopped_at, type } = res || {};
+
+      if (type === "ERROR") {
+        setUpcomingMoreData(false);
+        setIsLoading(false);
+        return;
+      }
+      setUpcomingOffset(stopped_at);
+      setJobs(data || []);
+      setIsLoading(false);
+    }
+  }, [getParams]);
 
   React.useEffect(() => {
     setSidebar(true);
@@ -140,15 +152,20 @@ const Services = (props) => {
             name="country"
             label="Select a country"
             value={(country && country) || ""}
-            onChange={(e) => setCountry(e.target.value)}
-            native
+            onChange={(e) => {
+              setCountry(e.target.value);
+              searchJobs();
+            }}
+            input={<Input2 />}
           >
             {countries &&
-              countries.map((m, i) => (
-                <option key={i} value={m.country_id}>
-                  {m.country_name}
-                </option>
-              ))}
+              countries.map((m, i) => {
+                return (
+                  <MenuItem key={i} value={Number(m.country_id)}>
+                    <ListItemText primary={m.country_name} />
+                  </MenuItem>
+                );
+              })}
           </SelectComponent>
         </FormControl>
         <FormControl
@@ -158,19 +175,20 @@ const Services = (props) => {
         >
           <SelectComponent
             name="provider_language"
-            label="Provider language"
+            label="Provider languag"
             value={provider_language}
             onChange={(e) => {
               setProviderLanguage(e.target.value);
+              searchJobs();
             }}
-            native
+            input={<Input2 />}
           >
             {languages &&
-              languages.map((l) => {
+              languages.map((m, i) => {
                 return (
-                  <option key={l.id_language} value={l.id_language}>
-                    {l.language_name}
-                  </option>
+                  <MenuItem key={i} value={m.id_language}>
+                    <ListItemText primary={m.language_name} />
+                  </MenuItem>
                 );
               })}
           </SelectComponent>
@@ -195,6 +213,7 @@ const Services = (props) => {
             id="per_hour_rate_min"
             onChange={(e) => {
               setperHourRateMin(e.target.value);
+              searchJobs();
             }}
             variant="outlined"
           />
@@ -266,39 +285,24 @@ const Services = (props) => {
             label="Book service"
           />
         </RadioGroup>
-        <ButtonComponent
-          title="Search"
-          className={classes.margin}
-          style={{
-            backgroundColor: themes.default.colors.white,
-            border: "1px solid rgba(25, 25, 25, 0.9)",
-            marginTop: 20,
-          }}
-          type="button"
-          size="large"
-          onClick={() => {
-            searchJobs();
-          }}
-        />
       </div>
     );
   }, [
-    setSidebarContent,
-    setSidebar,
-    country,
-    provider_language,
-    setperHourRateMax,
-    setperHourRateMin,
-    languages,
     per_hour_rate_min,
     per_hour_rate_max,
-    value,
+    provider_language,
+    classes.formControl,
+    countries,
+    country,
     serviceQuality,
     simpathy,
-    countries,
-    classes.formControl,
+    languages,
+    setSidebarContent,
+    setSidebar,
+    value,
     searchJobs,
   ]);
+
   useEffect(() => {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
@@ -306,6 +310,9 @@ const Services = (props) => {
 
     if (Boolean(forgotPassword) === true) {
       setOpenResetPassword(true);
+      onLogout(props).then((result) => {
+        logout();
+      });
     }
     async function fetchLanguages() {
       const res = await get("/languages/list");
@@ -325,7 +332,7 @@ const Services = (props) => {
     }
     countryList();
     searchJobs();
-  }, []);
+  }, [logout]);
   const onMore = async (path, offset, criteria = {}) => {
     setUpcomingLoading(true);
     let res = await search(path, {
@@ -344,7 +351,9 @@ const Services = (props) => {
       setUpcomingLoading(false);
     }
   };
-  const onResetPassword = () => {};
+  const onResetPassword = () => {
+    //update auth api call karva ni
+  };
   const onPhone = () => {};
   const onCalendar = () => {};
   const onJobTitle = (element) => {

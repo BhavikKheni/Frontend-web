@@ -4,6 +4,7 @@
   "logout": "Logout",
   "loginButton": "Log in",
   "signUpButton": "Sign up",
+  "close":"Close",
   "login": {
     "title": "Login",
     "signin": "Sign in",

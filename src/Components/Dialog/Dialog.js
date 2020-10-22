@@ -1,10 +1,12 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { makeStyles } from "@material-ui/core/styles";
 import Dialog from "@material-ui/core/Dialog";
 import MuiDialogTitle from "@material-ui/core/DialogTitle";
 import CloseIcon from "@material-ui/icons/Close";
 import IconButton from "@material-ui/core/IconButton";
 import TypographyComponent from "../../Components/Typography/Typography";
+import TooltipComponent from "../../Components/Tooltip/Tooltip";
 import "./Dialog.css";
 
 const styles = makeStyles((theme) => ({
@@ -44,7 +46,7 @@ const DialogTitle = (props) => {
     iconColor,
     ...other
   } = props;
-
+  const { t } = useTranslation();
   const classes1 = styles({
     header: {
       justifyContent: justifyContent,
@@ -78,14 +80,16 @@ const DialogTitle = (props) => {
         </div>
       </div>
       <div style={{ maxWidth: 140, width: "100%", display: "flex", flex: 1 }}>
-        <IconButton
-          aria-label="close"
-          className={classes1.closeButton}
-          onClick={onClose}
-          style={{ color: iconColor }}
-        >
-          <CloseIcon />
-        </IconButton>
+        <TooltipComponent title={t('close')}>
+          <IconButton
+            aria-label="close"
+            className={classes1.closeButton}
+            onClick={onClose}
+            style={{ color: iconColor }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </TooltipComponent>
       </div>
     </MuiDialogTitle>
   );

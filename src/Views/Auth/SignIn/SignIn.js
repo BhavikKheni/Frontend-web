@@ -1,4 +1,5 @@
 import React from "react";
+import { withRouter } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 import { FormControl } from "@material-ui/core";
 import Link from "@material-ui/core/Link";
@@ -31,7 +32,8 @@ const SignIn = (props) => {
   const { t } = useTranslation();
   const [open, setOpen] = React.useState(false);
   const [setRes, setTypeRes] = React.useState("");
-  const onSubmit = (values) => {
+
+  const onSubmit = (values,setSubmitting) => {
     login(values.email, values.password)
       .then((res) => {
         if (res && res.type === "SUCCESS") {
@@ -44,6 +46,7 @@ const SignIn = (props) => {
           handleCloseSignIn();
           setTypeRes(res);
         } else {
+          setSubmitting(false)
           setOpen(true);
           setTypeRes(res);
         }
@@ -90,11 +93,10 @@ const SignIn = (props) => {
               return errors;
             }}
             onSubmit={(values, { setSubmitting }) => {
-              onSubmit(values);
+              onSubmit(values,setSubmitting);
             }}
             validationSchema={Yup.object().shape({
-              password: Yup.string()
-                .required(t("validation.password"))
+              password: Yup.string().required(t("validation.password")),
             })}
           >
             {({ values, errors, handleChange, handleSubmit, isSubmitting }) => (
@@ -134,7 +136,7 @@ const SignIn = (props) => {
                         openForgotPasswordDialog();
                       }}
                     >
-                       {t("login.sendNewPassword")}
+                      {t("login.sendNewPassword")}
                     </Link>
                     <ButtonComponent
                       variant="contained"
@@ -165,4 +167,4 @@ const SignIn = (props) => {
     </div>
   );
 };
-export default SignIn;
+export default withRouter(SignIn);

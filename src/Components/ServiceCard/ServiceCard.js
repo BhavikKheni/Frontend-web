@@ -97,7 +97,7 @@ const ServiceCardComponent = (props) => {
             <div
               key={i}
               style={{
-                background: ` URL('${image}') no-repeat  center  center `,
+                background: ` URL('${image.image}') no-repeat  center  center `,
               }}
             >
               {imageRender()}
@@ -134,7 +134,7 @@ const ServiceCardComponent = (props) => {
             <ArrowForwardIosIcon style={{ marginLeft: 5, marginTop: 10 }} />
           </div>
           <div style={{ cursor: "pointer" }} onClick={onProviderName}>
-            <TooltipComponent title={providerName}>
+            <TooltipComponent title={providerName || ""}>
               <Typography
                 variant="h6"
                 style={{
