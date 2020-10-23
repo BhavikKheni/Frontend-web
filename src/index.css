@@ -24,10 +24,7 @@ body {
 }
 /* common over */
 .content_wrapper {
-  display: flex;
-  /* flex-direction: column; */
-  /* overflow-y: auto;
-  height: calc(100vh - 64px); */
+  height: 100%;
 }
 .content_data {
   padding: 30px 0;
@@ -67,6 +64,21 @@ header button.MuiButtonBase-root ~ button {
   margin-top: 0px;
   margin-bottom: 15px;
 } */
+.main_content {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  min-height: 50vh;
+  padding: 30px 20px;
+}
+
+.spinner_loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 /* card */
 .card_header {
   display: flex;
@@ -113,7 +125,7 @@ header button.MuiButtonBase-root ~ button {
   position: absolute;
   width: 20px;
   height: 10px;
-  background-image: url('/static/media/select_arrow.a4396685.svg');
+  background-image: url('./Images/select_arrow.svg');
   transition: all 0.3s ease-in-out 0s;
   background-size: cover;
   background-repeat: no-repeat;

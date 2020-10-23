@@ -1,4 +1,5 @@
 import React from "react";
+import clsx from "clsx";
 import Card from "@material-ui/core/Card";
 import { Typography } from "@material-ui/core/";
 import CardActions from "@material-ui/core/CardActions";
@@ -57,101 +58,98 @@ const ServiceCardComponent = (props) => {
       <div className="card-slider-item">
         <div>
           <div className="service">
+            <div className="service_text">
+              <TypographyComponent
+                title="Service quality"
+                className="service-quality"
+              />
+            </div>
             <TypographyComponent
-              title="Service quality"
-              className="service-quality"
+              // title={service_quality_rating}
+              title="4.5"
             />
-            <TypographyComponent
-              title={service_quality_rating}
-              style={{ marginLeft: 5 }}
+            <StarRateRounded
+              className="card_start_review"
             />
-            <StarRateRounded style={{ marginLeft: 5 }} />
           </div>
           <div className="service">
-            <TypographyComponent title="Simpathy" />
-            <TypographyComponent
-              title={sympathy_rating}
-              style={{ marginLeft: 5 }}
+            <div className="service_text">
+              <TypographyComponent title="Simpathy" />
+            </div>
+              <TypographyComponent
+                // title={sympathy_rating}
+                title="4.5"
+              />
+            <StarRateRounded
+              className="card_start_review"
             />
-            <StarRateRounded style={{ marginLeft: 5 }} />
           </div>
         </div>
         <div className="card-buttons">
           <div className="phoneIconCard" onClick={onPhone}>
-            <PhoneIcon style={{ color: "#fff" }} />
+            <PhoneIcon/>
           </div>
           <div className="calendarIconCard" onClick={onCalendar}>
-            <CalendarTodayIcon style={{ color: "#fff" }} />
+            <CalendarTodayIcon/>
           </div>
         </div>
       </div>
     );
   };
   return (
-    <Card className={classes.root}>
-      <Slider>
-        {images.length > 0 ? (
-          images.map((image, i) => (
+    <Card className={clsx(classes.root, 'job_card')}>
+      <div className="job_card_inner">
+        <Slider>
+          {images.length > 0 ? (
+            images.map((image, i) => (
+              <div
+                key={i}
+                style={{
+                  background: ` URL('${image.image}') no-repeat  center  center `,
+                }}
+              >
+                {imageRender()}
+              </div>
+            ))
+          ) : (
             <div
-              key={i}
               style={{
-                background: ` URL('${image.image}') no-repeat  center  center `,
+                background: ` URL('${DefaultServiceImage}') no-repeat  center  center `,
               }}
+              className="previousButton nextButton"
             >
               {imageRender()}
             </div>
-          ))
-        ) : (
-          <div
-            style={{
-              background: ` URL('${DefaultServiceImage}') no-repeat  center  center `,
-            }}
-            className="previousButton nextButton"
-          >
-            {imageRender()}
+          )}
+        </Slider>
+        <CardActions disableSpacing className={"card_ratings"}>
+          <div className="card-actions">
+            <div className="card-actions-title" onClick={onJobTitle}>
+              <TooltipComponent title={title}>
+                <Typography
+                className="card_title"
+                >
+                  {title}
+                </Typography>
+              </TooltipComponent>
+            </div>
+            <div style={{ cursor: "pointer" }} onClick={onProviderName}>
+              <TooltipComponent title={providerName || ""}>
+                <Typography
+                  className="card_description"
+                >
+                  {/* {providerName} */}
+                  {'Provider name'}
+                </Typography>
+              </TooltipComponent>
+            </div>
           </div>
-        )}
-      </Slider>
-      <CardActions disableSpacing className={"card_ratings"}>
-        <div className="card-actions">
-          <div className="card-actions-title" onClick={onJobTitle}>
-            <TooltipComponent title={title}>
-              <Typography
-                variant="h4"
-                noWrap
-                style={{
-                  fontSize: 20,
-                  color: themes.default.colors.white,
-                  fontWeight: 500,
-                  width: 115,
-                }}
-              >
-                {title}
-              </Typography>
-            </TooltipComponent>
-            <ArrowForwardIosIcon style={{ marginLeft: 5, marginTop: 10 }} />
+          <div className="card-status">
+            <span className="live-now"> Live now</span>
+            <span className="price">{`${price}/h`}</span>
           </div>
-          <div style={{ cursor: "pointer" }} onClick={onProviderName}>
-            <TooltipComponent title={providerName || ""}>
-              <Typography
-                variant="h6"
-                style={{
-                  fontWeight: "normal",
-                  color: themes.default.colors.white,
-                  width: 115,
-                }}
-                noWrap
-              >
-                {providerName}
-              </Typography>
-            </TooltipComponent>
-          </div>
-        </div>
-        <div className="card-actions" style={{ marginTop: 5 }}>
-          <span className="live-now"> Live now</span>
-          <span className="price">{`${price}/h`}</span>
-        </div>
-      </CardActions>
+        </CardActions>
+      </div>
     </Card>
   );
 };

@@ -1,97 +1,180 @@
 .slider {
+  border-radius: 8px 8px 0 0;
   height: 237px;
+}
+polygon {
+  fill: #fff;
+}
+.job_card {
+  max-width: calc(33.33% - 13px);
+  width: 100%;
+  box-shadow: 0px 6px 10px 4px rgba(0, 0, 0, 0.15) !important; 
+  margin: 0 0 20px;
+}
+.job_card_inner {
+  height: 303px;
+  overflow: hidden;
+}
+/* .slider a.previousButton,
+.slider a.nextButton {
+  display: none;
+} */
+.slider a.previousButton, .slider a.nextButton {
+  padding: 0;
+  top: 92px;
+  background-repeat: no-repeat;
+}
+.slider a.previousButton svg, .slider a.nextButton svg {
+  opacity: 0;
+}
+.slider a.previousButton {
+  background-image: url('../../Images/back_arrow_white.svg');
+}
+.slider a.nextButton {
+  background-image: url('../../Images/next_arrow_white.svg');
 }
 .card-slider-item {
   position: absolute;
+  left: 0;
   bottom: 10px;
   display: flex;
   justify-content: space-between;
+  align-items: baseline;
   width: 100%;
-  max-width: 455px;
-  align-items: center;
-  margin: 20px;
-}
-.service-quality {
-  margin-top: 10px;
-}
-.card-buttons {
-  display: flex;
-  margin-right: 20px;
-}
-.card-actions-title {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
+  padding: 0 13px;
 }
 .service {
   display: flex;
   color: white;
 }
+.service + .service {
+  margin-top: 3px;
+}
+.service_text {
+  flex: 1 0 auto;
+  margin-right: 6px;
+}
+.service p {
+  font-family: 'Rubik';
+  font-weight: 500;
+  font-size: 12px;
+  line-height: normal;
+  letter-spacing: 0.02em;
+  color: #000000;
+  -webkit-text-fill-color: #fff;
+  -webkit-text-stroke-width: 0.4px;
+  -webkit-text-stroke-color: #000;
+}
+.service .card_start_review {
+  width: 12px;
+  height: 12px;
+}
+.card-buttons {
+  display: flex;
+  color: #fff;
+}
+.card-buttons > div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
 .phoneIconCard {
   background-color: #1ab900;
-  padding: 10px;
-  border-radius: 34px;
-  margin-right: 10px;
+  border-radius: 50%;
   height: 48px;
   width: 48px;
-  text-align: center;
 }
 .calendarIconCard {
   background-color: #0038ff;
-  padding: 10px;
   border-radius: 10px;
-  margin-right: 10px;
   height: 48px;
   width: 48px;
-  text-align: center;
+  margin-left: 8px;
 }
-polygon {
-  fill: #fff;
+.phoneIconCard svg {
+  width: 25px;
+  height: 25px;
 }
-.slider a.previousButton,
-.slider a.nextButton {
-  display: none;
+.calendarIconCard svg {
+  width: 27px;
+  height: 27px;
 }
-
-.card_ratings {
+.job_card_inner .card-actions {
+  display: flex;
+  flex-direction: column;
+}
+.job_card_inner .card_ratings {
   justify-content: space-between;
   background: rgba(101, 101, 101, 0.7);
   box-shadow: 0px 6px 10px 4px rgba(0, 0, 0, 0.15);
   color: #fff;
+  height: 65px;
+  padding: 8px 13px;
+  border-radius: 0px 0px 8px 8px;
 }
-.card-actions {
+.card-actions-title {
+  position: relative;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  padding-right: 20px;
 }
-.price {
-  font-family: Rubik;
-  font-style: normal;
-  font-weight: bold;
+.card-actions-title:after {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  content: '';
+  height: 20px;
+  width: 9px;
+  background-image: url('../../Images/next_arrow_white.svg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+.card_ratings .card_title {
+  font-weight: 500;
   font-size: 20px;
   line-height: 24px;
+  font-family: Rubik;
   letter-spacing: 0.02em;
-  color: #ffffff;
-  margin-top: 10;
+  color: #fff;
+  white-space: nowrap;
+  max-width: 100%;
+  text-overflow: ellipsis;
+}
+.card_ratings .card_description {
+  font-size: 14px;
+  line-height: normal;
+  white-space: nowrap;
+  max-width: 100%;
+  text-overflow: ellipsis;
+}
+.card-status {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
 }
 .live-now {
   font-family: Rubik;
   font-style: normal;
   font-weight: bold;
   font-size: 14px;
-  line-height: 24px;
+  line-height: normal;
+  letter-spacing: 0.02em;
+  color: #1ab900;
+  -webkit-text-fill-color: #fff;
+  -webkit-text-stroke-width: 0.7px;
+  -webkit-text-stroke-color: #1ab900;
+}
+.price {
+  font-family: Rubik;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 20px;
+  line-height: normal;
   letter-spacing: 0.02em;
   color: #ffffff;
-  text-shadow: 2px 2px #1ab900;
-}
-.card_ratings.MuiCardActions-root {
-  padding: 10px 20px 10px 20px;
-}
-
-
-
-.makeStyles-root-256 {
-  max-width: 33.33%;
-  width: 100%;
-  margin: 0;
-  padding: 0 15px;
+  margin-top: 3px;
 }

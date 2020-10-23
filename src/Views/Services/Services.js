@@ -117,7 +117,7 @@ const Services = (props) => {
 
   const searchJobs = useCallback(async () => {
     setIsLoading(true);
-    let res = await search("/job/list", getParams());
+    let res = await search("/service/list", getParams());
     if (res) {
       const { data, stopped_at, type } = res || {};
 
@@ -344,10 +344,15 @@ const Services = (props) => {
 
   return (
     <div>
-      {isLoading ? (
-        <div style={{ textAlign: "center" }}>
-          <Spinner />
+      <div className="promotion_text">
+        <p>Hi, Your email isn’t verified yet. Please verify to use all the services.</p>
+        <div className="promotion_links">
+          <a href="javscript:void(0)">Resend email confirmation link</a>
+          <a href="javscript:void(0)" className="close_icon"><span class="material-icons">close</span></a>
         </div>
+      </div>
+      {isLoading ? (
+        <Spinner />
       ) : (
         <div
           style={{

@@ -87,7 +87,8 @@
     position: relative;
     letter-spacing: 0.02em;
     line-height: 30px;
-    padding: 3px 15px;
+    padding: 3px 0;
+    justify-content: center;
 }
 
 .header_navbar a:first-child {
@@ -95,7 +96,8 @@
 }
 
 .header_navbar a:not(:first-child) {
-    margin: 0 15px;
+    margin: 0 20px;
+    min-width: 75px;
 }
 
 .header_navbar a:hover,
@@ -122,7 +124,7 @@
 
 .header_navbar a.Mui-selected {
     cursor: default;
-    position: none;
+    position: relative;
     border: none;
 }
 

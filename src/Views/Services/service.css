@@ -1,9 +1,50 @@
+.promotion_text {
+  font-family: 'Rubik';
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 30px;
+  letter-spacing: 0.02em;
+  color: #303030;
+  background: rgba(239, 243, 44, 0.8);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 14px 0 33px;
+  min-height: 60px;
+  position: absolute;
+  top: 0;
+  left: 20px;
+  width: calc(100% - 40px);
+  z-index: 1;
+  border-radius: 0 0 5px 5px;
+}
+.promotion_links {
+  display: flex;
+  align-items: center;
+}
+.promotion_links a {
+  font-weight: bold;
+  font-size: 16px;
+  color: #303030;
+  letter-spacing: 0.03em;
+  line-height: normal;
+}
+.promotion_links a:hover {
+  opacity: 0.8;
+  text-decoration: none;
+}
+.promotion_links .close_icon {
+  margin-left: 14px;
+}
+.promotion_links .close_icon span {
+  font-size: 44px;
+}
 .sidebar_wrapper {
   max-width: 290px;
   width: 100%;
   border-right: 1px solid #BDBDBD;
-  padding-top: 30px;
-  padding-right: 45px;
+  padding: 30px 45px 30px 0;
 }
 .sidebar_wrapper .makeStyles-drawer-30 {
   width: 100%;

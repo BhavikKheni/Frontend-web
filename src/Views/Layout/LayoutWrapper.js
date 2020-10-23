@@ -29,7 +29,7 @@ const LayoutWrapper = () => {
       <CssBaseline />
       <OweraHeader open={mobileOpen} handleDrawerToggle={handleDrawerToggle} />
       <div className="page_content">
-        <div className="container">
+        <div className="container small_screen_full_height">
           <div className="content_wrapper">
             <Hidden
               xsDown={isSideBar}
