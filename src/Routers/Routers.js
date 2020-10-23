@@ -7,7 +7,9 @@ import { SessionContext } from "../Provider/Provider.js";
 import ProfileProvider from '../Views/Profile/ProfileProvider';
 import Home from "../Views/Home/Home";
 import Work from "../Views/Work/Work";
+
 const useSession = () => React.useContext(SessionContext);
+
 const ProtectedRoute = ({ component: Component, ...rest }) => {
   const { isLoggedIn } = useSession();
   return (
@@ -25,9 +27,11 @@ const ProtectedRoute = ({ component: Component, ...rest }) => {
 };
 
 const CreateRoutes = () => {
+
   const { loading } = useSession();
 
   if (loading) return <p>Loading...</p>;
+
   return (
     <Switch>
       <Route exact path="/" component={Services} />
@@ -40,4 +44,5 @@ const CreateRoutes = () => {
     </Switch>
   );
 };
+
 export default CreateRoutes;

@@ -25,7 +25,7 @@ import SignIn from "../Auth/SignIn/SignIn";
 import SignUp from "../Auth/SignUp/SignUp";
 import ForgotPassword from "../Auth/ForgotPassword/ForgotPassword";
 import "react-flags-select/css/react-flags-select.css";
-import OweraHeaderPic from "../../images/Owera-logo.png";
+import OweraHeaderPic from "../../Images/Owera-logo.png";
 import DialogComponent from "../../Components/Dialog/Dialog";
 import "./Header.css";
 const useSession = () => React.useContext(SessionContext);
@@ -240,8 +240,8 @@ const OweraHeader = (props) => {
                 </MenuItem>
                 <MenuItem
                   component={RouterLink}
-                  to="/create-services"
-                  selected={pathname === "/create-services"}
+                  to="/work"
+                  selected={pathname === "/work"}
                 >
                   Work
                 </MenuItem>

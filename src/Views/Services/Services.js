@@ -28,18 +28,22 @@ import { onLogout } from "../../Services/Auth.service";
 import Input from "@material-ui/core/Input";
 
 import "./service.css";
+
 const useSession = () => React.useContext(SessionContext);
 const limit = 10;
+
 const DialogContent = withStyles((theme) => ({
   root: {
     padding: theme.spacing(2),
   },
 }))(MuiDialogContent);
+
 const Input2 = withStyles((theme) => ({
   root: {
     width: "100%",
   },
 }))(Input);
+
 const useStyles = makeStyles((theme) => ({
   formControl: {
     margin: theme.spacing(1),
@@ -53,6 +57,7 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1),
   },
 }));
+
 const FormControl = withStyles((theme) => ({
   root: {
     // width: "100%",
@@ -61,7 +66,6 @@ const FormControl = withStyles((theme) => ({
     },
   },
 }))(MuiFormControl);
-
 
 const Services = (props) => {
   const classes = useStyles();
@@ -301,6 +305,7 @@ const Services = (props) => {
     countryList();
     searchJobs();
   }, [logout]);
+  
   const onMore = async (path, offset, criteria = {}) => {
     setUpcomingLoading(true);
     let res = await search(path, {
@@ -319,14 +324,18 @@ const Services = (props) => {
       setUpcomingLoading(false);
     }
   };
+  
   const onResetPassword = () => {
     //update auth api call karva ni
   };
+
   const onPhone = () => {};
   const onCalendar = () => {};
+  
   const onJobTitle = (element) => {
     history.push("/create-services", { job: element });
   };
+  
   const onProviderName = (element) => {
     history.push("/profile-provider", {
       userId: element.assigned_to,
