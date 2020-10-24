@@ -125,7 +125,7 @@ header button.MuiButtonBase-root ~ button {
   position: absolute;
   width: 20px;
   height: 10px;
-  background-image: url('./Images/select_arrow.svg');
+  background-image: url('./images/select_arrow.svg');
   transition: all 0.3s ease-in-out 0s;
   background-size: cover;
   background-repeat: no-repeat;

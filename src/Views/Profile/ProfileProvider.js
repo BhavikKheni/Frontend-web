@@ -14,7 +14,7 @@ import { SessionContext } from "../../Provider/Provider";
 import { get } from "../../Services/Auth.service";
 import ButtonComponent from "../../Components/Forms/Button";
 import TypographyComponent from "../../Components/Typography/Typography";
-import ProfilePic from "../../Images/profile-image.png";
+import ProfilePic from "../../images/profile-image.png";
 import { themes } from "../../themes";
 import { useSidebar } from "../../Provider/SidebarProvider";
 import { useTranslation } from "react-i18next";

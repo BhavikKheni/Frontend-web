@@ -28,10 +28,10 @@ polygon {
   opacity: 0;
 }
 .slider a.previousButton {
-  background-image: url('../../Images/back_arrow_white.svg');
+  background-image: url('../../images/back_arrow_white.svg');
 }
 .slider a.nextButton {
-  background-image: url('../../Images/next_arrow_white.svg');
+  background-image: url('../../images/next_arrow_white.svg');
 }
 .card-slider-item {
   position: absolute;
@@ -128,7 +128,7 @@ polygon {
   content: '';
   height: 20px;
   width: 9px;
-  background-image: url('../../Images/next_arrow_white.svg');
+  background-image: url('../../images/next_arrow_white.svg');
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
