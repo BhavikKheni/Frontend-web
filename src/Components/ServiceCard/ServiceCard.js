@@ -67,37 +67,45 @@ const ServiceCardComponent = (props) => {
                 className="service-quality"
               />
             </div>
-            <TypographyComponent
-              title={service_quality_rating}
-            />
-            <StarRateRounded
-              className="card_start_review"
-            />
+            <div className="service_review">
+              <TypographyComponent
+                title={service_quality_rating}
+              />
+              <StarBorderIcon
+                className="card_start_review"
+              />
+            </div>
           </div>
           <div className="service">
             <div className="service_text">
               <TypographyComponent title="Simpathy" />
             </div>
+            <div className="service_review">
               <TypographyComponent
                 // title={sympathy_rating}
                 title="4.5"
               />
-            <StarRateRounded
-              className="card_start_review"
-            />
+              <StarBorderIcon
+                className="card_start_review"
+              />
+            </div>
           </div>
         </div>
         <div className="card-buttons">
         {service_provider_live_now ? (
-          <div className="phoneIconCard" onClick={onPhone}>
-            <PhoneIcon/>
-          </div>
+          <React.Fragment>
+            <div className="phoneIconCard" onClick={onPhone}>
+              <PhoneIcon/>
+            </div>
+            <div className="calendarIconCard" onClick={onCalendar}>
+              <CalendarTodayIcon/>
+            </div>
+          </React.Fragment>
         ):(
-          <div className="calendarIconCard" onClick={onCalendar}>
+          <div className="calendar_book_service" onClick={onCalendar}>
             <CalendarTodayIcon/>
             <TypographyComponent
                 title="Book Service"
-                style={{ color: "#fff", fontSize: 12, marginLeft: 10 }}
             />
           </div>
         )}

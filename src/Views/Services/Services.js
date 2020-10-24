@@ -367,7 +367,7 @@ const Services = (props) => {
   };
 
   return (
-    <div>
+    <div className="service_card_content">
       <div className="promotion_text">
         <p>Hi, Your email isn’t verified yet. Please verify to use all the services.</p>
         <div className="promotion_links">
@@ -378,13 +378,7 @@ const Services = (props) => {
       {isLoading ? (
         <Spinner />
       ) : (
-        <div
-          style={{
-            display: "flex",
-            flexFlow: "row wrap",
-            justifyContent: "space-between",
-          }}
-        >
+        <div className="service_card_wrapper">
           {services &&
             services.map((element, index) => (
               <ServiceCardComponent
@@ -423,7 +417,6 @@ const Services = (props) => {
                 })
               }
             >
-              <ExpandMore />
             </div>
           )}
         </div>

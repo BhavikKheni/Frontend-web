@@ -25,7 +25,7 @@ function DefaultLayout(props) {
   const classes = useStyles();
   return (
     <main
-      className={clsx(classes.content, {
+      className={clsx(classes.content, 'main_content_inner', {
         [classes.contentShift]: sidebarOpen,
       })}
     >

@@ -4,18 +4,7 @@ import Drawer from "@material-ui/core/Drawer";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import Toolbar from "@material-ui/core/Toolbar";
 import { useSidebar } from "../../Provider/SidebarProvider";
-const drawerWidth = 270;
 const useStyles = makeStyles((theme) => ({
-  drawer: {
-    width: drawerWidth,
-    // [theme.breakpoints.up("sm")]: {
-    //   width: drawerWidth,
-    //   flexShrink: 0,
-    // },
-  },
-  drawerPaper: {
-    width: drawerWidth,
-  },
   drawerContainer: {
     overflow: "auto",
     height:'100%'

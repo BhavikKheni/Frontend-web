@@ -1,36 +1,55 @@
-.slider {
-  border-radius: 8px 8px 0 0;
-  height: 237px;
-}
 polygon {
   fill: #fff;
 }
-.job_card {
-  max-width: calc(33.33% - 13px);
+.service_card_content {
+  height: 100%;
+  /* display: flex;
+  align-items: center;
+  justify-content: center; */
+}
+.service_card_wrapper {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin: 0 -11px;
+}
+.service_card_wrapper .job_card {
+  max-width: 33.33%;
   width: 100%;
-  box-shadow: 0px 6px 10px 4px rgba(0, 0, 0, 0.15) !important; 
-  margin: 0 0 20px;
+  box-shadow: none;
+  padding: 0 11px;
 }
-.job_card_inner {
+.service_card_wrapper .job_card:last-of-type {
+  margin-right: auto;
+}
+.service_card_wrapper .job_card .job_card_inner {
   height: 303px;
-  overflow: hidden;
+  margin-bottom: 20px;
 }
-/* .slider a.previousButton,
-.slider a.nextButton {
-  display: none;
-} */
-.slider a.previousButton, .slider a.nextButton {
+.service_card_wrapper .job_card .job_card_inner .slider {
+  border-radius: 8px 8px 0 0;
+  box-shadow: 0px 6px 10px 4px rgba(0, 0, 0, 0.15);
+  height: 237px;
+}
+.service_card_wrapper .job_card .job_card_inner .slider a.previousButton{
+  left: 15px;
+}
+.service_card_wrapper .job_card .job_card_inner .slider a.nextButton {
+  right: 15px;
+}
+.service_card_wrapper .job_card .job_card_inner .slider a.previousButton, .service_card_wrapper .job_card .job_card_inner .slider a.nextButton {
   padding: 0;
-  top: 92px;
+  top: 106px;
   background-repeat: no-repeat;
+  cursor: pointer;
 }
-.slider a.previousButton svg, .slider a.nextButton svg {
+.service_card_wrapper .job_card .job_card_inner .slider a.previousButton svg, .service_card_wrapper .job_card .job_card_inner .slider a.nextButton svg {
   opacity: 0;
 }
-.slider a.previousButton {
+.service_card_wrapper .job_card .job_card_inner .slider a.previousButton {
   background-image: url('../../images/back_arrow_white.svg');
 }
-.slider a.nextButton {
+.service_card_wrapper .job_card .job_card_inner .slider a.nextButton {
   background-image: url('../../images/next_arrow_white.svg');
 }
 .card-slider-item {
@@ -52,7 +71,7 @@ polygon {
 }
 .service_text {
   flex: 1 0 auto;
-  margin-right: 6px;
+  margin-right: 10px;
 }
 .service p {
   font-family: 'Rubik';
@@ -65,9 +84,15 @@ polygon {
   -webkit-text-stroke-width: 0.4px;
   -webkit-text-stroke-color: #000;
 }
+.service_review {
+  min-width: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
 .service .card_start_review {
-  width: 12px;
-  height: 12px;
+  width: 15px;
+  height: 15px;
 }
 .card-buttons {
   display: flex;
@@ -78,6 +103,24 @@ polygon {
   align-items: center;
   justify-content: center;
   cursor: pointer;
+}
+.calendar_book_service {
+  background: #0038FF;
+  backdrop-filter: blur(25px);
+  border-radius: 10px;
+  min-width: 106px;
+  min-height: 50px;
+}
+.calendar_book_service p {
+  font-family: 'Rubik';
+  letter-spacing: 0.02em;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 13px;
+  max-width: 50px;
+  width: 100%;
+  margin-top: 2px;
+  margin-left: 6px;
 }
 .phoneIconCard {
   background-color: #1ab900;
@@ -92,6 +135,10 @@ polygon {
   width: 48px;
   margin-left: 8px;
 }
+.calendar_book_service svg {
+  width: 30px;
+  height: 30px;
+}
 .phoneIconCard svg {
   width: 25px;
   height: 25px;
@@ -100,23 +147,22 @@ polygon {
   width: 27px;
   height: 27px;
 }
-.job_card_inner .card-actions {
+/* .service_card_wrapper .job_card .job_card_inner .card-actions {
   display: flex;
   flex-direction: column;
-}
-.job_card_inner .card_ratings {
+} */
+.service_card_wrapper .job_card .job_card_inner .card_ratings {
   justify-content: space-between;
   background: rgba(101, 101, 101, 0.7);
   box-shadow: 0px 6px 10px 4px rgba(0, 0, 0, 0.15);
   color: #fff;
-  height: 65px;
+  height: 66px;
   padding: 8px 13px;
   border-radius: 0px 0px 8px 8px;
+  position: relative;
 }
 .card-actions-title {
   position: relative;
-  display: flex;
-  align-items: center;
   cursor: pointer;
   padding-right: 20px;
 }
@@ -140,9 +186,12 @@ polygon {
   font-family: Rubik;
   letter-spacing: 0.02em;
   color: #fff;
+  display: block;
+  max-width: 200px;
+  width: 100%;
   white-space: nowrap;
-  max-width: 100%;
   text-overflow: ellipsis;
+  overflow: hidden;
 }
 .card_ratings .card_description {
   font-size: 14px;
@@ -156,17 +205,25 @@ polygon {
   flex-direction: column;
   align-items: flex-end;
 }
-.live-now {
+.live-now, .offline {
   font-family: Rubik;
   font-style: normal;
   font-weight: bold;
   font-size: 14px;
   line-height: normal;
   letter-spacing: 0.02em;
+}
+.live-now {
   color: #1ab900;
   -webkit-text-fill-color: #fff;
   -webkit-text-stroke-width: 0.7px;
   -webkit-text-stroke-color: #1ab900;
+}
+.offline {
+  color: #ff0000;
+  -webkit-text-fill-color: #fff;
+  -webkit-text-stroke-width: 0.7px;
+  -webkit-text-stroke-color: #ff0000;
 }
 .price {
   font-family: Rubik;
@@ -178,14 +235,3 @@ polygon {
   color: #ffffff;
   margin-top: 3px;
 }
-.offline {
-  font-family: Rubik;
-  font-style: normal;
-  font-weight: bold;
-  font-size: 14px;
-  line-height: 24px;
-  letter-spacing: 0.02em;
-  color: #ffffff;
-  text-shadow: 2px 2px #ff0000;
-}
-
