@@ -48,7 +48,7 @@ const ProfileView = (props) => {
     newPassword: null,
     languages: [],
   });
-  let { user } = useSession();
+  let { user, isLoggedIn } = useSession();
   const { pathname } = props.location;
   const { path } = props.match;
   const { t } = useTranslation();
@@ -56,22 +56,29 @@ const ProfileView = (props) => {
     setSidebar(true);
     setSidebarContent(
       <div style={{ margin: 20 }}>
-        <MenuItem>{t("home.messages")}</MenuItem>
-        <MenuItem>{t("home.myCalendar")}</MenuItem>
-        <MenuItem>{t("home.nextBookings")}</MenuItem>
-        <MenuItem>{t("home.myServiceHistory")}</MenuItem>
-        <MenuItem
-        // component={Link}
-        // to="/profile"
-        // selected={pathname === "/profile"}
-        // className={classes.selected}
-        >
-          {t("home.myProfile")}
-        </MenuItem>
-        <MenuItem>{t("home.paymentMethods")}</MenuItem>
+        {isLoggedIn && (
+          <React.Fragment>
+            <MenuItem>{t("home.messages")}</MenuItem>
+            <MenuItem>{t("home.myCalendar")}</MenuItem>
+            <MenuItem>{t("home.nextBookings")}</MenuItem>
+            <MenuItem>{t("home.myServiceHistory")}</MenuItem>
+            <MenuItem>{t("home.myProfile")}</MenuItem>
+            <MenuItem>{t("home.paymentMethods")}</MenuItem>
+          </React.Fragment>
+        )}
+        <MenuItem>{t("home.feedback")}</MenuItem>
+        <MenuItem>{t("home.faq")}</MenuItem>
+        <MenuItem>{t("home.support")}</MenuItem>
       </div>
     );
-  }, [setSidebarContent, setSidebar, t, pathname, classes.selected]);
+  }, [
+    setSidebarContent,
+    setSidebar,
+    t,
+    pathname,
+    classes.selected,
+    isLoggedIn,
+  ]);
 
   useEffect(() => {
     async function getData() {
@@ -86,8 +93,10 @@ const ProfileView = (props) => {
         setLoading(false);
       }
     }
-    getData();
-  }, [user]);
+    if (isLoggedIn) {
+      getData();
+    }
+  }, [user, isLoggedIn]);
 
   const newLng = (data) => {
     setUserData({ ...userData, languages: [...userData.languages, ...data] });
@@ -105,9 +114,11 @@ const ProfileView = (props) => {
         <Link to={path}>
           <TypographyComponent variant="h4" title="My profile" />
         </Link>
-        <Link to={`/profile/edit`}>
-          <TypographyComponent variant="h4" title="edit" />
-        </Link>
+        {pathname === "/profile/edit" && (
+          <Link to={`/profile/edit`}>
+            <TypographyComponent variant="h4" title="edit" />
+          </Link>
+        )}
       </Breadcrumbs>
       {isLoading ? (
         <div style={{ textAlign: "center" }}>
@@ -231,7 +242,12 @@ const ProfileView = (props) => {
       )}
       <Route
         path={`/profile/:edit`}
-        render={() => <UpdateProfile newLng={(data) => newLng(data)} languages={userData.languages}/>}
+        render={() => (
+          <UpdateProfile
+            newLng={(data) => newLng(data)}
+            languages={userData.languages}
+          />
+        )}
       />
     </div>
   );

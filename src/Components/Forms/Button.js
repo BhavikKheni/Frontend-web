@@ -22,6 +22,7 @@ const ButtonComponent = (props) => {
   const classes = useStyles();
   const {
     endIcon,
+    startIcon,
     onClick,
     title,
     type,
@@ -41,6 +42,7 @@ const ButtonComponent = (props) => {
         color={color}
         className={clsx(classes.primary, classes.button, className)}
         endIcon={endIcon}
+        startIcon={startIcon}
         onClick={onClick}
         type={type}
         disabled={disabled}

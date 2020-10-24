@@ -26,6 +26,7 @@ import Service from "../../Services/index";
 import "react-phone-input-2/lib/style.css";
 import "./UpdateProfile.css";
 import * as Yup from "yup";
+import { LOCALSTORAGE_DATA } from "../../utils";
 const service = new Service();
 const useSession = () => React.useContext(SessionContext);
 
@@ -45,17 +46,6 @@ const Input2 = withStyles((theme) => ({
     width: "100%",
   },
 }))(Input);
-const SERVIVCE_DATA = {
-  set: (name, data) => {
-    localStorage.setItem(name, JSON.stringify(data));
-  },
-  remove: () => {
-    localStorage.remove();
-  },
-  get: (name) => ({
-    data: JSON.parse(localStorage.getItem(name)),
-  }),
-};
 const languages_level = [
   { label: "BASIC" },
   { label: "INTERMEDIATE" },
@@ -128,13 +118,13 @@ const UpdateProfile = (props) => {
       }
     }
     async function countryList() {
-      const cnt = SERVIVCE_DATA.get("countries");
+      const cnt = LOCALSTORAGE_DATA.get("countries");
       if (!cnt.data) {
         const res = await get("/countries/list").catch((error) => {
           console.log(error);
         });
         if (res) {
-          SERVIVCE_DATA.set("countries", res);
+          LOCALSTORAGE_DATA.set("countries", res);
           setCountries(res);
         }
       } else {
@@ -143,11 +133,11 @@ const UpdateProfile = (props) => {
     }
     countryList();
     async function fetchTimeZones() {
-      const tymzone = SERVIVCE_DATA.get("timezones");
+      const tymzone = LOCALSTORAGE_DATA.get("timezones");
       if (!tymzone.data) {
         const res = await get("/timezones/list");
         if (res) {
-          SERVIVCE_DATA.set("timezones", res);
+          LOCALSTORAGE_DATA.set("timezones", res);
           setTimezones(res);
         }
       } else {
@@ -228,10 +218,10 @@ const UpdateProfile = (props) => {
       }
       formData.append("id_user", user.id_user);
       formData.append("full_name", updateRecord.full_name);
-      if(updateRecord.country){
+      if (updateRecord.country) {
         formData.append("country", updateRecord.country);
       }
-      if(updateRecord.timezone){
+      if (updateRecord.timezone) {
         formData.append("timezone", updateRecord.timezone);
       }
       formData.append("languages", props.languages);

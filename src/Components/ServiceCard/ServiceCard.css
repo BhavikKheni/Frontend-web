@@ -178,3 +178,14 @@ polygon {
   color: #ffffff;
   margin-top: 3px;
 }
+.offline {
+  font-family: Rubik;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 24px;
+  letter-spacing: 0.02em;
+  color: #ffffff;
+  text-shadow: 2px 2px #ff0000;
+}
+

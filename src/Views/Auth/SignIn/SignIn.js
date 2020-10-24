@@ -1,7 +1,7 @@
 import React from "react";
 import { withRouter } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
-import { FormControl } from "@material-ui/core";
+import { FormControl, CircularProgress } from "@material-ui/core";
 import Link from "@material-ui/core/Link";
 import MuiDialogContent from "@material-ui/core/DialogContent";
 import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
@@ -31,9 +31,11 @@ const SignIn = (props) => {
   } = props;
   const { t } = useTranslation();
   const [open, setOpen] = React.useState(false);
+  const [isLoading, setLoading] = React.useState(false);
   const [setRes, setTypeRes] = React.useState("");
 
-  const onSubmit = (values,setSubmitting) => {
+  const onSubmit = (values, setSubmitting) => {
+    setLoading(true);
     login(values.email, values.password)
       .then((res) => {
         if (res && res.type === "SUCCESS") {
@@ -41,12 +43,14 @@ const SignIn = (props) => {
             ...((res && res.user) || {}),
             token: res.auth_token,
           });
+          setLoading(false);
           setOpen(true);
           setLogin(res && res.user);
           handleCloseSignIn();
           setTypeRes(res);
         } else {
-          setSubmitting(false)
+          setSubmitting(false);
+          setLoading(false);
           setOpen(true);
           setTypeRes(res);
         }
@@ -93,7 +97,7 @@ const SignIn = (props) => {
               return errors;
             }}
             onSubmit={(values, { setSubmitting }) => {
-              onSubmit(values,setSubmitting);
+              onSubmit(values, setSubmitting);
             }}
             validationSchema={Yup.object().shape({
               password: Yup.string().required(t("validation.password")),
@@ -144,7 +148,8 @@ const SignIn = (props) => {
                       type="submit"
                       disabled={isSubmitting}
                       className="signin-button"
-                      endIcon={<ArrowForwardIosIcon />}
+                      startIcon={isLoading && <CircularProgress />}
+                      endIcon={!isLoading && <ArrowForwardIosIcon />}
                       title={t("login.button")}
                     />
                   </div>

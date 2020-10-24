@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
-import { FormControl } from "@material-ui/core";
+import { FormControl, CircularProgress } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import MuiDialogContent from "@material-ui/core/DialogContent";
 import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
@@ -11,6 +11,7 @@ import ButtonComponent from "../../../Components/Forms/Button";
 import TypographyComponent from "../../../Components/Typography/Typography";
 import { add } from "../../../Services/Auth.service";
 import DialogComponent from "../../../Components/Dialog/Dialog";
+import SnackBarComponent from "../../../Components/SnackBar/SnackBar";
 import { themes } from "../../../themes";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -37,6 +38,9 @@ const SignUp = (props) => {
   const { t } = useTranslation();
   const { handleCloseSignUp, openSignUp, openSignInDialog } = props;
   const [isDisabled, setDisabled] = useState(false);
+  const [isLoading, setLoading] = useState(false);
+  const [open, setOpen] = React.useState(false);
+  const [setRes, setTypeRes] = React.useState("");
   const [openTermsCondition, setTermsCondition] = useState(false);
   const formik = useFormik({
     initialValues: {
@@ -51,36 +55,52 @@ const SignUp = (props) => {
     validate: (values) => {
       const errors = {};
       if (!values.email) {
-        errors.email =  t('validation.email');
+        errors.email = t("validation.email");
       } else if (
         !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
       ) {
-        errors.email = t('validation.inValidateEmail');
+        errors.email = t("validation.inValidateEmail");
       }
       return errors;
     },
     validationSchema: Yup.object().shape({
-      password: Yup.string().required(t('validation.password')),
-      full_name: Yup.string().required(t('validation.fullName')),
-      checked: Yup.boolean().required("Required").oneOf([true], "Error"),
+      password: Yup.string().required(t("validation.password")),
+      full_name: Yup.string().required(t("validation.fullName")),
+      checked: Yup.boolean()
+        .required("Required")
+        .oneOf([true], "Terms & condition Required"),
     }),
   });
 
   const onSubmit = (values) => {
+    setLoading(true);
     add("/signup", values)
       .then((res) => {
         if (res && res.type === "SUCCESS") {
           handleCloseSignUp();
+          setLoading(false);
         } else {
+          setTypeRes(res);
           setDisabled(false);
+          setLoading(false);
+          setOpen(true);
         }
       })
       .catch((error) => {});
   };
+
   const handleCloseTermsCondition = () => {
     setTermsCondition(false);
     formik.resetForm();
   };
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+  };
+
   return (
     <React.Fragment>
       <DialogComponent
@@ -89,9 +109,9 @@ const SignUp = (props) => {
           formik.resetForm();
         }}
         open={openSignUp}
-        title={t('signup.title')}
-        subTitle1={t('signup.alreadyHaveAccount')}
-        subTitle2={t('login.title')}
+        title={t("signup.title")}
+        subTitle1={t("alreadyHaveAccount")}
+        subTitle2={t("login.title")}
         onSubTitle2={(e) => {
           e.stopPropagation();
           handleCloseSignUp();
@@ -162,7 +182,7 @@ const SignUp = (props) => {
                   />
                   <div className="item-1">
                     <TypographyComponent
-                      title={t('signup.registrationAgree')}
+                      title={t("signup.registrationAgree")}
                       variant="h1"
                       style={{
                         lineHeight: 4,
@@ -170,7 +190,7 @@ const SignUp = (props) => {
                     />
 
                     <TypographyComponent
-                       title={t('signup.termsConditions')}
+                      title={t("signup.termsConditions")}
                       variant="h1"
                       onClick={() => {
                         setTermsCondition(true);
@@ -192,7 +212,8 @@ const SignUp = (props) => {
                     type="submit"
                     disabled={isDisabled}
                     className="go"
-                    endIcon={<ArrowForwardIosIcon />}
+                    startIcon={isLoading && <CircularProgress />}
+                    endIcon={!isLoading && <ArrowForwardIosIcon />}
                     title={t("signup.go")}
                     style={{
                       backgroundColor: formik.values.checked
@@ -228,7 +249,7 @@ const SignUp = (props) => {
                 <Grid item xs={12} sm={6} md={6} lg={6} xl={6}>
                   <TypographyComponent
                     variant="h3"
-                    title={t('signup.termsConditions')}
+                    title={t("signup.termsConditions")}
                     style={{
                       marginTop: 20,
                       marginBottom: 20,
@@ -308,7 +329,7 @@ const SignUp = (props) => {
                       />
                       <div className="item-1">
                         <TypographyComponent
-                          title={t('signup.registrationAgree')}
+                          title={t("signup.registrationAgree")}
                           variant="h1"
                           style={{
                             lineHeight: 4,
@@ -316,7 +337,7 @@ const SignUp = (props) => {
                         />
 
                         <TypographyComponent
-                          title={t('signup.termsConditions')}
+                          title={t("signup.termsConditions")}
                           variant="h1"
                           style={{
                             lineHeight: 0,
@@ -390,6 +411,16 @@ const SignUp = (props) => {
           </form>
         </DialogContent>
       </DialogComponent>
+      <SnackBarComponent
+        open={open}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        message={setRes.message}
+        type={setRes.type && setRes.type.toLowerCase()}
+      />
     </React.Fragment>
   );
 };

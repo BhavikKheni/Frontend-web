@@ -129,8 +129,7 @@ const OweraHeader = (props) => {
     return () => clearTimeout(intervalRef.current);
   }, [search]);
 
-  const openSignInDialog = (e) => {
-    e.stopPropagation();
+  const openSignInDialog = () => {
     setOpenSignIn(true);
   };
 
@@ -245,16 +244,6 @@ const OweraHeader = (props) => {
                 >
                   Work
                 </MenuItem>
-                {isLoggedIn && (
-                  <MenuItem
-                    component={RouterLink}
-                    to="/profile"
-                    selected={pathname === "/profile"}
-                    className={clsx(classes.selected)}
-                  >
-                    Profile
-                  </MenuItem>
-                )}
               </div>
             </div>
             <div className="header_button_wrapper">

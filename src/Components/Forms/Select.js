@@ -1,9 +1,9 @@
 import React from "react";
 import clsx from "clsx";
-import { withStyles, makeStyles } from "@material-ui/core/styles";
+import InputLabel from "@material-ui/core/InputLabel";
+import { withStyles } from "@material-ui/core/styles";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import MuiSelect from "@material-ui/core/Select";
-import { InputLabel } from "@material-ui/core";
 const Select = withStyles((theme) => ({
   root: {
     border: "1px solid rgba(25, 25, 25, 0.9)",
@@ -25,11 +25,13 @@ export default function SelectComponent(props) {
   } = props;
   return (
     <div>
+      <InputLabel htmlFor="native-select">{label}</InputLabel>
       <Select
         native={native}
         multiple={multiple}
         value={value}
         name={name}
+        label={label}
         onChange={onChange}
         className={clsx(props.className, 'select_down_arrow')}
         inputProps={{

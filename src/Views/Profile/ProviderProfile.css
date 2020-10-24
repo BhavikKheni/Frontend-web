@@ -61,3 +61,86 @@
   display: flex;
   flex-direction: column;
 }
+
+.body {
+  overflow-y: scroll;
+  scroll-behavior: smooth;
+}
+
+.time-booking {
+  background: #363636;
+  border-radius: 15px;
+  max-width: 227px;
+  width: 100%;
+  height: 100%;
+  max-height: 246px;
+}
+.title-booking {
+  padding: 9px 7px 14px 15px;
+  display: flex;
+  justify-content: space-between;
+  color: #fff;
+  align-items: center;
+}
+.select-form-date {
+  display: flex;
+  align-items: center;
+  color: #fff;
+  justify-content: space-between;
+}
+.select-form-date .from {
+  max-width: 40px;
+  width: 100%;
+  padding-left: 15px;
+}
+
+.select-form-date .to {
+  padding: 5px;
+}
+.select-form-date .fromTime {
+  max-width: 56px;
+  width: 100%;
+  height: 33px;
+  padding-left: 13px;
+}
+.select-form-date .toTime {
+  max-width: 58px;
+  width: 100%;
+  height: 33px;
+  padding-right: 7px;
+}
+
+.date {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #fff;
+  padding: 5px 7px 10px 15px;
+}
+.date-picker {
+  width: 100%;
+  max-width: 147px;
+}
+.date-picker .MuiInputBase-root{
+  border: 1px solid #fff;
+  padding: 5px;
+  color: #fff;
+}
+.total-cost {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #fff;
+  padding: 7px 7px 7px 15px;
+}
+.confirm-button{
+  padding: 0px 7px 0px 15px;
+}
+.confirm-button .makeStyles-button-36{
+  background-color: #0a3ceb;
+  color:#fff;
+  border-radius: 7px;
+  width: 100%;
+  max-width: 160px;
+  height: 42px;
+}

@@ -40,7 +40,7 @@ const CreateRoutes = () => {
       <Route exact path="/work" component={Work} />
       <Route exact path="/create-services" component={CreateService} />
       <ProtectedRoute path="/profile" component={Profile}/>
-      <ProtectedRoute path="/profile-provider" component={ProfileProvider} />
+      <Route path="/profile-provider" component={ProfileProvider} />
     </Switch>
   );
 };

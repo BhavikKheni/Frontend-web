@@ -7,6 +7,7 @@ import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
 import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
 import PhoneIcon from "@material-ui/icons/Phone";
 import StarRateRounded from "@material-ui/icons/StarRateRounded";
+import StarBorderIcon from "@material-ui/icons/StarBorder";
 import { makeStyles } from "@material-ui/core/styles";
 import { red } from "@material-ui/core/colors";
 import Slider from "react-animated-slider";
@@ -50,9 +51,11 @@ const ServiceCardComponent = (props) => {
     price,
     onPhone,
     onCalendar,
-    onJobTitle,
+    onServiceTitle,
     onProviderName,
+    service_provider_live_now,
   } = props;
+
   const imageRender = () => {
     return (
       <div className="card-slider-item">
@@ -65,8 +68,7 @@ const ServiceCardComponent = (props) => {
               />
             </div>
             <TypographyComponent
-              // title={service_quality_rating}
-              title="4.5"
+              title={service_quality_rating}
             />
             <StarRateRounded
               className="card_start_review"
@@ -86,12 +88,19 @@ const ServiceCardComponent = (props) => {
           </div>
         </div>
         <div className="card-buttons">
+        {service_provider_live_now ? (
           <div className="phoneIconCard" onClick={onPhone}>
             <PhoneIcon/>
           </div>
+        ):(
           <div className="calendarIconCard" onClick={onCalendar}>
             <CalendarTodayIcon/>
+            <TypographyComponent
+                title="Book Service"
+                style={{ color: "#fff", fontSize: 12, marginLeft: 10 }}
+            />
           </div>
+        )}
         </div>
       </div>
     );
@@ -113,18 +122,18 @@ const ServiceCardComponent = (props) => {
             ))
           ) : (
             <div
-              style={{
-                background: ` URL('${DefaultServiceImage}') no-repeat  center  center `,
-              }}
-              className="previousButton nextButton"
-            >
-              {imageRender()}
-            </div>
+            style={{
+              background: ` URL('${DefaultServiceImage}') no-repeat  center  center `,
+            }}
+            className="previousButton nextButton"
+          >
+            {imageRender()}
+          </div>
           )}
         </Slider>
         <CardActions disableSpacing className={"card_ratings"}>
           <div className="card-actions">
-            <div className="card-actions-title" onClick={onJobTitle}>
+            <div className="card-actions-title" onClick={onServiceTitle}>
               <TooltipComponent title={title}>
                 <Typography
                 className="card_title"
@@ -145,8 +154,12 @@ const ServiceCardComponent = (props) => {
             </div>
           </div>
           <div className="card-status">
-            <span className="live-now"> Live now</span>
-            <span className="price">{`${price}/h`}</span>
+          <span
+            className={clsx(service_provider_live_now ? "live-now" : "offline")}
+          >
+            {service_provider_live_now === true ? "Live now" : "offline"}
+          </span>
+            <span className="price">{`${price}$/h`}</span>
           </div>
         </CardActions>
       </div>
