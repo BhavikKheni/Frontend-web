@@ -26,6 +26,7 @@ import Service from "../../Services/index";
 import "react-phone-input-2/lib/style.css";
 import "./UpdateProfile.css";
 import * as Yup from "yup";
+import ProfilePic from "../../images/profile-image.png";
 import { LOCALSTORAGE_DATA } from "../../utils";
 const service = new Service();
 const useSession = () => React.useContext(SessionContext);
@@ -200,6 +201,10 @@ const UpdateProfile = (props) => {
     return true;
   }
 
+  const openFileUplodPopup = () => {
+    setImageOpen(true);
+  }
+
   const onSubmit = async (e) => {
     e.preventDefault();
     const isEdit = isEquivalent(copyRecord, userData);
@@ -238,6 +243,7 @@ const UpdateProfile = (props) => {
 
   return (
     <div style={{ width: "100%", margin: 20 }}>
+      <ButtonComponent title="Change picture" size="small" onClick={openFileUplodPopup}></ButtonComponent>
       <div>
         <form
           onSubmit={onSubmit}
@@ -738,16 +744,17 @@ const UpdateProfile = (props) => {
           <DialogContent style={{ textAlign: "center" }}>
             <FormControl className="image-upload">
               <div className="profile-image-tag">
-                {/* <img
+                <img
                     alt="Profile"
                     id="output"
-                    src={userData.image && URL.createObjectURL(userData.image)}
+                    // src={userData.image && URL.createObjectURL(userData.image)}
+                    src={ProfilePic}
                     style={{
                       width: "200px",
                       height: "200px",
                       borderRadius: "100%",
                     }}
-                  /> */}
+                  />
                 <input
                   type="file"
                   id="upload-button"
