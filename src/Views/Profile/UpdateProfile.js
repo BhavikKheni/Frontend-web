@@ -27,6 +27,8 @@ import "react-phone-input-2/lib/style.css";
 import "./UpdateProfile.css";
 import * as Yup from "yup";
 import ProfilePic from "../../images/profile-image.png";
+
+import ImageComponent from "../../Components/Forms/Image";
 import { LOCALSTORAGE_DATA } from "../../utils";
 const service = new Service();
 const useSession = () => React.useContext(SessionContext);
@@ -82,7 +84,8 @@ const UpdateProfile = (props) => {
   const [countries, setCountries] = useState([]);
   const [timezones, setTimezones] = useState([]);
   const [customLanguages, setCustomLanguages] = useState([]);
-
+  const [imageUploadSuccess, setImageUploadSuccess] = useState(false);
+  const [image, setImage] = useState();
   React.useEffect(() => {
     setSidebar(true);
     setSidebarContent(
@@ -170,6 +173,7 @@ const UpdateProfile = (props) => {
           ...userData,
           [event.target.name]: event.target.files[0],
         });
+        props.newImagePath(URL.createObjectURL(event.target.files[0]));
         isSetImageSize(false);
       }
     }
@@ -204,6 +208,30 @@ const UpdateProfile = (props) => {
   const openFileUplodPopup = () => {
     setImageOpen(true);
   }
+
+  const makeImage = () => {
+    if (userData.image instanceof File) {
+      saveImage();
+      return URL.createObjectURL(userData.image);
+    } else {
+      return userData.image;
+    }
+  };
+
+  const saveImage = async () => {
+    const formData = new FormData();
+    if (userData.image instanceof File) {
+      formData.append("image", userData.image);
+    }
+    formData.append("id_user", user.id_user);
+    const res = await service.upload("/profile/update", formData);
+    if (res.status === 200) {
+      setImageUploadSuccess(true);
+    } else {
+      setImageUploadSuccess(false);
+      console.log("Error");
+    }
+  };
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -242,213 +270,185 @@ const UpdateProfile = (props) => {
   };
 
   return (
-    <div style={{ width: "100%", margin: 20 }}>
-      <ButtonComponent title="Change picture" size="small" onClick={openFileUplodPopup}></ButtonComponent>
+    <div className="update_profile_form_wrapper">
       <div>
         <form
           onSubmit={onSubmit}
           noValidate
           autoComplete="off"
-          style={{ marginTop: 20 }}
         >
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={6}>
-              <Grid container spacing={3}>
-                <Grid item xs={12} md={12}>
-                  <FormControl>
-                    <InputComponent
-                      label="Full name"
-                      type="text"
-                      value={userData.full_name && userData.full_name}
-                      placeholder="Full name"
-                      name="full_name"
-                      id="full_name"
-                      onChange={handleChange}
-                      error={isError}
-                    />
-                  </FormControl>
-                </Grid>
+          <div className="update_profile_inner">
+            <div className="form_row">
+              <FormControl variant="outlined">
+                <InputComponent
+                  label="Full name"
+                  type="text"
+                  value={userData.full_name && userData.full_name}
+                  name="full_name"
+                  id="full_name"
+                  onChange={handleChange}
+                  error={isError}
+                />
+              </FormControl>
+            </div>
 
-                <Grid item xs={12} md={5}>
-                  <FormControl variant="outlined">
-                    <SelectComponent
-                      name="language"
-                      label="Select a language"
-                      value={language}
-                      onChange={(e) => {
-                        setLanguage(e.target.value);
-                      }}
-                      input={<Input2 />}
-                    >
-                      {languages &&
-                        languages.map((l) => {
-                          return (
-                            <MenuItem
-                              key={l.id_language}
-                              value={l.language_name}
-                            >
-                              <ListItemText primary={l.language_name} />
-                            </MenuItem>
-                          );
-                        })}
-                    </SelectComponent>
-                  </FormControl>
-                </Grid>
-                <Grid item xs={12} md={5}>
-                  <FormControl variant="outlined">
-                    <SelectComponent
-                      name="level"
-                      label="Select a level"
-                      value={level}
-                      onChange={(e) => {
-                        setLevel(e.target.value);
-                      }}
-                      input={<Input2 />}
-                    >
-                      {languages_level &&
-                        languages_level.map((l, i) => {
-                          return (
-                            <MenuItem key={i} value={l.label}>
-                              <ListItemText primary={l.label} />
-                            </MenuItem>
-                          );
-                        })}
-                    </SelectComponent>
-                  </FormControl>
-                </Grid>
-                <Grid item xs={3} md={2}>
-                  <ButtonComponent
-                    title="Add"
-                    style={{
-                      color: "#fff",
-                    }}
-                    onClick={() => {
-                      const arr = [];
-                      arr.push({
-                        language_name: language,
-                        language_level: level,
-                      });
-                      setCustomLanguages([...customLanguages, ...arr]);
-                      props.newLng([...customLanguages, ...arr]);
-                    }}
-                  />
-                </Grid>
-              </Grid>
-              <Grid container spacing={3}>
-                <Grid item xs={12} md={12}>
-                  <FormControl variant="outlined">
-                    <SelectComponent
-                      value={userData.country && userData.country}
-                      onChange={handleChange}
-                      name="country"
-                      label="Select a country"
-                    >
-                      {countries &&
-                        countries.map((m, i) => (
-                          <MenuItem key={i} value={Number(m.country_id)}>
-                            <ListItemText primary={m.country_name} />
-                          </MenuItem>
-                        ))}
-                    </SelectComponent>
-                  </FormControl>
-                </Grid>
-              </Grid>
-              <Grid container spacing={3}>
-                <Grid item xs={12} md={12}>
-                  <FormControl variant="outlined">
-                    <SelectComponent
-                      value={userData.timezone && userData.timezone}
-                      onChange={handleChange}
-                      name="timezone"
-                      label="Select your time zone"
-                    >
-                      {timezones &&
-                        timezones.map((m, i) => (
-                          <MenuItem key={i} value={Number(m.id_timezone)}>
-                            <ListItemText primary={m.relativity} />
-                          </MenuItem>
-                        ))}
-                    </SelectComponent>
-                  </FormControl>
-                </Grid>
-              </Grid>
-              <Grid container spacing={3}>
-                <Grid item xs={12} md={6}>
-                  <FormControl>
-                    <ButtonComponent
-                      title="Change password"
-                      style={{
-                        border: "1px solid rgba(25, 25, 25, 0.9)",
-                        backgroundColor: "#fff",
-                      }}
-                    />
-                  </FormControl>
-                </Grid>
-              </Grid>
-              <Grid container spacing={3}>
-                <Grid item xs={12} md={12}></Grid>
-                <Grid item xs={12} md={12}></Grid>
-              </Grid>
-            </Grid>
-            <Hidden smDown>
-              <Grid item md={1}></Grid>
-            </Hidden>
-            <Grid item xs={12} md={5}>
-              <Grid container spacing={3}>
-                <Grid item xs={12} md={12}></Grid>
-                <Grid item xs={12} md={6}></Grid>
-                <Grid item xs={12} md={6}></Grid>
-                <Grid item xs={12} md={12}></Grid>
-                <Grid item xs={12} md={12}></Grid>
-                <Grid item xs={12} md={12}></Grid>
-              </Grid>
-            </Grid>
-            <Hidden smDown>
-              <Grid item md={1}></Grid>
-            </Hidden>
-          </Grid>
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={8}>
-              <Grid container spacing={3}>
-                <Grid item xs={12} md={6}>
-                  <ButtonComponent
-                    title="Delete profile"
-                    style={{
-                      border: "1px solid rgba(25, 25, 25, 0.9)",
-                      backgroundColor: "#fff",
-                    }}
-                  />
-                  <ButtonComponent
-                    title="Deactivate profile"
-                    style={{
-                      border: "1px solid rgba(25, 25, 25, 0.9)",
-                      backgroundColor: "#fff",
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={12} md={6}></Grid>
-              </Grid>
-            </Grid>
-            <Hidden smDown>
-              <Grid item md={1}></Grid>
-            </Hidden>
-            <Grid item xs={12} md={3}>
-              <Grid container spacing={3}>
-                <Grid item xs={12} md={6}>
-                  <ButtonComponent
-                    variant="contained"
-                    color="primary"
-                    type="submit"
-                    className="update-profile"
-                    title="Update my profile"
-                  />
-                </Grid>
-              </Grid>
-            </Grid>
-            <Hidden smDown>
-              <Grid item md={1}></Grid>
-            </Hidden>
-          </Grid>
+            <div className="form_row">
+              <FormControl variant="outlined">
+                <InputComponent
+                  label="Last name"
+                  type="text"
+                  value={userData.last_name && userData.last_name}
+                  name="last_name"
+                  id="last_name"
+                  onChange={handleChange}
+                  error={isError}
+                />
+              </FormControl>
+            </div>
+
+            <div className="form_row">
+              <FormControl variant="outlined">
+                <InputComponent
+                  label="Mobile No"
+                  type="text"
+                  value={userData.mobile_no && userData.mobile_no}
+                  name="mobile_no"
+                  id="mobile_no"
+                  onChange={handleChange}
+                  error={isError}
+                />
+              </FormControl>
+            </div>
+
+            <div className="form_row form_multi_field">
+              <FormControl variant="outlined">
+                <SelectComponent
+                  name="language"
+                  label="Select a language"
+                  value={language}
+                  onChange={(e) => {
+                    setLanguage(e.target.value);
+                  }}
+                  native
+                >
+                  {languages &&
+                    languages.map((l, i) => (
+                      <option
+                        key={l.id_language}
+                        value={l.language_name}
+                        >
+                        {l.language_name}
+                      </option>
+                    ))}
+                </SelectComponent>
+              </FormControl>
+
+              <FormControl variant="outlined">
+                <SelectComponent
+                  name="level"
+                  label="Select a level"
+                  value={level}
+                  onChange={(e) => {
+                    setLevel(e.target.value);
+                  }}
+                  native
+                >
+                  {languages_level &&
+                    languages_level.map((l, i) => (
+                      <option
+                      key={i}
+                      value={l.label}
+                        >
+                        {l.label}
+                      </option>
+                    ))}
+                </SelectComponent>
+              </FormControl>
+              
+              <div>
+                <ButtonComponent
+                  title="Add"
+                  onClick={() => {
+                    const arr = [];
+                    arr.push({
+                      language_name: language,
+                      language_level: level,
+                    });
+                    setCustomLanguages([...customLanguages, ...arr]);
+                    props.newLng([...customLanguages, ...arr]);
+                  }}
+                />
+              </div>
+            </div>
+
+            <div className="form_row">
+              <FormControl variant="outlined">
+                <SelectComponent
+                  name="country"
+                  label="Select a country"
+                  value={userData.country && userData.country}
+                  onChange={handleChange}
+                  native
+                >
+                  {countries &&
+                    countries.map((m, i) => (
+                      <option
+                        key={i}
+                        value={Number(m.country_id)}
+                        >
+                        {m.country_name}
+                      </option>
+                    ))}
+                </SelectComponent>
+              </FormControl>
+            </div>
+
+            <div className="form_row">
+              <FormControl variant="outlined">
+                <SelectComponent
+                  name="timezone"
+                  label="Select your time zone"
+                  value={userData.timezone && userData.timezone}
+                  onChange={handleChange}
+                  native
+                >
+                  {timezones &&
+                    timezones.map((m, i) => (
+                      <option
+                      key={i}
+                      value={Number(m.id_timezone)}
+                        >
+                        {m.relativity}
+                      </option>
+                    ))}
+                </SelectComponent>
+              </FormControl>
+            </div>
+            <div className="form_row change_password_field">
+              <FormControl>
+                <ButtonComponent
+                  title="Change password"
+                />
+              </FormControl>
+            </div>
+          </div>
+          <div className="update_profile_form_cta_row">
+            <ButtonComponent
+              title="Delete profile"
+              disabled
+            />
+            <ButtonComponent
+              title="Deactivate profile"
+              disabled
+            />
+            <ButtonComponent
+                className="update_profile_cta"
+                variant="contained"
+                color="primary"
+                type="submit"
+                title="Update my profile"
+              />
+          </div>
         </form>
         <DialogComponent
           onClose={(e) => {
@@ -735,32 +735,37 @@ const UpdateProfile = (props) => {
         <DialogComponent
           onClose={(e) => {
             e.stopPropagation();
-            setImageOpen(false);
+            props.closeImageDialog();
           }}
-          open={openImage}
+          open={props.openImage}
           title="Change picture"
           maxHeight={490}
         >
           <DialogContent style={{ textAlign: "center" }}>
             <FormControl className="image-upload">
               <div className="profile-image-tag">
-                <img
-                    alt="Profile"
-                    id="output"
-                    // src={userData.image && URL.createObjectURL(userData.image)}
-                    src={ProfilePic}
-                    style={{
-                      width: "200px",
-                      height: "200px",
-                      borderRadius: "100%",
-                    }}
-                  />
+                {
+                  userData.image === null ?
+                  <ImageComponent/>:
+                  <img
+                      alt="Profile"
+                      id="output"
+                      src={makeImage()}
+                      src={ProfilePic}
+                      style={{
+                        width: "200px",
+                        height: "200px",
+                        borderRadius: "100%",
+                      }}
+                    />
+                }
                 <input
                   type="file"
                   id="upload-button"
                   style={{ display: "none" }}
                   name="image"
                   onChange={(event) => handleUploadClick(event)}
+                  accept="image/*"
                 />
               </div>
               <div className="profile-image-button">
@@ -800,6 +805,16 @@ const UpdateProfile = (props) => {
                   }}
                 />
               </div>
+              {imageUploadSuccess && (
+                <TypographyComponent
+                  variant="h4"
+                  title="Congrats! You’ve successfully changed your picture."
+                  style={{
+                    color: "#2FB41A",
+                    marginTop: 20,
+                  }}
+                />
+              )}
               {isImageSize && (
                 <TypographyComponent
                   variant="h4"

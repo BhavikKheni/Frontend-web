@@ -16,6 +16,7 @@ import ProfilePic from "../../images/profile-image.png";
 import { themes } from "../../themes";
 import { useSidebar } from "../../Provider/SidebarProvider";
 import UpdateProfile from "./UpdateProfile";
+import "./Profile.css";
 const useSession = () => React.useContext(SessionContext);
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -48,6 +49,7 @@ const ProfileView = (props) => {
     newPassword: null,
     languages: [],
   });
+  const [openImage, setImageOpen] = useState(false);
   let { user, isLoggedIn } = useSession();
   const { pathname } = props.location;
   const { path } = props.match;
@@ -107,17 +109,21 @@ const ProfileView = (props) => {
     temp.splice(i, 1);
     setUserData({ ...userData, languages: [...temp] });
   };
+  const closeImageDialog = () => {
+    setImageOpen(false);
+  };
 
+  const newImagePath = (path) => {
+    if (path) {
+      setUserData({ ...userData, image: path });
+    }
+  };
   return (
-    <div style={{ margin: 20 }}>
+    <div className="profile_page_wrapper">
       <Breadcrumbs aria-label="breadcrumb">
-        <Link to={path}>
-          <TypographyComponent variant="h4" title="My profile" />
-        </Link>
+        <Link to={path}> My profile </Link>
         {pathname === "/profile/edit" && (
-          <Link to={`/profile/edit`}>
-            <TypographyComponent variant="h4" title="edit" />
-          </Link>
+        <Link to={`/profile/edit`}>edit</Link>
         )}
       </Breadcrumbs>
       {isLoading ? (
@@ -125,120 +131,94 @@ const ProfileView = (props) => {
           <CircularProgress />
         </div>
       ) : (
-        <Grid container spacing={3} style={{ marginTop: 20 }}>
-          <Grid item xs={12} md={2}>
-            <img
-              alt="profile"
-              src={userData.image ? userData.image : ProfilePic}
-              style={{
-                width: "200px",
-                height: "200px",
-                borderRadius: "100%",
-              }}
-            />
-          </Grid>
-          <Grid item xs={12} md={2}>
+        <div className="user_profile_updated_value">
+          <div className="user_profile_img">
+            <div className="user_profile_img_block">
+              <img
+                alt="profile"
+                src={userData.image ? userData.image : ProfilePic}
+              />
+            </div>
+            <TypographyComponent
+                className="user_profile_change_cta"
+                title="Change picture"
+                onClick={() => {
+                  setImageOpen(true);
+                }}
+              />
+          </div>
+          <div className="user_language_timezone">
             <TypographyComponent
               variant="h3"
               title={userData.full_name}
               style={{
-                fontWeight: "bold",
                 color: themes.default.colors.darkGray,
               }}
             />
-            <Grid style={{ display: "flex", marginTop: 10 }}>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <TypographyComponent
-                  variant="h6"
-                  title={userData.country_name}
-                  style={{ marginLeft: 5 }}
-                />
-                <TypographyComponent
-                  variant="h6"
-                  title={userData.timezone_name}
-                  style={{ marginLeft: 5 }}
-                />
-              </div>
-            </Grid>
-            <Grid
-              style={{
-                marginTop: 10,
-                display: "flex",
-                flexDirection: "column",
-              }}
-            >
+            <div className="user_country_timezone_title">
+              <TypographyComponent
+                variant="h6"
+                // title={userData.country_name}
+                title={'Country'}
+              />
+              <TypographyComponent
+                variant="h6"
+                // title={userData.timezone_name}
+                title={'Timezone'}
+              />
+            </div>
+            <div className="user_country_timezone_data">
               {userData.languages &&
                 userData.languages.map((language, i) => (
-                  <div
-                    key={i}
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                    }}
-                  >
+                  <div className="user_language_item" key={i}>
                     <ClearIcon onClick={() => removeItem(i)} />
-                    <span>{language.language_name}</span>
+                    <span className="user_language">{language.language_name}</span>
                     <span>{language.language_level}</span>
                   </div>
                 ))}
-            </Grid>
+            </div>
             {pathname !== "/profile/edit" && (
-              <Grid>
-                <div style={{ marginTop: 20 }}>
-                  <Link
-                    to={`/profile/edit`}
-                    style={{
-                      border: `1px solid ${themes.default.colors.orange}`,
-                      color: themes.default.colors.orange,
-                      textDecoration: "none",
-                      padding: "10px 20px 10px 20px",
-                      borderRadius: 10,
-                    }}
-                  >
-                    Edit
-                  </Link>
-                </div>
-              </Grid>
+              <div  className="profile_edit_cta">
+                <Link
+                  to={`/profile/edit`}
+                >
+                  Edit
+                </Link>
+              </div>
             )}
-          </Grid>
-          <Grid item xs={12} md={8}>
+          </div>
+          <div className="user_verification">
             <TypographyComponent variant="h4" title="Employer Verfication" />
-            <Grid style={{ display: "flex", marginTop: 10 }}>
+            <div className="user_verification_item">
               <CheckIcon />
               <TypographyComponent
-                variant="h4"
+                variant="h5"
                 title={userData.member_since}
-                style={{ marginLeft: 5 }}
               />
-            </Grid>
+            </div>
 
-            <Grid
-              style={{ display: "flex", alignItems: "center", marginTop: 10 }}
-            >
+            <div className="user_verification_item">
               <CheckIcon />
               <TypographyComponent
-                variant="h4"
+                variant="h5"
                 title="E-Mail verified"
-                style={{ marginLeft: 5 }}
               />
               <ButtonComponent
                 title="Verify"
-                style={{
-                  backgroundColor: themes.default.colors.white,
-                  color: themes.default.colors.orange,
-                  border: `1px solid ${themes.default.colors.orange}`,
-                  width: 100,
-                }}
               />
-            </Grid>
-          </Grid>
-        </Grid>
+            </div>
+            <div className="user_verification_item">
+              <CheckIcon />
+              <TypographyComponent
+                variant="h5"
+                title="Mobile verified"
+              />
+              <ButtonComponent
+                title="Verify"
+              />
+            </div>
+          </div>
+        </div>
       )}
       <Route
         path={`/profile/:edit`}
@@ -246,8 +226,12 @@ const ProfileView = (props) => {
           <UpdateProfile
             newLng={(data) => newLng(data)}
             languages={userData.languages}
+            openImage={openImage}
+            closeImageDialog={closeImageDialog}
+            newImagePath={(path) => newImagePath(path)}
           />
         )}
+        
       />
     </div>
   );

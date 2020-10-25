@@ -14,7 +14,7 @@ import Slider from "react-animated-slider";
 import TooltipComponent from "../Tooltip/Tooltip";
 import TypographyComponent from "../Typography/Typography";
 import { themes } from "../../themes";
-import DefaultServiceImage from "../../images/defaultServiceImage.png";
+import DefaultServiceImage from "../../images/default-image.jpeg";
 import "react-animated-slider/build/horizontal.css";
 import "./ServiceCard.css";
 const useStyles = makeStyles((theme) => ({

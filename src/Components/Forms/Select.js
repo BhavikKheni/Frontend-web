@@ -24,7 +24,7 @@ export default function SelectComponent(props) {
     label,
   } = props;
   return (
-    <div>
+    <div className='input_wrapper'>
       <InputLabel htmlFor="native-select">{label}</InputLabel>
       <Select
         native={native}

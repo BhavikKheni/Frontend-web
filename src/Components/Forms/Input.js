@@ -60,7 +60,7 @@ const InputComponent = (props) => {
       autoFocus={props.autoFocus}
       helperText={props.helperText}
       InputLabelProps={props.InputLabelProps}
-      variant="filled"
+      variant="outlined"
       multiline={props.multiline}
       rows={props.rows}
       style={{ ...props.styles }}
