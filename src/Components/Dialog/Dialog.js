@@ -11,24 +11,10 @@ import "./Dialog.css";
 
 const styles = makeStyles((theme) => ({
   root: {
-    margin: 0,
-    padding: theme.spacing(2),
-    display: "flex",
   },
   closeButton: {
-    position: "absolute",
-    right: theme.spacing(1),
-    top: theme.spacing(1),
-    color: "#FF7A00",
   },
   header: {
-    width: "100%",
-    maxWidth: 458,
-    display: "flex",
-    justifyContent: (props) => props.header.justifyContent || "space-between",
-    alignItems: (props) => props.header.alignItems || "center",
-    flexDirection: (props) => props.header.flexDirection || "row",
-    flexFlow: "row wrap",
   },
 }));
 const DialogTitle = (props) => {
@@ -55,32 +41,31 @@ const DialogTitle = (props) => {
     },
   });
   return (
-    <MuiDialogTitle disableTypography className={classes1.root} {...other}>
-      <div
-        style={{ maxWidth: 140, width: "100%", display: "flex", flex: 1 }}
-      ></div>
-      <div className={classes1.header}>
-        <div>
-          <TypographyComponent
-            title={title}
-            variant="h3"
-            style={{ color: titleColor }}
-          />
+    <div className="dialog_header">
+      <MuiDialogTitle disableTypography>
+        <div className="dialog_container">
+          <div>
+            <TypographyComponent
+              title={title}
+              variant="h3"
+              style={{ color: titleColor }}
+            />
+          </div>
+          <div className="dialog_subtitle">
+            <TypographyComponent title={subTitle1} variant="h2" />
+
+            <TypographyComponent
+              style={{ textDecoration: "underline", cursor: "pointer", marginLeft: "5px" }}
+              onClick={(e) => {
+                onSubTitle2(e);
+              }}
+              title={subTitle2}
+              variant="h2"
+            ></TypographyComponent>
+          </div>
         </div>
-        <div style={{ display: "flex" }}>
-          <TypographyComponent title={subTitle1} variant="h2" />
-          <TypographyComponent
-            style={{ textDecoration: "underline", cursor: "pointer" }}
-            onClick={(e) => {
-              onSubTitle2(e);
-            }}
-            title={subTitle2}
-            variant="h2"
-          ></TypographyComponent>
-        </div>
-      </div>
-      <div style={{ maxWidth: 140, width: "100%", display: "flex", flex: 1 }}>
-        <TooltipComponent title={t('close')}>
+      </MuiDialogTitle>
+      <TooltipComponent title={t('close')}>
           <IconButton
             aria-label="close"
             className={classes1.closeButton}
@@ -90,22 +75,11 @@ const DialogTitle = (props) => {
             <CloseIcon />
           </IconButton>
         </TooltipComponent>
-      </div>
-    </MuiDialogTitle>
+    </div>
   );
 };
 
-const DialogStyle = makeStyles((theme) => ({
-  paperWidthSm: {
-    width: "100%",
-    height: "100%",
-    maxWidth: (props) => props.maxWidth || 766,
-    background: "rgba(48, 48, 48, 0.9)",
-    border: "1px solid #ffffff",
-    borderRadius: 40,
-    maxHeight: (props) => props.maxHeight,
-  },
-}));
+
 
 const DialogComponent = (props) => {
   const {
@@ -124,7 +98,6 @@ const DialogComponent = (props) => {
     titleColor,
     iconColor,
   } = props;
-  const classes1 = DialogStyle({ maxHeight: maxHeight, maxWidth: maxWidth });
   return (
     <div>
       <Dialog
@@ -132,9 +105,7 @@ const DialogComponent = (props) => {
         aria-labelledby="customized-dialog"
         open={open}
         disableBackdropClick
-        classes={{
-          paperWidthSm: classes1.paperWidthSm,
-        }}
+        className="dialog_wrapper"
       >
         <DialogTitle
           title={title}

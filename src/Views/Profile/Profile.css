@@ -49,7 +49,9 @@
 .user_language_timezone {
   display: flex;
   flex-direction: column;
-  margin-right: 110px;
+  max-width: 300px;
+  width: 100%;
+  margin-right: 50px;
 }
 .user_language_timezone h3 {
   line-height: 48px;
@@ -67,6 +69,7 @@
   font-size: 18px;
   max-width: 140px;
   width: 100%;
+  flex: 1 0 auto;
   padding-right: 15px;
 }
 .user_country_timezone_data {
@@ -77,6 +80,7 @@
 .user_language_item {
   display: flex;
   align-items: center;
+  min-height: 30px;
   margin-bottom: -4px;
 }
 .user_language_item svg {
@@ -95,6 +99,7 @@
   padding-right: 15px;
   text-overflow: ellipsis;
   white-space: nowrap;
+  flex: 1 0 auto;
   overflow: hidden;
 }
 .user_verification h4 {

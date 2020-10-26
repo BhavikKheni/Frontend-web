@@ -82,82 +82,85 @@ const SignIn = (props) => {
         }}
         maxHeight={340}
       >
-        <DialogContent style={{ textAlign: "center" }}>
-          <Formik
-            initialValues={{ email: "", password: "" }}
-            validate={(values) => {
-              const errors = {};
-              if (!values.email) {
-                errors.email = errors.email = t("validation.email");
-              } else if (
-                !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
-              ) {
-                errors.email = t("validation.inValidateEmail");
-              }
-              return errors;
-            }}
-            onSubmit={(values, { setSubmitting }) => {
-              onSubmit(values, setSubmitting);
-            }}
-            validationSchema={Yup.object().shape({
-              password: Yup.string().required(t("validation.password")),
-            })}
-          >
-            {({ values, errors, handleChange, handleSubmit, isSubmitting }) => (
-              <form onSubmit={handleSubmit} className="login-form">
-                <FormControl className="login-form-control">
-                  <InputComponent
-                    label="Email"
-                    type="email"
-                    placeholder="Email"
-                    name="email"
-                    value={values.email}
-                    id="outlined-email"
-                    autoFocus
-                    onChange={handleChange}
-                    error={errors.email ? true : false}
-                    helperText={errors.email && `${errors.email}`}
-                    styles={{ maxHeight: 80, height: "100%" }}
-                  />
-                  <InputComponent
-                    label="Password"
-                    type="password"
-                    placeholder="Password"
-                    name="password"
-                    id="outlined-password"
-                    value={values.password}
-                    onChange={handleChange}
-                    error={errors.password ? true : false}
-                    helperText={errors.password && `${errors.password}`}
-                    styles={{ marginTop: 10, maxHeight: 80, height: "100%" }}
-                  />
-                  <div className="signin-button-bottom">
-                    <Link
-                      href="#"
-                      className={"forgot-password"}
-                      onClick={() => {
-                        handleCloseSignIn();
-                        openForgotPasswordDialog();
-                      }}
-                    >
-                      {t("login.sendNewPassword")}
-                    </Link>
-                    <ButtonComponent
-                      variant="contained"
-                      color="primary"
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="signin-button"
-                      startIcon={isLoading && <CircularProgress />}
-                      endIcon={!isLoading && <ArrowForwardIosIcon />}
-                      title={t("login.button")}
-                    />
-                  </div>
-                </FormControl>
-              </form>
-            )}
-          </Formik>
-        </DialogContent>
+        <div className="dialog_container">
+          <DialogContent>
+            <Formik
+              initialValues={{ email: "", password: "" }}
+              validate={(values) => {
+                const errors = {};
+                if (!values.email) {
+                  errors.email = errors.email = t("validation.email");
+                } else if (
+                  !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
+                ) {
+                  errors.email = t("validation.inValidateEmail");
+                }
+                return errors;
+              }}
+              onSubmit={(values, { setSubmitting }) => {
+                onSubmit(values, setSubmitting);
+              }}
+              validationSchema={Yup.object().shape({
+                password: Yup.string().required(t("validation.password")),
+              })}
+            >
+              {({ values, errors, handleChange, handleSubmit, isSubmitting }) => (
+                <form onSubmit={handleSubmit} className="login-form">
+                  <FormControl className="dialog_form_control_inner">
+                    <div className="dialog_form_row">
+                      <InputComponent
+                        type="email"
+                        placeholder="Email"
+                        name="email"
+                        value={values.email}
+                        id="outlined-email"
+                        autoFocus
+                        onChange={handleChange}
+                        error={errors.email ? true : false}
+                        helperText={errors.email && `${errors.email}`}
+                      />
+                    </div>
+                    <div className="dialog_form_row">
+                      <InputComponent
+                        type="password"
+                        placeholder="Password"
+                        name="password"
+                        id="outlined-password"
+                        value={values.password}
+                        onChange={handleChange}
+                        error={errors.password ? true : false}
+                        helperText={errors.password && `${errors.password}`}
+                      />
+                    </div>
+                    <div className="modal_bottom_cta">
+                      <Link
+                        href="#"
+                        className={"forgot-password"}
+                        onClick={() => {
+                          handleCloseSignIn();
+                          openForgotPasswordDialog();
+                        }}
+                      >
+                        {t("login.sendNewPassword")}
+                      </Link>
+                      <ButtonComponent
+                        variant="contained"
+                        color="primary"
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="signin-button"
+                        startIcon={isLoading && <CircularProgress />}
+                        endIcon={!isLoading}
+                        title={t("login.button")}
+                      />
+                    </div>
+                  </FormControl>
+                </form>
+              )}
+            </Formik>
+          </DialogContent>
+        </div>
+        
       </DialogComponent>
       <SnackBarComponent
         open={open}

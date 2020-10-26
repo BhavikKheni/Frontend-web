@@ -123,6 +123,7 @@ const ServiceCardComponent = (props) => {
                 key={i}
                 style={{
                   background: ` URL('${image.image}') no-repeat  center  center `,
+                  backgroundSize: '100%',
                 }}
               >
                 {imageRender()}
@@ -132,8 +133,9 @@ const ServiceCardComponent = (props) => {
             <div
             style={{
               background: ` URL('${DefaultServiceImage}') no-repeat  center  center `,
+              backgroundSize: '100%',
             }}
-            className="previousButton nextButton"
+            // className="previousButton nextButton"
           >
             {imageRender()}
           </div>

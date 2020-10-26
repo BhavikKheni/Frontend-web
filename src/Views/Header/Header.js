@@ -94,8 +94,10 @@ const useStyles = makeStyles((theme) => ({
     maxHeight: 240,
   },
   logoutDescription: {
+    fontFamily: 'Rubik',
     fontSize: 36,
     fontWeight: 500,
+    letterSpacing: '0.05em',
     color: themes.default.colors.white,
     textAlign: "left",
   },
@@ -308,27 +310,28 @@ const OweraHeader = (props) => {
         titleColor={themes.default.colors.green}
         iconColor={themes.default.colors.green}
       >
-        <DialogContent style={{ textAlign: "center" }}>
-          <FormControl className={classes.logoutDialog}>
-            <TypographyComponent
-              title="a warmly good bye..."
-              className={classes.logoutDescription}
-            />
-            <div style={{ textAlign: "right" }}>
-              <ButtonComponent
-                variant="contained"
-                color="primary"
-                type="button"
-                endIcon={<ArrowForwardIosIcon />}
-                title={t("Logout")}
-                style={{
-                  backgroundColor: themes.default.colors.orange,
-                }}
-                onClick={handleLogout}
+        <div class="dialog_container">
+          <DialogContent>
+            <FormControl className={classes.logoutDialog}>
+              <TypographyComponent
+                title="a warmly good bye..."
+                className={classes.logoutDescription}
               />
-            </div>
-          </FormControl>
-        </DialogContent>
+              <div className="modal_bottom_cta">
+                <ButtonComponent
+                  variant="contained"
+                  color="primary"
+                  type="button"
+                  title={t("Log out")}
+                  style={{
+                    backgroundColor: themes.default.colors.orange,
+                  }}
+                  onClick={handleLogout}
+                />
+              </div>
+            </FormControl>
+          </DialogContent>
+        </div>
       </DialogComponent>
       <SignIn
         onClose={handleCloseSignIn}
