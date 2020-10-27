@@ -17,14 +17,15 @@ function renderEventContent(eventInfo) {
     </>
   );
 }
-const AddBookingSpace = () => {
+const AddBookingSpace = (props) => {
+  const { tempArray } = props;
   return (
     <React.Fragment>
       <h3>Add Booking Space</h3>
       <Grid container spacing={3}>
         <Grid item xs={12} md={10}>
           <CalendarComponent
-            INITIAL_EVENTS={INITIAL_EVENTS}
+            INITIAL_EVENTS={tempArray}
             renderEventContent={renderEventContent}
           />
         </Grid>

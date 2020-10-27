@@ -4,7 +4,7 @@
   "logout": "Logout",
   "loginButton": "Log in",
   "signUpButton": "Sign up",
-  "close":"Close",
+  "close": "Close",
   "login": {
     "title": "Login",
     "signin": "Sign in",
@@ -23,6 +23,7 @@
   "service": {
     "create-service": {
       "createService": "Create a service",
+      "editService": "Edit the service",
       "nameAllocation": "Name and allocation",
       "startWork": "StartWork",
       "myServiceLibrary": "My service library",

@@ -119,6 +119,8 @@
   border-radius: 5px !important;
   max-height: 26px !important;
   padding: 20px !important;
+  width: 100% !important;
+  max-width: 77px !important;
 }
 .active-button {
   color: #fff !important;
@@ -126,6 +128,19 @@
   padding: 20px !important;
   border-radius: 5px 0px 0px 5px !important;
   background-color: #2fb41a !important;
+  width: 100% !important;
+  max-width: 85px !important;
+}
+.inActive-button {
+  background: #ffffff !important;
+  border: 1px solid #ff0000 !important;
+  box-sizing: border-box !important;
+  border-radius: 0px 5px 5px 0px !important;
+  color: #ff0000 !important;
+  font-style: normal !important;
+  font-weight: normal !important;
+  font-size: 12px !important;
+  line-height: 24px !important;
 }
 .service-quality {
   display: flex;

@@ -104,7 +104,15 @@ const SignIn = (props) => {
                 password: Yup.string().required(t("validation.password")),
               })}
             >
-              {({ values, errors, handleChange, handleSubmit, isSubmitting }) => (
+              {({
+                values,
+                errors,
+                touched,
+                handleChange,
+                handleSubmit,
+                handleBlur,
+                isSubmitting,
+              }) => (
                 <form onSubmit={handleSubmit} className="login-form">
                   <FormControl className="dialog_form_control_inner">
                     <div className="dialog_form_row">
@@ -116,8 +124,11 @@ const SignIn = (props) => {
                         id="outlined-email"
                         autoFocus
                         onChange={handleChange}
-                        error={errors.email ? true : false}
-                        helperText={errors.email && `${errors.email}`}
+                        onBlur={handleBlur}
+                        error={errors.email && touched.email ? true : false}
+                        helperText={
+                          errors.email && touched.email && `${errors.email}`
+                        }
                       />
                     </div>
                     <div className="dialog_form_row">
@@ -128,8 +139,15 @@ const SignIn = (props) => {
                         id="outlined-password"
                         value={values.password}
                         onChange={handleChange}
-                        error={errors.password ? true : false}
-                        helperText={errors.password && `${errors.password}`}
+                        handleBlur={handleBlur}
+                        error={
+                          errors.password && touched.password ? true : false
+                        }
+                        helperText={
+                          errors.password &&
+                          touched.password &&
+                          `${errors.password}`
+                        }
                       />
                     </div>
                     <div className="modal_bottom_cta">
@@ -160,7 +178,6 @@ const SignIn = (props) => {
             </Formik>
           </DialogContent>
         </div>
-        
       </DialogComponent>
       <SnackBarComponent
         open={open}

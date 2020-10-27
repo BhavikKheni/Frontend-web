@@ -17,6 +17,11 @@ import { themes } from "../../themes";
 import { useSidebar } from "../../Provider/SidebarProvider";
 import UpdateProfile from "./UpdateProfile";
 import "./Profile.css";
+const languages_level = [
+  { language_level_id: 1, label: "BASIC" },
+  { language_level_id: 2, label: "INTERMEDIATE" },
+  { language_level_id: 3, label: "ADVANCED" },
+];
 const useSession = () => React.useContext(SessionContext);
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -39,6 +44,8 @@ const ProfileView = (props) => {
   const classes = useStyles();
   const { setSidebarContent, setSidebar } = useSidebar();
   const [isLoading, setLoading] = useState(false);
+  const [allLanguages, setAllLanguges] = useState([]);
+
   let [userData, setUserData] = useState({
     first_name: "",
     last_name: "",
@@ -49,6 +56,15 @@ const ProfileView = (props) => {
     newPassword: null,
     languages: [],
   });
+  useEffect(() => {
+    async function fetchLanguages() {
+      const res = await get("/languages/list");
+      if (res) {
+        setAllLanguges(res);
+      }
+    }
+    fetchLanguages();
+  },[]);
   const [openImage, setImageOpen] = useState(false);
   let { user, isLoggedIn } = useSession();
   const { pathname } = props.location;
@@ -122,9 +138,7 @@ const ProfileView = (props) => {
     <div className="profile_page_wrapper">
       <Breadcrumbs aria-label="breadcrumb">
         <Link to={path}> My profile </Link>
-        {pathname === "/profile/edit" && (
-        <Link to={`/profile/edit`}>edit</Link>
-        )}
+        {pathname === "/profile/edit" && <Link to={`/profile/edit`}>edit</Link>}
       </Breadcrumbs>
       {isLoading ? (
         <div style={{ textAlign: "center" }}>
@@ -140,12 +154,12 @@ const ProfileView = (props) => {
               />
             </div>
             <TypographyComponent
-                className="user_profile_change_cta"
-                title="Change picture"
-                onClick={() => {
-                  setImageOpen(true);
-                }}
-              />
+              className="user_profile_change_cta"
+              title="Change picture"
+              onClick={() => {
+                setImageOpen(true);
+              }}
+            />
           </div>
           <div className="user_language_timezone">
             <TypographyComponent
@@ -156,34 +170,43 @@ const ProfileView = (props) => {
               }}
             />
             <div className="user_country_timezone_title">
+              <TypographyComponent variant="h6" title={userData.country_name} />
               <TypographyComponent
                 variant="h6"
-                // title={userData.country_name}
-                title={'Country'}
-              />
-              <TypographyComponent
-                variant="h6"
-                // title={userData.timezone_name}
-                title={'Timezone'}
+                title={userData.timezone_name}
               />
             </div>
             <div className="user_country_timezone_data">
               {userData.languages &&
-                userData.languages.map((language, i) => (
-                  <div className="user_language_item" key={i}>
-                    <ClearIcon onClick={() => removeItem(i)} />
-                    <span className="user_language">{language.language_name}</span>
-                    <span>{language.language_level}</span>
-                  </div>
-                ))}
+                userData.languages.map((language, i) => {
+                  return (
+                    <div className="user_language_item" key={i}>
+                      <ClearIcon onClick={() => removeItem(i)} />
+                      <span className="user_language">
+                        {
+                          allLanguages.find(
+                            (x) =>
+                              Number(x.id_language) ===
+                              Number(language.language_id)
+                          ).language_name
+                        }
+                      </span>
+                      <span>
+                        {
+                          languages_level.find(
+                            (x) =>
+                              Number(x.language_level_id) ===
+                              Number(language.language_level_id)
+                          ).label
+                        }
+                      </span>
+                    </div>
+                  );
+                })}
             </div>
             {pathname !== "/profile/edit" && (
-              <div  className="profile_edit_cta">
-                <Link
-                  to={`/profile/edit`}
-                >
-                  Edit
-                </Link>
+              <div className="profile_edit_cta">
+                <Link to={`/profile/edit`}>Edit</Link>
               </div>
             )}
           </div>
@@ -191,31 +214,18 @@ const ProfileView = (props) => {
             <TypographyComponent variant="h4" title="Employer Verfication" />
             <div className="user_verification_item">
               <CheckIcon />
-              <TypographyComponent
-                variant="h5"
-                title={userData.member_since}
-              />
+              <TypographyComponent variant="h5" title={userData.member_since} />
             </div>
 
             <div className="user_verification_item">
               <CheckIcon />
-              <TypographyComponent
-                variant="h5"
-                title="E-Mail verified"
-              />
-              <ButtonComponent
-                title="Verify"
-              />
+              <TypographyComponent variant="h5" title="E-Mail verified" />
+              <ButtonComponent title="Verify" />
             </div>
             <div className="user_verification_item">
               <CheckIcon />
-              <TypographyComponent
-                variant="h5"
-                title="Mobile verified"
-              />
-              <ButtonComponent
-                title="Verify"
-              />
+              <TypographyComponent variant="h5" title="Mobile verified" />
+              <ButtonComponent title="Verify" />
             </div>
           </div>
         </div>
@@ -231,7 +241,6 @@ const ProfileView = (props) => {
             newImagePath={(path) => newImagePath(path)}
           />
         )}
-        
       />
     </div>
   );

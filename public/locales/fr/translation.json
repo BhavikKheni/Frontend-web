@@ -22,7 +22,9 @@
   },
   "service": {
     "create-service": {
+      "createService": "Create a service",
       "startWork": "StartWork",
+      "editService": "Edit the service",
       "myServiceLibrary": "My service library",
       "addBookingSpace": "Add booking space",
       "createSpace": "Create a space"
