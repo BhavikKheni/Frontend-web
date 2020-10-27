@@ -55,6 +55,7 @@ input:-webkit-autofill:focus {
     margin-top: 27px;
 }
 .dialog_wrapper .MuiInputBase-formControl {
+    font-family: Rubik;
     background-color: #F5F5F5;
     border: 1px solid #191919;
     border-radius: 10px;
@@ -124,3 +125,89 @@ input:-webkit-autofill:focus {
     width: 20px !important;
     height: 20px !important;
 }
+
+
+
+
+
+
+
+/* Used in signUp form */
+.dialog_form_checkbox_row {
+    display: flex;
+}
+.dialog_form_checkbox_row label {
+    width: 25px;
+    height: 25px;
+    margin-left: 0;
+    margin-right: 15px;
+}
+.dialog_form_checkbox_row label span {
+    padding: 0;
+}
+.dialog_form_checkbox_row label input {
+    height: inherit;
+}
+.dialog_form_checkbox_row p {
+    font-size: 12px;
+    line-height: 24px;
+    letter-spacing: 0.02em;
+    color: #fff;
+    text-align: left;
+    display: inline;
+}
+.dialog_form_checkbox_row .terms-condition-item {
+    margin-left: 4px;
+}
+.dialog_form_checkbox_row label svg {
+    color: #949494;
+    background-color: #949494;
+    border-radius: 7px;
+}
+.dialog_form_checkbox_row label .Mui-checked svg {
+    background-color: #fff;
+    border: 1px solid #2FB41A;
+    color: transparent;
+}
+.dialog_form_checkbox_row label .Mui-checked span:after {
+    left: 9px;
+    top: 5px;
+    width: 6px;
+    height: 12px;
+    border: solid #2FB41A;
+    border-width: 0 2px 2px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+    position: absolute;
+    content: '';
+}
+/* Used in signUp form Over */
+
+
+
+/* Error */
+.dialog_wrapper .MuiFormHelperText-root.Mui-error {
+    font-size: 14px;
+    position: absolute;
+    bottom: -26px;
+    left: 10px;
+    background-color: #f44336;
+    color: #fff;
+    border-radius: 3px;
+    padding: 2px 8px;
+    margin: 0;
+    z-index: 1;
+}
+.dialog_wrapper .MuiFormHelperText-root.Mui-error:before {
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid #f44336;
+    position: absolute;
+    top: -10px;
+    left: 5px;
+    content: '';
+}
+/* Error Over */

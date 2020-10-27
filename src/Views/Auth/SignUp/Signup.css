@@ -1,4 +1,4 @@
-.signup-form-control {
+/* .signup-form-control {
   width: 100%;
   max-width: 458px;
   height: 100%;
@@ -95,32 +95,39 @@
   overflow-y: auto;
   margin: 25px;
   text-align: left;
-}
+} */
 
 /*This cause the division content 
 to be displayed from right to left */
-.Flipped {
+/* .Flipped {
   direction: rtl;
-}
+} */
 
 /* Designing for scroll-bar */
-::-webkit-scrollbar {
+/* ::-webkit-scrollbar {
   width: 6px;
-}
+} */
 
 /* Track */
-::-webkit-scrollbar-track {
+/* ::-webkit-scrollbar-track {
   background: gainsboro;
   border-radius: 5px;
-}
+} */
 
 /* Handle */
-::-webkit-scrollbar-thumb {
+/* ::-webkit-scrollbar-thumb {
   background: #d2d2d2;
   border-radius: 5px;
-}
+} */
 
 /* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
+/* ::-webkit-scrollbar-thumb:hover {
   background: #555;
+} */
+
+
+
+
+.dialog_wrapper .dialog_form_row + .dialog_form_row {
+  margin-top: 19px;
 }

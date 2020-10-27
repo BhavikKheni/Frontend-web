@@ -119,11 +119,12 @@ const SignUp = (props) => {
         }}
         maxHeight={427}
       >
+        <div className="dialog_container">
         <DialogContent style={{ textAlign: "center" }}>
           <form onSubmit={formik.handleSubmit} className="signup-form">
-            <FormControl className="signup-form-control">
+            <FormControl className="dialog_form_control_inner">
+            <div className="dialog_form_row">
               <InputComponent
-                label="Full name"
                 type="text"
                 placeholder="Full name"
                 name="full_name"
@@ -135,10 +136,10 @@ const SignUp = (props) => {
                 helperText={
                   formik.errors.full_name && `${formik.errors.full_name}`
                 }
-                styles={{ maxHeight: 80, height: "100%" }}
               />
+            </div>
+            <div className="dialog_form_row">
               <InputComponent
-                label="Email"
                 type="email"
                 placeholder="Email"
                 name="email"
@@ -147,10 +148,10 @@ const SignUp = (props) => {
                 value={formik.values.email}
                 error={formik.errors.email ? true : false}
                 helperText={formik.errors.email && `${formik.errors.email}`}
-                styles={{ maxHeight: 80, height: "100%", marginTop: 10 }}
               />
+            </div>
+            <div className="dialog_form_row">
               <InputComponent
-                label="Password"
                 type="password"
                 placeholder="Create password"
                 name="password"
@@ -161,68 +162,58 @@ const SignUp = (props) => {
                 helperText={
                   formik.errors.password && `${formik.errors.password}`
                 }
-                styles={{ maxHeight: 80, height: "100%", marginTop: 10 }}
               />
-              <div className="item">
-                <div style={{ display: "flex" }}>
-                  <FormControlLabel
-                    control={
-                      <CustomCheckbox
-                        checked={formik.values.checked}
-                        name="checked"
-                        onChange={() => {
-                          formik.setFieldValue(
-                            "checked",
-                            !formik.values.checked
-                          );
-                        }}
-                        size="medium"
-                      />
-                    }
+              </div>
+              <div className="dialog_form_row dialog_form_checkbox_row">
+                <FormControlLabel
+                  control={
+                    <CustomCheckbox
+                      checked={formik.values.checked}
+                      name="checked"
+                      onChange={() => {
+                        formik.setFieldValue(
+                          "checked",
+                          !formik.values.checked
+                        );
+                      }}
+                      size="medium"
+                    />
+                  }
+                />
+                <div>
+                  <TypographyComponent
+                    title={t("signup.registrationAgree")}
                   />
-                  <div className="item-1">
-                    <TypographyComponent
-                      title={t("signup.registrationAgree")}
-                      variant="h1"
-                      style={{
-                        lineHeight: 4,
-                      }}
-                    />
-
-                    <TypographyComponent
-                      title={t("signup.termsConditions")}
-                      variant="h1"
-                      onClick={() => {
-                        setTermsCondition(true);
-                        handleCloseSignUp();
-                      }}
-                      style={{
-                        lineHeight: 0,
-                        textAlign: "left",
-                        color: themes.default.colors.green,
-                      }}
-                      className="terms-condition-item"
-                    />
-                  </div>
-                </div>
-                <div style={{ height: 48 }}>
-                  <ButtonComponent
-                    variant="contained"
-                    color="primary"
-                    type="submit"
-                    disabled={isDisabled}
-                    className="go"
-                    startIcon={isLoading && <CircularProgress />}
-                    endIcon={!isLoading && <ArrowForwardIosIcon />}
-                    title={t("signup.go")}
-                    style={{
-                      backgroundColor: formik.values.checked
-                        ? "#2FB41A"
-                        : "#949494",
-                      height: 48,
+                  <TypographyComponent
+                    title={t("signup.termsConditions")}
+                    onClick={() => {
+                      setTermsCondition(true);
+                      handleCloseSignUp();
                     }}
+                    style={{
+                      color: themes.default.colors.green,
+                    }}
+                    className="terms-condition-item"
                   />
                 </div>
+              </div>
+              <div style={{ height: 48 }}>
+                <ButtonComponent
+                  variant="contained"
+                  color="primary"
+                  type="submit"
+                  disabled={isDisabled}
+                  className="go"
+                  startIcon={isLoading && <CircularProgress />}
+                  endIcon={!isLoading && <ArrowForwardIosIcon />}
+                  title={t("signup.go")}
+                  style={{
+                    backgroundColor: formik.values.checked
+                      ? "#2FB41A"
+                      : "#949494",
+                    height: 48,
+                  }}
+                />
               </div>
               <FormHelperText style={{ color: "red" }}>
                 {formik.errors.checked && `${formik.errors.checked}`}
@@ -230,6 +221,7 @@ const SignUp = (props) => {
             </FormControl>
           </form>
         </DialogContent>
+        </div>
       </DialogComponent>
       <DialogComponent
         onClose={handleCloseTermsCondition}
