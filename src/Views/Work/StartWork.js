@@ -59,8 +59,12 @@ const StartWork = () => {
     <div>
       <Grid container spacing={3}>
         <Grid item xs={12} md={10}>
+          <TypographyComponent title="Service name" />
+        </Grid>
+      </Grid>
+      <Grid container spacing={3}>
+        <Grid item xs={12} md={10}>
           <div className="service_call">
-            <TypographyComponent title="Service name" />
             <div className="service_calling_wrapper">
               <InputBase
                 placeholder="Search"

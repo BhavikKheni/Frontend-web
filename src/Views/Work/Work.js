@@ -22,12 +22,62 @@ import SnackBarComponent from "../../Components/SnackBar/SnackBar";
 import { themes } from "../../themes";
 import Spinner from "../../Components/Spinner/Spinner";
 import { SessionContext } from "../../Provider/Provider";
-import { get } from "../../Services/Auth.service";
+import { get, add } from "../../Services/Auth.service";
 import Service from "../../Services/index";
 import { useSidebar } from "../../Provider/SidebarProvider";
 import "./StartWork.css";
 const newService = new Service();
 const useSession = () => React.useContext(SessionContext);
+
+const booked_slots = [
+  {
+    id: 1,
+    startDate: "2020-10-27T01:10:00",
+    endDate: "2020-10-27T11:00:00",
+    title: "Test event",
+    booked_by: 1,
+    color: "red",
+    resize: false,
+  },
+];
+const available_slots = [
+  {
+    startDate: "2020-10-27T12:10:00",
+    endDate: "2020-10-27T11:00:00",
+    color: "green",
+    editable: true,
+    title: "Available slot",
+  },
+  {
+    id: 2,
+    startDate: "2020-10-27T07:00:00",
+    endDate: "2020-10-27T11:00:00",
+    title: "Test event",
+    booked_by: 159,
+    color: "blue",
+    editable: false,
+  },
+];
+var tempArray = [];
+
+available_slots.forEach((val) => {
+  tempArray.push({
+    start: val.startDate,
+    color: val.color,
+    editable: val.editable,
+    id: val.id,
+    title: val.title,
+  });
+});
+booked_slots.forEach((val) => {
+  tempArray.push({
+    start: val.startDate,
+    color: val.color,
+    editable: val.editable,
+    id: val.id,
+    title: val.title,
+  });
+});
 const limit = 10;
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -75,13 +125,16 @@ const Work = (props) => {
   const [isUpcomingMoreData, setUpcomingMoreData] = useState(true);
   const [upcomingoffset, setUpcomingOffset] = useState(0);
   const [isUpcomingLoading, setUpcomingLoading] = useState(false);
-
+  const [activeRecord, setActiveRecord] = useState([]);
+  const [inActiveRecord, setInActiveRecord] = useState([]);
   useEffect(() => {
     async function searchServiceLibrary() {
       setIsJobLoading(true);
       const res = await search("/service/list/user", {
-        user_id: user.id_user,
-        role: "assigned",
+        user_id: 159,
+        role: "posted",
+        limit: limit,
+        offset: 0,
       }).catch((err) => console.log(err));
       if (res) {
         const { data, stopped_at, type } = res || {};
@@ -163,6 +216,16 @@ const Work = (props) => {
     });
     return formData;
   }
+
+  const onDelete = async () => {
+    const res = await newService.delete("/service", {
+      id_service: formik.values.id_service,
+      token: copyRecord.token,
+    });
+    if (res.status === 200) {
+    } else {
+    }
+  };
 
   const onSave = async (record, setSubmitting) => {
     let formData = new FormData();
@@ -281,6 +344,7 @@ const Work = (props) => {
   const onEdit = (response) => {
     const newRecord = {
       id_service: response.id_service,
+      token: response.token,
       category: response.category,
       subcategory: response.subcategory,
       price: response.price,
@@ -292,20 +356,24 @@ const Work = (props) => {
       image_4: response.image_4,
     };
     setCopyRecord({ ...newRecord });
+    formik.setValues({
+      title: response.title,
+      description: response.description,
+      category: response.category,
+      price: response.price,
+      image_1:response.image_1,
+      image_2:response.image_2,
+      image_3:response.image_3,
+      image_4:response.image_4
+    });
     formik.setFieldValue("id_service", response.id_service);
-    formik.setFieldValue("category", response.category);
-    formik.setFieldValue("price", response.price);
     const sub =
       category &&
       category.filter((f) => Number(f.id) === Number(response.category));
-    setSubCategories(sub[0].sub_categories);
+    if (sub[0] && sub[0].sub_categories) {
+      setSubCategories(sub[0].sub_categories);
+    }
     formik.setFieldValue("subcategory", sub[0].sub_categories[0].id_category);
-    formik.setFieldValue("title", response.title);
-    formik.setFieldValue("description", response.description);
-    formik.setFieldValue("image_1", response.image_1);
-    formik.setFieldValue("image_2", response.image_2);
-    formik.setFieldValue("image_3", response.image_3);
-    formik.setFieldValue("image_4", response.image_4);
     setFileList([...response.images]);
     var elmnt = document.getElementsByClassName("create-service");
     if (elmnt[0]) {
@@ -321,6 +389,16 @@ const Work = (props) => {
     }
   };
 
+  const onActivateDactivate = (service) => {
+    const d = {
+      id_service: service.id_service,
+      id_user: user.id_user,
+      active: service.active ? "INACTIVE" : "ACTIVE",
+    };
+    add("/service/status", d).then((res) => {
+      console.log("res activate", res);
+    });
+  };
   return (
     <React.Fragment>
       <StartWork />
@@ -328,7 +406,32 @@ const Work = (props) => {
         <TypographyComponent
           title={`My service library (${services.length})`}
         />
+
+        <div>
+          <ButtonComponent
+            title={"Active"}
+            type="button"
+            className="active-button"
+            onClick={() => {
+              const newArray = services.sort((a, b) => b.active - a.active);
+              setServices((b) => [...(b || []), ...(newArray || [])]);
+              setActiveRecord((s) => [...(s || []), ...(newArray || [])]);
+            }}
+          />
+
+          <ButtonComponent
+            title="Inactive"
+            className="inActive-button"
+            type="button"
+            onClick={() => {
+              const newArray = services.sort((a, b) => a.active - b.active);
+              setServices((services) => [...newArray]);
+              setInActiveRecord((services) => [...newArray]);
+            }}
+          />
+        </div>
         <Divider className="divider" />
+
         {services &&
           services.map((service, index) => {
             return (
@@ -337,6 +440,9 @@ const Work = (props) => {
                   <ButtonComponent
                     title={service.active ? "Active" : "Deactive"}
                     className="active-button"
+                    onClick={(e) => {
+                      onActivateDactivate(service);
+                    }}
                   />
 
                   <ButtonComponent
@@ -389,7 +495,7 @@ const Work = (props) => {
         )}
         <Divider className="divider" />
       </section>
-      <AddBookinSpace />
+      <AddBookinSpace tempArray={tempArray} />
       <section className="create-service">
         <div className={classes.content}>
           {isJobLoading ? (
@@ -401,7 +507,11 @@ const Work = (props) => {
               <Grid container spacing={3}>
                 <Grid item xs={12} md={10}>
                   <TypographyComponent
-                    title={t("service.create-service.createService")}
+                    title={
+                      formik.values.id_service
+                        ? t("service.create-service.editService")
+                        : t("service.create-service.createService")
+                    }
                     variant="h3"
                     style={{
                       color: themes.default.colors.darkGray,
@@ -441,11 +551,12 @@ const Work = (props) => {
                                 placeholder="Service name"
                                 name="title"
                                 autoFocus
+                                handleBlur={formik.handleBlur}
                                 onChange={formik.handleChange}
                                 value={formik.values.title}
-                                error={formik.errors.title ? true : false}
+                                error={formik.errors.title && formik.touched.title ? true : false}
                                 helperText={
-                                  formik.errors.title &&
+                                  formik.errors.title && formik.touched.title &&
                                   `${formik.errors.title}`
                                 }
                                 styles={{ maxHeight: 80, height: "100%" }}
@@ -466,7 +577,12 @@ const Work = (props) => {
                             <FormControl
                               variant="outlined"
                               className={classes1.formControl}
-                              error={formik.errors.category ? true : false}
+                              error={
+                                formik.errors.category &&
+                                formik.touched.category
+                                  ? true
+                                  : false
+                              }
                             >
                               <SelectComponent
                                 name="category"
@@ -509,7 +625,12 @@ const Work = (props) => {
                             <FormControl
                               variant="outlined"
                               className={classes.formControl}
-                              error={formik.errors.subcategory ? true : false}
+                              error={
+                                formik.errors.subcategory &&
+                                formik.touched.subcategory
+                                  ? true
+                                  : false
+                              }
                             >
                               <SelectComponent
                                 name="subcategory"
@@ -706,7 +827,9 @@ const Work = (props) => {
                     {formik.values.id_service && (
                       <ButtonComponent
                         title="Delete service"
-                        onClick={() => {}}
+                        onClick={() => {
+                          onDelete();
+                        }}
                         variant="outlined"
                         style={{
                           backgroundColor: "#fff",

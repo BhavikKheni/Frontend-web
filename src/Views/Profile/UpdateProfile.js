@@ -39,15 +39,15 @@ const FormControl = withStyles((theme) => ({
 }))(MuiFormControl);
 
 const languages_level = [
-  { label: "BASIC" },
-  { label: "INTERMEDIATE" },
-  { label: "ADVANCED" },
-  { label: "EXPERT" },
+  { language_level_id: 1, label: "BASIC" },
+  { language_level_id: 2, label: "INTERMEDIATE" },
+  { language_level_id: 3, label: "ADVANCED" },
 ];
 const UpdateProfile = (props) => {
   let { user } = useSession();
   let [userData, setUserData] = useState({
-    full_name: "",
+    first_name: "",
+    last_name: "",
     timezone: "",
     country: "",
     image: null,
@@ -73,7 +73,7 @@ const UpdateProfile = (props) => {
   const [timezones, setTimezones] = useState([]);
   const [customLanguages, setCustomLanguages] = useState([]);
   const [imageUploadSuccess, setImageUploadSuccess] = useState(false);
-  
+
   React.useEffect(() => {
     setSidebar(true);
     setSidebarContent(
@@ -234,16 +234,24 @@ const UpdateProfile = (props) => {
         formData.append("image", updateRecord.image);
       }
       formData.append("id_user", user.id_user);
-      formData.append("full_name", updateRecord.full_name);
+      if(updateRecord.first_name){
+        formData.append("first_name", updateRecord.first_name);
+      }
+      if(updateRecord.last_name){
+        formData.append("last_name", updateRecord.last_name);
+      }
       if (updateRecord.country) {
         formData.append("country", updateRecord.country);
       }
       if (updateRecord.timezone) {
         formData.append("timezone", updateRecord.timezone);
       }
-      console.log(props.languages)
-      formData.append("languages", props.languages);
-
+     
+      props.languages.forEach((ele,index)=>{
+        formData.append(`languages[${[index]}][0]`, ele.language_id);
+        formData.append(`languages[${[index]}][1]`, ele.language_level_id);
+      })
+      
       const res = await service.upload("/profile/update", formData);
       if (res.status === 200) {
         console.log("success");
@@ -257,20 +265,16 @@ const UpdateProfile = (props) => {
   return (
     <div className="update_profile_form_wrapper">
       <div>
-        <form
-          onSubmit={onSubmit}
-          noValidate
-          autoComplete="off"
-        >
+        <form onSubmit={onSubmit} noValidate autoComplete="off">
           <div className="update_profile_inner">
             <div className="form_row">
               <FormControl variant="outlined">
                 <InputComponent
-                  label="Full name"
+                  label="First name"
                   type="text"
-                  value={userData.full_name && userData.full_name}
+                  value={userData.first_name && userData.first_name}
                   name="first_name"
-                  id="full_name"
+                  id="first_name"
                   onChange={handleChange}
                   error={isError}
                 />
@@ -318,10 +322,7 @@ const UpdateProfile = (props) => {
                 >
                   {languages &&
                     languages.map((l, i) => (
-                      <option
-                        key={l.id_language}
-                        value={l.language_name}
-                        >
+                      <option key={l.id_language} value={l.id_language}>
                         {l.language_name}
                       </option>
                     ))}
@@ -340,27 +341,24 @@ const UpdateProfile = (props) => {
                 >
                   {languages_level &&
                     languages_level.map((l, i) => (
-                      <option
-                      key={i}
-                      value={l.label}
-                        >
+                      <option key={i} value={l.language_level_id}>
                         {l.label}
                       </option>
                     ))}
                 </SelectComponent>
               </FormControl>
-              
+
               <div>
                 <ButtonComponent
                   title="Add"
                   onClick={() => {
                     const arr = [];
                     arr.push({
-                      language_name: language,
-                      language_level: level,
+                      language_id: language,
+                      language_level_id: level,
                     });
                     setCustomLanguages([...customLanguages, ...arr]);
-                    props.newLng([...customLanguages, ...arr]);
+                    props.newLng([...arr]);
                   }}
                 />
               </div>
@@ -377,10 +375,7 @@ const UpdateProfile = (props) => {
                 >
                   {countries &&
                     countries.map((m, i) => (
-                      <option
-                        key={i}
-                        value={Number(m.country_id)}
-                        >
+                      <option key={i} value={Number(m.country_id)}>
                         {m.country_name}
                       </option>
                     ))}
@@ -399,10 +394,7 @@ const UpdateProfile = (props) => {
                 >
                   {timezones &&
                     timezones.map((m, i) => (
-                      <option
-                      key={i}
-                      value={Number(m.id_timezone)}
-                        >
+                      <option key={i} value={Number(m.id_timezone)}>
                         {m.relativity}
                       </option>
                     ))}
@@ -411,28 +403,20 @@ const UpdateProfile = (props) => {
             </div>
             <div className="form_row change_password_field">
               <FormControl>
-                <ButtonComponent
-                  title="Change password"
-                />
+                <ButtonComponent title="Change password" />
               </FormControl>
             </div>
           </div>
           <div className="update_profile_form_cta_row">
+            <ButtonComponent title="Delete profile" disabled />
+            <ButtonComponent title="Deactivate profile" disabled />
             <ButtonComponent
-              title="Delete profile"
-              disabled
+              className="update_profile_cta"
+              variant="contained"
+              color="primary"
+              type="submit"
+              title="Update my profile"
             />
-            <ButtonComponent
-              title="Deactivate profile"
-              disabled
-            />
-            <ButtonComponent
-                className="update_profile_cta"
-                variant="contained"
-                color="primary"
-                type="submit"
-                title="Update my profile"
-              />
           </div>
         </form>
         <DialogComponent
@@ -729,20 +713,20 @@ const UpdateProfile = (props) => {
           <DialogContent style={{ textAlign: "center" }}>
             <FormControl className="image-upload">
               <div className="profile-image-tag">
-                {
-                  userData.image === null ?
-                  <ImageComponent/>:
+                {userData.image === null ? (
+                  <ImageComponent />
+                ) : (
                   <img
-                      alt="Profile"
-                      id="output"
-                      src={makeImage()}
-                      style={{
-                        width: "200px",
-                        height: "200px",
-                        borderRadius: "100%",
-                      }}
-                    />
-                }
+                    alt="Profile"
+                    id="output"
+                    src={makeImage()}
+                    style={{
+                      width: "200px",
+                      height: "200px",
+                      borderRadius: "100%",
+                    }}
+                  />
+                )}
                 <input
                   type="file"
                   id="upload-button"

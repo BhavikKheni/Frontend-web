@@ -1,16 +1,16 @@
 const offline = false;
-const url = offline ? 'http://127.0.0.1:8000' : 'https://owera.herokuapp.com';
+const url = offline ? "http://127.0.0.1:8000" : "https://owera.herokuapp.com";
 function readToken() {
-  const result = JSON.parse(localStorage.getItem('userInfo'));
+  const result = JSON.parse(localStorage.getItem("userInfo"));
   return result && (result.token || null);
 }
 class Service {
   constructor(props) {
     const headers = new Headers();
-    headers.append('Accept', 'application/json');
-    headers.append('Content-Type', 'application/json');
-    headers.append('Access-Control-Allow-Origin', '*');
-    headers.append('Access-Control-Allow-Credentials', true);
+    headers.append("Accept", "application/json");
+    headers.append("Content-Type", "application/json");
+    headers.append("Access-Control-Allow-Origin", "*");
+    headers.append("Access-Control-Allow-Credentials", true);
 
     this.state = {
       baseURL: url,
@@ -26,10 +26,10 @@ class Service {
   upload(url, data) {
     const uploadUrl = `${this.state.baseURL}${url}`;
     let headers = new Headers();
-    headers.append('token', readToken());
+    headers.append("token", readToken());
 
     return fetch(uploadUrl, {
-      method: 'POST',
+      method: "POST",
       body: data,
       headers: headers,
     });
@@ -38,19 +38,19 @@ class Service {
   request(url, config = {}, data = {}) {
     let headers = this.headers;
     if (readToken() !== null) {
-      headers.append('token', readToken());
+      headers.append("token", readToken());
     }
     const options = Object.assign(
       {
-        method: 'POST',
+        method: "POST",
         headers: this.headers,
-        mode: 'cors',
+        mode: "cors",
         body: JSON.stringify(data),
       },
-      config,
+      config
     );
 
-    if (config.method === 'GET') {
+    if (config.method === "GET") {
       delete options.body;
     }
 
@@ -64,14 +64,14 @@ class Service {
       password,
     };
     const config = {
-      method: 'POST',
+      method: "POST",
     };
     return this.request(url, config, data).then((res) => res.json());
   }
 
   add(url, data) {
     const config = {
-      method: 'POST',
+      method: "POST",
     };
     const newUrl = `${this.state.baseURL}${url}`;
     return this.request(newUrl, config, data).then((res) => res.json());
@@ -79,24 +79,24 @@ class Service {
 
   get(url) {
     const config = {
-      method: 'GET',
+      method: "GET",
     };
     const newUrl = `${this.state.baseURL}${url}`;
     return this.request(newUrl, config, {}).then((res) => res.json());
   }
 
-  delete(url, id) {
+  delete(url, data) {
     const config = {
-      method: 'DELETE',
+      method: "DELETE",
     };
-    const newUrl = `${this.state.baseURL}${url}/delete/${id}`;
-    return this.request(newUrl, config);
+    const newUrl = `${this.state.baseURL}${url}/delete`;
+    return this.request(newUrl, config, data);
   }
 
   search(url, data) {
     const newUrl = `${this.state.baseURL}${url}`;
     const config = {
-      method: 'POST',
+      method: "POST",
     };
     return this.request(newUrl, config, data).then((res) => res.json());
   }
