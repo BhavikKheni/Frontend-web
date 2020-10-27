@@ -15,7 +15,10 @@
   background: #333333;
   border-radius: 5px;
   width: 100%;
+  max-width: 283px;
   height: 100%;
+  min-height: 158px;
+  max-height:158px
 }
 .image {
   width: 100%;
@@ -28,7 +31,5 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  top: 50%;
-  width:100%;
   max-width:190px;
 }

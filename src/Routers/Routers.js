@@ -2,7 +2,7 @@ import React from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
 import Services from "../Views/Services/Services";
 import Profile from "../Views/Profile/Profile";
-import CreateService from "../Views/Services/CreateService";
+import CreateService from "../Views/Work/CreateService";
 import { SessionContext } from "../Provider/Provider.js";
 import ProfileProvider from '../Views/Profile/ProfileProvider';
 import Home from "../Views/Home/Home";
