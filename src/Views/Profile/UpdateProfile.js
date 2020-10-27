@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { withRouter } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
-import Hidden from "@material-ui/core/Hidden";
-import Grid from "@material-ui/core/Grid";
 import MenuItem from "@material-ui/core/MenuItem";
-import ListItemText from "@material-ui/core/ListItemText";
 import MuiDialogContent from "@material-ui/core/DialogContent";
 import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
 import Link from "@material-ui/core/Link";
@@ -12,7 +9,6 @@ import TextField from "@material-ui/core/TextField";
 import PhoneInput from "react-phone-input-2";
 import { Formik } from "formik";
 import MuiFormControl from "@material-ui/core/FormControl";
-import Input from "@material-ui/core/Input";
 import TypographyComponent from "../../Components/Typography/Typography";
 import SelectComponent from "../../Components/Forms/Select";
 import ButtonComponent from "../../Components/Forms/Button";
@@ -23,13 +19,11 @@ import { SessionContext } from "../../Provider/Provider";
 import { useSidebar } from "../../Provider/SidebarProvider";
 import { get } from "../../Services/Auth.service";
 import Service from "../../Services/index";
-import "react-phone-input-2/lib/style.css";
-import "./UpdateProfile.css";
 import * as Yup from "yup";
-import ProfilePic from "../../images/profile-image.png";
-
 import ImageComponent from "../../Components/Forms/Image";
 import { LOCALSTORAGE_DATA } from "../../utils";
+import "react-phone-input-2/lib/style.css";
+import "./UpdateProfile.css";
 const service = new Service();
 const useSession = () => React.useContext(SessionContext);
 
@@ -44,11 +38,6 @@ const FormControl = withStyles((theme) => ({
   },
 }))(MuiFormControl);
 
-const Input2 = withStyles((theme) => ({
-  root: {
-    width: "100%",
-  },
-}))(Input);
 const languages_level = [
   { label: "BASIC" },
   { label: "INTERMEDIATE" },
@@ -77,7 +66,6 @@ const UpdateProfile = (props) => {
   const [verifySucessPhone, setVerifySuccessPhone] = React.useState(false);
   const [languages, setLanguages] = useState([]);
   const [isError, setError] = useState(false);
-  const [openImage, setImageOpen] = useState(false);
   const [openErrorSnackBar, setOpenSnackBar] = useState(false);
   const [resError, setResError] = useState("");
   const [isImageSize, isSetImageSize] = useState(false);
@@ -85,7 +73,7 @@ const UpdateProfile = (props) => {
   const [timezones, setTimezones] = useState([]);
   const [customLanguages, setCustomLanguages] = useState([]);
   const [imageUploadSuccess, setImageUploadSuccess] = useState(false);
-  const [image, setImage] = useState();
+  
   React.useEffect(() => {
     setSidebar(true);
     setSidebarContent(
@@ -205,10 +193,6 @@ const UpdateProfile = (props) => {
     return true;
   }
 
-  const openFileUplodPopup = () => {
-    setImageOpen(true);
-  }
-
   const makeImage = () => {
     if (userData.image instanceof File) {
       saveImage();
@@ -257,6 +241,7 @@ const UpdateProfile = (props) => {
       if (updateRecord.timezone) {
         formData.append("timezone", updateRecord.timezone);
       }
+      console.log(props.languages)
       formData.append("languages", props.languages);
 
       const res = await service.upload("/profile/update", formData);
@@ -284,7 +269,7 @@ const UpdateProfile = (props) => {
                   label="Full name"
                   type="text"
                   value={userData.full_name && userData.full_name}
-                  name="full_name"
+                  name="first_name"
                   id="full_name"
                   onChange={handleChange}
                   error={isError}
@@ -751,7 +736,6 @@ const UpdateProfile = (props) => {
                       alt="Profile"
                       id="output"
                       src={makeImage()}
-                      src={ProfilePic}
                       style={{
                         width: "200px",
                         height: "200px",

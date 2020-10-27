@@ -3,17 +3,14 @@ import clsx from "clsx";
 import Card from "@material-ui/core/Card";
 import { Typography } from "@material-ui/core/";
 import CardActions from "@material-ui/core/CardActions";
-import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
 import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
 import PhoneIcon from "@material-ui/icons/Phone";
-import StarRateRounded from "@material-ui/icons/StarRateRounded";
 import StarBorderIcon from "@material-ui/icons/StarBorder";
 import { makeStyles } from "@material-ui/core/styles";
 import { red } from "@material-ui/core/colors";
 import Slider from "react-animated-slider";
 import TooltipComponent from "../Tooltip/Tooltip";
 import TypographyComponent from "../Typography/Typography";
-import { themes } from "../../themes";
 import DefaultServiceImage from "../../images/default-image.jpeg";
 import "react-animated-slider/build/horizontal.css";
 import "./ServiceCard.css";
@@ -82,8 +79,7 @@ const ServiceCardComponent = (props) => {
             </div>
             <div className="service_review">
               <TypographyComponent
-                // title={sympathy_rating}
-                title="4.5"
+                title={sympathy_rating}
               />
               <StarBorderIcon
                 className="card_start_review"
@@ -157,8 +153,7 @@ const ServiceCardComponent = (props) => {
                 <Typography
                   className="card_description"
                 >
-                  {/* {providerName} */}
-                  {'Provider name'}
+                  {providerName}
                 </Typography>
               </TooltipComponent>
             </div>

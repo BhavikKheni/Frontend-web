@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { ExpandMore } from "@material-ui/icons";
 import MuiDialogContent from "@material-ui/core/DialogContent";
 import { withStyles } from "@material-ui/core/styles";
 import MuiFormControl from "@material-ui/core/FormControl";
@@ -25,9 +24,9 @@ import SelectComponent from "../../Components/Forms/Select";
 import TypographyComponent from "../../Components/Typography/Typography";
 import { onLogout } from "../../Services/Auth.service";
 import { LOCALSTORAGE_DATA } from "../../utils";
-
 import "./service.css";
 
+import { useDebouncedCallback } from "use-debounce";
 const useSession = () => React.useContext(SessionContext);
 const limit = 10;
 
@@ -70,7 +69,7 @@ const Services = (props) => {
   const [country, setCountry] = useState(214);
   const { setSidebarContent, setSidebar } = useSidebar();
   const [languages, setLanguages] = useState([]);
-  const [provider_language, setProviderLanguage] = useState(50);
+  const [provider_language, setProviderLanguage] = useState(3);
   const [per_hour_rate_min, setperHourRateMin] = useState(10);
   const [per_hour_rate_max, setperHourRateMax] = useState(99);
   const { history } = props;
@@ -82,6 +81,7 @@ const Services = (props) => {
   const handleChangeRadio = (event) => {
     const value1 = event.target.value === "true" ? "true" : "false";
     setValue(value1);
+    debounced.callback();
   };
 
   const getParams = useCallback(() => {
@@ -101,19 +101,49 @@ const Services = (props) => {
     per_hour_rate_max,
     simpathy,
     service_quality,
-    value,
-    country,
     provider_language,
+    country,
+    value,
   ]);
+  const debounced = useDebouncedCallback(
+    () => {
+      asyncFetchData();
+    },
+    1500,
+    { maxWait: 2000 }
+  );
+
+  useEffect(
+    () => () => {
+      debounced.flush();
+    },
+    [debounced]
+  );
+
+  async function asyncFetchData() {
+    const res = await search("/service/list/filter", getParams());
+    if (res) {
+      const { data, stopped_at, type } = res || {};
+      if (type === "ERROR" || (data && data.length === 0)) {
+        setUpcomingMoreData(false);
+        setIsLoading(false);
+        return;
+      }
+      setUpcomingOffset(stopped_at);
+      setServices(data || []);
+      setIsLoading(false);
+    }
+  }
 
   useEffect(() => {
-    async function searchService() {
+    async function fetchData() {
       const res = await search("/service/list/filter", getParams());
       if (res) {
         const { data, stopped_at, type } = res || {};
-        if (type === "ERROR" || data.length === 0) {
+        if (type === "ERROR" || (data && data.length === 0)) {
           setUpcomingMoreData(false);
           setIsLoading(false);
+          setServices([]);
           return;
         }
         setUpcomingOffset(stopped_at);
@@ -121,15 +151,17 @@ const Services = (props) => {
         setIsLoading(false);
       }
     }
-    searchService();
-  }, [getParams]);
+    fetchData();
+  }, []);
 
   React.useEffect(() => {
     setSidebar(true);
     setSidebarContent(
       <div className="sidebar_inner">
-        {sidebarLoader ? <Spinner /> :
-          (<React.Fragment>
+        {sidebarLoader ? (
+          <Spinner />
+        ) : (
+          <React.Fragment>
             <div className="sidebar_row">
               <FormControl variant="outlined" disabled>
                 <SelectComponent
@@ -184,6 +216,7 @@ const Services = (props) => {
                   InputProps={{ inputProps: { min: 0, max: 200 } }}
                   onChange={(e) => {
                     setperHourRateMin(e.target.value);
+                    debounced.callback();
                   }}
                   variant="outlined"
                 />
@@ -199,6 +232,7 @@ const Services = (props) => {
                   InputProps={{ inputProps: { min: 0, max: 200 } }}
                   onChange={(e) => {
                     setperHourRateMax(e.target.value);
+                    debounced.callback();
                   }}
                   variant="outlined"
                 />
@@ -212,6 +246,7 @@ const Services = (props) => {
                   value={service_quality}
                   onChange={(event, newValue) => {
                     setServiceQuality(newValue);
+                    debounced.callback();
                   }}
                   size="small"
                 />
@@ -223,6 +258,7 @@ const Services = (props) => {
                   value={simpathy}
                   onChange={(event, newValue) => {
                     setSimpathy(newValue);
+                    debounced.callback();
                   }}
                   size="small"
                 />
@@ -247,8 +283,8 @@ const Services = (props) => {
                 />
               </RadioGroup>
             </div>
-          </React.Fragment>)
-        }
+          </React.Fragment>
+        )}
       </div>
     );
   }, [
@@ -265,6 +301,7 @@ const Services = (props) => {
     setSidebar,
     value,
     sidebarLoader,
+    debounced,
   ]);
 
   useEffect(() => {
@@ -329,8 +366,9 @@ const Services = (props) => {
     });
     if (res) {
       const { data, stopped_at, type } = res || {};
-      if (type === "ERROR" || data.length === 0) {
+      if (type === "ERROR" || (data && data.length === 0)) {
         setUpcomingMoreData(false);
+        setServices([]);
         return;
       }
       setUpcomingOffset(stopped_at);
@@ -369,10 +407,15 @@ const Services = (props) => {
   return (
     <div className="service_card_content">
       <div className="promotion_text">
-        <p>Hi, Your email isn’t verified yet. Please verify to use all the services.</p>
+        <p>
+          Hi, Your email isn’t verified yet. Please verify to use all the
+          services.
+        </p>
         <div className="promotion_links">
           <a href="javscript:void(0)">Resend email confirmation link</a>
-          <a href="javscript:void(0)" className="close_icon"><span className="material-icons">close</span></a>
+          <a href="javscript:void(0)" className="close_icon">
+            <span className="material-icons">close</span>
+          </a>
         </div>
       </div>
       {isLoading ? (
@@ -416,8 +459,7 @@ const Services = (props) => {
                   provider_language,
                 })
               }
-            >
-            </div>
+            ></div>
           )}
         </div>
       )}
