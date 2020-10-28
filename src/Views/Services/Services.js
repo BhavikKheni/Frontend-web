@@ -472,60 +472,61 @@ const Services = (props) => {
         title="Reset Password"
         maxHeight={340}
       >
-        <DialogContent style={{ textAlign: "center" }}>
-          <Formik
-            initialValues={{ email: "", password: "" }}
-            onSubmit={(values, { setSubmitting }) => {
-              onResetPassword(values);
-            }}
-            validationSchema={Yup.object().shape({
-              password: Yup.string().required("Password is required"),
-            })}
-          >
-            {({ values, errors, handleChange, handleSubmit, isSubmitting }) => (
-              <form onSubmit={handleSubmit} className="reset-password-form">
-                <FormControl className="reset-password-form-control">
-                  <InputComponent
-                    label="New password"
-                    type="password"
-                    placeholder="New password"
-                    name="password"
-                    value={values.password}
-                    id="outlined-password"
-                    autoFocus
-                    onChange={handleChange}
-                    error={errors.password ? true : false}
-                    helperText={errors.password && `${errors.password}`}
-                    styles={{ maxHeight: 80, height: "100%" }}
-                  />
-                  <InputComponent
-                    label="Confirm new password"
-                    type="password"
-                    placeholder="Confirm new password"
-                    name="password"
-                    id="Confirm new password"
-                    value={values.password}
-                    onChange={handleChange}
-                    error={errors.password ? true : false}
-                    helperText={errors.password && `${errors.password}`}
-                    styles={{ marginTop: 10, maxHeight: 80, height: "100%" }}
-                  />
-                  <div className="reset-password-bottom">
-                    <ButtonComponent
-                      variant="contained"
-                      color="primary"
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="reset-password-button"
-                      endIcon={<ArrowForwardIosIcon />}
-                      title="Reset"
+        <div className="dialog_container">
+          <DialogContent style={{ textAlign: "center" }}>
+            <Formik
+              initialValues={{ email: "", password: "" }}
+              onSubmit={(values, { setSubmitting }) => {
+                onResetPassword(values);
+              }}
+              validationSchema={Yup.object().shape({
+                password: Yup.string().required("Password is required"),
+              })}
+            >
+              {({ values, errors, handleChange, handleSubmit, isSubmitting }) => (
+                <form onSubmit={handleSubmit} className="reset-password-form">
+                  <FormControl className="dialog_form_control_inner">
+                  <div className="dialog_form_row">
+                    <InputComponent
+                      type="password"
+                      placeholder="New password"
+                      name="password"
+                      value={values.password}
+                      id="outlined-password"
+                      autoFocus
+                      onChange={handleChange}
+                      error={errors.password ? true : false}
+                      helperText={errors.password && `${errors.password}`}
                     />
                   </div>
-                </FormControl>
-              </form>
-            )}
-          </Formik>
-        </DialogContent>
+                  <div className="dialog_form_row">
+                    <InputComponent
+                      type="password"
+                      placeholder="Confirm new password"
+                      name="password"
+                      id="Confirm new password"
+                      value={values.password}
+                      onChange={handleChange}
+                      error={errors.password ? true : false}
+                      helperText={errors.password && `${errors.password}`}
+                    />
+                  </div>
+                  <div className="modal_bottom_cta">
+                      <ButtonComponent
+                        variant="contained"
+                        color="primary"
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="reset-password-button"
+                        title="Reset"
+                      />
+                  </div>
+                  </FormControl>
+                </form>
+              )}
+            </Formik>
+          </DialogContent>
+        </div>
       </DialogComponent>
     </div>
   );

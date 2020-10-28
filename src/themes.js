@@ -33,7 +33,7 @@ const fonts = {
     fontSize: fontSize.fontSize12,
     fontStyle: "normal",
     fontWeight: "normal",
-    lineHeight: 24,
+    lineHeight: "24px",
     letterSpacing: "0.02em",
     color: colorValues.white,
   },

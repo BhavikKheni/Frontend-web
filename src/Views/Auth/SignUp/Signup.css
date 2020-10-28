@@ -1,130 +1,39 @@
-/* .signup-form-control {
-  width: 100%;
-  max-width: 458px;
-  height: 100%;
-  max-height: 310px;
-}
-.signup-form {
-  height: 100%;
-  max-height: 310px;
-}
-.terms-condition-control {
-  width: 100%;
-  max-width: 966px;
-  height: 100%;
-  max-height: 796px;
-}
-.terms-condition-form {
-  height: 100%;
-  max-height: 711px;
-}
-.terms-condition-item{
-  height: 100%;
-}
-.terms-condition-control .item {
-  display: flex;
-  justify-content: space-between;
-  /* align-items: center; */
-  /* height: 48px;
-} */
-.terms-condition-control .item-2 {
-  display: flex;
-  justify-content: flex-start;
-  /* align-items: center; */
-  height: 48px;
-}
-.terms-condition-input-component {
-  width: 100%;
-  max-width: 458px;
-}
-
-.signup-form-control .MuiFilledInput-underline::after {
-  border-bottom: none;
-}
-
-.signup-form-control .email {
-  margin-top: 20px;
-}
-.signup-form-control .password {
-  margin-top: 20px;
-}
-.terms-condition-item {
-  cursor: pointer;
-  margin-top: 10px;
-  text-align: center;
-}
-.signup-form-control .item {
-  display: flex;
-  justify-content: space-between;
-  height: 48px;
-}
-.signup-form-control .item-1 {
-  display: flex;
-  flex-direction: column;
-  height: 48px;
-}
-.signup-form-control .item-2 .terms-condition-control {
-  width: 100%;
-  max-width: 198px;
-  display: flex;
-  flex-direction: column;
-}
-.Container {
-  border-radius: 5px;
-  width: 100%;
-  max-width: 966px;
-  background: #f5f5f5;
-  mix-blend-mode: normal;
-  border: 2px solid #000000;
-  border-radius: 40px;
-  margin-top: 30px;
-}
-
-.Content {
-  height: 410px;
-  font-family: Rubik;
-  font-style: normal;
-  font-weight: normal;
-  font-size: 16px;
-  line-height: 150%;
-  letter-spacing: 0.02em;
-  color: #303030;
-  overflow-y: auto;
-  margin: 25px;
-  text-align: left;
-} */
-
-/*This cause the division content 
-to be displayed from right to left */
-/* .Flipped {
-  direction: rtl;
-} */
-
-/* Designing for scroll-bar */
-/* ::-webkit-scrollbar {
-  width: 6px;
-} */
-
-/* Track */
-/* ::-webkit-scrollbar-track {
-  background: gainsboro;
-  border-radius: 5px;
-} */
-
-/* Handle */
-/* ::-webkit-scrollbar-thumb {
-  background: #d2d2d2;
-  border-radius: 5px;
-} */
-
-/* Handle on hover */
-/* ::-webkit-scrollbar-thumb:hover {
-  background: #555;
-} */
-
-
-
-
 .dialog_wrapper .dialog_form_row + .dialog_form_row {
   margin-top: 19px;
+}
+.dialog_wrapper .dialog_form_row.dialog_form_checkbox_row {
+  margin-top: 31px;
+}
+.sign_up_first_step_cta {
+  display: flex;
+  justify-content: space-between;
+}
+.sign_up_first_step_cta .dialog_form_checkbox_row {
+  max-width: 230px;
+  width: 100%;
+}
+
+.terms-condition-form h3 {
+  margin-bottom: 20px;
+}
+.signup_form_tandc_text {
+  background: #F5F5F5;
+  mix-blend-mode: normal;
+  backdrop-filter: blur(4px);
+  border-radius: 40px;
+  padding: 32px 51px;
+  max-height: 596px;
+  overflow-y: auto;
+  box-shadow: 0px 0px 5px 0px #ffffff;
+  margin-top: 30px;
+}
+.signup_form_tandc_text p {
+  font-family: Rubik;
+  font-size: 16px;
+  font-weight: normal;
+  color: #303030;
+  margin-top: 0;
+}
+.dialog_wrapper .terms-condition-form .modal_bottom_cta {
+  margin-top: 0;
 }
