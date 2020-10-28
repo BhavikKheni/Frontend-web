@@ -7,7 +7,7 @@ import { themes } from "../../../themes";
 import TypographyComponent from "../../../Components/Typography/Typography";
 
 const LatestReviews = (props) => {
-    const { t } = useTranslation();
+  const { t } = useTranslation();
   const { selectedReviews } = props;
   return (
     <React.Fragment>
@@ -36,7 +36,9 @@ const LatestReviews = (props) => {
 
       <Grid container spacing={3}>
         <Grid item xs={12} md={8}>
-          {selectedReviews &&
+          {selectedReviews.length === 0 ? (
+            <span>{t('providerProfile.notFoundReviews')}</span>
+          ) : (
             selectedReviews.map((review, index) => (
               <div
                 key={index}
@@ -70,7 +72,8 @@ const LatestReviews = (props) => {
                   </div>
                 </div>
               </div>
-            ))}
+            ))
+          )}
         </Grid>
       </Grid>
       <Grid container spacing={3}>

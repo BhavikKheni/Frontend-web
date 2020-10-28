@@ -48,6 +48,7 @@ const UpdateProfile = (props) => {
   let [userData, setUserData] = useState({
     first_name: "",
     last_name: "",
+    phone_no: "",
     timezone: "",
     country: "",
     image: null,
@@ -59,8 +60,7 @@ const UpdateProfile = (props) => {
   const { setSidebarContent, setSidebar } = useSidebar();
   const [isLoading, setLoading] = useState(false);
   const [openEmail, setEmail] = React.useState(false);
-  const [verify, setVerify] = React.useState(false);
-  const [verifySucess, setVerifySuccess] = React.useState(false);
+
   const [openPhone, setPhone] = React.useState(false);
   const [verifyPhone, setVerifyPhone] = React.useState(false);
   const [verifySucessPhone, setVerifySuccessPhone] = React.useState(false);
@@ -234,10 +234,13 @@ const UpdateProfile = (props) => {
         formData.append("image", updateRecord.image);
       }
       formData.append("id_user", user.id_user);
-      if(updateRecord.first_name){
+      if (updateRecord.first_name) {
         formData.append("first_name", updateRecord.first_name);
       }
-      if(updateRecord.last_name){
+      if(updateRecord.phone_no){
+        formData.append("phone_no", updateRecord.phone_no);
+      }
+      if (updateRecord.last_name) {
         formData.append("last_name", updateRecord.last_name);
       }
       if (updateRecord.country) {
@@ -246,12 +249,12 @@ const UpdateProfile = (props) => {
       if (updateRecord.timezone) {
         formData.append("timezone", updateRecord.timezone);
       }
-     
-      props.languages.forEach((ele,index)=>{
+
+      props.languages.forEach((ele, index) => {
         formData.append(`languages[${[index]}][0]`, ele.language_id);
         formData.append(`languages[${[index]}][1]`, ele.language_level_id);
-      })
-      
+      });
+
       const res = await service.upload("/profile/update", formData);
       if (res.status === 200) {
         console.log("success");
@@ -300,9 +303,9 @@ const UpdateProfile = (props) => {
                 <InputComponent
                   label="Mobile No"
                   type="text"
-                  value={userData.mobile_no && userData.mobile_no}
-                  name="mobile_no"
-                  id="mobile_no"
+                  value={userData.phone_no && userData.phone_no}
+                  name="phone_no"
+                  id="phone_no"
                   onChange={handleChange}
                   error={isError}
                 />
@@ -437,7 +440,6 @@ const UpdateProfile = (props) => {
                 initialValues={{ email: "" }}
                 onSubmit={async (values) => {
                   setEmail(false);
-                  setVerify(true);
                 }}
                 validationSchema={Yup.object().shape({
                   email: Yup.string().email().required("Required"),
@@ -486,84 +488,6 @@ const UpdateProfile = (props) => {
           </DialogContent>
         </DialogComponent>
 
-        <DialogComponent
-          onClose={(e) => {
-            e.stopPropagation();
-            setVerify(false);
-          }}
-          open={verify}
-          title="E-mail verification"
-          subTitle1="We’ve send a 4 digit code to your email. Please enter the 
-        code to verify your email-id."
-          maxHeight={312}
-        >
-          <DialogContent style={{ textAlign: "center" }}>
-            <FormControl className="email-verify">
-              <FormControl className="phone-number-otp">
-                <TextField id="number1" type="number" style={{ width: 62 }} />
-                <TextField id="number2" type="number" style={{ width: 62 }} />
-                <TextField id="number3" type="number" style={{ width: 62 }} />
-                <TextField id="number4" type="number" style={{ width: 62 }} />
-                <div className="timer">
-                  <div id="counter" style={{ marginLeft: 5 }}>
-                    1:00
-                  </div>
-                </div>
-              </FormControl>
-              <div className="resend-button">
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <TypographyComponent variant="h2" title="Didn’t get code?" />
-                  <Link href="#" style={{ color: "#F5F5F5", marginLeft: 5 }}>
-                    Resend
-                  </Link>
-                </div>
-                <ButtonComponent
-                  variant="contained"
-                  color="primary"
-                  type="button"
-                  className="send-code"
-                  endIcon={<ArrowForwardIosIcon />}
-                  title="verify"
-                  onClick={() => {
-                    setVerify(false);
-                    setVerifySuccess(true);
-                  }}
-                />
-              </div>
-            </FormControl>
-          </DialogContent>
-        </DialogComponent>
-        <DialogComponent
-          onClose={(e) => {
-            e.stopPropagation();
-            setVerifySuccess(false);
-          }}
-          open={verifySucess}
-          title="E-mail verification"
-          subTitle1="Congratulations! Your e-mail id has been verified."
-          maxHeight={234}
-        >
-          <DialogContent style={{ textAlign: "center" }}>
-            <FormControl className="email-verify">
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "flex-end",
-                }}
-              >
-                <ButtonComponent
-                  variant="contained"
-                  color="primary"
-                  type="button"
-                  className="send-code"
-                  endIcon={<ArrowForwardIosIcon />}
-                  title="Finish"
-                  onClick={() => {}}
-                />
-              </div>
-            </FormControl>
-          </DialogContent>
-        </DialogComponent>
         <DialogComponent
           onClose={(e) => {
             e.stopPropagation();

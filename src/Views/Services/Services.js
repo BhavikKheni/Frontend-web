@@ -121,12 +121,14 @@ const Services = (props) => {
   );
 
   async function asyncFetchData() {
+    setIsLoading(true);
     const res = await search("/service/list/filter", getParams());
     if (res) {
       const { data, stopped_at, type } = res || {};
       if (type === "ERROR" || (data && data.length === 0)) {
         setUpcomingMoreData(false);
         setIsLoading(false);
+        setServices([]);
         return;
       }
       setUpcomingOffset(stopped_at);
@@ -137,6 +139,7 @@ const Services = (props) => {
 
   useEffect(() => {
     async function fetchData() {
+      setIsLoading(true);
       const res = await search("/service/list/filter", getParams());
       if (res) {
         const { data, stopped_at, type } = res || {};
@@ -368,7 +371,6 @@ const Services = (props) => {
       const { data, stopped_at, type } = res || {};
       if (type === "ERROR" || (data && data.length === 0)) {
         setUpcomingMoreData(false);
-        setServices([]);
         return;
       }
       setUpcomingOffset(stopped_at);
@@ -380,7 +382,12 @@ const Services = (props) => {
     //update auth api call karva ni
   };
 
-  const onPhone = (element) => {};
+  const onPhone = (element) => {
+    history.push("/call-page", {
+      service: element,
+      userId: element.assigned_to,
+    });
+  };
 
   const onCalendar = (element) => {
     history.push("/profile-provider", {

@@ -1,21 +1,26 @@
 import React, { useState, useEffect } from "react";
 import { withRouter, Link, Route } from "react-router-dom";
-import { makeStyles } from "@material-ui/core/styles";
-import { CircularProgress, MenuItem } from "@material-ui/core";
+import { makeStyles, withStyles } from "@material-ui/core/styles";
+import { CircularProgress, MenuItem, TextField } from "@material-ui/core";
+import MuiDialogContent from "@material-ui/core/DialogContent";
+import MuiFormControl from "@material-ui/core/FormControl";
 import Breadcrumbs from "@material-ui/core/Breadcrumbs";
-import Grid from "@material-ui/core/Grid";
+import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
 import CheckIcon from "@material-ui/icons/Check";
 import ClearIcon from "@material-ui/icons/Clear";
-
 import { useTranslation } from "react-i18next";
 import { SessionContext } from "../../Provider/Provider";
-import { get } from "../../Services/Auth.service";
+import { get, add } from "../../Services/Auth.service";
 import ButtonComponent from "../../Components/Forms/Button";
 import TypographyComponent from "../../Components/Typography/Typography";
 import ProfilePic from "../../images/profile-image.png";
 import { themes } from "../../themes";
 import { useSidebar } from "../../Provider/SidebarProvider";
+import DialogComponent from "../../Components/Dialog/Dialog";
+import SnackBarComponent from "../../Components/SnackBar/SnackBar";
 import UpdateProfile from "./UpdateProfile";
+import { LOCALSTORAGE_DATA } from "../../utils";
+
 import "./Profile.css";
 const languages_level = [
   { language_level_id: 1, label: "BASIC" },
@@ -40,31 +45,65 @@ const useStyles = makeStyles((theme) => ({
     },
   },
 }));
+
+const DialogContent = withStyles((theme) => ({
+  root: {
+    padding: theme.spacing(2),
+  },
+}))(MuiDialogContent);
+
+const FormControl = withStyles((theme) => ({
+  root: {
+    width: "100%",
+  },
+}))(MuiFormControl);
 const ProfileView = (props) => {
   const classes = useStyles();
   const { setSidebarContent, setSidebar } = useSidebar();
   const [isLoading, setLoading] = useState(false);
   const [allLanguages, setAllLanguges] = useState([]);
-
+  const [verify, setVerify] = useState(false);
+  const [verifySucess, setVerifySuccess] = useState(false);
+  const [setRes, setTypeRes] = useState("");
+  const [title, setTitle] = useState("");
+  const [subTitle, setSubTitle] = useState("");
+  const [successTitle, setSuccessTitle] = useState("");
+  const [successSubTitle, setSuccessSubTitle] = useState("");
+  const [type, setType] = useState("");
+  const [open, setOpen] = React.useState(false);
+  const [number, setNumber] = useState({
+    number1: null,
+    number2: null,
+    number3: null,
+    number4: null,
+  });
   let [userData, setUserData] = useState({
     first_name: "",
     last_name: "",
-    bio: "",
+    phone_no: "",
     country: "",
     image: null,
     password: null,
     newPassword: null,
     languages: [],
   });
+
   useEffect(() => {
     async function fetchLanguages() {
-      const res = await get("/languages/list");
-      if (res) {
-        setAllLanguges(res);
+      const storage_laguages = LOCALSTORAGE_DATA.get("languages");
+      if (!storage_laguages.data) {
+        const res = await get("/languages/list");
+        if (res) {
+          LOCALSTORAGE_DATA.set("languages", res);
+          setAllLanguges(res);
+        }
+      } else {
+        setAllLanguges(storage_laguages.data);
       }
     }
     fetchLanguages();
-  },[]);
+  }, []);
+
   const [openImage, setImageOpen] = useState(false);
   let { user, isLoggedIn } = useSession();
   const { pathname } = props.location;
@@ -134,6 +173,94 @@ const ProfileView = (props) => {
       setUserData({ ...userData, image: path });
     }
   };
+
+  const handleChangeNumber = (e) => {
+    setNumber((n) => ({ ...n, [e.target.name]: e.target.value }));
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+  };
+
+  const onVerifyEmailDailog = async () => {
+    if (type === "email") {
+      const data = {
+        email: userData.email,
+        id_user: userData.id_user,
+      };
+      const res = await add("/profile/verifyemail", data).catch((err) => {
+        setTypeRes(err);
+      });
+      if (res && res.type === "SUCCESS") {
+        setVerify(true);
+        setTypeRes(res);
+        setOpen(true);
+      } else {
+        setOpen(true);
+      }
+    } else if (type === "mobile") {
+      const data = {
+        phone: userData.phone_no,
+        id_user: userData.id_user,
+      };
+      const res = await add("/profile/verifyphone", data).catch((err) => {
+        setTypeRes(err);
+      });
+      if (res && res.type === "SUCCESS") {
+        setVerify(true);
+        setTypeRes(res);
+        setOpen(true);
+      } else {
+        setOpen(true);
+      }
+    }
+  };
+
+  const onVerifyEmail = async () => {
+    if (type === "email") {
+      const data = {
+        id_user: userData.id_user,
+        code: Number(
+          `${number.number1}${number.number2}${number.number3}${number.number4}`
+        ),
+        type: "email",
+      };
+      const res = await add("/profile/verify", data).catch((err) => {
+        setTypeRes(err);
+      });
+      if (res && res.type === "SUCCESS") {
+        setVerify(false);
+        setTypeRes(res);
+        setOpen(true);
+        setVerifySuccess(true);
+      } else {
+        setOpen(true);
+      }
+    }
+    if (type === "mobile") {
+      const data = {
+        id_user: userData.id_user,
+        code: Number(
+          `${number.number1}${number.number2}${number.number3}${number.number4}`
+        ),
+        type: "phone",
+      };
+      const res = await add("/profile/verify", data).catch((err) => {
+        setTypeRes(err);
+      });
+      if (res && res.type === "SUCCESS") {
+        setVerify(true);
+        setTypeRes(res);
+        setOpen(true);
+        setVerifySuccess(true);
+      } else {
+        setOpen(true);
+      }
+    }
+  };
   return (
     <div className="profile_page_wrapper">
       <Breadcrumbs aria-label="breadcrumb">
@@ -179,26 +306,24 @@ const ProfileView = (props) => {
             <div className="user_country_timezone_data">
               {userData.languages &&
                 userData.languages.map((language, i) => {
+                  const language_name =
+                    (allLanguages &&
+                      allLanguages.find(
+                        (x) =>
+                          Number(x.id_language) === Number(language.language_id)
+                      ).language_name) ||
+                    "";
                   return (
                     <div className="user_language_item" key={i}>
                       <ClearIcon onClick={() => removeItem(i)} />
-                      <span className="user_language">
-                        {
-                          allLanguages.find(
-                            (x) =>
-                              Number(x.id_language) ===
-                              Number(language.language_id)
-                          ).language_name
-                        }
-                      </span>
+                      <span className="user_language">{language_name}</span>
                       <span>
-                        {
+                        {languages_level &&
                           languages_level.find(
                             (x) =>
                               Number(x.language_level_id) ===
                               Number(language.language_level_id)
-                          ).label
-                        }
+                          ).label}
                       </span>
                     </div>
                   );
@@ -216,16 +341,40 @@ const ProfileView = (props) => {
               <CheckIcon />
               <TypographyComponent variant="h5" title={userData.member_since} />
             </div>
+            <div className="user_verification_item">
+              {!userData.email_verified && <CheckIcon />}
+              <TypographyComponent variant="h5" title="E-Mail verified" />
+              {!userData.email_verified && (
+                <ButtonComponent
+                  title="Verify"
+                  onClick={() => {
+                    onVerifyEmailDailog();
+                    setType("email");
+                    setTitle("E-mail verification");
+                    setSubTitle(
+                      "We’ve send a 4 digit code to your email. Please enter the code to verify your email-id."
+                    );
+                  }}
+                />
+              )}
+            </div>
 
             <div className="user_verification_item">
-              <CheckIcon />
-              <TypographyComponent variant="h5" title="E-Mail verified" />
-              <ButtonComponent title="Verify" />
-            </div>
-            <div className="user_verification_item">
-              <CheckIcon />
+              {!userData.phone_verified && <CheckIcon />}
               <TypographyComponent variant="h5" title="Mobile verified" />
-              <ButtonComponent title="Verify" />
+              {!userData.phone_verified && (
+                <ButtonComponent
+                  title="Verify"
+                  onClick={() => {
+                    onVerifyEmailDailog();
+                    setType("mobile");
+                    setTitle("Mobile verification");
+                    setSubTitle(
+                      "We’ve send a 4 digit code to your mobile. Please enter the code to verify your mobile."
+                    );
+                  }}
+                />
+              )}
             </div>
           </div>
         </div>
@@ -241,6 +390,119 @@ const ProfileView = (props) => {
             newImagePath={(path) => newImagePath(path)}
           />
         )}
+      />
+      <DialogComponent
+        onClose={(e) => {
+          e.stopPropagation();
+          setVerify(false);
+        }}
+        open={verify}
+        title={title}
+        subTitle1={subTitle}
+        maxHeight={312}
+      >
+        <DialogContent style={{ textAlign: "center" }}>
+          <FormControl className="email-verify">
+            <FormControl className="phone-number-otp">
+              <TextField
+                value={number.number1}
+                name="number1"
+                type="number"
+                style={{ width: 62 }}
+                onChange={handleChangeNumber}
+              />
+              <TextField
+                value={number.number2}
+                name="number2"
+                type="number"
+                style={{ width: 62 }}
+                onChange={handleChangeNumber}
+              />
+              <TextField
+                value={number.number3}
+                name="number3"
+                type="number"
+                style={{ width: 62 }}
+                onChange={handleChangeNumber}
+              />
+              <TextField
+                value={number.number4}
+                name="number4"
+                type="number"
+                style={{ width: 62 }}
+                onChange={handleChangeNumber}
+              />
+            </FormControl>
+            <div className="resend-button">
+              <div
+                style={{ display: "flex", alignItems: "center" }}
+                onClick={() => onVerifyEmailDailog()}
+              >
+                <TypographyComponent variant="h2" title="Didn’t get code?" />
+                <TypographyComponent
+                  variant="h2"
+                  title="Resend"
+                  style={{ color: "#F5F5F5", marginLeft: 5 }}
+                />
+              </div>
+              <ButtonComponent
+                variant="contained"
+                color="primary"
+                type="button"
+                className="send-code"
+                endIcon={<ArrowForwardIosIcon />}
+                title="verify"
+                onClick={() => {
+                  setVerify(false);
+                  onVerifyEmail();
+                }}
+              />
+            </div>
+          </FormControl>
+        </DialogContent>
+      </DialogComponent>
+      <DialogComponent
+        onClose={(e) => {
+          e.stopPropagation();
+          setVerifySuccess(false);
+        }}
+        open={verifySucess}
+        title="E-mail verification"
+        subTitle1="Congratulations! Your e-mail id has been verified."
+        maxHeight={234}
+      >
+        <DialogContent style={{ textAlign: "center" }}>
+          <FormControl className="email-verify">
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+              }}
+            >
+              <ButtonComponent
+                variant="contained"
+                color="primary"
+                type="button"
+                className="send-code"
+                endIcon={<ArrowForwardIosIcon />}
+                title="Finish"
+                onClick={() => {
+                  setVerifySuccess(false);
+                }}
+              />
+            </div>
+          </FormControl>
+        </DialogContent>
+      </DialogComponent>
+      <SnackBarComponent
+        open={open}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        message={setRes.message}
+        type={setRes.type && setRes.type.toLowerCase()}
       />
     </div>
   );

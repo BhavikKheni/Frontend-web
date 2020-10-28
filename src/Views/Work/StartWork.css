@@ -2,6 +2,7 @@
   display: flex;
   align-items: center;
   background-color: #e5e9f8;
+  height: 100%;
 }
 .service_calling_wrapper {
   position: relative;
@@ -69,6 +70,18 @@
   justify-content: space-between;
   align-items: center;
 }
+.go-online {
+  color: #fff !important;
+  width: 100% !important;
+  max-width: 242px;
+}
+.off-line {
+  color: #fff !important;
+  background-color: #4f4f4f !important;
+  border-radius: 10px !important;
+  width: 100% !important;
+  max-width: 242px;
+}
 /* create service */
 .service-price .MuiFilledInput-input {
   padding: 7px 12px 10px;
@@ -130,6 +143,9 @@
   background-color: #2fb41a !important;
   width: 100% !important;
   max-width: 85px !important;
+}
+.deactivate-button {
+  background-color: #ff0000 !important;
 }
 .inActive-button {
   background: #ffffff !important;
