@@ -24,18 +24,16 @@
 .terms-condition-control .item {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  /* align-items: center; */
+  /* height: 48px;
+} */
+.terms-condition-control .item-2 {
+  display: flex;
+  justify-content: flex-start;
+  /* align-items: center; */
   height: 48px;
 }
-.terms-condition-fullName {
-  width: 100%;
-  max-width: 458px;
-}
-.terms-condition-email {
-  width: 100%;
-  max-width: 458px;
-}
-.terms-condition-password {
+.terms-condition-input-component {
   width: 100%;
   max-width: 458px;
 }
@@ -50,7 +48,6 @@
 .signup-form-control .password {
   margin-top: 20px;
 }
-
 .terms-condition-item {
   cursor: pointer;
   margin-top: 10px;

@@ -18,6 +18,8 @@ import * as Yup from "yup";
 import { useTranslation } from "react-i18next";
 import "./Signup.css";
 import FormHelperText from "@material-ui/core/FormHelperText";
+
+
 const DialogContent = withStyles((theme) => ({
   root: {
     padding: theme.spacing(2),
@@ -44,9 +46,12 @@ const SignUp = (props) => {
   const [openTermsCondition, setTermsCondition] = useState(false);
   const formik = useFormik({
     initialValues: {
-      full_name: "",
+      first_name: "",
+      last_name: "",
       email: "",
+      phone_number: "",
       password: "",
+      checkedC: false,
       checked: false,
     },
     onSubmit: (values) => {
@@ -64,11 +69,12 @@ const SignUp = (props) => {
       return errors;
     },
     validationSchema: Yup.object().shape({
-      password: Yup.string().required(t("validation.password")),
-      full_name: Yup.string().required(t("validation.fullName")),
-      checked: Yup.boolean()
-        .required("Required")
-        .oneOf([true], "Terms & condition Required"),
+      password: Yup.string().required(t('validation.password')),
+      first_name: Yup.string().required(t('validation.firstName')),
+      last_name: Yup.string().required(t('validation.lastName')),
+      phone_number: Yup.string().required(t('validation.phoneNumber')),
+      checkedC: Yup.boolean().required("Required").oneOf([true], "Error"),
+      checked: Yup.boolean().required("Required").oneOf([true], "Error"),
     }),
   });
 
@@ -79,6 +85,8 @@ const SignUp = (props) => {
         if (res && res.type === "SUCCESS") {
           handleCloseSignUp();
           setLoading(false);
+
+          console.log(values);
         } else {
           setTypeRes(res);
           setDisabled(false);
@@ -110,35 +118,46 @@ const SignUp = (props) => {
         }}
         open={openSignUp}
         title={t("signup.title")}
-        subTitle1={t("alreadyHaveAccount")}
+        subTitle1={t("signup.alreadyHaveAccount")}
         subTitle2={t("login.title")}
         onSubTitle2={(e) => {
           e.stopPropagation();
           handleCloseSignUp();
           openSignInDialog();
         }}
-        maxHeight={427}
+        maxHeight={500}
       >
-        <div className="dialog_container">
+        {/* Signup Popup */}
         <DialogContent style={{ textAlign: "center" }}>
           <form onSubmit={formik.handleSubmit} className="signup-form">
-            <FormControl className="dialog_form_control_inner">
-            <div className="dialog_form_row">
+            <FormControl className="signup-form-control">
               <InputComponent
                 type="text"
-                placeholder="Full name"
-                name="full_name"
+                placeholder="First Name"
+                name="first_name"
                 id="outlined-name"
                 autoFocus
                 onChange={formik.handleChange}
-                value={formik.values.full_name}
-                error={formik.errors.full_name ? true : false}
+                value={formik.values.first_name}
+                error={formik.errors.first_name ? true : false}
                 helperText={
-                  formik.errors.full_name && `${formik.errors.full_name}`
+                  formik.errors.first_name && `${formik.errors.first_name}`
                 }
+                styles={{ maxHeight: 80, height: "100%"}}
               />
-            </div>
-            <div className="dialog_form_row">
+              <InputComponent
+                type="text"
+                placeholder="Last Name"
+                name="last_name"
+                id="outlined-name"
+                onChange={formik.handleChange}
+                value={formik.values.last_name}
+                error={formik.errors.last_name ? true : false}
+                helperText={
+                  formik.errors.last_name && `${formik.errors.last_name}`
+                }
+                styles={{ maxHeight: 80, height: "100%", marginTop: 10 }}
+              />
               <InputComponent
                 type="email"
                 placeholder="Email"
@@ -148,9 +167,21 @@ const SignUp = (props) => {
                 value={formik.values.email}
                 error={formik.errors.email ? true : false}
                 helperText={formik.errors.email && `${formik.errors.email}`}
+                styles={{ maxHeight: 80, height: "100%", marginTop: 10 }}
               />
-            </div>
-            <div className="dialog_form_row">
+              <InputComponent
+                type="tel"
+                placeholder="Phone Number"
+                name="phone_number"
+                id="outlined-name"
+                onChange={formik.handleChange}
+                value={formik.values.phone_number}
+                error={formik.errors.phone_number ? true : false}
+                helperText={
+                  formik.errors.phone_number && `${formik.errors.phone_number}`
+                }
+                styles={{ maxHeight: 80, height: "100%", marginTop: 10 }}
+              />
               <InputComponent
                 type="password"
                 placeholder="Create password"
@@ -162,58 +193,105 @@ const SignUp = (props) => {
                 helperText={
                   formik.errors.password && `${formik.errors.password}`
                 }
+                styles={{ maxHeight: 80, height: "100%", marginTop: 10 }}
               />
-              </div>
-              <div className="dialog_form_row dialog_form_checkbox_row">
-                <FormControlLabel
-                  control={
-                    <CustomCheckbox
-                      checked={formik.values.checked}
-                      name="checked"
-                      onChange={() => {
-                        formik.setFieldValue(
-                          "checked",
-                          !formik.values.checked
-                        );
-                      }}
-                      size="medium"
-                    />
-                  }
-                />
+
+              {/* Agreement Checkboxes */}
+              <div className="terms-condition-control" style={{ display: "flex", justifyContent: "space-between" }}>
                 <div>
-                  <TypographyComponent
-                    title={t("signup.registrationAgree")}
-                  />
-                  <TypographyComponent
-                    title={t("signup.termsConditions")}
-                    onClick={() => {
-                      setTermsCondition(true);
-                      handleCloseSignUp();
-                    }}
+                  {/* Citizenship Agreement */}
+                  <div className="item">
+                    <div>
+                        <FormControlLabel
+                          control={
+                            <CustomCheckbox
+                              checked={formik.values.checkedC}
+                              name="checkedC"
+                              onChange={() => {
+                                formik.setFieldValue(
+                                  "checkedC",
+                                  !formik.values.checkedC
+                                );
+                              }}
+                              size="medium"
+                            />
+                          }
+                        />
+                    </div>
+                    <div className="item item-1">
+                      <TypographyComponent
+                        title={t('signup.citizenshipAgree')}
+                        variant="h1"
+                        style={{
+                          lineHeight: 4,
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Terms & Condition Agreement */}
+                  <div className="item-2">
+                    <div>
+                        <FormControlLabel
+                          control={
+                            <CustomCheckbox
+                              checked={formik.values.checked}
+                              name="checked"
+                              onChange={() => {
+                                formik.setFieldValue(
+                                  "checked",
+                                  !formik.values.checked
+                                );
+                              }}
+                              size="medium"
+                            />
+                          }
+                        />
+                    </div>
+                    <div>
+                      <TypographyComponent
+                        title={t('signup.registrationAgree')}
+                        variant="h1"
+                        style={{
+                          lineHeight: 4,
+                        }}
+                      />
+                      <TypographyComponent
+                        title={t('signup.termsConditions')}
+                        variant="h1"
+                        onClick={() => {
+                          setTermsCondition(true);
+                          handleCloseSignUp();
+                        }}
+                        style={{
+                          lineHeight: 0,
+                          textAlign: "left",
+                          color: themes.default.colors.green,
+                        }}
+                        className="terms-condition-item"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="item" style={{ height: 48 }}>
+                  <ButtonComponent
+                    variant="contained"
+                    color="primary"
+                    type="submit"
+                    disabled={isDisabled}
+                    className="go"
+                    startIcon={isLoading && <CircularProgress />}
+                    endIcon={!isLoading && <ArrowForwardIosIcon />}
+                    title={t("signup.go")}
                     style={{
-                      color: themes.default.colors.green,
+                      backgroundColor: formik.values.checkedC && formik.values.checked
+                        ? "#2FB41A"
+                        : "#949494",
+                      height: 48,
                     }}
-                    className="terms-condition-item"
                   />
                 </div>
-              </div>
-              <div style={{ height: 48 }}>
-                <ButtonComponent
-                  variant="contained"
-                  color="primary"
-                  type="submit"
-                  disabled={isDisabled}
-                  className="go"
-                  startIcon={isLoading && <CircularProgress />}
-                  endIcon={!isLoading && <ArrowForwardIosIcon />}
-                  title={t("signup.go")}
-                  style={{
-                    backgroundColor: formik.values.checked
-                      ? "#2FB41A"
-                      : "#949494",
-                    height: 48,
-                  }}
-                />
               </div>
               <FormHelperText style={{ color: "red" }}>
                 {formik.errors.checked && `${formik.errors.checked}`}
@@ -221,8 +299,9 @@ const SignUp = (props) => {
             </FormControl>
           </form>
         </DialogContent>
-        </div>
       </DialogComponent>
+
+      {/* Terms & Conditions Popup */}
       <DialogComponent
         onClose={handleCloseTermsCondition}
         open={openTermsCondition}
@@ -253,20 +332,69 @@ const SignUp = (props) => {
               <Grid container spacing={3} className="terms-condition-item">
                 <Grid item xs={12} sm={6} md={6} lg={6} xl={6}>
                   <InputComponent
-                    label="Full name"
+                    label="First name"
                     type="text"
-                    placeholder="Full name"
-                    name="full_name"
+                    placeholder="First name"
+                    name="first_name"
                     id="outlined-name"
                     autoFocus
                     onChange={formik.handleChange}
-                    value={formik.values.full_name}
-                    error={formik.errors.full_name ? true : false}
+                    value={formik.values.first_name}
+                    error={formik.errors.first_name ? true : false}
                     helperText={
-                      formik.errors.full_name && `${formik.errors.full_name}`
+                      formik.errors.first_name && `${formik.errors.first_name}`
                     }
-                    className="terms-condition-fullName"
+                    className="terms-condition-input-component"
                     styles={{ maxHeight: 80, height: "100%" }}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6} md={6} lg={6} xl={6}>
+                  <InputComponent
+                    label="Last name"
+                    type="text"
+                    placeholder="Last name"
+                    name="last_name"
+                    id="outlined-name"
+                    onChange={formik.handleChange}
+                    value={formik.values.last_name}
+                    error={formik.errors.last_name ? true : false}
+                    helperText={
+                      formik.errors.last_name && `${formik.errors.last_name}`
+                    }
+                    className="terms-condition-input-component"
+                    styles={{ maxHeight: 80, height: "100%" }}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6} md={6} lg={6} xl={6}>
+                  <InputComponent
+                    label="Email"
+                    type="email"
+                    placeholder="Email"
+                    name="email"
+                    id="outlined-email"
+                    onChange={formik.handleChange}
+                    value={formik.values.email}
+                    error={formik.errors.email ? true : false}
+                    helperText={formik.errors.email && `${formik.errors.email}`}
+                    styles={{ maxHeight: 80, height: "100%", marginTop: 10 }}
+                    className="terms-condition-input-component"
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6} md={6} lg={6} xl={6}>
+                  <InputComponent
+                    label="Phone Number"
+                    type="tel"
+                    placeholder="Phone Number"
+                    name="phone_number"
+                    id="outlined-name"
+                    onChange={formik.handleChange}
+                    value={formik.values.phone_number}
+                    error={formik.errors.phone_number ? true : false}
+                    helperText={
+                      formik.errors.phone_number && `${formik.errors.phone_number}`
+                    }
+                    styles={{ maxHeight: 80, height: "100%" }}
+                    className="terms-condition-input-component"
                   />
                 </Grid>
                 <Grid item xs={12} sm={6} md={6} lg={6} xl={6}>
@@ -283,26 +411,12 @@ const SignUp = (props) => {
                       formik.errors.password && `${formik.errors.password}`
                     }
                     styles={{ maxHeight: 80, height: "100%" }}
-                    className="password terms-condition-password"
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6} md={6} lg={6} xl={6}>
-                  <InputComponent
-                    label="Email"
-                    type="email"
-                    placeholder="Email"
-                    name="email"
-                    id="outlined-email"
-                    onChange={formik.handleChange}
-                    value={formik.values.email}
-                    error={formik.errors.email ? true : false}
-                    helperText={formik.errors.email && `${formik.errors.email}`}
-                    styles={{ maxHeight: 80, height: "100%", marginTop: 10 }}
-                    className="email terms-condition-email"
+                    className="password terms-condition-input-component"
                   />
                 </Grid>
                 <Grid item xs={12} sm={6} md={6} lg={6} xl={6}>
                   <div className="item">
+                    {/* Terms & Condition Agreement */}
                     <div style={{ display: "flex" }}>
                       <FormControlLabel
                         control={
@@ -365,11 +479,11 @@ const SignUp = (props) => {
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                   <div className="Container Flipped">
                     <div className="Content">
-                      GeeksforGeeks is a Computer Science portal for geeks. It
-                      contains well written, well thought and well explained
+                      GeeksforGeeks is a Computer Science portal for geeks. 
+                      It contains well written, well thought and well explained
                       computer science and programming articles, quizzes etc.
-                      GeeksforGeeks is a Computer Science portal for geeks. It
-                      contains well written, well thought and well explained
+                      GeeksforGeeks is a Computer Science portal for geeks. 
+                      It contains well written, well thought and well explained
                       computer science and programming articles, quizzes etc.
                       GeeksforGeeks is a Computer Science portal for geeks. It
                       contains well written, well thought and well explained

@@ -13,11 +13,12 @@
     "button": "Login",
     "sendNewPassword": "Send new password?"
   },
-  "alreadyHaveAccount": "Already have an account?",
   "signup": {
     "title": "Sign up",
+    "alreadyHaveAccount": "Already have an account?",
+    "citizenshipAgree": "I hereby confirm that I am domiciled in Switzerland.",
     "registrationAgree": "With your registration you agree to our",
-    "termsConditions": "terms & conditions",
+    "termsConditions": "Terms & conditions",
     "go": "go"
   },
   "service": {
@@ -34,7 +35,9 @@
     "email": "Email is required",
     "inValidateEmail": "Invalid email address",
     "password": "Password is required",
-    "fullName": "FullName is required"
+    "phoneNumber": "Phone Number is required",
+    "firstName": "First Name is required",
+    "lastName": "Last Name is required"
   },
   "providerProfile": {
     "offeredService": "Offered Services",
