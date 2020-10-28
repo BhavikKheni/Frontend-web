@@ -50,6 +50,7 @@
     "serviceQuality": "Service quality",
     "simpathy": "Simpathy",
     "latestReview": "Latest reviews",
+    "notFoundReviews":"No Reviews Found",
     "bookService": "Book Service"
   },
   "home": {
@@ -74,5 +75,10 @@
       "followUs": "Follow us:",
       "subscribe": "Subscribe"
     }
+  },
+  "video-call": {
+    "title": "Would you like to leave?",
+    "message": "You’re going to leave the call. Are you sure?",
+    "opinion":"What`s your oppinion"
   }
 }

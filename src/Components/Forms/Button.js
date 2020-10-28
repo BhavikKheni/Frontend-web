@@ -8,7 +8,7 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1),
     height: 48,
     fontFamily: "Rubik",
-    borderRadius: '10px',
+    borderRadius: "10px",
   },
   primary: {
     backgroundColor: "#2fb41a",
@@ -36,24 +36,22 @@ const ButtonComponent = (props) => {
     className,
   } = props;
   return (
-    <React.Fragment>
-      <Button
-        variant={variant}
-        color={color}
-        className={clsx(classes.primary, classes.button, className)}
-        endIcon={endIcon}
-        startIcon={startIcon}
-        onClick={onClick}
-        type={type}
-        disabled={disabled}
-        disableFocusRipple={disableFocusRipple}
-        disableElevation={disableElevation}
-        size={size}
-        style={{ ...style }}
-      >
-        {title}
-      </Button>
-    </React.Fragment>
+    <Button
+      variant={variant}
+      color={color}
+      className={clsx(classes.primary, classes.button, className)}
+      endIcon={endIcon}
+      startIcon={startIcon}
+      onClick={onClick}
+      type={type}
+      disabled={disabled}
+      disableFocusRipple={disableFocusRipple}
+      disableElevation={disableElevation}
+      size={size}
+      style={{ ...style }}
+    >
+      {title}
+    </Button>
   );
 };
 export default ButtonComponent;

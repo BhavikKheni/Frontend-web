@@ -17,6 +17,7 @@ import OfferedServices from "./OfferedServices/OfferedServices";
 import ServiceDetails from "./ServiceDetails/ServiceDetails";
 import LatestReviews from "./LatestReviews/LatestReviews";
 import "./ProviderProfile.css";
+import ButtonComponent from "../../Components/Forms/Button";
 const useStyles = makeStyles((theme) => ({
   large: {
     width: theme.spacing(20),
@@ -75,7 +76,7 @@ const ProfileProvider = (props) => {
         }
         if (type === "calendar-view") {
           var elementCalendar = document.getElementsByClassName("calendar");
-          if (elementCalendar) {
+          if (elementCalendar[0]) {
             elementCalendar[0].scrollIntoView();
           }
         }
@@ -103,6 +104,8 @@ const ProfileProvider = (props) => {
     getData();
   }, [state]);
 
+  const onVerify = () => {};
+
   return (
     <div style={{ margin: 20 }}>
       <TypographyComponent title="Provider profile" variant="h4" />
@@ -128,7 +131,7 @@ const ProfileProvider = (props) => {
             <Grid item xs={12} md={4}>
               <TypographyComponent
                 variant="h3"
-                title={userData.full_name}
+                title={`${userData.first_name} ${userData.last_name}`}
                 style={{
                   fontWeight: "bold",
                   color: themes.default.colors.darkGray,
@@ -190,12 +193,40 @@ const ProfileProvider = (props) => {
               <Grid
                 style={{ display: "flex", alignItems: "center", marginTop: 10 }}
               >
-                <CheckIcon />
+                {!userData.email_verified && <CheckIcon />}
                 <TypographyComponent
                   variant="h4"
                   title="E-Mail verified"
                   style={{ marginLeft: 5 }}
                 />
+                {!userData.email_verified && (
+                  <ButtonComponent
+                    title="Verify"
+                    className="verify-email"
+                    onClick={() => {
+                      onVerify();
+                    }}
+                  />
+                )}
+              </Grid>
+              <Grid
+                style={{ display: "flex", alignItems: "center", marginTop: 10 }}
+              >
+                {!userData.phone_verified && <CheckIcon />}
+                <TypographyComponent
+                  variant="h4"
+                  title="Mobile verified"
+                  style={{ marginLeft: 5 }}
+                />
+                {!userData.phone_verified && (
+                  <ButtonComponent
+                    title="Verify"
+                    className="verify-email"
+                    onClick={() => {
+                      onVerify();
+                    }}
+                  />
+                )}
               </Grid>
             </Grid>
           </Grid>
@@ -209,7 +240,10 @@ const ProfileProvider = (props) => {
             />
           </section>
           <section className="service-details">
-            <ServiceDetails averages={averages} selectedService={selectedService} />
+            <ServiceDetails
+              averages={averages}
+              selectedService={selectedService}
+            />
           </section>
           <section className="latest-reviews">
             <LatestReviews selectedReviews={selectedReviews} />
@@ -287,7 +321,9 @@ const ProfileProvider = (props) => {
                   />
                   <TypographyComponent
                     variant="h6"
-                    title={selectedService.price && `${selectedService.price}$/h`}
+                    title={
+                      selectedService.price && `${selectedService.price}$/h`
+                    }
                     style={{
                       marginLeft: 5,
                       color: themes.default.colors.darkGray,

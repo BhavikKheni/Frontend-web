@@ -97,8 +97,8 @@ const StartWork = () => {
             <TypographyComponent title="Hourly rate" />
             <TypographyComponent title="00.00/h" />
           </div>
-          <ButtonComponent title="Go online" />
-          <ButtonComponent title="Off online" />
+          <ButtonComponent title="Go online" className="go-online" />
+          <ButtonComponent title="Off online" className="off-line" />
         </Grid>
       </Grid>
     </div>

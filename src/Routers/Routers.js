@@ -7,6 +7,7 @@ import { SessionContext } from "../Provider/Provider.js";
 import ProfileProvider from '../Views/Profile/ProfileProvider';
 import Home from "../Views/Home/Home";
 import Work from "../Views/Work/Work";
+import CallPage from '../Views/Work/CallPage';
 
 const useSession = () => React.useContext(SessionContext);
 
@@ -41,6 +42,7 @@ const CreateRoutes = () => {
       <Route exact path="/create-services" component={CreateService} />
       <ProtectedRoute path="/profile" component={Profile}/>
       <Route path="/profile-provider" component={ProfileProvider} />
+      <Route path="/call-page" component={CallPage} />
     </Switch>
   );
 };

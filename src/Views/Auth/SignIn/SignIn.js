@@ -4,7 +4,6 @@ import { withStyles } from "@material-ui/core/styles";
 import { FormControl, CircularProgress } from "@material-ui/core";
 import Link from "@material-ui/core/Link";
 import MuiDialogContent from "@material-ui/core/DialogContent";
-import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
 import { login, setLocalStorage } from "../../../Services/Auth.service";
 import InputComponent from "../../../Components/Forms/Input";
 import ButtonComponent from "../../../Components/Forms/Button";

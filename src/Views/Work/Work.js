@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import clsx from "clsx";
 import { Grid, Divider } from "@material-ui/core";
 import StarBorderIcon from "@material-ui/icons/StarBorder";
 import TypographyComponent from "../../Components/Typography/Typography";
@@ -127,6 +128,14 @@ const Work = (props) => {
   const [isUpcomingLoading, setUpcomingLoading] = useState(false);
   const [activeRecord, setActiveRecord] = useState([]);
   const [inActiveRecord, setInActiveRecord] = useState([]);
+
+  useEffect(() => {
+    var elmnt = document.getElementsByClassName("start-work");
+    if (elmnt[0]) {
+      elmnt[0].scrollIntoView();
+    }
+  }, []);
+
   useEffect(() => {
     async function searchServiceLibrary() {
       setIsJobLoading(true);
@@ -174,10 +183,46 @@ const Work = (props) => {
     setSidebar(true);
     setSidebarContent(
       <div style={{ margin: 20 }}>
-        <MenuItem>{t("service.create-service.startWork")}</MenuItem>
-        <MenuItem>{t("service.create-service.myServiceLibrary")}</MenuItem>
-        <MenuItem>{t("service.create-service.addBookingSpace")}</MenuItem>
-        <MenuItem>{t("service.create-service.createSpace")}</MenuItem>
+        <MenuItem
+          onClick={() => {
+            var elmnt = document.getElementsByClassName("start-work");
+            if (elmnt[0]) {
+              elmnt[0].scrollIntoView();
+            }
+          }}
+        >
+          {t("service.create-service.startWork")}
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            var elmnt = document.getElementsByClassName("my-service-lib");
+            if (elmnt[0]) {
+              elmnt[0].scrollIntoView();
+            }
+          }}
+        >
+          {t("service.create-service.myServiceLibrary")}
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            var elmnt = document.getElementsByClassName("add-booking-space");
+            if (elmnt[0]) {
+              elmnt[0].scrollIntoView();
+            }
+          }}
+        >
+          {t("service.create-service.addBookingSpace")}
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            var elmnt = document.getElementsByClassName("create-service");
+            if (elmnt[0]) {
+              elmnt[0].scrollIntoView();
+            }
+          }}
+        >
+          {t("service.create-service.createSpace")}
+        </MenuItem>
       </div>
     );
   }, [setSidebarContent, setSidebar, t]);
@@ -361,10 +406,10 @@ const Work = (props) => {
       description: response.description,
       category: response.category,
       price: response.price,
-      image_1:response.image_1,
-      image_2:response.image_2,
-      image_3:response.image_3,
-      image_4:response.image_4
+      image_1: response.image_1,
+      image_2: response.image_2,
+      image_3: response.image_3,
+      image_4: response.image_4,
     });
     formik.setFieldValue("id_service", response.id_service);
     const sub =
@@ -401,459 +446,464 @@ const Work = (props) => {
   };
   return (
     <React.Fragment>
-      <StartWork />
+      <section className="start-work">
+        <StartWork />
+      </section>
       <section className="my-service-lib">
         <TypographyComponent
           title={`My service library (${services.length})`}
         />
+        {isJobLoading ? (
+          <Spinner />
+        ) : (
+          <React.Fragment>
+            <div>
+              <ButtonComponent
+                title={"Active"}
+                type="button"
+                className="active-button"
+                onClick={() => {
+                  const newArray = services.sort((a, b) => b.active - a.active);
+                  setServices((b) => [...(b || []), ...(newArray || [])]);
+                  setActiveRecord((s) => [...(s || []), ...(newArray || [])]);
+                }}
+              />
 
-        <div>
-          <ButtonComponent
-            title={"Active"}
-            type="button"
-            className="active-button"
-            onClick={() => {
-              const newArray = services.sort((a, b) => b.active - a.active);
-              setServices((b) => [...(b || []), ...(newArray || [])]);
-              setActiveRecord((s) => [...(s || []), ...(newArray || [])]);
-            }}
-          />
+              <ButtonComponent
+                title="Inactive"
+                className="inActive-button"
+                type="button"
+                onClick={() => {
+                  const newArray = services.sort((a, b) => a.active - b.active);
+                  setServices((services) => [...newArray]);
+                  setInActiveRecord((services) => [...newArray]);
+                }}
+              />
+            </div>
+            <Divider className="divider" />
+            {services &&
+              services.map((service, index) => {
+                return (
+                  <Grid container spacing={3} key={index}>
+                    <Grid item xs={12} md={3}>
+                      <ButtonComponent
+                        title={service.active ? "Activate" : "Deactivate"}
+                        className={clsx(
+                          { "deactivate-button": !service.active },
+                          "active-button"
+                        )}
+                        onClick={(e) => {
+                          onActivateDactivate(service);
+                        }}
+                      />
 
-          <ButtonComponent
-            title="Inactive"
-            className="inActive-button"
-            type="button"
-            onClick={() => {
-              const newArray = services.sort((a, b) => a.active - b.active);
-              setServices((services) => [...newArray]);
-              setInActiveRecord((services) => [...newArray]);
-            }}
-          />
-        </div>
-        <Divider className="divider" />
-
-        {services &&
-          services.map((service, index) => {
-            return (
-              <Grid container spacing={3} key={index}>
-                <Grid item xs={12} md={3}>
-                  <ButtonComponent
-                    title={service.active ? "Active" : "Deactive"}
-                    className="active-button"
-                    onClick={(e) => {
-                      onActivateDactivate(service);
-                    }}
-                  />
-
-                  <ButtonComponent
-                    title="Edit"
-                    className="edit-button"
-                    onClick={() => {
-                      onEdit(service);
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={12} md={1}>
-                  <TypographyComponent title={service.price} />
-                </Grid>
-                <Grid item xs={12} md={1}>
-                  <TypographyComponent title={service.title} />
-                </Grid>
-                <Hidden smDown>
-                  <Grid item xs={12} md={1}></Grid>
-                </Hidden>
-                <Grid item xs={12} md={1}>
-                  <TypographyComponent title="Service quality" />
-                </Grid>
-                <Grid item xs={12} md={2}>
-                  <div className="service-quality">
-                    <TypographyComponent title="5" />
-                    <StarBorderIcon />
-                  </div>
-                </Grid>
-                <Grid item xs={12} md={3}>
-                  <TypographyComponent title="Sympathy" />
-                  <div className="simpathy">
-                    <TypographyComponent title="4.5" />
-                    <StarBorderIcon />
-                  </div>
-                </Grid>
-              </Grid>
-            );
-          })}
-        {isUpcomingMoreData && services && services.length > 0 && (
-          <div>
-            {isUpcomingLoading ? (
-              <Spinner />
-            ) : (
-              <div
-                className="load-more"
-                onClick={() => onMore("/service/list/user", upcomingoffset, {})}
-              ></div>
+                      <ButtonComponent
+                        title="Edit"
+                        className="edit-button"
+                        onClick={() => {
+                          onEdit(service);
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={12} md={1}>
+                      <TypographyComponent title={service.price} />
+                    </Grid>
+                    <Grid item xs={12} md={1}>
+                      <TypographyComponent title={service.title} />
+                    </Grid>
+                    <Hidden smDown>
+                      <Grid item xs={12} md={1}></Grid>
+                    </Hidden>
+                    <Grid item xs={12} md={1}>
+                      <TypographyComponent title="Service quality" />
+                    </Grid>
+                    <Grid item xs={12} md={2}>
+                      <div className="service-quality">
+                        <TypographyComponent title="5" />
+                        <StarBorderIcon />
+                      </div>
+                    </Grid>
+                    <Grid item xs={12} md={3}>
+                      <TypographyComponent title="Sympathy" />
+                      <div className="simpathy">
+                        <TypographyComponent title="4.5" />
+                        <StarBorderIcon />
+                      </div>
+                    </Grid>
+                  </Grid>
+                );
+              })}
+            {isUpcomingMoreData && services && services.length > 0 && (
+              <div>
+                {isUpcomingLoading ? (
+                  <Spinner />
+                ) : (
+                  <div
+                    className="load-more"
+                    onClick={() =>
+                      onMore("/service/list/user", upcomingoffset, {})
+                    }
+                  ></div>
+                )}
+              </div>
             )}
-          </div>
+            <Divider className="divider" />
+          </React.Fragment>
         )}
-        <Divider className="divider" />
       </section>
-      <AddBookinSpace tempArray={tempArray} />
+      <section className="add-booking-space">
+        <AddBookinSpace tempArray={tempArray} />
+      </section>
       <section className="create-service">
         <div className={classes.content}>
-          {isJobLoading ? (
-            <div style={{ display: "flex", justifyContent: "center" }}>
-              <CircularProgress />
-            </div>
-          ) : (
-            <React.Fragment>
-              <Grid container spacing={3}>
-                <Grid item xs={12} md={10}>
-                  <TypographyComponent
-                    title={
-                      formik.values.id_service
-                        ? t("service.create-service.editService")
-                        : t("service.create-service.createService")
-                    }
-                    variant="h3"
-                    style={{
-                      color: themes.default.colors.darkGray,
-                    }}
-                  />
-                </Grid>
-              </Grid>
-              <Grid container spacing={3}>
-                <Grid item xs={12} md={10}>
-                  <TypographyComponent
-                    title={t("service.create-service.nameAllocation")}
-                    variant="h2"
-                    style={{
-                      color: themes.default.colors.darkGray,
-                      fontWeight: 500,
-                      marginBottom: 10,
-                      marginTop: 20,
-                    }}
-                  />
-                </Grid>
-              </Grid>
-              <form onSubmit={formik.handleSubmit}>
+          <Grid container spacing={3}>
+            <Grid item xs={12} md={10}>
+              <TypographyComponent
+                title={
+                  formik.values.id_service
+                    ? t("service.create-service.editService")
+                    : t("service.create-service.createService")
+                }
+                variant="h3"
+                style={{
+                  color: themes.default.colors.darkGray,
+                }}
+              />
+            </Grid>
+          </Grid>
+          <Grid container spacing={3}>
+            <Grid item xs={12} md={10}>
+              <TypographyComponent
+                title={t("service.create-service.nameAllocation")}
+                variant="h2"
+                style={{
+                  color: themes.default.colors.darkGray,
+                  fontWeight: 500,
+                  marginBottom: 10,
+                  marginTop: 20,
+                }}
+              />
+            </Grid>
+          </Grid>
+          <form onSubmit={formik.handleSubmit}>
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={10}>
                 <Grid container spacing={3}>
-                  <Grid item xs={12} md={10}>
+                  <Grid item xs={12} md={5}>
                     <Grid container spacing={3}>
-                      <Grid item xs={12} md={5}>
-                        <Grid container spacing={3}>
-                          <Grid item xs={12} md={12}>
-                            <FormControl
-                              variant="outlined"
-                              className={classes1.formControl}
-                              error={formik.errors.title ? true : false}
-                            >
-                              <InputComponent
-                                label="Sevice name"
-                                type="text"
-                                placeholder="Service name"
-                                name="title"
-                                autoFocus
-                                handleBlur={formik.handleBlur}
-                                onChange={formik.handleChange}
-                                value={formik.values.title}
-                                error={formik.errors.title && formik.touched.title ? true : false}
-                                helperText={
-                                  formik.errors.title && formik.touched.title &&
-                                  `${formik.errors.title}`
-                                }
-                                styles={{ maxHeight: 80, height: "100%" }}
-                              />
-                            </FormControl>
-                          </Grid>
-                          <Grid item xs={12} md={12}>
-                            <TypographyComponent title="Describe the service of your dream as specific and simple you can so others can find you easily." />
-                          </Grid>
-                        </Grid>
+                      <Grid item xs={12} md={12}>
+                        <FormControl
+                          variant="outlined"
+                          className={classes1.formControl}
+                          error={formik.errors.title ? true : false}
+                        >
+                          <InputComponent
+                            label="Sevice name"
+                            type="text"
+                            placeholder="Service name"
+                            name="title"
+                            autoFocus
+                            handleBlur={formik.handleBlur}
+                            onChange={formik.handleChange}
+                            value={formik.values.title}
+                            error={
+                              formik.errors.title && formik.touched.title
+                                ? true
+                                : false
+                            }
+                            helperText={
+                              formik.errors.title &&
+                              formik.touched.title &&
+                              `${formik.errors.title}`
+                            }
+                            styles={{ maxHeight: 80, height: "100%" }}
+                          />
+                        </FormControl>
                       </Grid>
-                      <Hidden smDown>
-                        <Grid item xs={12} md={1}></Grid>
-                      </Hidden>
-                      <Grid item xs={12} md={5}>
-                        <Grid container spacing={3}>
-                          <Grid item xs={12} md={12}>
-                            <FormControl
-                              variant="outlined"
-                              className={classes1.formControl}
-                              error={
-                                formik.errors.category &&
-                                formik.touched.category
-                                  ? true
-                                  : false
+                      <Grid item xs={12} md={12}>
+                        <TypographyComponent title="Describe the service of your dream as specific and simple you can so others can find you easily." />
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                  <Hidden smDown>
+                    <Grid item xs={12} md={1}></Grid>
+                  </Hidden>
+                  <Grid item xs={12} md={5}>
+                    <Grid container spacing={3}>
+                      <Grid item xs={12} md={12}>
+                        <FormControl
+                          variant="outlined"
+                          className={classes1.formControl}
+                          error={
+                            formik.errors.category && formik.touched.category
+                              ? true
+                              : false
+                          }
+                        >
+                          <SelectComponent
+                            name="category"
+                            label="Category"
+                            value={formik.values.category}
+                            onChange={(e) => {
+                              formik.setFieldValue("category", e.target.value);
+                              const sub =
+                                category &&
+                                category.filter(
+                                  (f) => Number(f.id) === e.target.value
+                                );
+                              setSubCategories(sub[0].sub_categories);
+                              if (sub[0]) {
+                                formik.setFieldValue(
+                                  "subcategory",
+                                  sub[0].sub_categories[0].id_category
+                                );
                               }
-                            >
-                              <SelectComponent
-                                name="category"
-                                label="Category"
-                                value={formik.values.category}
-                                onChange={(e) => {
-                                  formik.setFieldValue(
-                                    "category",
-                                    e.target.value
-                                  );
-                                  const sub =
-                                    category &&
-                                    category.filter(
-                                      (f) => Number(f.id) === e.target.value
-                                    );
-                                  setSubCategories(sub[0].sub_categories);
-                                  if (sub[0]) {
-                                    formik.setFieldValue(
-                                      "subcategory",
-                                      sub[0].sub_categories[0].id_category
-                                    );
-                                  }
-                                }}
-                                error={formik.errors.category ? true : false}
-                              >
-                                {category &&
-                                  category.map((m, i) => (
-                                    <MenuItem
-                                      key={Number(m.id)}
-                                      value={Number(m.id)}
-                                      className={classes.formControl}
-                                    >
-                                      {m.name}
-                                    </MenuItem>
-                                  ))}
-                              </SelectComponent>
-                            </FormControl>
-                          </Grid>
-                          <Grid item xs={12} md={12}>
-                            <FormControl
-                              variant="outlined"
-                              className={classes.formControl}
-                              error={
-                                formik.errors.subcategory &&
-                                formik.touched.subcategory
-                                  ? true
-                                  : false
-                              }
-                            >
-                              <SelectComponent
-                                name="subcategory"
-                                label="Sub-Category"
-                                value={formik.values.subcategory}
-                                onChange={formik.handleChange}
-                              >
-                                {subCategories &&
-                                  subCategories.map((m, i) => (
-                                    <MenuItem
-                                      key={Number(m.id_category)}
-                                      value={Number(m.id_category)}
-                                    >
-                                      {m.category_name}
-                                    </MenuItem>
-                                  ))}
-                              </SelectComponent>
-                            </FormControl>
-                          </Grid>
-                        </Grid>
+                            }}
+                            error={formik.errors.category ? true : false}
+                          >
+                            {category &&
+                              category.map((m, i) => (
+                                <MenuItem
+                                  key={Number(m.id)}
+                                  value={Number(m.id)}
+                                  className={classes.formControl}
+                                >
+                                  {m.name}
+                                </MenuItem>
+                              ))}
+                          </SelectComponent>
+                        </FormControl>
+                      </Grid>
+                      <Grid item xs={12} md={12}>
+                        <FormControl
+                          variant="outlined"
+                          className={classes.formControl}
+                          error={
+                            formik.errors.subcategory &&
+                            formik.touched.subcategory
+                              ? true
+                              : false
+                          }
+                        >
+                          <SelectComponent
+                            name="subcategory"
+                            label="Sub-Category"
+                            value={formik.values.subcategory}
+                            onChange={formik.handleChange}
+                          >
+                            {subCategories &&
+                              subCategories.map((m, i) => (
+                                <MenuItem
+                                  key={Number(m.id_category)}
+                                  value={Number(m.id_category)}
+                                >
+                                  {m.category_name}
+                                </MenuItem>
+                              ))}
+                          </SelectComponent>
+                        </FormControl>
                       </Grid>
                     </Grid>
                   </Grid>
                 </Grid>
+              </Grid>
+            </Grid>
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={10}>
+                <TypographyComponent
+                  variant="h2"
+                  title="Description"
+                  style={{
+                    color: themes.default.colors.darkGray,
+                    fontWeight: "500",
+                  }}
+                />
+              </Grid>
+            </Grid>
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={10}>
                 <Grid container spacing={3}>
-                  <Grid item xs={12} md={10}>
-                    <TypographyComponent
-                      variant="h2"
-                      title="Description"
-                      style={{
-                        color: themes.default.colors.darkGray,
-                        fontWeight: "500",
+                  <Grid item xs={12} md={11}>
+                    <InputComponent
+                      type="text"
+                      name="description"
+                      value={formik.values.description}
+                      onChange={formik.handleChange}
+                      multiline
+                      rows={10}
+                      fullWidth
+                      InputLabelProps={{
+                        shrink: true,
                       }}
-                    />
-                  </Grid>
-                </Grid>
-                <Grid container spacing={3}>
-                  <Grid item xs={12} md={10}>
-                    <Grid container spacing={3}>
-                      <Grid item xs={12} md={11}>
-                        <InputComponent
-                          type="text"
-                          name="description"
-                          value={formik.values.description}
-                          onChange={formik.handleChange}
-                          multiline
-                          rows={10}
-                          fullWidth
-                          InputLabelProps={{
-                            shrink: true,
-                          }}
-                          placeholder="Please briefly describe your service...
+                      placeholder="Please briefly describe your service...
                     In which situation can i use this service?
                     What can I expect from this service?
                     What are the key information?"
-                        />
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                </Grid>
-                <Grid container spacing={3}>
-                  <Grid item xs={12} md={10}>
-                    <TypographyComponent
-                      variant="h2"
-                      title="Price setting"
-                      style={{
-                        color: themes.default.colors.darkGray,
-                        fontWeight: 500,
-                      }}
                     />
                   </Grid>
                 </Grid>
+              </Grid>
+            </Grid>
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={10}>
+                <TypographyComponent
+                  variant="h2"
+                  title="Price setting"
+                  style={{
+                    color: themes.default.colors.darkGray,
+                    fontWeight: 500,
+                  }}
+                />
+              </Grid>
+            </Grid>
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={10}>
                 <Grid container spacing={3}>
-                  <Grid item xs={12} md={10}>
-                    <Grid container spacing={3}>
-                      <Grid item xs={12} md={5}>
-                        <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                          }}
-                        >
-                          <TypographyComponent
-                            variant="h2"
-                            title="My hourly price"
-                            style={{
-                              color: themes.default.colors.darkGray,
-                            }}
-                          />
-                          <InputComponent
-                            name="price"
-                            value={formik.values.price}
-                            onChange={formik.handleChange}
-                            styles={{
-                              maxHeight: 38,
-                              height: "100%",
-                              maxWidth: 91,
-                            }}
-                            className="service-price"
-                          />
-                        </div>
-                      </Grid>
-                      <Hidden smDown>
-                        <Grid item xs={12} md={1}></Grid>
-                      </Hidden>
-                      <Grid item xs={12} md={5}>
-                        <TypographyComponent title="Uppon your price will be sett the conditions of a payment service provider and the comission of Owera. All employees of Owera thank you for using our service and enabling our workplaces. Enjoy this winn winn situation because this is our philosophy to achiefe." />
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                </Grid>
-                <Grid container spacing={3}>
-                  <Grid item xs={12} md={10}>
-                    <TypographyComponent
-                      variant="h2"
-                      title="Pictures"
+                  <Grid item xs={12} md={5}>
+                    <div
                       style={{
-                        color: themes.default.colors.darkGray,
-                        fontWeight: "bold",
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
                       }}
-                    />
-                  </Grid>
-                </Grid>
-                <Grid container spacing={3}>
-                  <Grid item xs={12} md={10}>
-                    <Grid container spacing={3}>
-                      <Grid item xs={12} md={11}>
-                        <Grid container spacing={3}>
-                          {fileList &&
-                            fileList.map((file, i) => (
-                              <Grid item xs={12} md={3} key={i}>
-                                <div className="image-item">
-                                  <img
-                                    alt="Profile"
-                                    src={file && makeImageUrl(file)}
-                                    className="image"
-                                  />
-                                  <div
-                                    className="image-delete"
-                                    onClick={() => {
-                                      fileList.splice(i, 1);
-                                      setFileList([...fileList]);
-                                    }}
-                                  >
-                                    <div>
-                                      <label>Delete picture</label>
-                                    </div>
-                                    <div>
-                                      <DeleteIcon />
-                                    </div>
-                                  </div>
-                                </div>
-                              </Grid>
-                            ))}
-                          {fileList.length >= 4 ? null : (
-                            <Grid item xs={12} md={3}>
-                              <div className="image-item">
-                                <input
-                                  type="file"
-                                  name={`image_${fileList.length + 1}`}
-                                  id={`image_${fileList.length + 1}`}
-                                  style={{ display: "none" }}
-                                  onChange={(event) => handleUploadClick(event)}
-                                />
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    justifyContent: "space-between",
-                                    color: "#fff",
-                                    padding: "20px",
-                                  }}
-                                  onClick={() => {
-                                    document
-                                      .getElementById(
-                                        `image_${fileList.length + 1}`
-                                      )
-                                      .click();
-                                  }}
-                                >
-                                  <label htmlFor="file">Upload image</label>
-                                  <AddIcon />
-                                </div>
-                              </div>
-                            </Grid>
-                          )}
-                        </Grid>
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                </Grid>
-                <Grid container spacing={3}>
-                  <Grid item xs={12} md={10}>
-                    {formik.values.id_service && (
-                      <ButtonComponent
-                        title="Delete service"
-                        onClick={() => {
-                          onDelete();
-                        }}
-                        variant="outlined"
+                    >
+                      <TypographyComponent
+                        variant="h2"
+                        title="My hourly price"
                         style={{
-                          backgroundColor: "#fff",
-                          border: "1px solid #FF0000",
-                          color: "#FF0000",
+                          color: themes.default.colors.darkGray,
                         }}
                       />
-                    )}
-                    <ButtonComponent
-                      variant="contained"
-                      color="primary"
-                      type="submit"
-                      disabled={formik.isSubmitting}
-                      title={
-                        formik.values.id_service
-                          ? "Save changes"
-                          : "Create service"
-                      }
-                    />
+                      <InputComponent
+                        name="price"
+                        value={formik.values.price}
+                        onChange={formik.handleChange}
+                        styles={{
+                          maxHeight: 38,
+                          height: "100%",
+                          maxWidth: 91,
+                        }}
+                        className="service-price"
+                      />
+                    </div>
+                  </Grid>
+                  <Hidden smDown>
+                    <Grid item xs={12} md={1}></Grid>
+                  </Hidden>
+                  <Grid item xs={12} md={5}>
+                    <TypographyComponent title="Uppon your price will be sett the conditions of a payment service provider and the comission of Owera. All employees of Owera thank you for using our service and enabling our workplaces. Enjoy this winn winn situation because this is our philosophy to achiefe." />
                   </Grid>
                 </Grid>
-              </form>
-            </React.Fragment>
-          )}
+              </Grid>
+            </Grid>
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={10}>
+                <TypographyComponent
+                  variant="h2"
+                  title="Pictures"
+                  style={{
+                    color: themes.default.colors.darkGray,
+                    fontWeight: "bold",
+                  }}
+                />
+              </Grid>
+            </Grid>
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={10}>
+                <Grid container spacing={3}>
+                  <Grid item xs={12} md={11}>
+                    <Grid container spacing={3}>
+                      {fileList &&
+                        fileList.map((file, i) => (
+                          <Grid item xs={12} md={3} key={i}>
+                            <div className="image-item">
+                              <img
+                                alt="Profile"
+                                src={file && makeImageUrl(file)}
+                                className="image"
+                              />
+                              <div
+                                className="image-delete"
+                                onClick={() => {
+                                  fileList.splice(i, 1);
+                                  setFileList([...fileList]);
+                                }}
+                              >
+                                <div>
+                                  <label>Delete picture</label>
+                                </div>
+                                <div>
+                                  <DeleteIcon />
+                                </div>
+                              </div>
+                            </div>
+                          </Grid>
+                        ))}
+                      {fileList.length >= 4 ? null : (
+                        <Grid item xs={12} md={3}>
+                          <div className="image-item">
+                            <input
+                              type="file"
+                              name={`image_${fileList.length + 1}`}
+                              id={`image_${fileList.length + 1}`}
+                              style={{ display: "none" }}
+                              onChange={(event) => handleUploadClick(event)}
+                            />
+                            <div
+                              style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                color: "#fff",
+                                padding: "20px",
+                              }}
+                              onClick={() => {
+                                document
+                                  .getElementById(
+                                    `image_${fileList.length + 1}`
+                                  )
+                                  .click();
+                              }}
+                            >
+                              <label htmlFor="file">Upload image</label>
+                              <AddIcon />
+                            </div>
+                          </div>
+                        </Grid>
+                      )}
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Grid>
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={10}>
+                {formik.values.id_service && (
+                  <ButtonComponent
+                    title="Delete service"
+                    onClick={() => {
+                      onDelete();
+                    }}
+                    variant="outlined"
+                    style={{
+                      backgroundColor: "#fff",
+                      border: "1px solid #FF0000",
+                      color: "#FF0000",
+                    }}
+                  />
+                )}
+                <ButtonComponent
+                  variant="contained"
+                  color="primary"
+                  type="submit"
+                  disabled={formik.isSubmitting}
+                  title={
+                    formik.values.id_service ? "Save changes" : "Create service"
+                  }
+                />
+              </Grid>
+            </Grid>
+          </form>
+
           <SnackBarComponent
             open={open}
             onClose={handleClose}
