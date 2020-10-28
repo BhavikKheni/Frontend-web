@@ -123,6 +123,9 @@ header button.MuiButtonBase-root ~ button {
   top: 50%;
   transform: translateY(-50%);
 }
+.select_down_arrow.Mui-disabled:after {
+  opacity: 0.3;
+}
 .select_down_arrow svg.material-icons {
   display: none;
 }

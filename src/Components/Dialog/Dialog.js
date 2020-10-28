@@ -107,19 +107,22 @@ const DialogComponent = (props) => {
         disableBackdropClick
         className="dialog_wrapper"
       >
-        <DialogTitle
-          title={title}
-          subTitle1={subTitle1}
-          subTitle2={subTitle2}
-          onSubTitle2={onSubTitle2}
-          onClose={onClose}
-          justifyContent={justifyContent}
-          alignItems={alignItems}
-          flexDirection={flexDirection}
-          titleColor={titleColor}
-          iconColor={iconColor}
-        ></DialogTitle>
-        {children}
+        <div className="dialog_content">
+          <DialogTitle
+            title={title}
+            subTitle1={subTitle1}
+            subTitle2={subTitle2}
+            onSubTitle2={onSubTitle2}
+            onClose={onClose}
+            justifyContent={justifyContent}
+            alignItems={alignItems}
+            flexDirection={flexDirection}
+            titleColor={titleColor}
+            iconColor={iconColor}
+          ></DialogTitle>
+          {children}
+        </div>
+        
       </Dialog>
     </div>
   );

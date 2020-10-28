@@ -62,6 +62,7 @@ const ForgotPassword = (props) => {
         title="Reset password"
         maxHeight={267}
       >
+        <div className="dialog_container">
         <DialogContent>
           <Formik
             initialValues={{ email: "" }}
@@ -82,23 +83,22 @@ const ForgotPassword = (props) => {
               } = props;
               return (
                 <form onSubmit={handleSubmit} className="forgot-password-form">
-                  <FormControl className="forgot-password-form-control">
-                    <InputComponent
-                      label="E-Mail"
-                      type="email"
-                      value={values.email}
-                      placeholder=" E-Mail"
-                      name="email"
-                      id="outlined-name"
-                      onChange={handleChange}
-                      error={errors.email ? true : false}
-                      helperText={
-                        errors.email && touched.email && `${errors.email}`
-                      }
-                      styles={{ maxHeight: 80, height: "100%" }}
-                    />
-
-                    <div className="forrgot-form-button">
+                  <FormControl className="dialog_form_control_inner">
+                    <div className="dialog_form_row">
+                      <InputComponent
+                        type="email"
+                        value={values.email}
+                        placeholder="E-Mail"
+                        name="email"
+                        id="outlined-name"
+                        onChange={handleChange}
+                        error={errors.email ? true : false}
+                        helperText={
+                          errors.email && touched.email && `${errors.email}`
+                        }
+                      />
+                    </div>
+                    <div className="modal_bottom_cta">
                       <TypographyComponent
                         variant="h2"
                         title="Back to sign in."
@@ -115,14 +115,8 @@ const ForgotPassword = (props) => {
                         color="primary"
                         disabled={isDisabled}
                         type="submit"
-                        endIcon={<ArrowForwardIosIcon />}
                         title="Send new password"
-                        style={{
-                          maxWidth: 213,
-                          height: 48,
-                          borderRadius: 10,
-                        }}
-                      />
+                        />
                     </div>
                   </FormControl>
                 </form>
@@ -130,6 +124,7 @@ const ForgotPassword = (props) => {
             }}
           </Formik>
         </DialogContent>
+        </div>
       </DialogComponent>
     </React.Fragment>
   );
