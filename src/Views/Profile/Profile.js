@@ -70,12 +70,12 @@ const ProfileView = (props) => {
   const [successTitle, setSuccessTitle] = useState("");
   const [successSubTitle, setSuccessSubTitle] = useState("");
   const [type, setType] = useState("");
-  const [open, setOpen] = React.useState(false);
-  const [number, setNumber] = useState({
-    number1: null,
-    number2: null,
-    number3: null,
-    number4: null,
+  const [open, setOpen] = useState(false);
+  const [otp, setOtp] = useState({
+    otp1: "",
+    otp2: "",
+    otp3: "",
+    otp4: "",
   });
   let [userData, setUserData] = useState({
     first_name: "",
@@ -174,8 +174,25 @@ const ProfileView = (props) => {
     }
   };
 
-  const handleChangeNumber = (e) => {
-    setNumber((n) => ({ ...n, [e.target.name]: e.target.value }));
+  const handleChangeOtp = (name, event) => {
+    const otpValue = event.target && event.target.value;
+    if (otpValue) {
+      setOtp((o) => ({ ...o, [name]: otpValue }));
+    }
+  };
+
+  const inputfocus = (elmnt) => {
+    if (elmnt.key === "Delete" || elmnt.key === "Backspace") {
+      const next = elmnt.target.tabIndex - 2;
+      if (next > -1) {
+        elmnt.target.form.elements[next].focus();
+      }
+    } else {
+      const next = elmnt.target.tabIndex;
+      if (next < 4) {
+        elmnt.target.form.elements[next].focus();
+      }
+    }
   };
 
   const handleClose = (event, reason) => {
@@ -219,13 +236,17 @@ const ProfileView = (props) => {
     }
   };
 
+  const handleSubmitOtp = (e) => {
+    e.preventDefault();
+    setVerify(false);
+    onVerifyEmail();
+  };
+
   const onVerifyEmail = async () => {
     if (type === "email") {
       const data = {
         id_user: userData.id_user,
-        code: Number(
-          `${number.number1}${number.number2}${number.number3}${number.number4}`
-        ),
+        code: Number(`${otp.otp1}${otp.otp2}${otp.otp3}${otp.otp4}`),
         type: "email",
       };
       const res = await add("/profile/verify", data).catch((err) => {
@@ -236,6 +257,10 @@ const ProfileView = (props) => {
         setTypeRes(res);
         setOpen(true);
         setVerifySuccess(true);
+        setSuccessTitle("E-mail verification");
+        setSuccessSubTitle(
+          "Congratulations! Your e-mail id has been verified."
+        );
       } else {
         setOpen(true);
       }
@@ -243,9 +268,7 @@ const ProfileView = (props) => {
     if (type === "mobile") {
       const data = {
         id_user: userData.id_user,
-        code: Number(
-          `${number.number1}${number.number2}${number.number3}${number.number4}`
-        ),
+        code: Number(`${otp.otp1}${otp.otp2}${otp.otp3}${otp.otp4}`),
         type: "phone",
       };
       const res = await add("/profile/verify", data).catch((err) => {
@@ -256,6 +279,8 @@ const ProfileView = (props) => {
         setTypeRes(res);
         setOpen(true);
         setVerifySuccess(true);
+        setSuccessTitle("Phone verification");
+        setSuccessSubTitle("Congratulations! Your phone id has been verified.");
       } else {
         setOpen(true);
       }
@@ -359,7 +384,7 @@ const ProfileView = (props) => {
               )}
             </div>
 
-            <div className="user_verification_item">
+            {/* <div className="user_verification_item">
               {!userData.phone_verified && <CheckIcon />}
               <TypographyComponent variant="h5" title="Mobile verified" />
               {!userData.phone_verified && (
@@ -375,7 +400,7 @@ const ProfileView = (props) => {
                   }}
                 />
               )}
-            </div>
+            </div> */}
           </div>
         </div>
       )}
@@ -402,63 +427,81 @@ const ProfileView = (props) => {
         maxHeight={312}
       >
         <DialogContent style={{ textAlign: "center" }}>
-          <FormControl className="email-verify">
-            <FormControl className="phone-number-otp">
-              <TextField
-                value={number.number1}
-                name="number1"
-                type="number"
-                style={{ width: 62 }}
-                onChange={handleChangeNumber}
-              />
-              <TextField
-                value={number.number2}
-                name="number2"
-                type="number"
-                style={{ width: 62 }}
-                onChange={handleChangeNumber}
-              />
-              <TextField
-                value={number.number3}
-                name="number3"
-                type="number"
-                style={{ width: 62 }}
-                onChange={handleChangeNumber}
-              />
-              <TextField
-                value={number.number4}
-                name="number4"
-                type="number"
-                style={{ width: 62 }}
-                onChange={handleChangeNumber}
-              />
-            </FormControl>
-            <div className="resend-button">
-              <div
-                style={{ display: "flex", alignItems: "center" }}
-                onClick={() => onVerifyEmailDailog()}
-              >
-                <TypographyComponent variant="h2" title="Didn’t get code?" />
-                <TypographyComponent
-                  variant="h2"
-                  title="Resend"
-                  style={{ color: "#F5F5F5", marginLeft: 5 }}
+          <form onSubmit={handleSubmitOtp}>
+            <div className="otpContainer">
+              <div className="otpContainer">
+                <input
+                  name="otp1"
+                  type="text"
+                  autoComplete="off"
+                  className="otpInput"
+                  value={otp.otp1}
+                  onChange={(e) => handleChangeOtp("otp1", e)}
+                  tabIndex="1"
+                  maxLength="1"
+                  onKeyUp={(e) => inputfocus(e)}
                 />
+                <input
+                  name="otp2"
+                  type="text"
+                  autoComplete="off"
+                  className="otpInput"
+                  value={otp.otp2}
+                  onChange={(e) => handleChangeOtp("otp2", e)}
+                  tabIndex="2"
+                  maxLength="1"
+                  onKeyUp={(e) => inputfocus(e)}
+                />
+                <input
+                  name="otp3"
+                  type="text"
+                  autoComplete="off"
+                  className="otpInput"
+                  value={otp.otp3}
+                  onChange={(e) => handleChangeOtp("otp3", e)}
+                  tabIndex="3"
+                  maxLength="1"
+                  onKeyUp={(e) => inputfocus(e)}
+                />
+                <input
+                  name="otp4"
+                  type="text"
+                  autoComplete="off"
+                  className="otpInput"
+                  value={otp.otp4}
+                  onChange={(e) => handleChangeOtp("otp4", e)}
+                  tabIndex="4"
+                  maxLength="1"
+                  onKeyUp={(e) => inputfocus(e)}
+                />
+
+                <div className="resend-button">
+                  <div
+                    style={{ display: "flex", alignItems: "center" }}
+                    onClick={() => onVerifyEmailDailog()}
+                  >
+                    <TypographyComponent
+                      variant="h2"
+                      title="Didn’t get code?"
+                    />
+                    <TypographyComponent
+                      variant="h2"
+                      title="Resend"
+                      style={{ color: "#F5F5F5", marginLeft: 5 }}
+                    />
+                  </div>
+                  <ButtonComponent
+                    variant="contained"
+                    color="primary"
+                    type="submit"
+                    className="send-code"
+                    endIcon={<ArrowForwardIosIcon />}
+                    title="verify"
+                  />
+                </div>
               </div>
-              <ButtonComponent
-                variant="contained"
-                color="primary"
-                type="button"
-                className="send-code"
-                endIcon={<ArrowForwardIosIcon />}
-                title="verify"
-                onClick={() => {
-                  setVerify(false);
-                  onVerifyEmail();
-                }}
-              />
             </div>
-          </FormControl>
+          </form>
         </DialogContent>
       </DialogComponent>
       <DialogComponent
@@ -467,8 +510,8 @@ const ProfileView = (props) => {
           setVerifySuccess(false);
         }}
         open={verifySucess}
-        title="E-mail verification"
-        subTitle1="Congratulations! Your e-mail id has been verified."
+        title={successTitle}
+        subTitle1={successSubTitle}
         maxHeight={234}
       >
         <DialogContent style={{ textAlign: "center" }}>

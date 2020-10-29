@@ -1,4 +1,5 @@
 import React from "react";
+import clsx from "clsx";
 import { useTranslation } from "react-i18next";
 import { makeStyles } from "@material-ui/core/styles";
 import Dialog from "@material-ui/core/Dialog";
@@ -10,12 +11,9 @@ import TooltipComponent from "../../Components/Tooltip/Tooltip";
 import "./Dialog.css";
 
 const styles = makeStyles((theme) => ({
-  root: {
-  },
-  closeButton: {
-  },
-  header: {
-  },
+  root: {},
+  closeButton: {},
+  header: {},
 }));
 const DialogTitle = (props) => {
   const {
@@ -55,7 +53,11 @@ const DialogTitle = (props) => {
             <TypographyComponent title={subTitle1} variant="h2" />
 
             <TypographyComponent
-              style={{ textDecoration: "underline", cursor: "pointer", marginLeft: "5px" }}
+              style={{
+                textDecoration: "underline",
+                cursor: "pointer",
+                marginLeft: "5px",
+              }}
               onClick={(e) => {
                 onSubTitle2(e);
               }}
@@ -65,21 +67,19 @@ const DialogTitle = (props) => {
           </div>
         </div>
       </MuiDialogTitle>
-      <TooltipComponent title={t('close')}>
-          <IconButton
-            aria-label="close"
-            className={classes1.closeButton}
-            onClick={onClose}
-            style={{ color: iconColor }}
-          >
-            <CloseIcon />
-          </IconButton>
-        </TooltipComponent>
+      <TooltipComponent title={t("close")}>
+        <IconButton
+          aria-label="close"
+          className={classes1.closeButton}
+          onClick={onClose}
+          style={{ color: iconColor }}
+        >
+          <CloseIcon />
+        </IconButton>
+      </TooltipComponent>
     </div>
   );
 };
-
-
 
 const DialogComponent = (props) => {
   const {
@@ -97,6 +97,7 @@ const DialogComponent = (props) => {
     flexDirection,
     titleColor,
     iconColor,
+    className
   } = props;
   return (
     <div>
@@ -107,7 +108,7 @@ const DialogComponent = (props) => {
         disableBackdropClick
         className="dialog_wrapper"
       >
-        <div className="dialog_content">
+        <div className={clsx("dialog_content", className)}>
           <DialogTitle
             title={title}
             subTitle1={subTitle1}
@@ -122,7 +123,6 @@ const DialogComponent = (props) => {
           ></DialogTitle>
           {children}
         </div>
-        
       </Dialog>
     </div>
   );

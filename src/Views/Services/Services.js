@@ -1,4 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { Formik } from "formik";
+import * as Yup from "yup";
+import { useTranslation } from "react-i18next";
 import { makeStyles } from "@material-ui/core/styles";
 import MuiDialogContent from "@material-ui/core/DialogContent";
 import { withStyles } from "@material-ui/core/styles";
@@ -9,21 +12,20 @@ import TextField from "@material-ui/core/TextField";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
-import { get } from "../../Services/Auth.service";
 import ServiceCardComponent from "../../Components/ServiceCard/ServiceCard";
 import Spinner from "../../Components/Spinner/Spinner";
-import { search } from "../../Services/Auth.service";
+import { search, add, get } from "../../Services/Auth.service";
 import DialogComponent from "../../Components/Dialog/Dialog";
 import InputComponent from "../../Components/Forms/Input";
 import ButtonComponent from "../../Components/Forms/Button";
-import { Formik } from "formik";
-import * as Yup from "yup";
+import SnackBarComponent from "../../Components/SnackBar/SnackBar";
 import { SessionContext } from "../../Provider/Provider";
 import { useSidebar } from "../../Provider/SidebarProvider";
 import SelectComponent from "../../Components/Forms/Select";
 import TypographyComponent from "../../Components/Typography/Typography";
 import { onLogout } from "../../Services/Auth.service";
 import { LOCALSTORAGE_DATA } from "../../utils";
+
 import "./service.css";
 
 import { useDebouncedCallback } from "use-debounce";
@@ -58,7 +60,8 @@ const FormControl = withStyles((theme) => ({
 
 const Services = (props) => {
   const classes = useStyles();
-  let { logout } = useSession();
+  const { t } = useTranslation();
+  let { logout, user } = useSession();
   const [isLoading, setIsLoading] = useState(false);
   const [sidebarLoader, setSidebarLoader] = useState(false);
   const [services, setServices] = useState([]);
@@ -77,6 +80,43 @@ const Services = (props) => {
   const [simpathy, setSimpathy] = useState();
   const [service_quality, setServiceQuality] = useState();
   const [countries, setCountries] = useState([]);
+  const [verify, setVerify] = useState(false);
+  const [setRes, setTypeRes] = useState("");
+  const [open, setOpen] = React.useState(false);
+  const [otp, setOtp] = useState({
+    otp1: "",
+    otp2: "",
+    otp3: "",
+    otp4: "",
+  });
+
+  const handleChangeOtp = (name, event) => {
+    const otpValue = event.target && event.target.value;
+    if (otpValue) {
+      setOtp((o) => ({ ...o, [name]: otpValue }));
+    }
+  };
+
+  const inputfocus = (elmnt) => {
+    if (elmnt.key === "Delete" || elmnt.key === "Backspace") {
+      const next = elmnt.target.tabIndex - 2;
+      if (next > -1) {
+        elmnt.target.form.elements[next].focus();
+      }
+    } else {
+      const next = elmnt.target.tabIndex;
+      if (next < 4) {
+        elmnt.target.form.elements[next].focus();
+      }
+    }
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+  };
 
   const handleChangeRadio = (event) => {
     const value1 = event.target.value === "true" ? "true" : "false";
@@ -122,7 +162,12 @@ const Services = (props) => {
 
   async function asyncFetchData() {
     setIsLoading(true);
-    const res = await search("/service/list/filter", getParams());
+    const res = await search("/service/list/filter", getParams()).catch(
+      (error) => {
+        setIsLoading(false);
+        console.log(error);
+      }
+    );
     if (res) {
       const { data, stopped_at, type } = res || {};
       if (type === "ERROR" || (data && data.length === 0)) {
@@ -140,7 +185,12 @@ const Services = (props) => {
   useEffect(() => {
     async function fetchData() {
       setIsLoading(true);
-      const res = await search("/service/list/filter", getParams());
+      const res = await search("/service/list/filter", getParams()).catch(
+        (error) => {
+          setIsLoading(false);
+          console.log(error);
+        }
+      );
       if (res) {
         const { data, stopped_at, type } = res || {};
         if (type === "ERROR" || (data && data.length === 0)) {
@@ -213,7 +263,7 @@ const Services = (props) => {
                 <TextField
                   type="number"
                   value={per_hour_rate_min}
-                  placeholder="0.00$"
+                  placeholder="CHF"
                   name="per_hour_rate_min"
                   id="per_hour_rate_min"
                   InputProps={{ inputProps: { min: 0, max: 200 } }}
@@ -229,7 +279,7 @@ const Services = (props) => {
                 <TextField
                   type="number"
                   value={per_hour_rate_max}
-                  placeholder="0.00$"
+                  placeholder="CHF"
                   name="per_hour_rate_max"
                   id="per_hour_rate_max"
                   InputProps={{ inputProps: { min: 0, max: 200 } }}
@@ -314,9 +364,9 @@ const Services = (props) => {
 
     if (Boolean(forgotPassword) === true) {
       setOpenResetPassword(true);
-      onLogout(props).then((result) => {
-        logout();
-      });
+      // onLogout(props).then((result) => {
+      //   logout();
+      // });
     }
 
     const fetchLanguage = new Promise((resolve, reject) => {
@@ -411,25 +461,77 @@ const Services = (props) => {
     });
   };
 
+  const onVerifyEmail = async () => {
+    const data = {
+      email: user.email,
+      id_user: user.id_user,
+    };
+    const res = await add("/profile/verifyemail", data).catch((err) => {
+      setTypeRes(err);
+    });
+    if (res && res.type === "SUCCESS") {
+      setVerify(true);
+      setTypeRes(res);
+      setOpen(true);
+    } else {
+      setOpen(true);
+    }
+  };
+
+  const onSubmitEmailCode = async () => {
+    const data = {
+      id_user: user.id_user,
+      code: Number(`${otp.otp1}${otp.otp2}${otp.otp3}${otp.otp4}`),
+      type: "email",
+    };
+    const res = await add("/profile/verify", data).catch((err) => {
+      setTypeRes(err);
+    });
+    if (res && res.type === "SUCCESS") {
+      setVerify(false);
+      setTypeRes(res);
+      setOpen(true);
+    } else {
+      setOpen(true);
+    }
+  };
+
+  const handleSubmitOtp = (e) => {
+    e.preventDefault();
+    setVerify(false);
+    onSubmitEmailCode();
+  };
+
   return (
     <div className="service_card_content">
-      <div className="promotion_text">
-        <p>
-          Hi, Your email isn’t verified yet. Please verify to use all the
-          services.
-        </p>
-        <div className="promotion_links">
-          <a href="javscript:void(0)">Resend email confirmation link</a>
-          <a href="javscript:void(0)" className="close_icon">
-            <span className="material-icons">close</span>
-          </a>
+      {user && !user.email_verified && (
+        <div className="promotion_text">
+          <p>
+            Hi, Your email isn’t verified yet. Please verify to use all the
+            services.
+          </p>
+          <div className="promotion_links">
+            <a
+              href="javascript:void(0)"
+              onClick={() => {
+                onVerifyEmail();
+              }}
+            >
+              Resend email confirmation link
+            </a>
+            <a href="javascript:void(0)" className="close_icon">
+              <span className="material-icons">close</span>
+            </a>
+          </div>
         </div>
-      </div>
+      )}
       {isLoading ? (
         <Spinner />
       ) : (
         <div className="service_card_wrapper">
-          {services &&
+          {services && services.length ? (
+            <span>{t("service.notFoundService")}</span>
+          ) : (
             services.map((element, index) => (
               <ServiceCardComponent
                 key={index}
@@ -445,7 +547,8 @@ const Services = (props) => {
                 onServiceTitle={() => onServiceTitle(element)}
                 onProviderName={() => onProviderName(element)}
               />
-            ))}
+            ))
+          )}
         </div>
       )}
       {isUpcomingMoreData && services && services.length > 0 && (
@@ -476,7 +579,7 @@ const Services = (props) => {
           setOpenResetPassword(false);
         }}
         open={openResetPassword}
-        title="Reset Password"
+        title="Change password"
         maxHeight={340}
       >
         <div className="dialog_container">
@@ -488,37 +591,54 @@ const Services = (props) => {
               }}
               validationSchema={Yup.object().shape({
                 password: Yup.string().required("Password is required"),
+                confirmPassword: Yup.string()
+                  .required("Password is required")
+                  .test(
+                    "passwords-match",
+                    "Confirm Passwords must match with Password",
+                    function (value) {
+                      return this.parent.password === value;
+                    }
+                  ),
               })}
             >
-              {({ values, errors, handleChange, handleSubmit, isSubmitting }) => (
+              {({
+                values,
+                errors,
+                handleChange,
+                handleSubmit,
+                isSubmitting,
+              }) => (
                 <form onSubmit={handleSubmit} className="reset-password-form">
                   <FormControl className="dialog_form_control_inner">
-                  <div className="dialog_form_row">
-                    <InputComponent
-                      type="password"
-                      placeholder="New password"
-                      name="password"
-                      value={values.password}
-                      id="outlined-password"
-                      autoFocus
-                      onChange={handleChange}
-                      error={errors.password ? true : false}
-                      helperText={errors.password && `${errors.password}`}
-                    />
-                  </div>
-                  <div className="dialog_form_row">
-                    <InputComponent
-                      type="password"
-                      placeholder="Confirm new password"
-                      name="password"
-                      id="Confirm new password"
-                      value={values.password}
-                      onChange={handleChange}
-                      error={errors.password ? true : false}
-                      helperText={errors.password && `${errors.password}`}
-                    />
-                  </div>
-                  <div className="modal_bottom_cta">
+                    <div className="dialog_form_row">
+                      <InputComponent
+                        type="password"
+                        placeholder="New password"
+                        name="password"
+                        value={values.password}
+                        id="outlined-password"
+                        autoFocus
+                        onChange={handleChange}
+                        error={errors.password ? true : false}
+                        helperText={errors.password && `${errors.password}`}
+                      />
+                    </div>
+                    <div className="dialog_form_row">
+                      <InputComponent
+                        type="password"
+                        placeholder="Confirm new password"
+                        name="confirmPassword"
+                        id="Confirm new password"
+                        value={values.confirmPassword}
+                        onChange={handleChange}
+                        error={errors.confirmPassword ? true : false}
+                        helperText={
+                          errors.confirmPassword && `${errors.confirmPassword}`
+                        }
+                      />
+                    </div>
+                    <div className="modal_bottom_cta">
                       <ButtonComponent
                         variant="contained"
                         color="primary"
@@ -527,7 +647,7 @@ const Services = (props) => {
                         className="reset-password-button"
                         title="Reset"
                       />
-                  </div>
+                    </div>
                   </FormControl>
                 </form>
               )}
@@ -535,6 +655,101 @@ const Services = (props) => {
           </DialogContent>
         </div>
       </DialogComponent>
+      {/* email verification dialog */}
+      <DialogComponent
+        onClose={(e) => {
+          e.stopPropagation();
+          setVerify(false);
+        }}
+        open={verify}
+        title="E-mail verification"
+        subTitle1="We’ve send a 4 digit code to your email. Please enter the code to verify your email-id."
+        maxHeight={312}
+      >
+        <DialogContent style={{ textAlign: "center" }}>
+          <form onSubmit={handleSubmitOtp}>
+            <div className="otpContainer">
+              <div className="otpContainer">
+                <input
+                  name="otp1"
+                  type="text"
+                  autoComplete="off"
+                  className="otpInput"
+                  value={otp.otp1}
+                  onChange={(e) => handleChangeOtp("otp1", e)}
+                  tabIndex="1"
+                  maxLength="1"
+                  onKeyUp={(e) => inputfocus(e)}
+                />
+                <input
+                  name="otp2"
+                  type="text"
+                  autoComplete="off"
+                  className="otpInput"
+                  value={otp.otp2}
+                  onChange={(e) => handleChangeOtp("otp2", e)}
+                  tabIndex="2"
+                  maxLength="1"
+                  onKeyUp={(e) => inputfocus(e)}
+                />
+                <input
+                  name="otp3"
+                  type="text"
+                  autoComplete="off"
+                  className="otpInput"
+                  value={otp.otp3}
+                  onChange={(e) => handleChangeOtp("otp3", e)}
+                  tabIndex="3"
+                  maxLength="1"
+                  onKeyUp={(e) => inputfocus(e)}
+                />
+                <input
+                  name="otp4"
+                  type="text"
+                  autoComplete="off"
+                  className="otpInput"
+                  value={otp.otp4}
+                  onChange={(e) => handleChangeOtp("otp4", e)}
+                  tabIndex="4"
+                  maxLength="1"
+                  onKeyUp={(e) => inputfocus(e)}
+                />
+              </div>
+              <div className="resend-button">
+                <div
+                  style={{ display: "flex", alignItems: "center" }}
+                  onClick={() => onVerifyEmail()}
+                >
+                  <TypographyComponent variant="h2" title="Didn’t get code?" />
+                  <TypographyComponent
+                    variant="h2"
+                    title="Resend"
+                    style={{ color: "#F5F5F5", marginLeft: 5 }}
+                  />
+                </div>
+                <ButtonComponent
+                  variant="contained"
+                  color="primary"
+                  type="submit"
+                  className="send-code"
+                  endIcon={<ArrowForwardIosIcon />}
+                  title="verify"
+                />
+              </div>
+            </div>
+          </form>
+        </DialogContent>
+      </DialogComponent>
+      <SnackBarComponent
+        open={open}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        message={setRes.message}
+        type={setRes.type && setRes.type.toLowerCase()}
+      />
     </div>
   );
 };

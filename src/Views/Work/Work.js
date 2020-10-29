@@ -144,7 +144,10 @@ const Work = (props) => {
         role: "posted",
         limit: limit,
         offset: 0,
-      }).catch((err) => console.log(err));
+      }).catch((err) => {
+        setIsJobLoading(false);
+        console.log(err);
+      });
       if (res) {
         const { data, stopped_at, type } = res || {};
         if (type === "ERROR" || (data && data.length === 0)) {
@@ -481,7 +484,9 @@ const Work = (props) => {
               />
             </div>
             <Divider className="divider" />
-            {services &&
+            {services && services.length ? (
+              <span>{t("service.notFoundService")}</span>
+            ) : (
               services.map((service, index) => {
                 return (
                   <Grid container spacing={3} key={index}>
@@ -532,7 +537,8 @@ const Work = (props) => {
                     </Grid>
                   </Grid>
                 );
-              })}
+              })
+            )}
             {isUpcomingMoreData && services && services.length > 0 && (
               <div>
                 {isUpcomingLoading ? (

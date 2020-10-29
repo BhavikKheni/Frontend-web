@@ -345,6 +345,7 @@ const OweraHeader = (props) => {
         handleCloseSignUp={handleCloseSignUp}
         openSignUp={openSignUp}
         openSignInDialog={openSignInDialog}
+        openSignUpDialog={openSignUpDialog}
       />
       <ForgotPassword
         closeForgotPasswordDialog={closeForgotPasswordDialog}

@@ -24,8 +24,7 @@ const CalendarComponent = (props) => {
       }}
       firstDay={1}
       // titleFormat = 'dddd, MMMM D, YYYY'
-      initialView="dayGridWeek"
-      defaultView="dayGridWeek"
+      initialView="timeGridWeek"
       formatDate={{
         month: "long",
         year: "numeric",

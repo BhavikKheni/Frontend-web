@@ -158,3 +158,12 @@
   font-size: 16px;
   min-height: 35px;
 }
+.otpInput {
+  width: 3rem !important;
+  height: 3rem;
+  margin: 0 1rem;
+  font-size: 2rem;
+  text-align: center;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+}

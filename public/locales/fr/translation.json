@@ -22,6 +22,7 @@
     "go": "go"
   },
   "service": {
+    "notFoundService":"No Services Found",
     "create-service": {
       "createService": "Create a service",
       "startWork": "StartWork",
@@ -37,7 +38,11 @@
     "password": "Password is required",
     "phoneNumber": "Phone Number is required",
     "firstName": "First Name is required",
-    "lastName": "Last Name is required"
+    "lastName": "Last Name is required",
+    "serviceTitle": "Title is required",
+    "Category": "Category is required",
+    "SubCategory": "Sub-Category is required",
+    "thisFieldIsRequired":"This field is required"
   },
   "providerProfile": {
     "offeredService": "Offered Services",
