@@ -1,0 +1,118 @@
+*{
+    margin: 0;
+}
+.messages{
+    margin: -30px 0px 0px -20px;
+    display: grid;
+    place-items: center;
+}
+.messages_body{
+    display: flex;
+    height: 100%;
+    width: 100%;
+}
+.sidebar_section{
+    display: flex;
+    flex-direction: column;
+    flex: 0.20;
+    background-color: blue;
+    color: white;
+}
+.sidebar_header{
+    padding: 12px 20px;
+    cursor: pointer;
+}
+.chat_section{
+    display: flex;
+    flex-direction: column;
+    flex: 0.80;
+    color: black;
+}
+.chat_header{
+    padding: 10px 20px;
+    display: flex;
+    border-bottom: 1px solid grey;
+    border-right: 1px solid grey;
+}
+.chat_header_left{
+    display: flex;
+    flex-direction: column;
+    flex: 0.90;
+}
+.chat_header_right{
+    display: flex;
+    flex-direction: column;
+    flex: 0.10;
+}
+.btn_chat_search{
+    width: 50%;
+}
+
+.chat_body{
+    padding: 30px;
+    height: 100%;
+    overflow: scroll;
+    /* border-bottom: 1px solid grey; */
+}
+.chat_name{
+    position: absolute;
+    top: -20px;
+    font-size: 12px;
+    font-weight: 500;
+}
+.chat_message{
+    margin-bottom: 30px;
+    padding: 10px;
+    position: relative;
+    font-size: 17px;
+    width: fit-content;
+    border-radius: 10px;
+    box-shadow: 5px 10px 5px #4849791a;
+}
+.chat_timestamp{
+    margin-left: 10px;
+    font-size: 10px;
+}
+.chat_sender{
+    border: 1px solid navy;
+}
+.chat_reciever{
+    margin-left: auto;
+    border: 1px solid #1AB900;
+}
+
+.chat_note_section{
+    padding: 20px;
+}
+.chat_note{
+    font-size: 17px;
+    color: #0000008a;
+}
+
+.chat_type_message{
+    margin: 10px;
+    border: 3px solid #1AB900;
+}
+.chat_type_message .btn_message_send{
+    padding: 5px 10px;
+    color: white;
+    background-color: #1AB900;
+    border: none;
+    cursor: pointer;
+}
+.chat_type_message form{
+    display: flex;
+    flex: 1;
+}
+.chat_type_message form input{
+    padding: 10px;
+    flex: 1;
+    border-radius: 10px;
+    border: none;
+}
+textarea:focus, input:focus{
+    outline: none;
+}
+textarea:focus, button:focus{
+    outline: none;
+}

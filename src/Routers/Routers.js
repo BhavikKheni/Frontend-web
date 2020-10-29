@@ -2,6 +2,7 @@ import React from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
 import Services from "../Views/Services/Services";
 import Profile from "../Views/Profile/Profile";
+import Messages from "../Views/Messages/Messages";
 import CreateService from "../Views/Work/CreateService";
 import { SessionContext } from "../Provider/Provider.js";
 import ProfileProvider from '../Views/Profile/ProfileProvider';
@@ -41,6 +42,8 @@ const CreateRoutes = () => {
       <Route exact path="/work" component={Work} />
       <Route exact path="/create-services" component={CreateService} />
       <ProtectedRoute path="/profile" component={Profile}/>
+      <ProtectedRoute path="/messages" component={Messages}/>
+      {/* <ProtectedRoute path="/messages"/> */}
       <Route path="/profile-provider" component={ProfileProvider} />
       <Route path="/call-page" component={CallPage} />
     </Switch>

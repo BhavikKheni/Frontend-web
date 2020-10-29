@@ -17,7 +17,13 @@ const Home = (props) => {
       <div style={{ margin: 20 }}>
         {isLoggedIn && (
           <React.Fragment>
-            <MenuItem>{t("home.messages")}</MenuItem>
+            <MenuItem
+              component={Link}
+              to="/messages"
+              selected={pathname === "/messages"}
+            >
+              {t("home.messages")}
+            </MenuItem>
             <MenuItem>{t("home.myCalendar")}</MenuItem>
             <MenuItem>{t("home.nextBookings")}</MenuItem>
             <MenuItem>{t("home.myServiceHistory")}</MenuItem>

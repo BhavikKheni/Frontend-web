@@ -1,0 +1,25 @@
+.chat_person{
+    padding: 10px 30px;
+    display: flex;
+    cursor: pointer;
+    /* border-bottom: 1px solid #ffffff1e; */
+}
+.chat_person:hover{
+    background-color: #0000005d;
+}
+.chat_person_avatar{
+    display: flex;
+    flex-direction: column;
+    flex: 0.20;
+}
+.chat_person_avater img{
+    width: 50px;
+    height: 50px;
+}
+
+.chat_person_name{
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    flex: 0.80;
+}
