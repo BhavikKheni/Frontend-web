@@ -140,7 +140,7 @@ const ServiceCardComponent = (props) => {
         <CardActions disableSpacing className={"card_ratings"}>
           <div className="card-actions">
             <div className="card-actions-title" onClick={onServiceTitle}>
-              <TooltipComponent title={title}>
+              <TooltipComponent title={title} placement="bottom">
                 <Typography
                 className="card_title"
                 >
@@ -149,7 +149,7 @@ const ServiceCardComponent = (props) => {
               </TooltipComponent>
             </div>
             <div style={{ cursor: "pointer" }} onClick={onProviderName}>
-              <TooltipComponent title={providerName || ""}>
+              <TooltipComponent title={providerName || ""} placement="bottom">
                 <Typography
                   className="card_description"
                 >

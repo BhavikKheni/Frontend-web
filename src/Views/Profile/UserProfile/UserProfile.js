@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { withRouter, Link, Route } from "react-router-dom";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
-import { CircularProgress, MenuItem, TextField } from "@material-ui/core";
+import { MenuItem } from "@material-ui/core";
 import MuiDialogContent from "@material-ui/core/DialogContent";
 import MuiFormControl from "@material-ui/core/FormControl";
 import Breadcrumbs from "@material-ui/core/Breadcrumbs";
@@ -9,24 +9,21 @@ import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
 import CheckIcon from "@material-ui/icons/Check";
 import ClearIcon from "@material-ui/icons/Clear";
 import { useTranslation } from "react-i18next";
-import { SessionContext } from "../../Provider/Provider";
-import { get, add } from "../../Services/Auth.service";
-import ButtonComponent from "../../Components/Forms/Button";
-import TypographyComponent from "../../Components/Typography/Typography";
-import ProfilePic from "../../images/profile-image.png";
-import { themes } from "../../themes";
-import { useSidebar } from "../../Provider/SidebarProvider";
-import DialogComponent from "../../Components/Dialog/Dialog";
-import SnackBarComponent from "../../Components/SnackBar/SnackBar";
-import UpdateProfile from "./UpdateProfile";
-import { LOCALSTORAGE_DATA } from "../../utils";
+import { SessionContext } from "../../../Provider/Provider";
+import { get, add } from "../../../Services/Auth.service";
+import ButtonComponent from "../../../Components/Forms/Button";
+import TypographyComponent from "../../../Components/Typography/Typography";
+import { themes } from "../../../themes";
+import { useSidebar } from "../../../Provider/SidebarProvider";
+import DialogComponent from "../../../Components/Dialog/Dialog";
+import SnackBarComponent from "../../../Components/SnackBar/SnackBar";
+import Spinner from "../../../Components/Spinner/Spinner";
+import UpdateProfile from "./UserUpdateProfile";
+import { LOCALSTORAGE_DATA, languages_level } from "../../../utils";
+import ImageComponent from "../../../Components/Forms/Image";
 
-import "./Profile.css";
-const languages_level = [
-  { language_level_id: 1, label: "BASIC" },
-  { language_level_id: 2, label: "INTERMEDIATE" },
-  { language_level_id: 3, label: "ADVANCED" },
-];
+import "./UserProfile.css";
+
 const useSession = () => React.useContext(SessionContext);
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -71,6 +68,10 @@ const ProfileView = (props) => {
   const [successSubTitle, setSuccessSubTitle] = useState("");
   const [type, setType] = useState("");
   const [open, setOpen] = useState(false);
+  const [isEmailVerifyLoader, setEmailVerifyLoader] = useState(false);
+  const [isDisabledEmailVerify, setIsDisabledEmailVerify] = useState(false);
+  const [profilVerifyLoader, setProfilVerifyLoader] = useState(false);
+  const [isProfilVerifyDisable, setProfilVerifyDisable] = useState(false);
   const [otp, setOtp] = useState({
     otp1: "",
     otp2: "",
@@ -119,7 +120,13 @@ const ProfileView = (props) => {
             <MenuItem>{t("home.myCalendar")}</MenuItem>
             <MenuItem>{t("home.nextBookings")}</MenuItem>
             <MenuItem>{t("home.myServiceHistory")}</MenuItem>
-            <MenuItem>{t("home.myProfile")}</MenuItem>
+            <MenuItem
+              component={Link}
+              to="/profile"
+              selected={pathname === "/profile"}
+            >
+              {t("home.myProfile")}
+            </MenuItem>
             <MenuItem>{t("home.paymentMethods")}</MenuItem>
           </React.Fragment>
         )}
@@ -208,10 +215,16 @@ const ProfileView = (props) => {
         email: userData.email,
         id_user: userData.id_user,
       };
+      setEmailVerifyLoader(true);
+      setIsDisabledEmailVerify(true);
       const res = await add("/profile/verifyemail", data).catch((err) => {
         setTypeRes(err);
+        setIsDisabledEmailVerify(false);
+        setEmailVerifyLoader(false);
       });
       if (res && res.type === "SUCCESS") {
+        setIsDisabledEmailVerify(false);
+        setEmailVerifyLoader(false);
         setVerify(true);
         setTypeRes(res);
         setOpen(true);
@@ -238,7 +251,6 @@ const ProfileView = (props) => {
 
   const handleSubmitOtp = (e) => {
     e.preventDefault();
-    setVerify(false);
     onVerifyEmail();
   };
 
@@ -249,10 +261,15 @@ const ProfileView = (props) => {
         code: Number(`${otp.otp1}${otp.otp2}${otp.otp3}${otp.otp4}`),
         type: "email",
       };
+      setProfilVerifyLoader(true);
+      setProfilVerifyDisable(true);
       const res = await add("/profile/verify", data).catch((err) => {
         setTypeRes(err);
+        setProfilVerifyLoader(false);
+        setProfilVerifyDisable(false);
       });
       if (res && res.type === "SUCCESS") {
+        setProfilVerifyLoader(false);
         setVerify(false);
         setTypeRes(res);
         setOpen(true);
@@ -293,30 +310,31 @@ const ProfileView = (props) => {
         {pathname === "/profile/edit" && <Link to={`/profile/edit`}>edit</Link>}
       </Breadcrumbs>
       {isLoading ? (
-        <div style={{ textAlign: "center" }}>
-          <CircularProgress />
-        </div>
+        <Spinner />
       ) : (
         <div className="user_profile_updated_value">
           <div className="user_profile_img">
             <div className="user_profile_img_block">
-              <img
-                alt="profile"
-                src={userData.image ? userData.image : ProfilePic}
-              />
+              {userData.image && userData.image ? (
+                <img alt="profile" src={userData.image} />
+              ) : (
+                <ImageComponent />
+              )}
             </div>
-            <TypographyComponent
-              className="user_profile_change_cta"
-              title="Change picture"
-              onClick={() => {
-                setImageOpen(true);
-              }}
-            />
+            {pathname === "/profile/edit" && (
+              <TypographyComponent
+                className="user_profile_change_cta"
+                title="Change picture"
+                onClick={() => {
+                  setImageOpen(true);
+                }}
+              />
+            )}
           </div>
           <div className="user_language_timezone">
             <TypographyComponent
               variant="h3"
-              title={userData.full_name}
+              title={`${userData.first_name} ${userData.last_name}`}
               style={{
                 color: themes.default.colors.darkGray,
               }}
@@ -331,25 +349,26 @@ const ProfileView = (props) => {
             <div className="user_country_timezone_data">
               {userData.languages &&
                 userData.languages.map((language, i) => {
-                  const language_name =
-                    (allLanguages &&
-                      allLanguages.find(
-                        (x) =>
-                          Number(x.id_language) === Number(language.language_id)
-                      ).language_name) ||
-                    "";
+                  let language_name =
+                    allLanguages &&
+                    allLanguages.find(
+                      (x) =>
+                        Number(x.id_language) === Number(language.language_id)
+                    );
+                  const label =
+                    languages_level &&
+                    languages_level.find(
+                      (x) =>
+                        Number(x.language_level_id) ===
+                        Number(language.language_level_id)
+                    );
                   return (
                     <div className="user_language_item" key={i}>
                       <ClearIcon onClick={() => removeItem(i)} />
-                      <span className="user_language">{language_name}</span>
-                      <span>
-                        {languages_level &&
-                          languages_level.find(
-                            (x) =>
-                              Number(x.language_level_id) ===
-                              Number(language.language_level_id)
-                          ).label}
+                      <span className="user_language">
+                        {language_name ? language_name.language_name : ""}
                       </span>
+                      <span>{label ? label.label : ""}</span>
                     </div>
                   );
                 })}
@@ -380,6 +399,8 @@ const ProfileView = (props) => {
                       "We’ve send a 4 digit code to your email. Please enter the code to verify your email-id."
                     );
                   }}
+                  startIcon={isEmailVerifyLoader && <Spinner />}
+                  disabled={isDisabledEmailVerify}
                 />
               )}
             </div>
@@ -477,7 +498,7 @@ const ProfileView = (props) => {
 
                 <div className="resend-button">
                   <div
-                    style={{ display: "flex", alignItems: "center" }}
+                    className="get-code"
                     onClick={() => onVerifyEmailDailog()}
                   >
                     <TypographyComponent
@@ -495,8 +516,10 @@ const ProfileView = (props) => {
                     color="primary"
                     type="submit"
                     className="send-code"
-                    endIcon={<ArrowForwardIosIcon />}
                     title="verify"
+                    startIcon={profilVerifyLoader && <Spinner />}
+                    endIcon={<ArrowForwardIosIcon />}
+                    disabled={isProfilVerifyDisable}
                   />
                 </div>
               </div>

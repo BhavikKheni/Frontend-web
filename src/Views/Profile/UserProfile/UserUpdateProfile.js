@@ -1,29 +1,31 @@
 import React, { useState, useEffect } from "react";
 import { withRouter } from "react-router-dom";
+import PhoneInput from "react-phone-input-2";
+import { Formik } from "formik";
+import * as Yup from "yup";
 import { withStyles } from "@material-ui/core/styles";
 import MenuItem from "@material-ui/core/MenuItem";
 import MuiDialogContent from "@material-ui/core/DialogContent";
 import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
 import Link from "@material-ui/core/Link";
 import TextField from "@material-ui/core/TextField";
-import PhoneInput from "react-phone-input-2";
-import { Formik } from "formik";
 import MuiFormControl from "@material-ui/core/FormControl";
-import TypographyComponent from "../../Components/Typography/Typography";
-import SelectComponent from "../../Components/Forms/Select";
-import ButtonComponent from "../../Components/Forms/Button";
-import InputComponent from "../../Components/Forms/Input";
-import DialogComponent from "../../Components/Dialog/Dialog";
-import SnackbarComponent from "../../Components/SnackBar/SnackBar";
-import { SessionContext } from "../../Provider/Provider";
-import { useSidebar } from "../../Provider/SidebarProvider";
-import { get } from "../../Services/Auth.service";
-import Service from "../../Services/index";
-import * as Yup from "yup";
-import ImageComponent from "../../Components/Forms/Image";
-import { LOCALSTORAGE_DATA } from "../../utils";
+import TypographyComponent from "../../../Components/Typography/Typography";
+import SelectComponent from "../../../Components/Forms/Select";
+import ButtonComponent from "../../../Components/Forms/Button";
+import InputComponent from "../../../Components/Forms/Input";
+import DialogComponent from "../../../Components/Dialog/Dialog";
+import SnackbarComponent from "../../../Components/SnackBar/SnackBar";
+import { SessionContext } from "../../../Provider/Provider";
+import { useSidebar } from "../../../Provider/SidebarProvider";
+import { get } from "../../../Services/Auth.service";
+import Service from "../../../Services/index";
+import ImageComponent from "../../../Components/Forms/Image";
+import Spinner from "../../../Components/Spinner/Spinner";
+import { LOCALSTORAGE_DATA } from "../../../utils";
+import ChangePassword from "../../../Components/ChangePassword/ChangePassword";
 import "react-phone-input-2/lib/style.css";
-import "./UpdateProfile.css";
+import "./UserUpdateProfile.css";
 const service = new Service();
 const useSession = () => React.useContext(SessionContext);
 
@@ -49,21 +51,22 @@ const UpdateProfile = (props) => {
     first_name: "",
     last_name: "",
     phone_no: "",
-    timezone: "",
-    country: "",
+    timezone: "GMT+2:00 Eastern European Time",
+    country: 214,
     image: null,
     languages: [],
   });
-  const [language, setLanguage] = React.useState("");
+  const [language, setLanguage] = useState(3);
   let [copyRecord, setCopyRecord] = useState();
-  const [level, setLevel] = React.useState("");
+  const [level, setLevel] = useState(1);
   const { setSidebarContent, setSidebar } = useSidebar();
   const [isLoading, setLoading] = useState(false);
-  const [openEmail, setEmail] = React.useState(false);
-
-  const [openPhone, setPhone] = React.useState(false);
-  const [verifyPhone, setVerifyPhone] = React.useState(false);
-  const [verifySucessPhone, setVerifySuccessPhone] = React.useState(false);
+  const [isImageUploadLoader, setImageUploadLoader] = useState(false);
+  const [isImageRemoveLoader, setImageRemoveLoader] = useState(false);
+  const [openEmail, setEmail] = useState(false);
+  const [openPhone, setPhone] = useState(false);
+  const [verifyPhone, setVerifyPhone] = useState(false);
+  const [verifySucessPhone, setVerifySuccessPhone] = useState(false);
   const [languages, setLanguages] = useState([]);
   const [isError, setError] = useState(false);
   const [openErrorSnackBar, setOpenSnackBar] = useState(false);
@@ -73,6 +76,7 @@ const UpdateProfile = (props) => {
   const [timezones, setTimezones] = useState([]);
   const [customLanguages, setCustomLanguages] = useState([]);
   const [imageUploadSuccess, setImageUploadSuccess] = useState(false);
+  const [openChangePassword, setOpenChangePassword] = useState(false);
 
   React.useEffect(() => {
     setSidebar(true);
@@ -161,6 +165,7 @@ const UpdateProfile = (props) => {
           ...userData,
           [event.target.name]: event.target.files[0],
         });
+        saveImage(event.target.files[0]);
         props.newImagePath(URL.createObjectURL(event.target.files[0]));
         isSetImageSize(false);
       }
@@ -195,24 +200,41 @@ const UpdateProfile = (props) => {
 
   const makeImage = () => {
     if (userData.image instanceof File) {
-      saveImage();
       return URL.createObjectURL(userData.image);
     } else {
       return userData.image;
     }
   };
 
-  const saveImage = async () => {
+  const removeImage = async () => {
     const formData = new FormData();
-    if (userData.image instanceof File) {
-      formData.append("image", userData.image);
+    formData.append("id_user", user.id_user);
+    setImageRemoveLoader(true);
+    const res = await service
+      .upload("/profile/removeimage", formData)
+      .catch((err) => {
+        setImageRemoveLoader(false);
+      });
+    if (res.status === "SUCCESS") {
+    } else {
+      setImageRemoveLoader(false);
+    }
+  };
+  const saveImage = async (img) => {
+    const formData = new FormData();
+    if (img instanceof File) {
+      formData.append("image", img);
     }
     formData.append("id_user", user.id_user);
+    setImageUploadLoader(true);
     const res = await service.upload("/profile/update", formData);
-    if (res.status === 200) {
+    if (res.status === "SUCCESS") {
+      setImageUploadLoader(false);
       setImageUploadSuccess(true);
     } else {
+      setImageUploadLoader(false);
       setImageUploadSuccess(false);
+
       console.log("Error");
     }
   };
@@ -237,7 +259,7 @@ const UpdateProfile = (props) => {
       if (updateRecord.first_name) {
         formData.append("first_name", updateRecord.first_name);
       }
-      if(updateRecord.phone_no){
+      if (updateRecord.phone_no) {
         formData.append("phone_no", updateRecord.phone_no);
       }
       if (updateRecord.last_name) {
@@ -264,6 +286,14 @@ const UpdateProfile = (props) => {
     }
     setError(false);
   };
+
+  const onOpenChangePassword = () => {
+    setOpenChangePassword(false);
+  };
+
+  const onDelete = () => {};
+
+  const onDeactivate = () => {};
 
   return (
     <div className="update_profile_form_wrapper">
@@ -406,13 +436,27 @@ const UpdateProfile = (props) => {
             </div>
             <div className="form_row change_password_field">
               <FormControl>
-                <ButtonComponent title="Change password" />
+                <ButtonComponent
+                  title="Change password"
+                  type="button"
+                  onClick={() => {
+                    setOpenChangePassword(true);
+                  }}
+                />
               </FormControl>
             </div>
           </div>
           <div className="update_profile_form_cta_row">
-            <ButtonComponent title="Delete profile" disabled />
-            <ButtonComponent title="Deactivate profile" disabled />
+            <ButtonComponent
+              title="Delete profile"
+              type="button"
+              onClick={() => onDelete()}
+            />
+            <ButtonComponent
+              title="Deactivate profile"
+              type="button"
+              onClick={() => onDeactivate()}
+            />
             <ButtonComponent
               className="update_profile_cta"
               variant="contained"
@@ -422,6 +466,11 @@ const UpdateProfile = (props) => {
             />
           </div>
         </form>
+        <ChangePassword
+          openResetPassword={openChangePassword}
+          onOpenChangePassword={() => onOpenChangePassword()}
+          type="change-password"
+        />
         <DialogComponent
           onClose={(e) => {
             e.stopPropagation();
@@ -637,7 +686,9 @@ const UpdateProfile = (props) => {
           <DialogContent style={{ textAlign: "center" }}>
             <FormControl className="image-upload">
               <div className="profile-image-tag">
-                {userData.image === null ? (
+                {userData.image === null ||
+                userData.image === undefined ||
+                typeof userData.image === "string" ? (
                   <ImageComponent />
                 ) : (
                   <img
@@ -673,13 +724,10 @@ const UpdateProfile = (props) => {
                     }}
                     title="Remove picture"
                     onClick={() => {
-                      var output = document.getElementById("output");
-                      output.src = null;
-                      setUserData({
-                        ...userData,
-                        image: null,
-                      });
+                      setUserData((d) => ({ ...d, image: null }));
+                      removeImage();
                     }}
+                    startIcon={isImageRemoveLoader && <Spinner />}
                   />
                 )}
                 <ButtonComponent
@@ -695,6 +743,7 @@ const UpdateProfile = (props) => {
                   onClick={() => {
                     document.getElementById("upload-button").click();
                   }}
+                  startIcon={isImageUploadLoader && <Spinner />}
                 />
               </div>
               {imageUploadSuccess && (
@@ -721,7 +770,6 @@ const UpdateProfile = (props) => {
           </DialogContent>
         </DialogComponent>
       </div>
-      {/* )} */}
       <SnackbarComponent
         type="error"
         open={openErrorSnackBar}

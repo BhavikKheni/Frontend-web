@@ -3,10 +3,8 @@ import { withRouter, Link as RouterLink } from "react-router-dom";
 import clsx from "clsx";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
-import Grid from "@material-ui/core/Grid";
 import MuiDialogContent from "@material-ui/core/DialogContent";
 import MenuItem from "@material-ui/core/MenuItem";
 import InputBase from "@material-ui/core/InputBase";
@@ -15,7 +13,6 @@ import { FormControl } from "@material-ui/core";
 import NotificationsNoneIcon from "@material-ui/icons/NotificationsNone";
 import SearchIcon from "@material-ui/icons/Search";
 import { useTranslation } from "react-i18next";
-import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
 import { SessionContext } from "../../Provider/Provider";
 import TypographyComponent from "../../Components/Typography/Typography";
 import ButtonComponent from "../../Components/Forms/Button";
@@ -27,6 +24,7 @@ import ForgotPassword from "../Auth/ForgotPassword/ForgotPassword";
 import "react-flags-select/css/react-flags-select.css";
 import OweraHeaderPic from "../../images/Owera-logo.png";
 import DialogComponent from "../../Components/Dialog/Dialog";
+import Sppiner from "../../Components/Spinner/Spinner";
 import "./Header.css";
 const useSession = () => React.useContext(SessionContext);
 const useStyles = makeStyles((theme) => ({
@@ -94,10 +92,10 @@ const useStyles = makeStyles((theme) => ({
     maxHeight: 240,
   },
   logoutDescription: {
-    fontFamily: 'Rubik',
+    fontFamily: "Rubik",
     fontSize: 36,
     fontWeight: 500,
-    letterSpacing: '0.05em',
+    letterSpacing: "0.05em",
     color: themes.default.colors.white,
     textAlign: "left",
   },
@@ -118,6 +116,7 @@ const OweraHeader = (props) => {
   let { isLoggedIn, doLogin, logout } = useSession();
   const [search, setSearch] = useState(false);
   const [openLogout, setLogout] = useState(false);
+  const [logoutLoader, setLogoutLoader] = useState(false);
   let { pathname } = props.location;
   const { history } = props;
   const intervalRef = useRef(null);
@@ -159,7 +158,7 @@ const OweraHeader = (props) => {
     onIsLoggedIn(true).then((res) => {
       if (res) {
         doLogin(res);
-        history.push('/');
+        history.push("/");
       }
     });
   };
@@ -169,9 +168,13 @@ const OweraHeader = (props) => {
   };
 
   const handleLogout = () => {
+    setLogoutLoader(true);
     onLogout(props).then((result) => {
       logout();
-      setLogout(false);
+      setTimeout(() => {
+        setLogoutLoader(false);
+        setLogout(false);
+      }, 1500);
     });
   };
 
@@ -190,10 +193,10 @@ const OweraHeader = (props) => {
         position="fixed"
         className={clsx(classes.appBar, classes.colorDefault)}
       >
-        <div className='container'>
-          <div className='header_inner'>
+        <div className="container">
+          <div className="header_inner">
             <div className="header_brand_wrapper">
-              <a href="/" className='header_brand'>
+              <a href="/" className="header_brand">
                 <img src={OweraHeaderPic} alt="Owera"></img>
               </a>
               <IconButton
@@ -217,11 +220,11 @@ const OweraHeader = (props) => {
                   <SearchIcon className={classes.searchIcon} />
                 </span>
               </div>
-              <div className={clsx(classes.menuName, 'header_navbar')}>
+              <div className={clsx(classes.menuName, "header_navbar")}>
                 <MenuItem
-                component={RouterLink}
-                to="javascript:void(0);"
-                selected={pathname === "javascript:void(0);"}
+                  component={RouterLink}
+                  to="javascript:void(0);"
+                  selected={pathname === "javascript:void(0);"}
                 >
                   <NotificationsNoneIcon className={classes.colorPrimary} />
                 </MenuItem>
@@ -278,7 +281,7 @@ const OweraHeader = (props) => {
                 </div>
               )}
               <ReactFlagsSelect
-                className='country_flag'
+                className="country_flag"
                 countries={["US", "GB", "FR", "DE", "IT", "GU"]}
                 placeholder="Language"
                 customLabels={{
@@ -292,9 +295,8 @@ const OweraHeader = (props) => {
                 onSelect={onSelectFlag}
               />
             </div>
+          </div>
         </div>
-        </div>
-        
       </AppBar>
       <DialogComponent
         onClose={(e) => {
@@ -310,7 +312,7 @@ const OweraHeader = (props) => {
         titleColor={themes.default.colors.green}
         iconColor={themes.default.colors.green}
       >
-        <div class="dialog_container">
+        <div className="dialog_container">
           <DialogContent>
             <FormControl className={classes.logoutDialog}>
               <TypographyComponent
@@ -327,6 +329,7 @@ const OweraHeader = (props) => {
                     backgroundColor: themes.default.colors.orange,
                   }}
                   onClick={handleLogout}
+                  startIcon={logoutLoader && <Sppiner />}
                 />
               </div>
             </FormControl>
@@ -345,7 +348,6 @@ const OweraHeader = (props) => {
         handleCloseSignUp={handleCloseSignUp}
         openSignUp={openSignUp}
         openSignInDialog={openSignInDialog}
-        openSignUpDialog={openSignUpDialog}
       />
       <ForgotPassword
         closeForgotPasswordDialog={closeForgotPasswordDialog}

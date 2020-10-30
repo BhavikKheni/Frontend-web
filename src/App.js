@@ -34,7 +34,7 @@ const theme = createMuiTheme({
         "&$selected": {
           backgroundColor: "transparent",
           fontWeight: 500,
-          borderBottom: "3px solid #303030",
+          borderBottom: "none",
         },
       },
     },

@@ -6,7 +6,7 @@ const TooltipComponent = (props) => {
   return (
     <Tooltip 
       title={props.title}
-      placement="bottom" 
+      placement={props.placement || 'bottom'}
       TransitionComponent={Fade} 
       TransitionProps={{ timeout: 600 }} 
       arrow>

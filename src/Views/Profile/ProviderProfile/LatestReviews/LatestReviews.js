@@ -3,8 +3,8 @@ import Grid from "@material-ui/core/Grid";
 import Divider from "@material-ui/core/Divider";
 import moment from "moment";
 import { useTranslation } from "react-i18next";
-import { themes } from "../../../themes";
-import TypographyComponent from "../../../Components/Typography/Typography";
+import { themes } from "../../../../themes";
+import TypographyComponent from "../../../../Components/Typography/Typography";
 
 const LatestReviews = (props) => {
   const { t } = useTranslation();
@@ -36,10 +36,10 @@ const LatestReviews = (props) => {
 
       <Grid container spacing={3}>
         <Grid item xs={12} md={8}>
-          {selectedReviews.length === 0 ? (
+          {selectedReviews && !selectedReviews.length ? (
             <span>{t('providerProfile.notFoundReviews')}</span>
           ) : (
-            selectedReviews.map((review, index) => (
+            selectedReviews && selectedReviews.map((review, index) => (
               <div
                 key={index}
                 className="provider-profile-review provider-profile-review-box"

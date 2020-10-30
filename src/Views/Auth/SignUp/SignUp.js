@@ -41,7 +41,6 @@ const SignUp = (props) => {
     handleCloseSignUp,
     openSignUp,
     openSignInDialog,
-    openSignUpDialog,
   } = props;
   const [isDisabled, setDisabled] = useState(false);
   const [isLoading, setLoading] = useState(false);
@@ -93,8 +92,6 @@ const SignUp = (props) => {
         if (res && res.type === "SUCCESS") {
           handleCloseSignUp();
           setLoading(false);
-
-          console.log(values);
         } else {
           setTypeRes(res);
           setDisabled(false);
@@ -102,12 +99,15 @@ const SignUp = (props) => {
           setOpen(true);
         }
       })
-      .catch((error) => {});
+      .catch((error) => {
+        console.log("Error", error)
+        setLoading(false);
+        setDisabled(false);
+      });
   };
 
   const handleCloseTermsCondition = () => {
-    setTermsCondition(false);
-    openSignUpDialog();
+    setTermsCondition(false)
   };
 
   const handleClose = (event, reason) => {
@@ -145,7 +145,7 @@ const SignUp = (props) => {
                     type="text"
                     placeholder="First Name"
                     name="first_name"
-                    id="outlined-name"
+                    id="outlined-first-name"
                     autoFocus
                     onChange={formik.handleChange}
                     value={formik.values.first_name}
@@ -160,7 +160,7 @@ const SignUp = (props) => {
                     type="text"
                     placeholder="Last Name"
                     name="last_name"
-                    id="outlined-name"
+                    id="outlined-last-name"
                     onChange={formik.handleChange}
                     value={formik.values.last_name}
                     error={formik.errors.last_name ? true : false}
@@ -258,7 +258,6 @@ const SignUp = (props) => {
                         href="javascript:;"
                         onClick={() => {
                           setTermsCondition(true);
-                          handleCloseSignUp();
                         }}
                       >
                         {t("signup.termsConditions")}

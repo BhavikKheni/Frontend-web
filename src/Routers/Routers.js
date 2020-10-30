@@ -1,11 +1,11 @@
 import React from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
 import Services from "../Views/Services/Services";
-import Profile from "../Views/Profile/Profile";
+import Profile from "../Views/Profile/UserProfile/UserProfile";
 import Messages from "../Views/Messages/Messages";
 import CreateService from "../Views/Work/CreateService";
 import { SessionContext } from "../Provider/Provider.js";
-import ProfileProvider from '../Views/Profile/ProfileProvider';
+import ProfileProvider from '../Views/Profile/ProviderProfile/ProviderProfile';
 import Home from "../Views/Home/Home";
 import Work from "../Views/Work/Work";
 import CallPage from '../Views/Work/CallPage';

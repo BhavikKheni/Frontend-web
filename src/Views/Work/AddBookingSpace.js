@@ -1,6 +1,6 @@
 import React from "react";
 import { Grid } from "@material-ui/core";
-import CalendarComponent from "../Profile/Calendar/Calendar";
+import CalendarComponent from "../../Components/Calendar/Calendar";
 
 const INITIAL_EVENTS = [
   {

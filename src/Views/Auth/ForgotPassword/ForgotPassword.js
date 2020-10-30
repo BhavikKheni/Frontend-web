@@ -90,7 +90,7 @@ const ForgotPassword = (props) => {
                         value={values.email}
                         placeholder="E-Mail"
                         name="email"
-                        id="outlined-name"
+                        id="outlined-E-mail-name"
                         onChange={handleChange}
                         error={errors.email ? true : false}
                         helperText={

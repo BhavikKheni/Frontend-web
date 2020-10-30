@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { withRouter, Link } from "react-router-dom";
 import MenuItem from "@material-ui/core/MenuItem";
 import ChevronLeftOutlined from "@material-ui/icons/ChevronLeftOutlined";
-import InputComponent from "../../Components/Forms/Input";
-import ButtonComponent from "../../Components/Forms/Button";
+import InputComponent from "../../../Components/Forms/Input";
+import ButtonComponent from "../../../Components/Forms/Button";
 import AddIcon from "@material-ui/icons/Add";
 import DateFnsUtils from "@date-io/date-fns";
 import {

@@ -5,19 +5,20 @@ import { CircularProgress, Avatar } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import CheckIcon from "@material-ui/icons/Check";
-import { get } from "../../Services/Auth.service";
-import TypographyComponent from "../../Components/Typography/Typography";
-import ProfilePic from "../../images/profile-image.png";
-import { themes } from "../../themes";
-import { useSidebar } from "../../Provider/SidebarProvider";
+import { get } from "../../../Services/Auth.service";
+import TypographyComponent from "../../../Components/Typography/Typography";
+import { themes } from "../../../themes";
+import { useSidebar } from "../../../Provider/SidebarProvider";
 import StarRateRounded from "@material-ui/icons/StarRateRounded";
-import CalendarComponent from "./Calendar/Calendar";
-import ProfileProviderSidebar from "./ProfileProviderSidebar";
+import CalendarComponent from "../../../Components/Calendar/Calendar";
+import ProfileProviderSidebar from "./ProviderProfileSidebar";
 import OfferedServices from "./OfferedServices/OfferedServices";
 import ServiceDetails from "./ServiceDetails/ServiceDetails";
 import LatestReviews from "./LatestReviews/LatestReviews";
+import ImageComponent from "../../../Components/Forms/Image";
+import { LOCALSTORAGE_DATA, languages_level } from "../../../utils";
 import "./ProviderProfile.css";
-import ButtonComponent from "../../Components/Forms/Button";
+
 const useStyles = makeStyles((theme) => ({
   large: {
     width: theme.spacing(20),
@@ -46,6 +47,7 @@ const ProfileProvider = (props) => {
   const { history } = props;
   const [selectedService, setSelectedService] = useState({});
   const [selectedReviews, setSelectedReview] = useState([]);
+  const [allLanguages, setAllLanguges] = useState([]);
   const [averages, setAverages] = useState({});
   let [userData, setUserData] = useState({
     full_name: "",
@@ -53,7 +55,7 @@ const ProfileProvider = (props) => {
     timezone: "",
     languages: [],
     level: [],
-    services_assigned: [],
+    services_created: [],
     reviews: [],
   });
 
@@ -63,11 +65,28 @@ const ProfileProvider = (props) => {
   }, [setSidebarContent, setSidebar, history, pathname]);
 
   useEffect(() => {
+    async function fetchLanguages() {
+      const storage_laguages = LOCALSTORAGE_DATA.get("languages");
+      if (!storage_laguages.data) {
+        const res = await get("/languages/list");
+        if (res) {
+          LOCALSTORAGE_DATA.set("languages", res);
+          setAllLanguges(res);
+        }
+      } else {
+        setAllLanguges(storage_laguages.data);
+      }
+    }
+    fetchLanguages();
+  }, []);
+
+  useEffect(() => {
     async function getService() {
       const res = await get(`/service/${service.id_service}`);
       if (res) {
         setSelectedService({ ...res });
-        setSelectedReview(res.reviews.reviews_list);
+        const { reviews_list } = res.reviews || [];
+        setSelectedReview(reviews_list);
         if (type === "job-details") {
           var elmnt = document.getElementsByClassName("service-details");
           if (elmnt[0]) {
@@ -91,7 +110,12 @@ const ProfileProvider = (props) => {
   useEffect(() => {
     async function getData() {
       setLoading(true);
-      const res = await get(`/profile/${state && state.userId}`);
+      const res = await get(`/profile/${state && state.userId}`).catch(
+        (error) => {
+          console.log(error);
+          setLoading(false);
+        }
+      );
       if (res) {
         setUserData({
           ...res.data,
@@ -104,8 +128,6 @@ const ProfileProvider = (props) => {
     getData();
   }, [state]);
 
-  const onVerify = () => {};
-
   return (
     <div style={{ margin: 20 }}>
       <TypographyComponent title="Provider profile" variant="h4" />
@@ -115,121 +137,76 @@ const ProfileProvider = (props) => {
         </div>
       ) : (
         <React.Fragment>
-          <Grid
-            container
-            spacing={3}
-            alignItems="center"
-            style={{ marginTop: 20 }}
-          >
-            <Grid item xs={12} md={4}>
-              <Avatar
-                alt="profile"
-                src={userData.image ? userData.image : ProfilePic}
-                className={classes.large}
-              />
-            </Grid>
-            <Grid item xs={12} md={4}>
+          <div className="user_profile_updated_value">
+            <div className="user_profile_img">
+              <div className="user_profile_img_block">
+                {userData.image && userData.image ? (
+                  <img alt="profile" src={userData.image} />
+                ) : (
+                  <ImageComponent />
+                )}
+              </div>
+            </div>
+            <div className="user_language_timezone">
               <TypographyComponent
                 variant="h3"
                 title={`${userData.first_name} ${userData.last_name}`}
                 style={{
-                  fontWeight: "bold",
                   color: themes.default.colors.darkGray,
                 }}
               />
-              <Grid style={{ display: "flex", marginTop: 10 }}>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  <TypographyComponent
-                    variant="h6"
-                    title={userData.country_name}
-                    style={{ marginLeft: 5 }}
-                  />
-                  <TypographyComponent
-                    variant="h6"
-                    title={userData.timezone_name}
-                    style={{ marginLeft: 5 }}
-                  />
-                </div>
-              </Grid>
-              <Grid
-                style={{
-                  marginTop: 10,
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
+              <div className="user_country_timezone_title">
+                <TypographyComponent
+                  variant="h6"
+                  title={userData.country_name}
+                />
+                <TypographyComponent
+                  variant="h6"
+                  title={userData.timezone_name}
+                />
+              </div>
+              <div className="user_country_timezone_data">
                 {userData.languages &&
-                  userData.languages.map((language, i) => (
-                    <div
-                      key={i}
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      <span>{language.language_name}</span>
-                      <span>{language.language_level}</span>
-                    </div>
-                  ))}
-              </Grid>
-            </Grid>
-            <Grid item xs={12} md={4}>
+                  userData.languages.map((language, i) => {
+                    let language_name =
+                      allLanguages &&
+                      allLanguages.find(
+                        (x) =>
+                          Number(x.id_language) === Number(language.language_id)
+                      );
+                    const label =
+                      languages_level &&
+                      languages_level.find(
+                        (x) =>
+                          Number(x.language_level_id) ===
+                          Number(language.language_level_id)
+                      );
+                    return (
+                      <div className="user_language_item" key={i}>
+                        <span className="user_language">
+                          {language_name ? language_name.language_name : ""}
+                        </span>
+                        <span>{label ? label.label : ""}</span>
+                      </div>
+                    );
+                  })}
+              </div>
+            </div>
+            <div className="user_verification">
               <TypographyComponent variant="h4" title="Employer Verfication" />
-              <Grid style={{ display: "flex", marginTop: 10 }}>
+              <div className="user_verification_item">
                 <CheckIcon />
                 <TypographyComponent
-                  variant="h4"
+                  variant="h5"
                   title={userData.member_since}
-                  style={{ marginLeft: 5 }}
                 />
-              </Grid>
-
-              <Grid
-                style={{ display: "flex", alignItems: "center", marginTop: 10 }}
-              >
-                {!userData.email_verified && <CheckIcon />}
-                <TypographyComponent
-                  variant="h4"
-                  title="E-Mail verified"
-                  style={{ marginLeft: 5 }}
-                />
-                {!userData.email_verified && (
-                  <ButtonComponent
-                    title="Verify"
-                    className="verify-email"
-                    onClick={() => {
-                      onVerify();
-                    }}
-                  />
-                )}
-              </Grid>
-              <Grid
-                style={{ display: "flex", alignItems: "center", marginTop: 10 }}
-              >
-                {!userData.phone_verified && <CheckIcon />}
-                <TypographyComponent
-                  variant="h4"
-                  title="Mobile verified"
-                  style={{ marginLeft: 5 }}
-                />
-                {!userData.phone_verified && (
-                  <ButtonComponent
-                    title="Verify"
-                    className="verify-email"
-                    onClick={() => {
-                      onVerify();
-                    }}
-                  />
-                )}
-              </Grid>
-            </Grid>
-          </Grid>
+              </div>
+              <div className="user_verification_item">
+                <CheckIcon />
+                <TypographyComponent variant="h5" title="E-Mail verified" />
+              </div>
+            </div>
+          </div>
 
           <section className="offered-services">
             <OfferedServices
@@ -274,7 +251,7 @@ const ProfileProvider = (props) => {
                     }}
                   />
                   <TypographyComponent
-                    title={averages.average_service_quality_rating}
+                    title={averages && averages.average_service_quality_rating}
                     style={{
                       marginLeft: 5,
                       color: themes.default.colors.darkGray,
@@ -306,7 +283,7 @@ const ProfileProvider = (props) => {
                     }}
                   />
                   <TypographyComponent
-                    title={averages.average_sympathy_rating}
+                    title={averages && averages.average_sympathy_rating}
                     style={{
                       marginLeft: 5,
                       color: themes.default.colors.darkGray,

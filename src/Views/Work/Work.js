@@ -266,7 +266,7 @@ const Work = (props) => {
   }
 
   const onDelete = async () => {
-    const res = await newService.delete("/service", {
+    const res = await newService.delete("/service/delete", {
       id_service: formik.values.id_service,
       token: copyRecord.token,
     });

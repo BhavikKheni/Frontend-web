@@ -29,7 +29,6 @@ function DefaultLayout(props) {
         [classes.contentShift]: sidebarOpen,
       })}
     >
-      {/* <div className={classes.drawerHeader} /> */}
       <CreateRoutes />
     </main>
   );

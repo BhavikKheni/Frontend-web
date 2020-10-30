@@ -4,7 +4,7 @@ import Rating from "@material-ui/lab/Rating";
 import { useTranslation } from "react-i18next";
 import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
 import PhoneIcon from "@material-ui/icons/Phone";
-import TypographyComponent from "../../../Components/Typography/Typography";
+import TypographyComponent from "../../../../Components/Typography/Typography";
 
 const ServicesDetails = (props) => {
   const { t } = useTranslation();
@@ -78,7 +78,7 @@ const ServicesDetails = (props) => {
           {selectedService.images &&
             selectedService.images.map((image, index) => (
               <div key={index}>
-                <img alt="service" src={image}></img>
+                <img alt="service" src={image.image}></img>
               </div>
             ))}
         </div>

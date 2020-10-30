@@ -16,16 +16,16 @@ import ServiceCardComponent from "../../Components/ServiceCard/ServiceCard";
 import Spinner from "../../Components/Spinner/Spinner";
 import { search, add, get } from "../../Services/Auth.service";
 import DialogComponent from "../../Components/Dialog/Dialog";
-import InputComponent from "../../Components/Forms/Input";
 import ButtonComponent from "../../Components/Forms/Button";
 import SnackBarComponent from "../../Components/SnackBar/SnackBar";
 import { SessionContext } from "../../Provider/Provider";
 import { useSidebar } from "../../Provider/SidebarProvider";
 import SelectComponent from "../../Components/Forms/Select";
 import TypographyComponent from "../../Components/Typography/Typography";
+import ChangePassword from "../../Components/ChangePassword/ChangePassword";
 import { onLogout } from "../../Services/Auth.service";
 import { LOCALSTORAGE_DATA } from "../../utils";
-
+import Sppiner from "../../Components/Spinner/Spinner";
 import "./service.css";
 
 import { useDebouncedCallback } from "use-debounce";
@@ -61,7 +61,7 @@ const FormControl = withStyles((theme) => ({
 const Services = (props) => {
   const classes = useStyles();
   const { t } = useTranslation();
-  let { logout, user } = useSession();
+  let { logout, user, isLoggedIn} = useSession();
   const [isLoading, setIsLoading] = useState(false);
   const [sidebarLoader, setSidebarLoader] = useState(false);
   const [services, setServices] = useState([]);
@@ -81,6 +81,7 @@ const Services = (props) => {
   const [service_quality, setServiceQuality] = useState();
   const [countries, setCountries] = useState([]);
   const [verify, setVerify] = useState(false);
+  const [verifyLoader, setVerifyLoader] = useState(false);
   const [setRes, setTypeRes] = useState("");
   const [open, setOpen] = React.useState(false);
   const [otp, setOtp] = useState({
@@ -124,6 +125,10 @@ const Services = (props) => {
     debounced.callback();
   };
 
+  const onOpenChangePassword = () => {
+    setOpenResetPassword(false);
+  };
+
   const getParams = useCallback(() => {
     return {
       limit: limit,
@@ -162,12 +167,10 @@ const Services = (props) => {
 
   async function asyncFetchData() {
     setIsLoading(true);
-    const res = await search("/service/list/filter", getParams()).catch(
-      (error) => {
-        setIsLoading(false);
-        console.log(error);
-      }
-    );
+    const res = await search("/service/list", getParams()).catch((error) => {
+      setIsLoading(false);
+      console.log(error);
+    });
     if (res) {
       const { data, stopped_at, type } = res || {};
       if (type === "ERROR" || (data && data.length === 0)) {
@@ -185,12 +188,10 @@ const Services = (props) => {
   useEffect(() => {
     async function fetchData() {
       setIsLoading(true);
-      const res = await search("/service/list/filter", getParams()).catch(
-        (error) => {
-          setIsLoading(false);
-          console.log(error);
-        }
-      );
+      const res = await search("/service/list", getParams()).catch((error) => {
+        setIsLoading(false);
+        console.log(error);
+      });
       if (res) {
         const { data, stopped_at, type } = res || {};
         if (type === "ERROR" || (data && data.length === 0)) {
@@ -435,7 +436,7 @@ const Services = (props) => {
   const onPhone = (element) => {
     history.push("/call-page", {
       service: element,
-      userId: element.assigned_to,
+      userId: element.provider_id_user,
     });
   };
 
@@ -443,7 +444,7 @@ const Services = (props) => {
     history.push("/profile-provider", {
       type: "calendar-view",
       service: element,
-      userId: element.assigned_to,
+      userId: element.provider_id_user,
     });
   };
 
@@ -451,13 +452,13 @@ const Services = (props) => {
     history.push("/profile-provider", {
       service: element,
       type: "job-details",
-      userId: element.assigned_to,
+      userId: element.provider_id_user,
     });
   };
 
   const onProviderName = (element) => {
     history.push("/profile-provider", {
-      userId: element.assigned_to,
+      userId: element.provider_id_user,
     });
   };
 
@@ -466,10 +467,13 @@ const Services = (props) => {
       email: user.email,
       id_user: user.id_user,
     };
+    setVerifyLoader(true);
     const res = await add("/profile/verifyemail", data).catch((err) => {
       setTypeRes(err);
+      setVerifyLoader(false);
     });
     if (res && res.type === "SUCCESS") {
+      setVerifyLoader(false);
       setVerify(true);
       setTypeRes(res);
       setOpen(true);
@@ -501,14 +505,14 @@ const Services = (props) => {
     setVerify(false);
     onSubmitEmailCode();
   };
-
   return (
     <div className="service_card_content">
-      {user && !user.email_verified && (
+      {user && !user.email_verified && isLoggedIn &&(
         <div className="promotion_text">
           <p>
             Hi, Your email isn’t verified yet. Please verify to use all the
             services.
+            {verifyLoader && <Sppiner />}
           </p>
           <div className="promotion_links">
             <a
@@ -529,7 +533,7 @@ const Services = (props) => {
         <Spinner />
       ) : (
         <div className="service_card_wrapper">
-          {services && services.length ? (
+          {services && !services.length ? (
             <span>{t("service.notFoundService")}</span>
           ) : (
             services.map((element, index) => (
@@ -559,7 +563,7 @@ const Services = (props) => {
             <div
               className="load-more"
               onClick={() =>
-                onMore("/service/list/filter", upcomingoffset, {
+                onMore("/service/list", upcomingoffset, {
                   per_hour_rate_min: Number(per_hour_rate_min),
                   per_hour_rate_max: Number(per_hour_rate_max),
                   simpathy,
@@ -573,88 +577,12 @@ const Services = (props) => {
           )}
         </div>
       )}
-      <DialogComponent
-        onClose={(e) => {
-          e.stopPropagation();
-          setOpenResetPassword(false);
-        }}
-        open={openResetPassword}
-        title="Change password"
-        maxHeight={340}
-      >
-        <div className="dialog_container">
-          <DialogContent style={{ textAlign: "center" }}>
-            <Formik
-              initialValues={{ email: "", password: "" }}
-              onSubmit={(values, { setSubmitting }) => {
-                onResetPassword(values);
-              }}
-              validationSchema={Yup.object().shape({
-                password: Yup.string().required("Password is required"),
-                confirmPassword: Yup.string()
-                  .required("Password is required")
-                  .test(
-                    "passwords-match",
-                    "Confirm Passwords must match with Password",
-                    function (value) {
-                      return this.parent.password === value;
-                    }
-                  ),
-              })}
-            >
-              {({
-                values,
-                errors,
-                handleChange,
-                handleSubmit,
-                isSubmitting,
-              }) => (
-                <form onSubmit={handleSubmit} className="reset-password-form">
-                  <FormControl className="dialog_form_control_inner">
-                    <div className="dialog_form_row">
-                      <InputComponent
-                        type="password"
-                        placeholder="New password"
-                        name="password"
-                        value={values.password}
-                        id="outlined-password"
-                        autoFocus
-                        onChange={handleChange}
-                        error={errors.password ? true : false}
-                        helperText={errors.password && `${errors.password}`}
-                      />
-                    </div>
-                    <div className="dialog_form_row">
-                      <InputComponent
-                        type="password"
-                        placeholder="Confirm new password"
-                        name="confirmPassword"
-                        id="Confirm new password"
-                        value={values.confirmPassword}
-                        onChange={handleChange}
-                        error={errors.confirmPassword ? true : false}
-                        helperText={
-                          errors.confirmPassword && `${errors.confirmPassword}`
-                        }
-                      />
-                    </div>
-                    <div className="modal_bottom_cta">
-                      <ButtonComponent
-                        variant="contained"
-                        color="primary"
-                        type="submit"
-                        disabled={isSubmitting}
-                        className="reset-password-button"
-                        title="Reset"
-                      />
-                    </div>
-                  </FormControl>
-                </form>
-              )}
-            </Formik>
-          </DialogContent>
-        </div>
-      </DialogComponent>
+      <ChangePassword
+        openResetPassword={openResetPassword}
+        onOpenChangePassword={() => onOpenChangePassword()}
+        type="forgot-password"
+      />
+
       {/* email verification dialog */}
       <DialogComponent
         onClose={(e) => {

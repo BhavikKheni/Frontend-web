@@ -12,3 +12,8 @@ export const LOCALSTORAGE_DATA = {
 };
 
 
+export const languages_level = [
+  { language_level_id: 1, label: "BASIC" },
+  { language_level_id: 2, label: "INTERMEDIATE" },
+  { language_level_id: 3, label: "ADVANCED" },
+];

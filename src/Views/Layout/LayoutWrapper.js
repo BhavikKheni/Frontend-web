@@ -2,7 +2,7 @@ import React from "react";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Hidden from "@material-ui/core/Hidden";
 import OweraHeader from "../Header/Header";
-import Sidebar from "../SideBar/Sidebar";
+import Sidebar from "../../Components/SideBar/Sidebar";
 import Layout from "./Layout";
 import { useSidebar } from "../../Provider/SidebarProvider";
 import Footer from "../Footer/Footer";

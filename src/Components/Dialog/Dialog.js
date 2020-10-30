@@ -67,7 +67,7 @@ const DialogTitle = (props) => {
           </div>
         </div>
       </MuiDialogTitle>
-      <TooltipComponent title={t("close")}>
+      <TooltipComponent title={t("close")} placement="right">
         <IconButton
           aria-label="close"
           className={classes1.closeButton}
@@ -97,7 +97,7 @@ const DialogComponent = (props) => {
     flexDirection,
     titleColor,
     iconColor,
-    className
+    className,
   } = props;
   return (
     <div>
