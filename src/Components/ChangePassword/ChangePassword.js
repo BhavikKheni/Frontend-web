@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { withStyles } from "@material-ui/core/styles";
@@ -9,6 +9,8 @@ import InputComponent from "../Forms/Input";
 import ButtonComponent from "../Forms/Button";
 import Sppiner from "../Spinner/Spinner";
 import { add } from "../../Services/Auth.service";
+import SnackBarComponent from "../SnackBar/SnackBar";
+
 const FormControl = withStyles((theme) => ({
   root: {
     "& .MuiOutlinedInput-root": {},
@@ -24,16 +26,36 @@ const DialogContent = withStyles((theme) => ({
 const ChangePassword = (props) => {
   const { onOpenChangePassword, openResetPassword } = props;
   const [isLoading, setIsLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [response, setResponse] = useState("");
   const onSubmit = async (values) => {
-    console.log(values);
-    setIsLoading(true);
-    const res = await add("").catch((error) => {
-      console.log("Error", error);
-      setIsLoading(false);
-    });
-    if (res) {
-      setIsLoading(false);
+    if (props.type === "change-password") {
+      const data = {
+        email: props.user.email,
+        old_password: values.current_password,
+        new_password: values.confirm_password,
+      };
+      setIsLoading(true);
+      const res = await add("/updateAuth", data).catch((error) => {
+        console.log("Error", error);
+        setIsLoading(false);
+        setResponse(error);
+        setOpen(true);
+      });
+      if (res) {
+        setOpen(true);
+        setResponse(res);
+        setIsLoading(false);
+        onOpenChangePassword();
+      }
     }
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
   };
 
   return (
@@ -44,22 +66,21 @@ const ChangePassword = (props) => {
       }}
       open={openResetPassword}
       title="Change password"
-      maxHeight={340}
     >
       <div className="dialog_container">
         <DialogContent style={{ textAlign: "center" }}>
           <Formik
             initialValues={{
-              current_password: "",
               password: "",
-              confirmPassword: "",
+              current_password: "",
+              confirm_password: "",
             }}
             onSubmit={(values, { setSubmitting }) => {
               onSubmit(values);
             }}
             validationSchema={Yup.object().shape({
               password: Yup.string().required("Password is required"),
-              confirmPassword: Yup.string()
+              confirm_password: Yup.string()
                 .required("Password is required")
                 .test(
                   "passwords-match",
@@ -94,7 +115,7 @@ const ChangePassword = (props) => {
                       placeholder="New password"
                       name="password"
                       value={values.password}
-                      id="outlined-password"
+                      id="change-password"
                       autoFocus
                       onChange={handleChange}
                       error={errors.password ? true : false}
@@ -106,7 +127,7 @@ const ChangePassword = (props) => {
                       type="password"
                       placeholder="Confirm new password"
                       name="confirm_password"
-                      id="Confirm new password"
+                      id="Confirm-new-password"
                       value={values.confirm_password}
                       onChange={handleChange}
                       error={errors.confirm_password ? true : false}
@@ -132,6 +153,16 @@ const ChangePassword = (props) => {
           </Formik>
         </DialogContent>
       </div>
+      <SnackBarComponent
+        open={open}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        message={response.message}
+        type={response.type && response.type.toLowerCase()}
+      />
     </DialogComponent>
   );
 };

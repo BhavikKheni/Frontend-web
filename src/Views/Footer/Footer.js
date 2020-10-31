@@ -123,12 +123,12 @@ const Footer = (props) => {
                   title={t("footer.navigationLink.theForGo")}
                   className={classes.appForGo}
                 />
-                <a href="#">
+                <button>
                   <img alt="app store" src={AppStore} className={classes.appIcon} />
-                </a>
-                <a href="#">
+                </button>
+                <button>
                   <img alt="android" src={Android} className={classes.appIcon} />
-                </a>
+                </button>
               </div>
               <div className="follow_subscribe_link">
                 <div className="social_links">
@@ -137,15 +137,15 @@ const Footer = (props) => {
                     className={classes.iconColor}
                   />
                   <div className={classes.icons}>
-                    <a href="#">
+                    <button>
                       <InstagramIcon className={classes.iconColor} />
-                    </a>
-                    <a href="#">
+                    </button>
+                    <button>
                       <FacebookIcon className={classes.iconColor} />
-                    </a>
-                    <a href="#">
+                    </button>
+                    <button>
                       <TwitterIcon className={classes.iconColor} />
-                    </a>
+                    </button>
                   </div>
                 </div>
                 <div className="subscribe_form">

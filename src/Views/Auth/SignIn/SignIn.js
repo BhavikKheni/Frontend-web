@@ -120,7 +120,7 @@ const SignIn = (props) => {
                         placeholder="Email"
                         name="email"
                         value={values.email}
-                        id="outlined-email"
+                        id="email-id"
                         autoFocus
                         onChange={handleChange}
                         onBlur={handleBlur}
@@ -135,7 +135,7 @@ const SignIn = (props) => {
                         type="password"
                         placeholder="Password"
                         name="password"
-                        id="outlined-password"
+                        id="signin-password-1"
                         value={values.password}
                         onChange={handleChange}
                         handleBlur={handleBlur}
@@ -167,7 +167,7 @@ const SignIn = (props) => {
                         disabled={isSubmitting}
                         className="signin-button"
                         startIcon={isLoading && <CircularProgress />}
-                        endIcon={!isLoading}
+                        endIcon={!isLoading && ""}
                         title={t("login.button")}
                       />
                     </div>

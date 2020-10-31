@@ -100,6 +100,13 @@ class Service {
     };
     return this.request(newUrl, config, data).then((res) => res.json());
   }
+  logout() {
+    const newUrl = `${this.state.baseURL}/logout`;
+    const config = {
+      method: "POST",
+    };
+    return this.request(newUrl, config).then((res) => res.json());
+  }
 }
 
 export default Service;

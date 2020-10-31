@@ -72,6 +72,8 @@ const ProfileView = (props) => {
   const [isDisabledEmailVerify, setIsDisabledEmailVerify] = useState(false);
   const [profilVerifyLoader, setProfilVerifyLoader] = useState(false);
   const [isProfilVerifyDisable, setProfilVerifyDisable] = useState(false);
+  const [isMobileVerifyLoader, setIsMobileVerifyLoader] = useState(false);
+  const [isDisabledMobileVerify, setIsDisabledMobileVerify] = useState(false);
   const [otp, setOtp] = useState({
     otp1: "",
     otp2: "",
@@ -236,12 +238,18 @@ const ProfileView = (props) => {
         phone: userData.phone_no,
         id_user: userData.id_user,
       };
+      setIsMobileVerifyLoader(true);
+      setIsDisabledMobileVerify(true);
       const res = await add("/profile/verifyphone", data).catch((err) => {
         setTypeRes(err);
+        setIsDisabledMobileVerify(false);
+        setIsMobileVerifyLoader(false);
       });
       if (res && res.type === "SUCCESS") {
         setVerify(true);
         setTypeRes(res);
+        setIsDisabledMobileVerify(false);
+        setIsMobileVerifyLoader(false);
         setOpen(true);
       } else {
         setOpen(true);
@@ -340,10 +348,13 @@ const ProfileView = (props) => {
               }}
             />
             <div className="user_country_timezone_title">
-              <TypographyComponent variant="h6" title={userData.country_name} />
               <TypographyComponent
                 variant="h6"
-                title={userData.timezone_name}
+                title={userData.country_name || ""}
+              />
+              <TypographyComponent
+                variant="h6"
+                title={userData.timezone_name || ""}
               />
             </div>
             <div className="user_country_timezone_data">
@@ -405,7 +416,7 @@ const ProfileView = (props) => {
               )}
             </div>
 
-            {/* <div className="user_verification_item">
+            <div className="user_verification_item">
               {!userData.phone_verified && <CheckIcon />}
               <TypographyComponent variant="h5" title="Mobile verified" />
               {!userData.phone_verified && (
@@ -419,9 +430,11 @@ const ProfileView = (props) => {
                       "We’ve send a 4 digit code to your mobile. Please enter the code to verify your mobile."
                     );
                   }}
+                  startIcon={isMobileVerifyLoader && <Spinner />}
+                  disabled={isDisabledMobileVerify}
                 />
               )}
-            </div> */}
+            </div>
           </div>
         </div>
       )}

@@ -174,7 +174,7 @@ const SignUp = (props) => {
                     type="email"
                     placeholder="Email"
                     name="email"
-                    id="outlined-email"
+                    id="signup-email"
                     onChange={formik.handleChange}
                     value={formik.values.email}
                     error={formik.errors.email ? true : false}
@@ -201,7 +201,7 @@ const SignUp = (props) => {
                     type="password"
                     placeholder="Create password"
                     name="password"
-                    id="outlined-password"
+                    id="signup-password"
                     onChange={formik.handleChange}
                     value={formik.values.password}
                     error={formik.errors.password ? true : false}
@@ -349,7 +349,7 @@ const SignUp = (props) => {
                         type="email"
                         placeholder="Email"
                         name="email"
-                        id="outlined-email"
+                        id="signup-Email"
                         onChange={formik.handleChange}
                         value={formik.values.email}
                         error={formik.errors.email ? true : false}

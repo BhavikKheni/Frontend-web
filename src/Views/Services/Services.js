@@ -1,6 +1,4 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Formik } from "formik";
-import * as Yup from "yup";
 import { useTranslation } from "react-i18next";
 import { makeStyles } from "@material-ui/core/styles";
 import MuiDialogContent from "@material-ui/core/DialogContent";
@@ -23,7 +21,7 @@ import { useSidebar } from "../../Provider/SidebarProvider";
 import SelectComponent from "../../Components/Forms/Select";
 import TypographyComponent from "../../Components/Typography/Typography";
 import ChangePassword from "../../Components/ChangePassword/ChangePassword";
-import { onLogout } from "../../Services/Auth.service";
+// import { onLogout } from "../../Services/Auth.service";
 import { LOCALSTORAGE_DATA } from "../../utils";
 import Sppiner from "../../Components/Spinner/Spinner";
 import "./service.css";
@@ -61,7 +59,7 @@ const FormControl = withStyles((theme) => ({
 const Services = (props) => {
   const classes = useStyles();
   const { t } = useTranslation();
-  let { logout, user, isLoggedIn} = useSession();
+  let { logout, user, isLoggedIn } = useSession();
   const [isLoading, setIsLoading] = useState(false);
   const [sidebarLoader, setSidebarLoader] = useState(false);
   const [services, setServices] = useState([]);
@@ -167,7 +165,7 @@ const Services = (props) => {
 
   async function asyncFetchData() {
     setIsLoading(true);
-    const res = await search("/service/list", getParams()).catch((error) => {
+    const res = await search("/service/list/filter", getParams()).catch((error) => {
       setIsLoading(false);
       console.log(error);
     });
@@ -188,7 +186,7 @@ const Services = (props) => {
   useEffect(() => {
     async function fetchData() {
       setIsLoading(true);
-      const res = await search("/service/list", getParams()).catch((error) => {
+      const res = await search("/service/list/filter", getParams()).catch((error) => {
         setIsLoading(false);
         console.log(error);
       });
@@ -459,6 +457,7 @@ const Services = (props) => {
   const onProviderName = (element) => {
     history.push("/profile-provider", {
       userId: element.provider_id_user,
+      service: element,
     });
   };
 
@@ -507,7 +506,7 @@ const Services = (props) => {
   };
   return (
     <div className="service_card_content">
-      {user && !user.email_verified && isLoggedIn &&(
+      {user && !user.email_verified && isLoggedIn && (
         <div className="promotion_text">
           <p>
             Hi, Your email isn’t verified yet. Please verify to use all the
@@ -515,17 +514,16 @@ const Services = (props) => {
             {verifyLoader && <Sppiner />}
           </p>
           <div className="promotion_links">
-            <a
-              href="javascript:void(0)"
+            <span
               onClick={() => {
                 onVerifyEmail();
               }}
             >
               Resend email confirmation link
-            </a>
-            <a href="javascript:void(0)" className="close_icon">
+            </span>
+            <p className="close_icon">
               <span className="material-icons">close</span>
-            </a>
+            </p>
           </div>
         </div>
       )}
@@ -563,7 +561,7 @@ const Services = (props) => {
             <div
               className="load-more"
               onClick={() =>
-                onMore("/service/list", upcomingoffset, {
+                onMore("/service/list/filter", upcomingoffset, {
                   per_hour_rate_min: Number(per_hour_rate_min),
                   per_hour_rate_max: Number(per_hour_rate_max),
                   simpathy,

@@ -63,7 +63,18 @@ export const onLogout = (props) => {
   });
   return result;
 };
-
+export const serverLogout = () => {
+  const service = new Service();
+  const result = new Promise((resolve, reject) => {
+    service
+      .logout()
+      .then((result) => {
+        resolve(result);
+      })
+      .catch((err) => reject(err));
+  });
+  return result;
+};
 export const setLocalStorage = (data) => {
   const storage = new LocalStore();
   const result = new Promise((resolve, reject) => {

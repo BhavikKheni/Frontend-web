@@ -121,6 +121,11 @@
 
 /* my service library */
 
+.my-service-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 .divider {
   border: 0.5px solid rgba(48, 48, 48, 0.5);
 }

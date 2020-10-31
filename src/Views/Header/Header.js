@@ -25,6 +25,7 @@ import "react-flags-select/css/react-flags-select.css";
 import OweraHeaderPic from "../../images/Owera-logo.png";
 import DialogComponent from "../../Components/Dialog/Dialog";
 import Sppiner from "../../Components/Spinner/Spinner";
+import { serverLogout } from "../../Services/Auth.service";
 import "./Header.css";
 const useSession = () => React.useContext(SessionContext);
 const useStyles = makeStyles((theme) => ({
@@ -169,13 +170,18 @@ const OweraHeader = (props) => {
 
   const handleLogout = () => {
     setLogoutLoader(true);
-    onLogout(props).then((result) => {
-      logout();
-      setTimeout(() => {
-        setLogoutLoader(false);
-        setLogout(false);
-      }, 1500);
-    });
+    serverLogout()
+      .then((result) => {
+        if (result.type === "SUCCESS") {
+          onLogout(props).then((result) => {
+            logout();
+            setLogoutLoader(false);
+            setLogout(false);
+          });
+        }
+        console.log(result);
+      })
+      .catch((err) => console.log(err));
   };
 
   const changeSearch = (e) => {

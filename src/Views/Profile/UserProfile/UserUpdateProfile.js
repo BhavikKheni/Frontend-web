@@ -18,7 +18,7 @@ import DialogComponent from "../../../Components/Dialog/Dialog";
 import SnackbarComponent from "../../../Components/SnackBar/SnackBar";
 import { SessionContext } from "../../../Provider/Provider";
 import { useSidebar } from "../../../Provider/SidebarProvider";
-import { get } from "../../../Services/Auth.service";
+import { get, add } from "../../../Services/Auth.service";
 import Service from "../../../Services/index";
 import ImageComponent from "../../../Components/Forms/Image";
 import Spinner from "../../../Components/Spinner/Spinner";
@@ -77,6 +77,9 @@ const UpdateProfile = (props) => {
   const [customLanguages, setCustomLanguages] = useState([]);
   const [imageUploadSuccess, setImageUploadSuccess] = useState(false);
   const [openChangePassword, setOpenChangePassword] = useState(false);
+
+  const [deleteLoader, setDeleteLoader] = useState(false);
+  const [deActivateLoader, setDeactivateLoader] = useState(false);
 
   React.useEffect(() => {
     setSidebar(true);
@@ -291,9 +294,35 @@ const UpdateProfile = (props) => {
     setOpenChangePassword(false);
   };
 
-  const onDelete = () => {};
+  const onDelete = async () => {
+    setDeleteLoader(true);
+    const res = await add("/profile/delete", {
+      id_user: user.id_user,
+    }).catch((error) => {
+      setDeleteLoader(false);
+      console.log("Profile Deactive Error", error);
+    });
+    if (res && res.type === "SUCCESS") {
+      setDeleteLoader(false);
+    } else if (res && res.type === "ERROR") {
+      setDeleteLoader(false);
+    }
+  };
 
-  const onDeactivate = () => {};
+  const onDeactivate = async () => {
+    setDeactivateLoader(true);
+    const res = await add("/profile/deactivate", {
+      id_user: user.id_user,
+    }).catch((error) => {
+      setDeactivateLoader(false);
+      console.log("Profile Deactive Error", error);
+    });
+    if (res && res.type === "SUCCESS") {
+      setDeactivateLoader(false);
+    }else if (res && res.type === "ERROR") {
+      setDeactivateLoader(false);
+    }
+  };
 
   return (
     <div className="update_profile_form_wrapper">
@@ -450,11 +479,13 @@ const UpdateProfile = (props) => {
             <ButtonComponent
               title="Delete profile"
               type="button"
+              startIcon={deleteLoader && <Spinner />}
               onClick={() => onDelete()}
             />
             <ButtonComponent
               title="Deactivate profile"
               type="button"
+              startIcon={deActivateLoader && <Spinner />}
               onClick={() => onDeactivate()}
             />
             <ButtonComponent
@@ -470,6 +501,7 @@ const UpdateProfile = (props) => {
           openResetPassword={openChangePassword}
           onOpenChangePassword={() => onOpenChangePassword()}
           type="change-password"
+          user={user}
         />
         <DialogComponent
           onClose={(e) => {

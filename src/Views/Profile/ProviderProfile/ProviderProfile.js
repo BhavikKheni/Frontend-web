@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { withRouter } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { CircularProgress, Avatar } from "@material-ui/core";
+import { CircularProgress } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import CheckIcon from "@material-ui/icons/Check";
@@ -61,8 +61,20 @@ const ProfileProvider = (props) => {
 
   React.useEffect(() => {
     setSidebar(true);
-    setSidebarContent(<ProfileProviderSidebar />);
-  }, [setSidebarContent, setSidebar, history, pathname]);
+    setSidebarContent(
+      <ProfileProviderSidebar
+        user={userData}
+        selectedService={selectedService}
+      />
+    );
+  }, [
+    setSidebarContent,
+    setSidebar,
+    history,
+    pathname,
+    userData,
+    selectedService,
+  ]);
 
   useEffect(() => {
     async function fetchLanguages() {

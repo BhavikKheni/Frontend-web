@@ -1,107 +1,88 @@
 import React, { useState } from "react";
-import { withRouter, Link } from "react-router-dom";
 import MenuItem from "@material-ui/core/MenuItem";
+import { useTranslation } from "react-i18next";
 import AddIcon from "@material-ui/icons/Add";
-import DateFnsUtils from "@date-io/date-fns";
-import ChevronLeftOutlined from "@material-ui/icons/ChevronLeftOutlined";
-import InputComponent from "../../../Components/Forms/Input";
-import ButtonComponent from "../../../Components/Forms/Button";
-import { add } from "../../../Services/Auth.service";
-import Sppiner from "../../../Components/Spinner/Spinner";
-import SnackBarComponent from "../../../Components/SnackBar/SnackBar";
+import moment from "moment";
 import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
 } from "@material-ui/pickers";
-import moment from "moment";
-import "./ProviderProfile.css";
-const ProfileProviderSidebar = (props) => {
-  const { history } = props;
-  const { pathname } = props.location;
+import DateFnsUtils from "@date-io/date-fns";
+// import { add } from "../../Services/Auth.service";
+import InputComponent from "../../Components/Forms/Input";
+import ButtonComponent from "../../Components/Forms/Button";
+
+const WorkSidebar = (props) => {
+  const { t } = useTranslation();
   const [fromTime, setFromTime] = useState();
   const [toTime, setToTime] = useState();
   const [selectedDate, setSelectedDate] = React.useState(
     new Date("2014-08-18T21:11:54")
   );
-  const [loading, setLoading] = useState(false);
-  const [openSnackBar, setOpenSnackBar] = useState(false);
-  const [response, setResponse] = useState({});
+
   const handleDateChange = (date) => {
     setSelectedDate(date);
   };
 
-  const handleClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setOpenSnackBar(false);
-  };
-
-  const onAddBooking = () => {
-    const { user, selectedService } = props;
+  const onConfirm = () => {
+    const { editRecord, user } = props;
     const data = {
       from_time: fromTime,
       to_time: toTime,
-      id_service: selectedService.id_service,
+      id_service: editRecord.id_service,
       booking_date: moment(selectedDate).format("YYYY-MM-DD"),
       id_user: user.id_user,
     };
-    setLoading(true);
-    add("/service/book", data)
-      .then((result) => {
-        setLoading(false);
-        setResponse(result);
-        setOpenSnackBar(true);
-      })
-      .catch((error) => {
-        setLoading(false);
-        setResponse(error);
-        console.log("Error", error);
-      });
+    
+    // add("/service/book", data)
+    //   .then((result) => {})
+    //   .catch((error) => {
+    //     console.log("Error", error);
+    //   });
   };
 
   return (
     <div style={{ margin: 20 }}>
       <MenuItem
         onClick={() => {
-          history.goBack();
+          var elmnt = document.getElementsByClassName("start-work");
+          if (elmnt[0]) {
+            elmnt[0].scrollIntoView();
+          }
         }}
       >
-        <ChevronLeftOutlined />
-        Go back
-      </MenuItem>
-      <MenuItem
-        component={Link}
-        to="/profile-provider"
-        selected={pathname === "/profile-provider"}
-      >
-        Provider Profile
+        {t("service.create-service.startWork")}
       </MenuItem>
       <MenuItem
         onClick={() => {
-          var elmnt = document.getElementsByClassName("offered-services");
-          elmnt[0].scrollIntoView();
+          var elmnt = document.getElementsByClassName("my-service-lib");
+          if (elmnt[0]) {
+            elmnt[0].scrollIntoView();
+          }
         }}
       >
-        Offered services
+        {t("service.create-service.myServiceLibrary")}
       </MenuItem>
       <MenuItem
         onClick={() => {
-          var elmnt = document.getElementsByClassName("service-details");
-          elmnt[0].scrollIntoView();
+          var elmnt = document.getElementsByClassName("add-booking-space");
+          if (elmnt[0]) {
+            elmnt[0].scrollIntoView();
+          }
         }}
       >
-        Service details
+        {t("service.create-service.addBookingSpace")}
       </MenuItem>
       <MenuItem
         onClick={() => {
-          var elmnt = document.getElementsByClassName("latest-reviews");
-          elmnt[0].scrollIntoView();
+          var elmnt = document.getElementsByClassName("create-service");
+          if (elmnt[0]) {
+            elmnt[0].scrollIntoView();
+          }
         }}
       >
-        Latest reviews
+        {t("service.create-service.createSpace")}
       </MenuItem>
-
       <div className="time-booking">
         <div className="title-booking">
           <span>Add Booking</span>
@@ -153,25 +134,14 @@ const ProfileProviderSidebar = (props) => {
           <ButtonComponent
             title="confirm"
             type="button"
-            startIcon={loading && <Sppiner />}
             onClick={() => {
-              onAddBooking();
+              onConfirm();
             }}
           />
         </div>
       </div>
-      <SnackBarComponent
-        open={openSnackBar}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: "top",
-          horizontal: "center",
-        }}
-        message={response.message}
-        type={response.type && response.type.toLowerCase()}
-      />
     </div>
   );
 };
 
-export default withRouter(ProfileProviderSidebar);
+export default WorkSidebar;
