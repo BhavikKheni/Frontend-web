@@ -25,7 +25,7 @@ const OfferedServices = (props) => {
         </Grid>
       </Grid>
       <Grid container spacing={3}>
-        <Grid item xs={12} md={8}>
+        <Grid item xs={12} md={12}>
           <Divider
             style={{
               border: "0.5px solid #9E9E9E",
@@ -34,24 +34,12 @@ const OfferedServices = (props) => {
         </Grid>
       </Grid>
 
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={8}>
-          <div
-            style={{
-              height: "100%",
-              maxHeight: 514,
-              overflowY: "auto",
-            }}
-          >
+      <div className="offered_services_inner">
             {userData.services_created &&
               userData.services_created.map((o, i) => {
                 return (
                   <div
                     key={i}
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                    }}
                     onClick={() => {
                       setSelectedService(o);
                       const { reviews_list } = o.reviews || [];
@@ -59,30 +47,16 @@ const OfferedServices = (props) => {
                       setSelectedReview(reviews_list);
                       setAverages(averages);
                     }}
+                    className="offered_services_item"
                   >
-                    <Grid item xs={12} md={2}>
                       <TypographyComponent
                         variant="h2"
-                        style={{
-                          color: themes.default.colors.darkGray,
-                          fontWeight: 500,
-                        }}
                         title={`${o.price}$/h`}
                       />
-                    </Grid>
-                    <Grid item xs={12} md={2}>
-                      <TypographyComponent variant="h4" title={o.title} />
-                    </Grid>
-                    <Grid item xs={12} md={4}></Grid>
-                    <Grid item xs={12} md={3}>
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "column",
-                        }}
-                      >
+                      <TypographyComponent variant="h5" title={o.title} />
+                      <div className="offered_services_review">
                         <TypographyComponent
-                          variant="h4"
+                          variant="h6"
                           title={"Service Quality"}
                         />
                         <Rating
@@ -95,15 +69,8 @@ const OfferedServices = (props) => {
                           disabled
                         />
                       </div>
-                    </Grid>
-                    <Grid item xs={12} md={3}>
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "column",
-                        }}
-                      >
-                        <TypographyComponent variant="h4" title="Simpathy" />
+                      <div className="offered_services_review">
+                        <TypographyComponent variant="h6" title="Simpathy" />
                         <Rating
                           name="simpathy"
                           value={
@@ -114,15 +81,12 @@ const OfferedServices = (props) => {
                           disabled
                         />
                       </div>
-                    </Grid>
                   </div>
                 );
               })}
           </div>
-        </Grid>
-      </Grid>
       <Grid container spacing={3}>
-        <Grid item xs={12} md={8}>
+        <Grid item xs={12} md={12}>
           <Divider
             style={{
               border: "0.5px solid #9E9E9E",

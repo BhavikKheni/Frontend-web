@@ -27,7 +27,7 @@ const LatestReviews = (props) => {
       </Grid>
 
       <div className="latest_reviews_inner">
-      {selectedReviews.length === 0 ? (
+      {selectedReviews && selectedReviews.length === 0 ? (
             <span>{t('providerProfile.notFoundReviews')}</span>
           ) : (
             selectedReviews && selectedReviews.map((review, index) => (
