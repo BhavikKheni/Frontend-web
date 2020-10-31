@@ -16,6 +16,7 @@ import OfferedServices from "./OfferedServices/OfferedServices";
 import ServiceDetails from "./ServiceDetails/ServiceDetails";
 import LatestReviews from "./LatestReviews/LatestReviews";
 import ImageComponent from "../../../Components/Forms/Image";
+
 import { LOCALSTORAGE_DATA, languages_level } from "../../../utils";
 import "./ProviderProfile.css";
 
@@ -141,7 +142,8 @@ const ProfileProvider = (props) => {
   }, [state]);
 
   return (
-    <div style={{ margin: 20 }}>
+    <div className="profile_page_wrapper provider_profile_wrapper">
+      
       <TypographyComponent title="Provider profile" variant="h4" />
       {isLoading ? (
         <div style={{ textAlign: "center" }}>
@@ -162,7 +164,7 @@ const ProfileProvider = (props) => {
             <div className="user_language_timezone">
               <TypographyComponent
                 variant="h3"
-                title={`${userData.first_name} ${userData.last_name}`}
+                title="Bhavik Kheni" //{`${userData.first_name} ${userData.last_name}`}
                 style={{
                   color: themes.default.colors.darkGray,
                 }}
@@ -237,20 +239,11 @@ const ProfileProvider = (props) => {
           <section className="latest-reviews">
             <LatestReviews selectedReviews={selectedReviews} />
           </section>
-          <section className="calendar">
-            <Grid container spacing={3}>
-              <Grid item xs={12} md={8}>
-                <TypographyComponent
-                  variant="h4"
-                  title={t("providerProfile.bookService")}
-                  style={{
-                    color: themes.default.colors.darkGray,
-                    fontWeight: "500px",
-                    marginTop: 20,
-                  }}
-                />
-              </Grid>
-            </Grid>
+          <section className="book-service">
+            <TypographyComponent
+              variant="h4"
+              title={t("providerProfile.bookService")}
+            />
             <Grid container spacing={3}>
               <Grid item xs={12} md={8}>
                 <div className="service">

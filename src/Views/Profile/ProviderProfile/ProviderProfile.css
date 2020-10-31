@@ -1,22 +1,148 @@
+.provider_profile_wrapper section {
+  max-width: 1164px;
+  width: 100%;
+  margin-bottom: 40px;
+}
+.provider_profile_wrapper section h4 {
+  font-size: 24px;
+  margin-bottom: 25px;
+}
+
+/* Offered Service */
+.provider_profile_wrapper section.offered-services {
+  margin-top: 60px;
+  margin-bottom: 80px;
+}
+.offered_services_inner {
+  max-height: 365px;
+  overflow: auto;
+  direction: rtl;
+  padding-left: 40px;
+  margin: 25px auto;
+}
+.offered_services_item {
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+  direction: ltr;
+  padding: 3px 10px;
+}
+.offered_services_item:hover {
+  background-color: #ececec;
+}
+.offered_services_item + .offered_services_item {
+  margin-top: 5px;
+}
+.offered_services_item h2 {
+  font-size: 16px;
+  line-height: 30px;
+  color: #303030;
+  margin-right: 25px;
+}
+.offered_services_item h5 {
+  font-size: 14px;
+  line-height: 30px;
+  font-weight: normal;
+  letter-spacing: 0.02em;
+  color: #303030;
+  flex: 1 0 auto;
+}
+.offered_services_review {
+  margin-left: 40px;
+}
+.offered_services_review h6 {
+  font-family: 'Montserrat';
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 24px;
+  letter-spacing: -0.015em;
+  color: #303030;
+}
+.offered_services_review svg {
+  width: 22px;
+  height: 22px;
+}
+/* Offered Service Over */
+
+/* Services */
+.service_inner {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 40px;
+}
+.service_left {
+  max-width: 235px;
+  width: 100%;
+}
+.service_right {
+  max-width: calc(100% - 245px);
+}
+.about_meeting {
+  display: flex;
+}
 .calendarIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background-color: #0038ff;
-  padding: 5px;
+  color: #fff;
   border-radius: 10px;
-  margin-right: 1px;
   height: 40px;
   width: 40px;
-  text-align: center;
 }
 .phoneIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background-color: #1ab900;
-  padding: 5px;
+  color: #fff;
   border-radius: 34px;
   margin-right: 10px;
   height: 40px;
   width: 40px;
-  text-align: center;
 }
-.provider-profile-review {
+.about_meeting .phoneIcon {
+  margin-left: 8px;
+}
+.service_left h6 {
+  margin-top: 20px;
+  font-weight: 500;
+  color: #303030;
+  margin-bottom: 12px;
+}
+.provider_profile_wrapper section .about_service h4 {
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 30px;
+  letter-spacing: -0.015em;
+  color: #303030;
+  margin-bottom: 0;
+}
+.provider_profile_wrapper .service-details .service_right {
+  max-height: 232px;
+  padding: 0 0 0 32px;
+  overflow: auto;
+}
+.service_images_wrapper {
+  display: flex;
+  flex-wrap: wrap;
+}
+.service_image {
+  max-width: 282px;
+  width: 100%;
+  max-height: 157px;
+  overflow: hidden;
+  border-radius: 5px;
+  padding: 0 5px;
+}
+.service_image img {
+  width: 100%;
+  height: 100%;
+  border-radius: 5px;
+}
+/* Services */
+
+/* .provider-profile-review {
   background: #edf6fe;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.25);
   border-radius: 8px;
@@ -28,7 +154,6 @@
   color: #4f4f4f;
   position: relative;
 }
-
 .provider-profile-review-box:before {
   content: "";
   width: 0px;
@@ -40,7 +165,97 @@
   border-bottom: 20px solid transparent;
   right: -29px;
   top: 0px;
+} */
+
+
+
+
+/* Latest Review */
+.latest_reviews_inner {
+  max-height: 290px;
+  overflow: auto;
+  direction: rtl;
+  margin: 15px auto;
 }
+.provider_profile_review_item {
+  position: relative;
+  background: #EDF6FE;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.25);
+  border-radius: 8px;
+  direction: ltr;
+  max-width: 824px;
+  width: 100%;
+  padding: 6px 8px 35px 8px;
+  margin: 0 auto;
+}
+.provider_profile_review_item:after {
+  content: "";
+  border-style: solid;
+  border-color: transparent;
+  position: absolute;
+  right: -30px;
+  border-width: 15px;
+  top: 0;
+  border-left-color: #edf6fe;
+  border-top-color: #edf6fe;
+}
+.provider_profile_review_item + .provider_profile_review_item {
+  margin-top: 21px;
+}
+.provider_profile_review_content {
+  display: flex;
+}
+.provider_profile_review_item img {
+  width: 95px;
+  height: 95px;
+  border-radius: 50%;
+  margin-right: 22px;
+}
+.provider_profile_review_item h6 {
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 36px;
+  margin-bottom: 5px;
+}
+.provider_profile_review_item p {
+  font-family: 'Rubik';
+  line-height: 30px;
+  letter-spacing: 0.02em;
+  color: #4F4F4F;
+}
+.provider_profile_review_time {
+  position: absolute;
+  bottom: 20px;
+  right: 30px;
+}
+.provider_profile_review_time span {
+  font-family: 'Montserrat';
+  font-style: italic;
+  font-weight: 300;
+  font-size: 12px;
+  letter-spacing: -0.015em;
+}
+/* Latest Review Over */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 .time {
   text-align: right;
 }
@@ -93,7 +308,6 @@
   width: 100%;
   padding-left: 15px;
 }
-
 .select-form-date .to {
   padding: 5px;
 }
@@ -109,7 +323,6 @@
   height: 33px;
   padding-right: 7px;
 }
-
 .date {
   display: flex;
   justify-content: space-between;

@@ -11,21 +11,13 @@ const LatestReviews = (props) => {
   const { selectedReviews } = props;
   return (
     <React.Fragment>
+      <TypographyComponent
+        variant="h4"
+        title={t("providerProfile.latestReview")}
+      />
+      
       <Grid container spacing={3}>
-        <Grid item xs={12} md={8}>
-          <TypographyComponent
-            variant="h4"
-            title={t("providerProfile.latestReview")}
-            style={{
-              color: themes.default.colors.darkGray,
-              fontWeight: "500px",
-              marginTop: 20,
-            }}
-          />
-        </Grid>
-      </Grid>
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={8}>
+        <Grid item xs={12} md={12}>
           <Divider
             style={{
               border: "0.5px solid #9E9E9E",
@@ -34,50 +26,41 @@ const LatestReviews = (props) => {
         </Grid>
       </Grid>
 
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={8}>
-          {selectedReviews && !selectedReviews.length ? (
+      <div className="latest_reviews_inner">
+      {selectedReviews.length === 0 ? (
             <span>{t('providerProfile.notFoundReviews')}</span>
           ) : (
             selectedReviews && selectedReviews.map((review, index) => (
               <div
                 key={index}
-                className="provider-profile-review provider-profile-review-box"
+                className="provider_profile_review_item"
               >
-                <img
-                  alt="review"
-                  src={review.reviewer_image}
-                  style={{ height: 70, width: 70, marginRight: 10 }}
-                />
-                <div>
-                  <TypographyComponent
-                    title={review.title}
-                    variant="h6"
-                    style={{
-                      color: themes.default.colors.matterhorn,
-                      fontWeight: 500,
-                      textAlign: "left",
-                    }}
+                <div className="provider_profile_review_content">
+                  <img
+                    alt="Avtar"
+                    src={review.reviewer_image}
                   />
-                  <TypographyComponent title={review.content} />
-                  <div className="time">
+                  <div>
                     <TypographyComponent
-                      title={moment(review.updated_at).format("MMMM Do YYYY")}
+                      title={review.title}
                       variant="h6"
-                      style={{
-                        fontWeight: 300,
-                        fontStyle: "italic",
-                      }}
                     />
+                    <TypographyComponent title={review.content} />
                   </div>
                 </div>
+                
+                <div className="provider_profile_review_time">
+                    <TypographyComponent
+                      title={moment(review.updated_at).format("MMMM Do YYYY")}
+                      variant="span"
+                    />
+                  </div>
               </div>
             ))
           )}
-        </Grid>
-      </Grid>
+      </div>
       <Grid container spacing={3}>
-        <Grid item xs={12} md={8}>
+        <Grid item xs={12} md={12}>
           <Divider
             style={{
               border: "0.5px solid #9E9E9E",

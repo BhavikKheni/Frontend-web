@@ -1,3 +1,9 @@
+.dialog_content.terms-condition-form-wrapper {
+  max-width: 1270px;
+}
+.terms-condition-form-wrapper .dialog_container {
+  max-width: 966px;
+}
 .dialog_wrapper .dialog_form_row + .dialog_form_row {
   margin-top: 19px;
 }
@@ -21,17 +27,22 @@
   mix-blend-mode: normal;
   backdrop-filter: blur(4px);
   border-radius: 40px;
-  padding: 32px 51px;
-  max-height: 596px;
-  overflow-y: auto;
+  padding: 32px 51px 32px 42px;
   box-shadow: 0px 0px 5px 0px #ffffff;
   margin-top: 30px;
+}
+.signup_form_tandc_inner {
+  max-height: 537px;
+  overflow-y: auto;
+  direction: rtl;
+  padding-left: 15px;
 }
 .signup_form_tandc_text p {
   font-family: Rubik;
   font-size: 16px;
   font-weight: normal;
   color: #303030;
+  direction: ltr;
   margin-top: 0;
 }
 .dialog_wrapper .terms-condition-form .modal_bottom_cta {

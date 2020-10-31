@@ -416,7 +416,7 @@ const ProfileView = (props) => {
               )}
             </div>
 
-            <div className="user_verification_item">
+            {/* <div className="user_verification_item">
               {!userData.phone_verified && <CheckIcon />}
               <TypographyComponent variant="h5" title="Mobile verified" />
               {!userData.phone_verified && (
@@ -434,7 +434,7 @@ const ProfileView = (props) => {
                   disabled={isDisabledMobileVerify}
                 />
               )}
-            </div>
+            </div> */}
           </div>
         </div>
       )}

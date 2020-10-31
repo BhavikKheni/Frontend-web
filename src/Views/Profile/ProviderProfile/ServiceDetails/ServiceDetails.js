@@ -16,35 +16,33 @@ const ServicesDetails = (props) => {
 
   return (
     <React.Fragment>
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={12}>
-          <TypographyComponent
-            variant="h4"
-            title={t("providerProfile.serviceDetails")}
-            style={{ marginTop: 20 }}
-          />
-        </Grid>
-      </Grid>
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={2}>
-          <TypographyComponent
-            variant="h4"
-            title={t("providerProfile.serviceTitle")}
-            style={{ fontWeight: "normal" }}
-          />
-          <div style={{ display: "flex", marginTop: 10 }}>
-            <div onClick={onPhone} className="phoneIcon">
-              <PhoneIcon style={{ color: "#fff" }} />
-            </div>
+      <TypographyComponent
+        variant="h4"
+        title={t("providerProfile.serviceDetails")}
+      />
+      <TypographyComponent
+        variant="h4"
+        title={t("providerProfile.serviceTitle")}
+        style={{ fontWeight: "normal" }}
+      />
+      <div className="service_inner">
+        <div className="service_left">
+          <div className="about_meeting">
             <div onClick={onCalendar} className="calendarIcon">
-              <CalendarTodayIcon style={{ color: "#fff" }} />
+              <CalendarTodayIcon/>
+            </div>
+            <div onClick={onPhone} className="phoneIcon">
+              <PhoneIcon/>
             </div>
           </div>
-          <TypographyComponent
+          {/* <TypographyComponent
             title={selectedService.price && `${selectedService.price}$/h`}
-            style={{ marginTop: 10 }}
+          /> */}
+          <TypographyComponent
+            variant="h6"
+            title={'0.00$/h'}
           />
-          <div style={{ marginTop: 10 }}>
+          <div className="about_service">
             <TypographyComponent
               title={t("providerProfile.serviceQuality")}
               variant="h4"
@@ -56,7 +54,7 @@ const ServicesDetails = (props) => {
               disabled
             />
           </div>
-          <div style={{ marginTop: 10 }}>
+          <div className="about_service">
             <TypographyComponent
               title={t("providerProfile.simpathy")}
               variant="h4"
@@ -68,12 +66,10 @@ const ServicesDetails = (props) => {
               disabled
             />
           </div>
-        </Grid>
+        </div>
         <Grid item xs={12} md={6}>
           <TypographyComponent title={selectedService.description} />
         </Grid>
-      </Grid>
-      <Grid container spacing={3}>
         <div>
           {selectedService.images &&
             selectedService.images.map((image, index) => (
@@ -82,7 +78,22 @@ const ServicesDetails = (props) => {
               </div>
             ))}
         </div>
-      </Grid>
+        <div className="service_right">
+          {/* <TypographyComponent title={selectedService.description} /> */}
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.t ut labore.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</p>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.t ut labore.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</p>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.t ut labore.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</p>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.t ut labore.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</p>
+        </div>
+      </div>
+      <div className="service_images_wrapper">
+        {selectedService.images &&
+          selectedService.images.map((image, index) => (
+            <div key={index} className="service_image">
+              <img alt="service" src={image.image}></img>
+            </div>
+          ))}
+      </div>
     </React.Fragment>
   );
 };

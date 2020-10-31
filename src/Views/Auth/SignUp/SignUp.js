@@ -459,7 +459,62 @@ const SignUp = (props) => {
                 </Grid>
 
                 <div className="signup_form_tandc_text">
-                  <p>
+                  <div className="signup_form_tandc_inner">
+                    <p>
+                      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                      Urna, arcu risus mus in risus eget arcu. Tortor nibh nunc
+                      nunc at. Duis scelerisque arcu volutpat gravida volutpat
+                      quisque sit. Sed ipsum vitae cum turpis. Molestie cursus
+                      etiam nullam nisl erat volutpat elit ut. Ullamcorper mattis
+                      vestibulum enim leo ultrices a. Felis egestas posuere
+                      vestibulum, pharetra sem curs
+                    </p>
+                    <p>
+                      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                      Urna, arcu risus mus in risus eget arcu. Tortor nibh nunc
+                      nunc at. Duis scelerisque arcu volutpat gravida volutpat
+                      quisque sit. Sed ipsum vitae cum turpis. Molestie cursus
+                      etiam nullam nisl erat volutpat elit ut. Ullamcorper mattis
+                      vestibulum enim leo ultrices a. Felis egestas posuere
+                      vestibulum, pharetra sem curs
+                    </p>
+                    <p>
+                      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                      Urna, arcu risus mus in risus eget arcu. Tortor nibh nunc
+                      nunc at. Duis scelerisque arcu volutpat gravida volutpat
+                      quisque sit. Sed ipsum vitae cum turpis. Molestie cursus
+                      etiam nullam nisl erat volutpat elit ut. Ullamcorper mattis
+                      vestibulum enim leo ultrices a. Felis egestas posuere
+                      vestibulum, pharetra sem curs
+                    </p>
+                    <p>
+                      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                      Urna, arcu risus mus in risus eget arcu. Tortor nibh nunc
+                      nunc at. Duis scelerisque arcu volutpat gravida volutpat
+                      quisque sit. Sed ipsum vitae cum turpis. Molestie cursus
+                      etiam nullam nisl erat volutpat elit ut. Ullamcorper mattis
+                      vestibulum enim leo ultrices a. Felis egestas posuere
+                      vestibulum, pharetra sem curs
+                    </p>
+                    <p>
+                      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                      Urna, arcu risus mus in risus eget arcu. Tortor nibh nunc
+                      nunc at. Duis scelerisque arcu volutpat gravida volutpat
+                      quisque sit. Sed ipsum vitae cum turpis. Molestie cursus
+                      etiam nullam nisl erat volutpat elit ut. Ullamcorper mattis
+                      vestibulum enim leo ultrices a. Felis egestas posuere
+                      vestibulum, pharetra sem curs
+                    </p>
+                    <p>
+                      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                      Urna, arcu risus mus in risus eget arcu. Tortor nibh nunc
+                      nunc at. Duis scelerisque arcu volutpat gravida volutpat
+                      quisque sit. Sed ipsum vitae cum turpis. Molestie cursus
+                      etiam nullam nisl erat volutpat elit ut. Ullamcorper mattis
+                      vestibulum enim leo ultrices a. Felis egestas posuere
+                      vestibulum, pharetra sem curs
+                    </p>
+                    <p>
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                     Urna, arcu risus mus in risus eget arcu. Tortor nibh nunc
                     nunc at. Duis scelerisque arcu volutpat gravida volutpat
@@ -468,60 +523,7 @@ const SignUp = (props) => {
                     vestibulum enim leo ultrices a. Felis egestas posuere
                     vestibulum, pharetra sem curs
                   </p>
-                  <p>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                    Urna, arcu risus mus in risus eget arcu. Tortor nibh nunc
-                    nunc at. Duis scelerisque arcu volutpat gravida volutpat
-                    quisque sit. Sed ipsum vitae cum turpis. Molestie cursus
-                    etiam nullam nisl erat volutpat elit ut. Ullamcorper mattis
-                    vestibulum enim leo ultrices a. Felis egestas posuere
-                    vestibulum, pharetra sem curs
-                  </p>
-                  <p>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                    Urna, arcu risus mus in risus eget arcu. Tortor nibh nunc
-                    nunc at. Duis scelerisque arcu volutpat gravida volutpat
-                    quisque sit. Sed ipsum vitae cum turpis. Molestie cursus
-                    etiam nullam nisl erat volutpat elit ut. Ullamcorper mattis
-                    vestibulum enim leo ultrices a. Felis egestas posuere
-                    vestibulum, pharetra sem curs
-                  </p>
-                  <p>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                    Urna, arcu risus mus in risus eget arcu. Tortor nibh nunc
-                    nunc at. Duis scelerisque arcu volutpat gravida volutpat
-                    quisque sit. Sed ipsum vitae cum turpis. Molestie cursus
-                    etiam nullam nisl erat volutpat elit ut. Ullamcorper mattis
-                    vestibulum enim leo ultrices a. Felis egestas posuere
-                    vestibulum, pharetra sem curs
-                  </p>
-                  <p>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                    Urna, arcu risus mus in risus eget arcu. Tortor nibh nunc
-                    nunc at. Duis scelerisque arcu volutpat gravida volutpat
-                    quisque sit. Sed ipsum vitae cum turpis. Molestie cursus
-                    etiam nullam nisl erat volutpat elit ut. Ullamcorper mattis
-                    vestibulum enim leo ultrices a. Felis egestas posuere
-                    vestibulum, pharetra sem curs
-                  </p>
-                  <p>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                    Urna, arcu risus mus in risus eget arcu. Tortor nibh nunc
-                    nunc at. Duis scelerisque arcu volutpat gravida volutpat
-                    quisque sit. Sed ipsum vitae cum turpis. Molestie cursus
-                    etiam nullam nisl erat volutpat elit ut. Ullamcorper mattis
-                    vestibulum enim leo ultrices a. Felis egestas posuere
-                    vestibulum, pharetra sem curs
-                  </p>
-                  <p>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                    Urna, arcu risus mus in risus eget arcu. Tortor nibh nunc
-                    nunc at. Duis scelerisque arcu volutpat gravida volutpat
-                    quisque sit. Sed ipsum vitae cum turpis. Molestie cursus
-                    etiam nullam nisl erat volutpat elit ut. Ullamcorper mattis
-                    vestibulum enim leo ultrices a. Felis egestas posuere
-                    vestibulum, pharetra sem curs
-                  </p>
+                  </div>
                 </div>
               </FormControl>
             </form>

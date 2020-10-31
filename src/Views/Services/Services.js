@@ -62,7 +62,16 @@ const Services = (props) => {
   let { logout, user, isLoggedIn } = useSession();
   const [isLoading, setIsLoading] = useState(false);
   const [sidebarLoader, setSidebarLoader] = useState(false);
-  const [services, setServices] = useState([]);
+  const [services, setServices] = useState([
+    {
+      id_service: 1,
+      provider_name: "Bhavik",
+      images:[],
+      title:"Create app",
+      price:45,
+      assigned_to:159
+    },
+  ]);
   const [isUpcomingMoreData, setUpcomingMoreData] = useState(true);
   const [upcomingoffset, setUpcomingOffset] = useState(0);
   const [isUpcomingLoading, setUpcomingLoading] = useState(false);
