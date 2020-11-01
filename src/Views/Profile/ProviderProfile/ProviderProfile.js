@@ -164,7 +164,7 @@ const ProfileProvider = (props) => {
             <div className="user_language_timezone">
               <TypographyComponent
                 variant="h3"
-                title="Bhavik Kheni" //{`${userData.first_name} ${userData.last_name}`}
+                title={`${userData.first_name} ${userData.last_name}`}
                 style={{
                   color: themes.default.colors.darkGray,
                 }}
@@ -172,11 +172,11 @@ const ProfileProvider = (props) => {
               <div className="user_country_timezone_title">
                 <TypographyComponent
                   variant="h6"
-                  title={userData.country_name}
+                  title={userData.country_name || ""}
                 />
                 <TypographyComponent
                   variant="h6"
-                  title={userData.timezone_name}
+                  title={userData.timezone_name || ""}
                 />
               </div>
               <div className="user_country_timezone_data">

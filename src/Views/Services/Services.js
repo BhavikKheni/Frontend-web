@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { makeStyles } from "@material-ui/core/styles";
-import MuiDialogContent from "@material-ui/core/DialogContent";
 import { withStyles } from "@material-ui/core/styles";
 import MuiFormControl from "@material-ui/core/FormControl";
 import Rating from "@material-ui/lab/Rating";
@@ -9,12 +8,9 @@ import Radio from "@material-ui/core/Radio";
 import TextField from "@material-ui/core/TextField";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
 import ServiceCardComponent from "../../Components/ServiceCard/ServiceCard";
 import Spinner from "../../Components/Spinner/Spinner";
 import { search, add, get } from "../../Services/Auth.service";
-import DialogComponent from "../../Components/Dialog/Dialog";
-import ButtonComponent from "../../Components/Forms/Button";
 import SnackBarComponent from "../../Components/SnackBar/SnackBar";
 import { SessionContext } from "../../Provider/Provider";
 import { useSidebar } from "../../Provider/SidebarProvider";
@@ -23,18 +19,12 @@ import TypographyComponent from "../../Components/Typography/Typography";
 import ChangePassword from "../../Components/ChangePassword/ChangePassword";
 // import { onLogout } from "../../Services/Auth.service";
 import { LOCALSTORAGE_DATA } from "../../utils";
-import Sppiner from "../../Components/Spinner/Spinner";
+import Verification from "../../Components/Verification/VerificationDialog";
 import "./service.css";
 
 import { useDebouncedCallback } from "use-debounce";
 const useSession = () => React.useContext(SessionContext);
 const limit = 10;
-
-const DialogContent = withStyles((theme) => ({
-  root: {
-    padding: theme.spacing(2),
-  },
-}))(MuiDialogContent);
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -62,16 +52,7 @@ const Services = (props) => {
   let { logout, user, isLoggedIn } = useSession();
   const [isLoading, setIsLoading] = useState(false);
   const [sidebarLoader, setSidebarLoader] = useState(false);
-  const [services, setServices] = useState([
-    {
-      id_service: 1,
-      provider_name: "Bhavik",
-      images:[],
-      title:"Create app",
-      price:45,
-      assigned_to:159
-    },
-  ]);
+  const [services, setServices] = useState([]);
   const [isUpcomingMoreData, setUpcomingMoreData] = useState(true);
   const [upcomingoffset, setUpcomingOffset] = useState(0);
   const [isUpcomingLoading, setUpcomingLoading] = useState(false);
@@ -87,38 +68,12 @@ const Services = (props) => {
   const [simpathy, setSimpathy] = useState();
   const [service_quality, setServiceQuality] = useState();
   const [countries, setCountries] = useState([]);
-  const [verify, setVerify] = useState(false);
-  const [verifyLoader, setVerifyLoader] = useState(false);
   const [setRes, setTypeRes] = useState("");
   const [open, setOpen] = React.useState(false);
-  const [otp, setOtp] = useState({
-    otp1: "",
-    otp2: "",
-    otp3: "",
-    otp4: "",
-  });
-
-  const handleChangeOtp = (name, event) => {
-    const otpValue = event.target && event.target.value;
-    if (otpValue) {
-      setOtp((o) => ({ ...o, [name]: otpValue }));
-    }
-  };
-
-  const inputfocus = (elmnt) => {
-    if (elmnt.key === "Delete" || elmnt.key === "Backspace") {
-      const next = elmnt.target.tabIndex - 2;
-      if (next > -1) {
-        elmnt.target.form.elements[next].focus();
-      }
-    } else {
-      const next = elmnt.target.tabIndex;
-      if (next < 4) {
-        elmnt.target.form.elements[next].focus();
-      }
-    }
-  };
-
+  const [verify, setVerify] = useState(false);
+  const [verifyLoader, setVerifyLoader] = useState(false);
+  const [disabledPromotionLink, setDisabledPromotionLink] = useState(false);
+  const [promotion_text_hide, setPromotion_text_hide] = useState(false);
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
@@ -174,10 +129,12 @@ const Services = (props) => {
 
   async function asyncFetchData() {
     setIsLoading(true);
-    const res = await search("/service/list/filter", getParams()).catch((error) => {
-      setIsLoading(false);
-      console.log(error);
-    });
+    const res = await search("/service/list/filter", getParams()).catch(
+      (error) => {
+        setIsLoading(false);
+        console.log(error);
+      }
+    );
     if (res) {
       const { data, stopped_at, type } = res || {};
       if (type === "ERROR" || (data && data.length === 0)) {
@@ -195,10 +152,12 @@ const Services = (props) => {
   useEffect(() => {
     async function fetchData() {
       setIsLoading(true);
-      const res = await search("/service/list/filter", getParams()).catch((error) => {
-        setIsLoading(false);
-        console.log(error);
-      });
+      const res = await search("/service/list/filter", getParams()).catch(
+        (error) => {
+          setIsLoading(false);
+          console.log(error);
+        }
+      );
       if (res) {
         const { data, stopped_at, type } = res || {};
         if (type === "ERROR" || (data && data.length === 0)) {
@@ -470,67 +429,62 @@ const Services = (props) => {
     });
   };
 
+  const onSetVerify = () => {
+    setVerify(true);
+  };
+
   const onVerifyEmail = async () => {
     const data = {
       email: user.email,
       id_user: user.id_user,
     };
     setVerifyLoader(true);
+    setDisabledPromotionLink(true);
     const res = await add("/profile/verifyemail", data).catch((err) => {
       setTypeRes(err);
       setVerifyLoader(false);
+      setDisabledPromotionLink(false);
     });
     if (res && res.type === "SUCCESS") {
       setVerifyLoader(false);
-      setVerify(true);
+      onSetVerify();
       setTypeRes(res);
+      setDisabledPromotionLink(false);
       setOpen(true);
-    } else {
-      setOpen(true);
-    }
-  };
-
-  const onSubmitEmailCode = async () => {
-    const data = {
-      id_user: user.id_user,
-      code: Number(`${otp.otp1}${otp.otp2}${otp.otp3}${otp.otp4}`),
-      type: "email",
-    };
-    const res = await add("/profile/verify", data).catch((err) => {
-      setTypeRes(err);
-    });
-    if (res && res.type === "SUCCESS") {
+    } else if (res && res.type === "ERROR") {
       setVerify(false);
-      setTypeRes(res);
+      setVerifyLoader(false);
       setOpen(true);
-    } else {
-      setOpen(true);
+      setDisabledPromotionLink(false);
     }
   };
 
-  const handleSubmitOtp = (e) => {
-    e.preventDefault();
+  const onCloseVerifyDialog = () => {
     setVerify(false);
-    onSubmitEmailCode();
+  };
+
+  const onPromotionClick = () => {
+    setPromotion_text_hide(true);
   };
   return (
     <div className="service_card_content">
-      {user && !user.email_verified && isLoggedIn && (
+      {user && !user.email_verified && isLoggedIn && !promotion_text_hide && (
         <div className="promotion_text">
           <p>
             Hi, Your email isn’t verified yet. Please verify to use all the
             services.
-            {verifyLoader && <Sppiner />}
+            {verifyLoader && <Spinner />}
           </p>
           <div className="promotion_links">
             <span
+              disabled={disabledPromotionLink}
               onClick={() => {
                 onVerifyEmail();
               }}
             >
               Resend email confirmation link
             </span>
-            <p className="close_icon">
+            <p className="close_icon" onClick={() => onPromotionClick()}>
               <span className="material-icons">close</span>
             </p>
           </div>
@@ -591,90 +545,11 @@ const Services = (props) => {
       />
 
       {/* email verification dialog */}
-      <DialogComponent
-        onClose={(e) => {
-          e.stopPropagation();
-          setVerify(false);
-        }}
-        open={verify}
-        title="E-mail verification"
-        subTitle1="We’ve send a 4 digit code to your email. Please enter the code to verify your email-id."
-        maxHeight={312}
-      >
-        <DialogContent style={{ textAlign: "center" }}>
-          <form onSubmit={handleSubmitOtp}>
-            <div className="otpContainer">
-              <div className="otpContainer">
-                <input
-                  name="otp1"
-                  type="text"
-                  autoComplete="off"
-                  className="otpInput"
-                  value={otp.otp1}
-                  onChange={(e) => handleChangeOtp("otp1", e)}
-                  tabIndex="1"
-                  maxLength="1"
-                  onKeyUp={(e) => inputfocus(e)}
-                />
-                <input
-                  name="otp2"
-                  type="text"
-                  autoComplete="off"
-                  className="otpInput"
-                  value={otp.otp2}
-                  onChange={(e) => handleChangeOtp("otp2", e)}
-                  tabIndex="2"
-                  maxLength="1"
-                  onKeyUp={(e) => inputfocus(e)}
-                />
-                <input
-                  name="otp3"
-                  type="text"
-                  autoComplete="off"
-                  className="otpInput"
-                  value={otp.otp3}
-                  onChange={(e) => handleChangeOtp("otp3", e)}
-                  tabIndex="3"
-                  maxLength="1"
-                  onKeyUp={(e) => inputfocus(e)}
-                />
-                <input
-                  name="otp4"
-                  type="text"
-                  autoComplete="off"
-                  className="otpInput"
-                  value={otp.otp4}
-                  onChange={(e) => handleChangeOtp("otp4", e)}
-                  tabIndex="4"
-                  maxLength="1"
-                  onKeyUp={(e) => inputfocus(e)}
-                />
-              </div>
-              <div className="resend-button">
-                <div
-                  style={{ display: "flex", alignItems: "center" }}
-                  onClick={() => onVerifyEmail()}
-                >
-                  <TypographyComponent variant="h2" title="Didn’t get code?" />
-                  <TypographyComponent
-                    variant="h2"
-                    title="Resend"
-                    style={{ color: "#F5F5F5", marginLeft: 5 }}
-                  />
-                </div>
-                <ButtonComponent
-                  variant="contained"
-                  color="primary"
-                  type="submit"
-                  className="send-code"
-                  endIcon={<ArrowForwardIosIcon />}
-                  title="verify"
-                />
-              </div>
-            </div>
-          </form>
-        </DialogContent>
-      </DialogComponent>
+      <Verification
+        user={user}
+        verify={verify}
+        closeVerifyDialog={onCloseVerifyDialog}
+      />
       <SnackBarComponent
         open={open}
         onClose={handleClose}
