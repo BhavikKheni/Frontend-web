@@ -21,7 +21,7 @@ import Spinner from "../../../Components/Spinner/Spinner";
 import UpdateProfile from "./UserUpdateProfile";
 import { LOCALSTORAGE_DATA, languages_level } from "../../../utils";
 import ImageComponent from "../../../Components/Forms/Image";
-
+import TooltipComponent from "../../../Components/Tooltip/Tooltip";
 import "./UserProfile.css";
 
 const useSession = () => React.useContext(SessionContext);
@@ -166,6 +166,10 @@ const ProfileView = (props) => {
 
   const newLng = (data) => {
     setUserData({ ...userData, languages: [...userData.languages, ...data] });
+  };
+
+  const setUpdate = (d) => {
+    setUserData((a) => ({ ...a, ...d }));
   };
 
   const removeItem = (i) => {
@@ -375,7 +379,9 @@ const ProfileView = (props) => {
                     );
                   return (
                     <div className="user_language_item" key={i}>
-                      <ClearIcon onClick={() => removeItem(i)} />
+                      <TooltipComponent title="Remove Language">
+                        <ClearIcon onClick={() => removeItem(i)} />
+                      </TooltipComponent>
                       <span className="user_language">
                         {language_name ? language_name.language_name : ""}
                       </span>
@@ -397,7 +403,15 @@ const ProfileView = (props) => {
               <TypographyComponent variant="h5" title={userData.member_since} />
             </div>
             <div className="user_verification_item">
-              {!userData.email_verified && <CheckIcon />}
+              {userData.email_verified ? (
+                <TooltipComponent placement="bottom" title="Email verified">
+                  <CheckIcon />
+                </TooltipComponent>
+              ) : (
+                <TooltipComponent placement="bottom" title="Email unverified">
+                  <ClearIcon />
+                </TooltipComponent>
+              )}
               <TypographyComponent variant="h5" title="E-Mail verified" />
               {!userData.email_verified && (
                 <ButtonComponent
@@ -412,12 +426,21 @@ const ProfileView = (props) => {
                   }}
                   startIcon={isEmailVerifyLoader && <Spinner />}
                   disabled={isDisabledEmailVerify}
+                  loader={isEmailVerifyLoader}
                 />
               )}
             </div>
 
-            {/* <div className="user_verification_item">
-              {!userData.phone_verified && <CheckIcon />}
+            <div className="user_verification_item">
+              {userData.phone_verified ? (
+                <TooltipComponent placement="bottom" title="Mobile verified">
+                  <CheckIcon />
+                </TooltipComponent>
+              ) : (
+                <TooltipComponent placement="bottom" title="Mobile unverified">
+                  <ClearIcon />
+                </TooltipComponent>
+              )}
               <TypographyComponent variant="h5" title="Mobile verified" />
               {!userData.phone_verified && (
                 <ButtonComponent
@@ -432,24 +455,29 @@ const ProfileView = (props) => {
                   }}
                   startIcon={isMobileVerifyLoader && <Spinner />}
                   disabled={isDisabledMobileVerify}
+                  loader={isMobileVerifyLoader}
                 />
               )}
-            </div> */}
+            </div>
           </div>
         </div>
       )}
-      <Route
-        path={`/profile/:edit`}
-        render={() => (
-          <UpdateProfile
-            newLng={(data) => newLng(data)}
-            languages={userData.languages}
-            openImage={openImage}
-            closeImageDialog={closeImageDialog}
-            newImagePath={(path) => newImagePath(path)}
-          />
-        )}
-      />
+      {!isLoading && (
+        <Route
+          path={`/profile/:edit`}
+          render={() => (
+            <UpdateProfile
+              newLng={(data) => newLng(data)}
+              languages={userData.languages}
+              openImage={openImage}
+              closeImageDialog={closeImageDialog}
+              newImagePath={(path) => newImagePath(path)}
+              userData={userData}
+              setUpdate={(data) => setUpdate(data)}
+            />
+          )}
+        />
+      )}
       <DialogComponent
         onClose={(e) => {
           e.stopPropagation();
@@ -533,6 +561,7 @@ const ProfileView = (props) => {
                     startIcon={profilVerifyLoader && <Spinner />}
                     endIcon={<ArrowForwardIosIcon />}
                     disabled={isProfilVerifyDisable}
+                    loader={profilVerifyLoader}
                   />
                 </div>
               </div>

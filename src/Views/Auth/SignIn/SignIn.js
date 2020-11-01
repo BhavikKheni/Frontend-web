@@ -172,6 +172,7 @@ const SignIn = (props) => {
                         startIcon={isLoading && <CircularProgress />}
                         endIcon={!isLoading && ""}
                         title={t("login.button")}
+                        loader={isLoading}
                       />
                     </div>
                   </FormControl>

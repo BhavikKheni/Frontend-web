@@ -145,6 +145,7 @@ const ChangePassword = (props) => {
                       className="reset-password-button"
                       title="Reset"
                       startIcon={isLoading && <Sppiner />}
+                      loader={isLoading}
                     />
                   </div>
                 </FormControl>

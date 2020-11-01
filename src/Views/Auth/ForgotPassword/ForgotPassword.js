@@ -117,6 +117,7 @@ const ForgotPassword = (props) => {
                           startIcon={isLoading && <Spinner />}
                           type="submit"
                           title="Send new password"
+                          loader={isLoading}
                         />
                       </div>
                     </FormControl>

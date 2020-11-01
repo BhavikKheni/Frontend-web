@@ -185,6 +185,7 @@ const Verification = (props) => {
                 startIcon={verifyLoader && <Sppiner />}
                 endIcon={<ArrowForwardIosIcon />}
                 title="verify"
+                loader={verifyLoader}
               />
             </div>
           </div>

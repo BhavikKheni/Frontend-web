@@ -132,6 +132,10 @@ const Work = (props) => {
   const [serviceVisible, setServiceVisible] = useState(false);
   const [editRecord, setEditRecord] = useState({});
   let { isLoggedIn, doLogin } = useSession();
+  const [openSignIn, setOpenSignIn] = useState(false);
+  const [openSignUp, setOpenSignUp] = useState(false);
+  const [openForgotPassword, setForgotPasswordDialog] = useState(false);
+  const [activeLoader, setActiveLoader] = useState(false);
 
   useEffect(() => {
     var elmnt = document.getElementsByClassName("start-work");
@@ -419,9 +423,13 @@ const Work = (props) => {
       id_user: user.id_user,
       active: service.active ? false : true,
     };
-    add("/service/active", d).then((res) => {
-      console.log("res activate", res);
-    });
+    setActiveLoader(true);
+    add("/service/active", d)
+      .then((res) => {
+        console.log("res activate", res);
+        setActiveLoader(false);
+      })
+      .catch((err) => console.log("Error", err));
   };
 
   return (
@@ -499,6 +507,7 @@ const Work = (props) => {
                             onClick={(e) => {
                               onActivateDactivate(service);
                             }}
+                            loader={activeLoader}
                           />
 
                           <ButtonComponent

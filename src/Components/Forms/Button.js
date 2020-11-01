@@ -34,6 +34,7 @@ const ButtonComponent = (props) => {
     size,
     style,
     className,
+    loader
   } = props;
   return (
     <Button
@@ -50,7 +51,7 @@ const ButtonComponent = (props) => {
       size={size}
       style={{ ...style }}
     >
-      {title}
+      {!loader && title}
     </Button>
   );
 };

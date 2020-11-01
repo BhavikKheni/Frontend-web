@@ -278,6 +278,7 @@ const SignUp = (props) => {
                           ? "#2FB41A"
                           : "#949494",
                     }}
+                    loader={isLoading}
                   />
                 </div>
               </FormControl>

@@ -15,7 +15,7 @@ import SelectComponent from "../../../Components/Forms/Select";
 import ButtonComponent from "../../../Components/Forms/Button";
 import InputComponent from "../../../Components/Forms/Input";
 import DialogComponent from "../../../Components/Dialog/Dialog";
-import SnackbarComponent from "../../../Components/SnackBar/SnackBar";
+import SnackBarComponent from "../../../Components/SnackBar/SnackBar";
 import { SessionContext } from "../../../Provider/Provider";
 import { useSidebar } from "../../../Provider/SidebarProvider";
 import { get, add } from "../../../Services/Auth.service";
@@ -80,6 +80,11 @@ const UpdateProfile = (props) => {
 
   const [deleteLoader, setDeleteLoader] = useState(false);
   const [deActivateLoader, setDeactivateLoader] = useState(false);
+  const [updateLoader, setUpdateLoader] = useState(false);
+
+  const [updateDisabled, setUpdateDisabled] = useState(false);
+  const [deleteDisabled, setDeleteDisabled] = useState(false);
+  const [deActivateDisabled, setDeactivateDisabled] = useState(false);
 
   React.useEffect(() => {
     setSidebar(true);
@@ -99,23 +104,13 @@ const UpdateProfile = (props) => {
   }, [setSidebarContent, setSidebar]);
 
   useEffect(() => {
-    async function getData() {
-      setLoading(true);
-      const res = await get(`/profile/${user && user.id_user}`);
-      if (res) {
-        setUserData({
-          ...res.data,
-        });
-        setCopyRecord({
-          ...res.data,
-        });
-        setLoading(false);
-      } else {
-        setResError(res);
-        setOpenSnackBar(true);
-        setLoading(false);
-      }
-    }
+    const { userData } = props;
+    setUserData({
+      ...userData,
+    });
+    setCopyRecord({
+      ...userData,
+    });
     async function countryList() {
       const cnt = LOCALSTORAGE_DATA.get("countries");
       if (!cnt.data) {
@@ -151,7 +146,6 @@ const UpdateProfile = (props) => {
       }
     }
     fetchLanguages();
-    getData();
   }, [user]);
 
   const handleChange = (e) => {
@@ -279,13 +273,18 @@ const UpdateProfile = (props) => {
         formData.append(`languages[${[index]}][0]`, ele.language_id);
         formData.append(`languages[${[index]}][1]`, ele.language_level_id);
       });
-
+      setUpdateLoader(true);
+      setUpdateDisabled(true);
       const res = await service.upload("/profile/update", formData);
-      if (res.status === 200) {
-        console.log("success");
-      } else {
-        console.log("Error");
-      }
+      res.json().then((response) => {
+        if (response && response) {
+          setUpdateLoader(false);
+          setUpdateDisabled(false);
+          setOpenSnackBar(true);
+          setResError(response);
+          props.setUpdate(userData);
+        }
+      });
     }
     setError(false);
   };
@@ -296,32 +295,54 @@ const UpdateProfile = (props) => {
 
   const onDelete = async () => {
     setDeleteLoader(true);
+    setDeleteDisabled(true);
     const res = await add("/profile/delete", {
       id_user: user.id_user,
     }).catch((error) => {
       setDeleteLoader(false);
+      setOpenSnackBar(true);
+      setResError(res);
       console.log("Profile Deactive Error", error);
     });
     if (res && res.type === "SUCCESS") {
       setDeleteLoader(false);
+      setDeleteDisabled(false);
+      setOpenSnackBar(true);
+      setResError(res);
     } else if (res && res.type === "ERROR") {
       setDeleteLoader(false);
+      setOpenSnackBar(true);
+      setDeleteDisabled(false);
+      setResError(res);
     }
   };
 
   const onDeactivate = async () => {
     setDeactivateLoader(true);
+    setDeactivateDisabled(true);
     const res = await add("/profile/deactivate", {
       id_user: user.id_user,
     }).catch((error) => {
       setDeactivateLoader(false);
+      setOpenSnackBar(true);
       console.log("Profile Deactive Error", error);
     });
     if (res && res.type === "SUCCESS") {
       setDeactivateLoader(false);
-    }else if (res && res.type === "ERROR") {
+      setDeactivateDisabled(false);
+      setOpenSnackBar(true);
+    } else if (res && res.type === "ERROR") {
       setDeactivateLoader(false);
+      setOpenSnackBar(true);
+      setDeactivateDisabled(false);
     }
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenSnackBar(false);
   };
 
   return (
@@ -479,14 +500,18 @@ const UpdateProfile = (props) => {
             <ButtonComponent
               title="Delete profile"
               type="button"
+              disabled={deleteDisabled}
               startIcon={deleteLoader && <Spinner />}
               onClick={() => onDelete()}
+              loader={deleteLoader}
             />
             <ButtonComponent
               title="Deactivate profile"
               type="button"
+              disabled={deActivateDisabled}
               startIcon={deActivateLoader && <Spinner />}
               onClick={() => onDeactivate()}
+              loader={deActivateLoader}
             />
             <ButtonComponent
               className="update_profile_cta"
@@ -494,6 +519,10 @@ const UpdateProfile = (props) => {
               color="primary"
               type="submit"
               title="Update my profile"
+              disabled={updateDisabled}
+              startIcon={updateLoader && <Spinner />}
+              endIcon={!updateLoader && ""}
+              loader={updateLoader}
             />
           </div>
         </form>
@@ -802,13 +831,16 @@ const UpdateProfile = (props) => {
           </DialogContent>
         </DialogComponent>
       </div>
-      <SnackbarComponent
-        type="error"
+
+      <SnackBarComponent
         open={openErrorSnackBar}
-        message={resError.message}
-        handleClose={() => {
-          setOpenSnackBar(false);
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
         }}
+        message={resError.message}
+        type={resError.type && resError.type.toLowerCase()}
       />
     </div>
   );

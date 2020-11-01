@@ -69,7 +69,7 @@ const CreateService = (props) => {
   const [isImageSize, isSetImageSize] = useState(false);
   let [copyRecord, setCopyRecord] = useState();
   const [isJobLoading, setIsJobLoading] = useState(false);
-
+  const [saveLoader, serSaveLoader] = useState(false);
   useEffect(() => {
     setSidebar(true);
     setSidebarContent(
@@ -169,9 +169,12 @@ const CreateService = (props) => {
           }
           formData.append("id_service", record.id_service);
           formData.append("id_user", user.id_user);
+          serSaveLoader(true)
           const res = await newService.upload("/service/update", formData);
-          if (res.status === 200) {
+          if (res.type === "SUCCESS") {
+            serSaveLoader(false)
           } else {
+            serSaveLoader(false)
           }
         }
       }
@@ -185,11 +188,14 @@ const CreateService = (props) => {
         formData.append("description", record.description);
         formData.append("price", record.price);
         console.log("save..", formData);
+        serSaveLoader(true)
         const res = await newService.upload("/service/add", formData);
         if (res.status === 200) {
           setTypeRes(res);
           setOpen(true);
+          serSaveLoader(false)
         } else {
+          serSaveLoader(false)
           setTypeRes(res);
           setSubmitting(false);
           setOpen(true);
@@ -229,7 +235,7 @@ const CreateService = (props) => {
 
   useEffect(() => {
     if (editRecord.id_service) {
-      console.log(editRecord)
+      console.log(editRecord);
       const newRecord = {
         id_service: editRecord.id_service,
         category: editRecord.category,
@@ -617,6 +623,7 @@ const CreateService = (props) => {
                         ? "Save changes"
                         : "Create service"
                     }
+                    loader={saveLoader}
                   />
                 </Grid>
               </Grid>
