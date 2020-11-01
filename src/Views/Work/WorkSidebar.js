@@ -45,7 +45,7 @@ const WorkSidebar = (props) => {
     <div style={{ margin: 20 }}>
       <MenuItem
         onClick={() => {
-          var elmnt = document.getElementsByClassName("start-work");
+          var elmnt = document.getElementsByClassName("start_work");
           if (elmnt[0]) {
             elmnt[0].scrollIntoView();
           }

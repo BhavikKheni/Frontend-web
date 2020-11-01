@@ -34,7 +34,7 @@ img {
   height: auto;
   cursor: pointer;
 }
-*[disabled='disabled'] {
+*[disabled] {
   pointer-events: none;
   color: #000;
   opacity: 0.3;
@@ -79,6 +79,10 @@ background: #D2D2D2;
   padding: 30px 0;
   margin-top: auto;
   margin-bottom: auto;
+}
+
+.owera_link {
+  cursor: pointer;
 }
 
 /* header */
@@ -167,6 +171,7 @@ header button.MuiButtonBase-root ~ button {
   right: 27px;
   top: 50%;
   transform: translateY(-50%);
+  pointer-events: none;
 }
 .select_down_arrow.Mui-disabled:after {
   opacity: 0.3;

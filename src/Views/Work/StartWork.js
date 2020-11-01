@@ -57,31 +57,29 @@ const StartWork = () => {
   };
   return (
     <div>
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={10}>
-          <TypographyComponent title="Service name" />
-        </Grid>
-      </Grid>
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={10}>
-          <div className="service_call">
+      <TypographyComponent title="Service name" className="start_wrok_title" />
+      <div className="start_work_hero">
+        
+          <div className="start_work_hero_left">
             <div className="service_calling_wrapper">
-              <InputBase
-                placeholder="Search"
-                inputProps={{ "aria-label": "search" }}
-                onChange={changeSearch}
-              />
-              <span className={classes.searchIconItem} onClick={onSearch}>
-                <SendIcon className={classes.searchIcon} />
-              </span>
-            </div>
-            <div>
-              <MicOffIcon />
-              <VideocamOffIcon /> <DesktopWindowsIcon />
+              <div className="service_calling_message">
+                <InputBase
+                  placeholder="Search"
+                  inputProps={{ "aria-label": "search" }}
+                  onChange={changeSearch}
+                />
+                <span className={classes.searchIconItem} onClick={onSearch}>
+                  <SendIcon className={classes.searchIcon} />
+                </span>
+              </div>
+              <div className="service_calling_option">
+                <MicOffIcon className="owera_link" />
+                <VideocamOffIcon className="owera_link" />
+                <DesktopWindowsIcon className="owera_link" />
+              </div>
             </div>
           </div>
-        </Grid>
-        <Grid item xs={12} md={2}>
+        <div className="start_work_hero_right">
           <Avatar className={classes.large} />
           <TypographyComponent title="Name" />
           <Divider className="divider" />
@@ -99,8 +97,8 @@ const StartWork = () => {
           </div>
           <ButtonComponent title="Go online" className="go-online" />
           <ButtonComponent title="Off online" className="off-line" />
-        </Grid>
-      </Grid>
+        </div>
+      </div>
     </div>
   );
 };

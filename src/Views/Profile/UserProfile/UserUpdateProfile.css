@@ -117,7 +117,7 @@
 
 
 
-.stripe-verification-item {
+/* .stripe-verification-item {
   display: flex;
   flex-direction: column;
 }
@@ -125,7 +125,7 @@
   display: flex;
   margin-top: 10px;
   align-items: center;
-}
+} */
 .email-verify {
   width: 100%;
   max-width: 458px;
@@ -171,23 +171,23 @@ input[type="file"] {
   bottom: 0;
 }
 
-.change-picture {
+/* .change-picture {
   display: inline-block;
   position: relative;
   width: 200px;
   text-align: center;
   margin-top: 10px;
-}
+} */
 .profile-form-control .MuiFormHelperText-root {
   color: red;
 }
-.MuiInputBase-root {
+/* .MuiInputBase-root {
   width: 100%;
-}
-.react-tel-input .country-list {
+} */
+/* .react-tel-input .country-list {
   width: 458px;
   text-align: left;
-}
+} */
 
 .profile-image-tag {
   text-align: center;

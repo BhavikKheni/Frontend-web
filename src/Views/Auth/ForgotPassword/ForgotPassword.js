@@ -58,6 +58,7 @@ const ForgotPassword = (props) => {
         open={openForgotPassword}
         title="Reset password"
         maxHeight={267}
+        className="forgot_password"
       >
         <div className="dialog_container">
           <DialogContent>

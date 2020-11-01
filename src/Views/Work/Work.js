@@ -138,7 +138,7 @@ const Work = (props) => {
   const [activeLoader, setActiveLoader] = useState(false);
 
   useEffect(() => {
-    var elmnt = document.getElementsByClassName("start-work");
+    var elmnt = document.getElementsByClassName("start_work");
     if (elmnt[0]) {
       elmnt[0].scrollIntoView();
     }
@@ -436,7 +436,7 @@ const Work = (props) => {
     <React.Fragment>
       {isLoggedIn && (
         <React.Fragment>
-          <section className="start-work">
+          <section className="start_work">
             <StartWork />
           </section>
           <section className="my-service-lib">

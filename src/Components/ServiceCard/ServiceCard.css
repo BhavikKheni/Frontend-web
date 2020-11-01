@@ -11,8 +11,20 @@ polygon {
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
+  height: 100%;
   margin: 0 -11px;
 }
+
+/* For if service found */
+.service_card_wrapper span {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/* For if service found Over*/
+
 .service_card_wrapper .job_card {
   max-width: 33.33%;
   width: 100%;
@@ -24,7 +36,7 @@ polygon {
 }
 .service_card_wrapper .job_card .job_card_inner {
   height: 303px;
-  margin-bottom: 20px;
+  /* margin-bottom: 20px; */
 }
 .service_card_wrapper .job_card .job_card_inner .slider {
   border-radius: 8px 8px 0 0;

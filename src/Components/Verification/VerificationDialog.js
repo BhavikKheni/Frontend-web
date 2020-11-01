@@ -8,6 +8,8 @@ import Sppiner from "../../Components/Spinner/Spinner";
 import TypographyComponent from "../../Components/Typography/Typography";
 import { add } from "../../Services/Auth.service";
 import SnackBarComponent from "../../Components/SnackBar/SnackBar";
+import "./VerificationDialog.css";
+
 const DialogContent = withStyles((theme) => ({
   root: {
     padding: theme.spacing(2),
@@ -106,16 +108,17 @@ const Verification = (props) => {
       open={props.verify}
       title="E-mail verification"
       subTitle1="We’ve send a 4 digit code to your email. Please enter the code to verify your email-id."
+      className="otp_Varification"
     >
-      <DialogContent style={{ textAlign: "center" }}>
-        <form onSubmit={handleSubmitOtp}>
-          <div className="otpContainer">
-            <div className="otpContainer">
+      <div className="dialog_container">
+        
+        <DialogContent>
+          <form onSubmit={handleSubmitOtp}>
+            <div className="dialog_form_row">
               <input
                 name="otp1"
                 type="text"
                 autoComplete="off"
-                className="otpInput"
                 value={otp.otp1}
                 onChange={(e) => handleChangeOtp("otp1", e)}
                 tabIndex="1"
@@ -126,7 +129,6 @@ const Verification = (props) => {
                 name="otp2"
                 type="text"
                 autoComplete="off"
-                className="otpInput"
                 value={otp.otp2}
                 onChange={(e) => handleChangeOtp("otp2", e)}
                 tabIndex="2"
@@ -137,7 +139,6 @@ const Verification = (props) => {
                 name="otp3"
                 type="text"
                 autoComplete="off"
-                className="otpInput"
                 value={otp.otp3}
                 onChange={(e) => handleChangeOtp("otp3", e)}
                 tabIndex="3"
@@ -148,7 +149,6 @@ const Verification = (props) => {
                 name="otp4"
                 type="text"
                 autoComplete="off"
-                className="otpInput"
                 value={otp.otp4}
                 onChange={(e) => handleChangeOtp("otp4", e)}
                 tabIndex="4"
@@ -156,25 +156,25 @@ const Verification = (props) => {
                 onKeyUp={(e) => inputfocus(e)}
               />
             </div>
-            <div className="resend-button">
+            <div className="modal_bottom_cta">
+              <div>
+                <TypographyComponent
+                  variant="h2"
+                  title="Didn’t get code?"
+                  style={{ display: "inline", marginRight: '5px'}}
+                />
+              </div>
               <div
-                style={{ display: "flex", alignItems: "center" }}
                 onClick={() => onGetCodeVerifyEmail()}
               >
                 {verifyLoader2 ? (
-                  <Sppiner />
+                  <Sppiner size={20} />
                 ) : (
-                  <React.Fragment>
-                    <TypographyComponent
-                      variant="h2"
-                      title="Didn’t get code?"
-                    />
-                    <TypographyComponent
-                      variant="h2"
-                      title="Resend"
-                      style={{ color: "#F5F5F5", marginLeft: 5 }}
-                    />
-                  </React.Fragment>
+                  <TypographyComponent
+                    variant="h2"
+                    title="Resend"
+                    className='owera_link'
+                  />
                 )}
               </div>
               <ButtonComponent
@@ -183,14 +183,13 @@ const Verification = (props) => {
                 type="submit"
                 className="send-code"
                 startIcon={verifyLoader && <Sppiner />}
-                endIcon={<ArrowForwardIosIcon />}
-                title="verify"
+                title="Verify"
                 loader={verifyLoader}
               />
             </div>
-          </div>
-        </form>
-      </DialogContent>
+          </form>
+        </DialogContent>
+      </div>
       <SnackBarComponent
         open={open}
         onClose={handleClose}

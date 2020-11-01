@@ -259,40 +259,35 @@ const OweraHeader = (props) => {
                   <SearchIcon className={classes.searchIcon} />
                 </span>
               </div>
-              <div className={classes.root}>
-                <List>
-                  <ListItem button>
-                    <NotificationsNoneIcon className={classes.colorPrimary} />
-                  </ListItem>
-                  <ListItem
-                    button
-                    selected={pathname === "/"}
-                    onClick={(event, index) => {
-                      onServiceHeader();
-                    }}
-                  >
-                    Services
-                  </ListItem>
-                  <ListItem
-                    button
-                    selected={pathname === "/home"}
-                    onClick={(event, index) => {
-                      onHomeHeader(1);
-                    }}
-                  >
-                    Home
-                  </ListItem>
-                  <ListItem
-                    button
-                    selected={pathname === "/work"}
-                    onClick={(event, index) => {
-                      onWorkHeader(2);
-                    }}
-                  >
-                    Work
-                  </ListItem>
-                </List>
-              </div>
+              <List className={classes.root, 'header_navbar'}>
+                <ListItem>
+                  <NotificationsNoneIcon className={classes.colorPrimary} />
+                </ListItem>
+                <ListItem
+                  selected={pathname === "/"}
+                  onClick={(event, index) => {
+                    onServiceHeader();
+                  }}
+                >
+                  Services
+                </ListItem>
+                <ListItem
+                  selected={pathname === "/home"}
+                  onClick={(event, index) => {
+                    onHomeHeader(1);
+                  }}
+                >
+                  Home
+                </ListItem>
+                <ListItem
+                  selected={pathname === "/work"}
+                  onClick={(event, index) => {
+                    onWorkHeader(2);
+                  }}
+                >
+                  Work
+                </ListItem>
+              </List>
             </div>
             <div className="header_button_wrapper">
               {!isLoggedIn ? (

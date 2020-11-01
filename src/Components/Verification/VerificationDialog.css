@@ -1,0 +1,24 @@
+.dialog_wrapper .otp_Varification .dialog_form_row {
+  display: flex;
+  justify-content: space-around;
+  padding: 13px 34px;
+  background: #F5F5F5;
+  border: 1px solid #191919;
+  border-radius: 10px;
+}
+.dialog_wrapper .otp_Varification input {
+  font-size: 30px;
+  text-align: center;
+  background-color: transparent;
+  box-shadow: none;
+  border-width: 0 0 1px 0;
+  border-style: solid;
+  border-color: #000;
+  max-width: 62px;
+  width: 100%;
+  height: 40px;
+  padding: 0;
+}
+.modal_bottom_cta .spinner_loading {
+  margin-left: 15px;
+}
