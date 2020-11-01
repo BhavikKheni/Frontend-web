@@ -35,13 +35,11 @@ const ServicesDetails = (props) => {
               <PhoneIcon/>
             </div>
           </div>
-          {/* <TypographyComponent
-            title={selectedService.price && `${selectedService.price}$/h`}
-          /> */}
           <TypographyComponent
-            variant="h6"
-            title={'0.00$/h'}
+           variant="h6"
+            title={selectedService.price && `${selectedService.price}$/h`}
           />
+          
           <div className="about_service">
             <TypographyComponent
               title={t("providerProfile.serviceQuality")}
