@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
-import { withRouter, Link as RouterLink } from "react-router-dom";
+import { withRouter } from "react-router-dom";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
 import clsx from "clsx";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
 import MuiDialogContent from "@material-ui/core/DialogContent";
-import MenuItem from "@material-ui/core/MenuItem";
 import InputBase from "@material-ui/core/InputBase";
 import ReactFlagsSelect from "react-flags-select";
 import { FormControl } from "@material-ui/core";
@@ -27,8 +28,15 @@ import DialogComponent from "../../Components/Dialog/Dialog";
 import Sppiner from "../../Components/Spinner/Spinner";
 import { serverLogout } from "../../Services/Auth.service";
 import "./Header.css";
+import { LOCALSTORAGE_DATA } from "../../utils";
 const useSession = () => React.useContext(SessionContext);
 const useStyles = makeStyles((theme) => ({
+  root: {
+    width: "100%",
+    maxWidth: 360,
+    color: "#000",
+    backgroundColor: theme.palette.background.paper,
+  },
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
     transition: theme.transitions.create(["width", "margin"], {
@@ -122,6 +130,7 @@ const OweraHeader = (props) => {
   const { history } = props;
   const intervalRef = useRef(null);
 
+  const [toPath, setPath] = useState("");
   useEffect(() => {
     if (search.length > 3) {
       intervalRef.current = setTimeout(() => {}, 1000);
@@ -159,7 +168,6 @@ const OweraHeader = (props) => {
     onIsLoggedIn(true).then((res) => {
       if (res) {
         doLogin(res);
-        history.push("/");
       }
     });
   };
@@ -175,11 +183,13 @@ const OweraHeader = (props) => {
         if (result.type === "SUCCESS") {
           onLogout(props).then((result) => {
             logout();
+            LOCALSTORAGE_DATA.remove('countries');
+            LOCALSTORAGE_DATA.remove('languages');
+            LOCALSTORAGE_DATA.remove('timezones');
             setLogoutLoader(false);
             setLogout(false);
           });
         }
-        console.log(result);
       })
       .catch((err) => console.log(err));
   };
@@ -191,6 +201,29 @@ const OweraHeader = (props) => {
 
   const onSearch = (e) => {
     e.preventDefault();
+  };
+
+  const onServiceHeader = () => {
+    history.push("/");
+  };
+
+  const onHomeHeader = (index) => {
+    if (!isLoggedIn) {
+      openSignInDialog();
+      setPath("/home");
+    } else {
+      history.push("/home");
+    }
+  };
+
+  const onWorkHeader = (index) => {
+    if (!isLoggedIn) {
+      openSignInDialog();
+      setPath("/work");
+    } else {
+      console.log("work call");
+      history.push("/work");
+    }
   };
 
   return (
@@ -226,35 +259,39 @@ const OweraHeader = (props) => {
                   <SearchIcon className={classes.searchIcon} />
                 </span>
               </div>
-              <div className={clsx(classes.menuName, "header_navbar")}>
-                <MenuItem
-                  component={RouterLink}
-                  to="javascript:void(0);"
-                  selected={pathname === "javascript:void(0);"}
-                >
-                  <NotificationsNoneIcon className={classes.colorPrimary} />
-                </MenuItem>
-                <MenuItem
-                  component={RouterLink}
-                  to="/"
-                  selected={pathname === "/"}
-                >
-                  Services
-                </MenuItem>
-                <MenuItem
-                  component={RouterLink}
-                  to="/home"
-                  selected={pathname === "/home"}
-                >
-                  Home
-                </MenuItem>
-                <MenuItem
-                  component={RouterLink}
-                  to="/work"
-                  selected={pathname === "/work"}
-                >
-                  Work
-                </MenuItem>
+              <div className={classes.root}>
+                <List>
+                  <ListItem button>
+                    <NotificationsNoneIcon className={classes.colorPrimary} />
+                  </ListItem>
+                  <ListItem
+                    button
+                    selected={pathname === "/"}
+                    onClick={(event, index) => {
+                      onServiceHeader();
+                    }}
+                  >
+                    Services
+                  </ListItem>
+                  <ListItem
+                    button
+                    selected={pathname === "/home"}
+                    onClick={(event, index) => {
+                      onHomeHeader(1);
+                    }}
+                  >
+                    Home
+                  </ListItem>
+                  <ListItem
+                    button
+                    selected={pathname === "/work"}
+                    onClick={(event, index) => {
+                      onWorkHeader(2);
+                    }}
+                  >
+                    Work
+                  </ListItem>
+                </List>
               </div>
             </div>
             <div className="header_button_wrapper">
@@ -349,6 +386,7 @@ const OweraHeader = (props) => {
         openForgotPasswordDialog={openForgotPasswordDialog}
         handleCloseSignIn={handleCloseSignIn}
         setLogin={LoggedIn}
+        toPath={toPath}
       />
       <SignUp
         handleCloseSignUp={handleCloseSignUp}

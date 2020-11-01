@@ -3,8 +3,9 @@ export const LOCALSTORAGE_DATA = {
   set: (name, data) => {
     localStorage.setItem(name, JSON.stringify(data));
   },
-  remove: () => {
-    localStorage.remove();
+  remove: (name) => {
+    localStorage.removeItem(name);
+    localStorage.clear();
   },
   get: (name) => ({
     data: JSON.parse(localStorage.getItem(name)),

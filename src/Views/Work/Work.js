@@ -25,9 +25,6 @@ import { SessionContext } from "../../Provider/Provider";
 import { get, add } from "../../Services/Auth.service";
 import Service from "../../Services/index";
 import { useSidebar } from "../../Provider/SidebarProvider";
-import SignIn from "../Auth/SignIn/SignIn";
-import SignUp from "../Auth/SignUp/SignUp";
-import ForgotPassword from "../Auth/ForgotPassword/ForgotPassword";
 import { onIsLoggedIn } from "../../Services/Auth.service";
 import "./StartWork.css";
 import WorkSidebar from "./WorkSidebar";
@@ -135,43 +132,7 @@ const Work = (props) => {
   const [serviceVisible, setServiceVisible] = useState(false);
   const [editRecord, setEditRecord] = useState({});
   let { isLoggedIn, doLogin } = useSession();
-  const [openSignIn, setOpenSignIn] = useState(false);
-  const [openSignUp, setOpenSignUp] = useState(false);
-  const [openForgotPassword, setForgotPasswordDialog] = useState(false);
 
-  const LoggedIn = useCallback(
-    (user) => {
-      onIsLoggedIn(true).then((res) => {
-        if (res) {
-          doLogin(res);
-        }
-      });
-    },
-    [doLogin]
-  );
-  const openSignInDialog = () => {
-    setOpenSignIn(true);
-  };
-
-  const handleCloseSignIn = () => {
-    setOpenSignIn(false);
-  };
-
-  const openSignUpDialog = () => {
-    setOpenSignUp(true);
-  };
-
-  const handleCloseSignUp = () => {
-    setOpenSignUp(false);
-  };
-
-  const openForgotPasswordDialog = () => {
-    setForgotPasswordDialog(true);
-  };
-
-  const closeForgotPasswordDialog = () => {
-    setForgotPasswordDialog(false);
-  };
   useEffect(() => {
     var elmnt = document.getElementsByClassName("start-work");
     if (elmnt[0]) {
@@ -225,12 +186,8 @@ const Work = (props) => {
   };
 
   useEffect(() => {
-    if (!isLoggedIn) {
-      setOpenSignIn(true);
-    } else {
-      setSidebar(true);
-      setSidebarContent(<WorkSidebar editRecord={editRecord} user={user} />);
-    }
+    setSidebar(true);
+    setSidebarContent(<WorkSidebar editRecord={editRecord} user={user} />);
   }, [isLoggedIn, setSidebarContent, setSidebar, t, editRecord, user]);
 
   useEffect(() => {
@@ -977,24 +934,6 @@ const Work = (props) => {
         }}
         message={setRes.message}
         type={setRes.type && setRes.type.toLowerCase()}
-      />
-      <SignIn
-        onClose={handleCloseSignIn}
-        openSignIn={openSignIn}
-        openSignUpDialog={openSignUpDialog}
-        openForgotPasswordDialog={openForgotPasswordDialog}
-        handleCloseSignIn={handleCloseSignIn}
-        setLogin={LoggedIn}
-      />
-      <SignUp
-        handleCloseSignUp={handleCloseSignUp}
-        openSignUp={openSignUp}
-        openSignInDialog={openSignInDialog}
-      />
-      <ForgotPassword
-        closeForgotPasswordDialog={closeForgotPasswordDialog}
-        openForgotPassword={openForgotPassword}
-        openSignInDialog={openSignInDialog}
       />
     </React.Fragment>
   );

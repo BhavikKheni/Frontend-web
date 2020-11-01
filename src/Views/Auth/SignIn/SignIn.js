@@ -42,6 +42,9 @@ const SignIn = (props) => {
             ...((res && res.user) || {}),
             token: res.auth_token,
           });
+          if(props.toPath){
+            props.history.push(props.toPath)
+          }
           setLoading(false);
           setOpen(true);
           setLogin(res && res.user);
