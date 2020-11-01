@@ -151,34 +151,6 @@
 }
 /* Services */
 
-/* .provider-profile-review {
-  background: #edf6fe;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.25);
-  border-radius: 8px;
-  display: flex;
-  margin: 50px auto;
-  padding: 20px;
-  text-align: center;
-  font-weight: 900;
-  color: #4f4f4f;
-  position: relative;
-}
-.provider-profile-review-box:before {
-  content: "";
-  width: 0px;
-  height: 0px;
-  position: absolute;
-  border-left: 20px solid #edf6fe;
-  border-right: 20px solid transparent;
-  border-top: 20px solid #edf6fe;
-  border-bottom: 20px solid transparent;
-  right: -29px;
-  top: 0px;
-} */
-
-
-
-
 /* Latest Review */
 .latest_reviews_inner {
   max-height: 290px;
@@ -255,130 +227,150 @@
 }
 /* Latest Review Over */
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-.time {
-  text-align: right;
+/* Book Service */
+.provider_profile_wrapper section.book-service {
+  position: relative;
+  margin-top: 100px;
 }
-.service {
+.book_service_quality_review {
   display: flex;
   align-items: center;
+  align-items: center;
+  margin-bottom: 5px;
 }
-.service-quality {
-  margin-top: 10px;
+.book_service_quality_review h5 {
+  font-weight: normal;
+  font-size: 18px;
+  line-height: 30px;
+  letter-spacing: 0.02em;
+  min-width: 150px;
+  color: #303030;
 }
-.profile-image {
-  width: 200px;
-  height: 200px;
-  border-radius: 100%;
+.book_service_quality_review h3 {
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 36px;
+  color: #303030;
 }
-.profile-languages {
-  margin-top: 10;
+.book_service_quality_review h6 {
+  font-style: normal;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 36px;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  letter-spacing: 0.02em;
+  color: #303030;
 }
+.book_service_quality_review_count {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 60px;
+  margin-right: 30px;
+}
+.book_service_quality_review .book_service_quality_review_count h5 {
+  min-width: inherit;
+}
+/* Book Service Over */
 
-/* .body {
-  overflow-y: scroll;
-  scroll-behavior: smooth;
-} */
-
-.time-booking {
+/* Sidebar book time */
+.booking_time {
+  position: absolute;
+  bottom: 0;
+  left: -320px;
   background: #363636;
+  color: #FFFFFF;
   border-radius: 15px;
   max-width: 227px;
-  width: 100%;
+  width: 227px;
   height: 100%;
   max-height: 246px;
+  padding: 7px 14px 12px;
 }
-.title-booking {
-  padding: 9px 7px 14px 15px;
+.booking_title {
+  font-family: 'Montserrat';
+  font-size: 18px;
+  line-height: 28px;
+  font-weight: bold;
+  color: #fff;
   display: flex;
   justify-content: space-between;
-  color: #fff;
   align-items: center;
+  margin-bottom: 15px;
 }
-.select-form-date {
+.booking_title h4 {
+  font-size: 18px !important;
+  margin-bottom: 0 !important;
+}
+.booking_row {
   display: flex;
-  align-items: center;
-  color: #fff;
   justify-content: space-between;
+  align-items: center;
 }
-.select-form-date .from {
-  max-width: 40px;
-  width: 100%;
-  padding-left: 15px;
+.booking_row + .booking_row {
+  margin-top: 15px;
 }
-.select-form-date .to {
-  padding: 5px;
+.booking_time .booking_time_label {
+  font-family: 'Montserrat';
+  line-height: 30px;
+  letter-spacing: -0.015em;
 }
-.select-form-date .fromTime {
-  max-width: 56px;
-  width: 100%;
+.booking_time_interval_input {
+  max-width: 55px;
+}
+.booking_time fieldset {
+  border-color: #BDBDBD;
+}
+.booking_time_interval_input .Mui-focused fieldset,
+.booking_time_interval_input .MuiInputBase-formControl:hover fieldset {
+  border-color: #fff !important;
+}
+.booking_time input {
+  color: #fff;
   height: 33px;
-  padding-left: 13px;
+  padding: 6px;
+  text-align: center;
 }
-.select-form-date .toTime {
-  max-width: 58px;
+.booking_date .date-picker {
+  max-width: 150px;
   width: 100%;
-  height: 33px;
-  padding-right: 7px;
+  border: 1px solid #BDBDBD;
+  border-radius: 4px;
+  margin: 0;
 }
-.date {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.booking_date .date-picker .MuiInput-underline:before,
+.booking_date .date-picker .MuiInput-underline:after {
+  display: none;
+}
+.booking_date .date-picker input {
+  padding-right: 0;
+}
+.booking_date .date-picker button {
+  padding: 0;
+  margin-right: 6px;
   color: #fff;
-  padding: 5px 7px 10px 15px;
 }
-.date-picker {
+.booking_time .booking_cost_price {
+  font-family: 'Montserrat';
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: #FFFFFF;
+}
+.confirm_booking_row {
+  margin-top: 10px;
+}
+.confirm_booking_row button {
+  font-family: 'Montserrat';
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: #FFFFFF;
   width: 100%;
-  max-width: 147px;
-}
-.date-picker .MuiInputBase-root {
-  border: 1px solid #fff;
-  padding: 5px;
-  color: #fff;
-}
-.total-cost {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: #fff;
-  padding: 7px 7px 7px 15px;
-}
-.confirm-button {
-  padding: 0px 7px 0px 15px;
-}
-.confirm-button .makeStyles-button-36 {
-  background-color: #0a3ceb;
-  color: #fff;
   border-radius: 7px;
-  width: 100%;
-  max-width: 160px;
-  height: 42px;
+  text-transform: inherit;
+  margin: 0;
 }
-.verify-email{
-  border: 1px solid #ff7a00;
-  box-sizing: border-box;
-  border-radius: 10px;
-  color: #ff7a00;
-  background-color: #fff;
+.confirm_booking_row .confirm_cta {
+  background: #0A3CEB;
 }
+/* Sidebar book time over */

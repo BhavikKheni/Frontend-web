@@ -5,6 +5,7 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import "date-fns";
 import DateFnsUtils from "@date-io/date-fns";
+import "./Calendar.css";
 
 const CalendarComponent = (props) => {
   const {INITIAL_EVENTS ,renderEventContent } = props;
@@ -12,18 +13,25 @@ const CalendarComponent = (props) => {
   return (
     <FullCalendar
       plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+
+      
+
       headerToolbar={{
-        right: "timeGridWeek,dayGridMonth,timeGridDay",
-        left: "today,prev,next",
-        center: "",
+        left: "today prevYear,prev,title,next,nextYear",
+        right: "dayGridMonth,timeGridWeek,timeGridDay",
+        center: ""
       }}
       dayHeaderFormat={{
         day: "numeric",
         weekday: "short",
-        month: "short",
+        month: "long",
       }}
-      firstDay={1}
-      // titleFormat = 'dddd, MMMM D, YYYY'
+
+      titleFormat={{
+        month: "long",
+        year: "numeric"
+      }}
+
       initialView="timeGridWeek"
       formatDate={{
         month: "long",

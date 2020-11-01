@@ -1,0 +1,96 @@
+.service_calendar {
+    margin-top: 40px;
+}
+
+.service_calendar .fc .fc-scroller {
+    direction: rtl;
+}
+.service_calendar .fc .fc-scroller > * {
+    direction: ltr;
+}
+
+
+/* .service_calendar .fc .fc-button-group > .fc-button {
+    background-color: transparent !important;
+    border: none;
+    font-family: 'Montserrat';
+    font-weight: bold;
+    font-size: 16px;
+    text-align: center;
+    letter-spacing: -0.015em;
+    color: #4F4F4F !important;
+    box-shadow: none !important;
+}
+.service_calendar .fc .fc-button-group > .fc-button:hover {
+    opacity: 0.8;
+}
+.service_calendar .fc .fc-button-group > .fc-button:first-letter {
+    text-transform: capitalize;
+} */
+
+
+.service_calendar th.fc-timegrid-axis,
+.service_calendar td.fc-timegrid-axis.fc-scrollgrid-shrink {
+    visibility: hidden;
+}
+.service_calendar .fc thead .fc-scroller {
+    overflow: hidden !important;
+}
+.service_calendar .fc tbody .fc-scrollgrid-section:not(.fc-scrollgrid-section-liquid):first-of-type .fc-scroller {
+    overflow: hidden !important;
+    display: none;
+}
+.service_calendar .fc-theme-standard thead th:first-child {
+    border-right: 0;
+}
+.service_calendar .fc-theme-standard thead th.fc-col-header-cell:nth-child(2) {
+    border-left: 0;
+}
+.service_calendar .fc .fc-view-harness {
+    height: 712px !important;
+}
+tbody tr {
+    height: 30px;
+}
+.service_calendar .fc .fc-timegrid-col.fc-day-today {
+    background-color: #e5eff0;
+}
+.service_calendar .fc .fc-toolbar.fc-header-toolbar .fc-toolbar-chunk:first-child {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    max-width: 100%;
+    width: 100%;
+}
+.service_calendar .fc .fc-toolbar.fc-header-toolbar .fc-toolbar-chunk:first-child > div {
+    display: flex;
+    align-items: center;
+}
+
+.service_calendar .fc .fc-toolbar.fc-header-toolbar .fc-toolbar-chunk:first-child div {
+    border: 1px solid #2c3e50;
+    border-radius: 0.25em;
+}
+
+.service_calendar .fc .fc-toolbar.fc-header-toolbar .fc-toolbar-chunk:first-child .fc-toolbar-title {
+    font-weight: normal;
+}
+
+.service_calendar .fc .fc-toolbar.fc-header-toolbar .fc-toolbar-chunk:first-child div button {
+    border-radius: 0;
+}
+
+.service_calendar .fc .fc-toolbar-title {
+    display: inline-block;
+    font-size: 20px;
+    min-width: 400px;
+    text-align: center;
+}
+
+.service_calendar .fc .fc-button-primary:first-letter {
+    text-transform: uppercase;
+}
+
+.service_calendar .fc .fc-button-primary:focus, .service_calendar .fc .fc-button-primary:focus:active {
+    box-shadow: none !important;
+}

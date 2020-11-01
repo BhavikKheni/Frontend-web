@@ -17,6 +17,22 @@ import ServiceDetails from "./ServiceDetails/ServiceDetails";
 import LatestReviews from "./LatestReviews/LatestReviews";
 import ImageComponent from "../../../Components/Forms/Image";
 
+
+import AddIcon from "@material-ui/icons/Add";
+import { add } from "../../../Services/Auth.service";
+import DateFnsUtils from "@date-io/date-fns";
+import InputComponent from "../../../Components/Forms/Input";
+import ButtonComponent from "../../../Components/Forms/Button";
+import Sppiner from "../../../Components/Spinner/Spinner";
+
+import {
+  MuiPickersUtilsProvider,
+  KeyboardDatePicker,
+} from "@material-ui/pickers";
+
+
+import moment from "moment";
+
 import { LOCALSTORAGE_DATA, languages_level } from "../../../utils";
 import "./ProviderProfile.css";
 
@@ -36,12 +52,65 @@ function renderEventContent(eventInfo) {
   );
 }
 
+
+const booked_slots = [
+  {
+    id: 1,
+    startDate: "2020-11-01T01:10:00",
+    endDate: "2020-11-02T11:00:00",
+    title: "Test event",
+    booked_by: 1,
+    color: "red",
+    resize: false,
+  },
+];
+const available_slots = [
+  {
+    startDate: "2020-11-01T12:10:00",
+    endDate: "2020-11-02T11:00:00",
+    color: "green",
+    editable: true,
+    title: "Available slot",
+  },
+  {
+    id: 2,
+    startDate: "2020-11-01T07:00:00",
+    endDate: "2020-11-01T11:00:00",
+    title: "Test event",
+    booked_by: 159,
+    color: "blue",
+    editable: false,
+  },
+];
+var tempArray = [];
+
+available_slots.forEach((val) => {
+  tempArray.push({
+    start: val.startDate,
+    color: val.color,
+    editable: val.editable,
+    id: val.id,
+    title: val.title,
+  });
+});
+booked_slots.forEach((val) => {
+  tempArray.push({
+    start: val.startDate,
+    color: val.color,
+    editable: val.editable,
+    id: val.id,
+    title: val.title,
+  });
+});
+
+
 const INITIAL_EVENTS = [];
 const ProfileProvider = (props) => {
   const { setSidebarContent, setSidebar } = useSidebar();
   const { t } = useTranslation();
   const classes = useStyles();
   const [isLoading, setLoading] = useState(false);
+  const [loading, setLoading2] = useState(false);
   const { state } = props && props.location;
   let { pathname } = props.location;
   const { service = {}, type } = state;
@@ -50,6 +119,45 @@ const ProfileProvider = (props) => {
   const [selectedReviews, setSelectedReview] = useState([]);
   const [allLanguages, setAllLanguges] = useState([]);
   const [averages, setAverages] = useState({});
+
+  const [fromTime, setFromTime] = useState();
+  const [toTime, setToTime] = useState();
+
+  
+  const [openSnackBar, setOpenSnackBar] = useState(false);
+  const [response, setResponse] = useState({});
+  
+  const [selectedDate, setSelectedDate] = React.useState(
+    new Date("2014-08-18T21:11:54")
+  );
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+  };
+  const onAddBooking = () => {
+    const { user, selectedService } = props;
+    const data = {
+      from_time: fromTime,
+      to_time: toTime,
+      id_service: selectedService.id_service,
+      booking_date: moment(selectedDate).format("YYYY-MM-DD"),
+      id_user: user.id_user,
+    };
+    setLoading(true);
+    add("/service/book", data)
+      .then((result) => {
+        setLoading(false);
+        setResponse(result);
+        setOpenSnackBar(true);
+      })
+      .catch((error) => {
+        setLoading(false);
+        setResponse(error);
+        console.log("Error", error);
+      });
+  };
+
+
+
   let [userData, setUserData] = useState({
     full_name: "",
     country: "",
@@ -239,85 +347,118 @@ const ProfileProvider = (props) => {
           <section className="latest-reviews">
             <LatestReviews selectedReviews={selectedReviews} />
           </section>
+
           <section className="book-service">
             <TypographyComponent
               variant="h4"
               title={t("providerProfile.bookService")}
             />
-            <Grid container spacing={3}>
-              <Grid item xs={12} md={8}>
-                <div className="service">
-                  <TypographyComponent
-                    title="Service quality"
-                    className="service-quality"
-                    variant="h6"
-                    style={{
-                      color: themes.default.colors.darkGray,
+            <div className="book_service_inner">
+                <div className="book_service_title">
+                  <div className="book_service_quality_review">
+                    <TypographyComponent
+                      title="Service quality"
+                      variant="h5"
+                    />
+                    <div className="book_service_quality_review_count">
+                      <TypographyComponent
+                        title={averages && averages.average_service_quality_rating}
+                        variant="h5"
+                      />
+                      <StarRateRounded />
+                    </div>
+                    <TypographyComponent
+                      variant="h3"
+                      title={selectedService.title}
+                    />
+                  </div>
+                  <div className="book_service_quality_review">
+                    <TypographyComponent
+                      title="Simpathy"
+                      variant="h5"
+                    />
+                    <div className="book_service_quality_review_count">
+                      <TypographyComponent
+                        title={averages && averages.average_sympathy_rating}
+                        variant="h5"
+                      />
+                      <StarRateRounded />
+                    </div>
+                    <TypographyComponent
+                      variant="h6"
+                      title={
+                        selectedService.price && `${selectedService.price}$/h`
+                      }
+                    />
+                  </div>
+                </div>
+            </div>
+            <div className="service_calendar">
+              <CalendarComponent
+                INITIAL_EVENTS={tempArray}
+                renderEventContent={renderEventContent}
+              />
+
+              <div className="booking_time">
+                <div className="booking_title">
+                  <h4>Add Booking</h4>
+                  <AddIcon />
+                </div>
+                <div className="booking_row booking_time_interval">
+                  <span className="booking_time_label">From:</span>
+                  <InputComponent
+                    placeholder="00:00"
+                    value={fromTime}
+                    onChange={(e) => {
+                      setFromTime(e.target.value);
                     }}
+                    className="booking_time_interval_input"
                   />
-                  <TypographyComponent
-                    title={averages && averages.average_service_quality_rating}
-                    style={{
-                      marginLeft: 5,
-                      color: themes.default.colors.darkGray,
+                  <span>To</span>
+                  <InputComponent
+                    placeholder="00:00"
+                    value={toTime}
+                    onChange={(e) => {
+                      setToTime(e.target.value);
                     }}
-                    variant="h6"
-                  />
-                  <StarRateRounded
-                    style={{
-                      marginLeft: 5,
-                      color: themes.default.colors.darkGray,
-                    }}
-                  />
-                  <TypographyComponent
-                    variant="h5"
-                    title={selectedService.title}
-                    style={{
-                      marginLeft: 5,
-                      color: themes.default.colors.darkGray,
-                    }}
+                    className="booking_time_interval_input"
                   />
                 </div>
-                <div className="service">
-                  <TypographyComponent
-                    title="Simpathy"
-                    variant="h6"
-                    style={{
-                      marginLeft: 5,
-                      color: themes.default.colors.darkGray,
+                <div className="booking_row booking_date">
+                  <span className="booking_time_label">Date:</span>
+                  <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                    <KeyboardDatePicker
+                      disableToolbar
+                      variant="inline"
+                      format="MM/dd/yyyy"
+                      margin="normal"
+                      id="date-picker-inline"
+                      value={selectedDate}
+                      onChange={handleDateChange}
+                      KeyboardButtonProps={{
+                        "aria-label": "change date",
+                      }}
+                      className="date-picker"
+                    />
+                  </MuiPickersUtilsProvider>
+                </div>
+                <div className="booking_row booking_cost">
+                  <span className="booking_time_label">Total Cost:</span>
+                  <p className="booking_cost_price">20$</p>
+                </div>
+                <div className="confirm_booking_row">
+                  <ButtonComponent
+                    title="Confirm"
+                    type="button"
+                    startIcon={loading && <Sppiner />}
+                    onClick={() => {
+                      onAddBooking();
                     }}
-                  />
-                  <TypographyComponent
-                    title={averages && averages.average_sympathy_rating}
-                    style={{
-                      marginLeft: 5,
-                      color: themes.default.colors.darkGray,
-                    }}
-                    variant="h6"
-                  />
-                  <StarRateRounded
-                    style={{
-                      marginLeft: 5,
-                      color: themes.default.colors.darkGray,
-                    }}
-                  />
-                  <TypographyComponent
-                    variant="h6"
-                    title={
-                      selectedService.price && `${selectedService.price}$/h`
-                    }
-                    style={{
-                      marginLeft: 5,
-                      color: themes.default.colors.darkGray,
-                    }}
+                    className={'confirm_cta'}
                   />
                 </div>
-                <CalendarComponent
-                  INITIAL_EVENTS={INITIAL_EVENTS}
-                  renderEventContent={renderEventContent}
-                />
-              </Grid>
-            </Grid>
+              </div>
+            </div>
           </section>
         </React.Fragment>
       )}

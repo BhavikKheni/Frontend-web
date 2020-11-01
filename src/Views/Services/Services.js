@@ -473,9 +473,9 @@ const Services = (props) => {
           <p>
             Hi, Your email isn’t verified yet. Please verify to use all the
             services.
-            {verifyLoader && <Spinner />}
           </p>
           <div className="promotion_links">
+            {verifyLoader && <Spinner size={20} />}
             <span
               disabled={disabledPromotionLink}
               onClick={() => {
