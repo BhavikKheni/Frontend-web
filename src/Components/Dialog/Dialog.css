@@ -126,6 +126,7 @@ input:-webkit-autofill:focus {
 }
 .dialog_wrapper .modal_bottom_cta button.Mui-disabled {
     font-size: 0;
+    background-color: #2fb41a;
 }
 .dialog_wrapper .modal_bottom_cta button.Mui-disabled span.MuiButton-label:after {
     display: none;
@@ -137,7 +138,9 @@ input:-webkit-autofill:focus {
     width: 20px !important;
     height: 20px !important;
 }
-
+.dialog_wrapper .modal_bottom_cta button svg {
+    color: #fff;
+}
 
 
 

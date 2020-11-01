@@ -33,7 +33,7 @@
 }
 .user_profile_img_block img {
   object-fit: cover;
-  height: 100%; /* Temparary*/
+  height: 344px;
 }
 .user_profile_img p {
   font-family: Rubik;

@@ -23,18 +23,27 @@
   display: flex;
   align-items: center;
 }
-.promotion_links a {
+.promotion_links .spinner_loading {
+  margin-right: 10px;
+}
+.promotion_links span {
   font-weight: bold;
   font-size: 16px;
   color: #303030;
   letter-spacing: 0.03em;
   line-height: normal;
+  cursor: pointer;
 }
-.promotion_links a:hover {
+.promotion_links > span {
+  text-decoration: underline;
+}
+.promotion_links span:hover {
   opacity: 0.8;
   text-decoration: none;
 }
 .promotion_links .close_icon {
+  display: flex;
+  align-items: center;
   margin-left: 14px;
 }
 .promotion_links .close_icon span {

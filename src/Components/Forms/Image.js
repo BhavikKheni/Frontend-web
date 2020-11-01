@@ -6,11 +6,6 @@ const ImageComponent = () => {
       <img
         src={CatImage}
         alt="cat"
-        style={{
-          width: "200px",
-          height: "200px",
-          borderRadius: "100%",
-        }}
       />
     </div>
   );

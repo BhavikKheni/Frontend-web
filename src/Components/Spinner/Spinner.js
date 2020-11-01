@@ -16,7 +16,7 @@ const Spinner = (props) => {
 
   return (
     <div className={classes.root,'spinner_loading'}>
-      <CircularProgress />
+      <CircularProgress size={props.size} />
     </div>
   );
 };

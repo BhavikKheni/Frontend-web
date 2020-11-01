@@ -123,10 +123,10 @@ const Footer = (props) => {
                   title={t("footer.navigationLink.theForGo")}
                   className={classes.appForGo}
                 />
-                <button>
+                <button className="button_link">
                   <img alt="app store" src={AppStore} className={classes.appIcon} />
                 </button>
-                <button>
+                <button className="button_link">
                   <img alt="android" src={Android} className={classes.appIcon} />
                 </button>
               </div>
@@ -137,13 +137,13 @@ const Footer = (props) => {
                     className={classes.iconColor}
                   />
                   <div className={classes.icons}>
-                    <button>
+                    <button className="button_link">
                       <InstagramIcon className={classes.iconColor} />
                     </button>
-                    <button>
+                    <button className="button_link">
                       <FacebookIcon className={classes.iconColor} />
                     </button>
-                    <button>
+                    <button className="button_link">
                       <TwitterIcon className={classes.iconColor} />
                     </button>
                   </div>

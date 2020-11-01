@@ -29,6 +29,10 @@
     letter-spacing: 0.02em;
     padding: 0;
 }
+.footer_page_link li:hover {
+    background-color: transparent;
+    opacity: 0.8;
+}
 .footer_page_link li + li {
     margin-top: 43px;
 }
@@ -90,7 +94,7 @@
     letter-spacing: 0.04em;
     color: #949494;
 }
-.social_links a + a {
+.social_links button + button {
     margin-left: 24px;
 }
 .subscribe_form .MuiFormControl-root {

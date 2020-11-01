@@ -1,3 +1,7 @@
+.provider_profile_wrapper .user_language_item span.user_language {
+  max-width: 142px;
+}
+
 .provider_profile_wrapper section {
   max-width: 1164px;
   width: 100%;
@@ -76,6 +80,11 @@
 }
 .service_right {
   max-width: calc(100% - 245px);
+  width: 100%;
+  direction: rtl;
+}
+.service_right p {
+  direction: ltr;
 }
 .about_meeting {
   display: flex;
@@ -177,6 +186,15 @@
   direction: rtl;
   margin: 15px auto;
 }
+.latest_reviews_inner:empty {
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.latest_reviews_inner:empty:after {
+  content: 'No review found';
+}
 .provider_profile_review_item {
   position: relative;
   background: #EDF6FE;
@@ -277,10 +295,10 @@
   flex-direction: column;
 }
 
-.body {
+/* .body {
   overflow-y: scroll;
   scroll-behavior: smooth;
-}
+} */
 
 .time-booking {
   background: #363636;
