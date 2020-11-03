@@ -1,17 +1,27 @@
-import React, {useEffect } from "react";
+import React, { useEffect } from "react";
 import { withRouter, Link } from "react-router-dom";
 import { MenuItem, Divider } from "@material-ui/core";
 import { useSidebar } from "../../Provider/SidebarProvider";
 import { useTranslation } from "react-i18next";
 import { SessionContext } from "../../Provider/Provider";
+import CalendarComponent from "./MyCalendar/MyCalendar";
+import MyServiceHistory from "./MyServiceHistory/MyServiceHistory";
+import NextBooking from "./NextBooking/NextBooking";
+import PaymentMethod from "./PaymentMethod/PaymentMethod";
+import AddBookingSidebar from "../../Components/AddBookingSidebar/AddBookingSidebar";
+
 const useSession = () => React.useContext(SessionContext);
 
 const Home = (props) => {
   const { t } = useTranslation();
   const { pathname } = props.location;
-  let { isLoggedIn } = useSession();
+  let { isLoggedIn, user } = useSession();
 
   const { setSidebarContent, setSidebar } = useSidebar();
+
+  const onAddBooking = (data) => {
+    console.log("Data",data)
+  };
 
   useEffect(() => {
     setSidebar(true);
@@ -26,9 +36,36 @@ const Home = (props) => {
             >
               {t("home.messages")}
             </MenuItem>
-            <MenuItem>{t("home.myCalendar")}</MenuItem>
-            <MenuItem>{t("home.nextBookings")}</MenuItem>
-            <MenuItem>{t("home.myServiceHistory")}</MenuItem>
+            <MenuItem
+              onClick={() => {
+                var elmnt = document.getElementsByClassName("calendar");
+                if (elmnt[0]) {
+                  elmnt[0].scrollIntoView();
+                }
+              }}
+            >
+              {t("home.myCalendar.title")}
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                var elmnt = document.getElementsByClassName("next-booking");
+                if (elmnt[0]) {
+                  elmnt[0].scrollIntoView();
+                }
+              }}
+            >
+              {t("home.nextBookings")}
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                var elmnt = document.getElementsByClassName("service-history");
+                if (elmnt[0]) {
+                  elmnt[0].scrollIntoView();
+                }
+              }}
+            >
+              {t("home.myServiceHistory")}
+            </MenuItem>
             <MenuItem
               component={Link}
               to="/profile"
@@ -36,7 +73,16 @@ const Home = (props) => {
             >
               {t("home.myProfile")}
             </MenuItem>
-            <MenuItem>{t("home.paymentMethods")}</MenuItem>
+            <MenuItem
+              onClick={() => {
+                var elmnt = document.getElementsByClassName("payment-method");
+                if (elmnt[0]) {
+                  elmnt[0].scrollIntoView();
+                }
+              }}
+            >
+              {t("home.paymentMethods")}
+            </MenuItem>
             <MenuItem>
               <Divider
                 style={{
@@ -50,10 +96,33 @@ const Home = (props) => {
         <MenuItem>{t("home.feedback")}</MenuItem>
         <MenuItem>{t("home.faq")}</MenuItem>
         <MenuItem>{t("home.support")}</MenuItem>
+        <div className="booking_time">
+          <AddBookingSidebar
+            onAddBooking={(data) => onAddBooking(data)}
+            user={user}
+            // selectedService={selectedService}
+          />
+        </div>
       </div>
     );
-  }, [setSidebarContent, setSidebar, t, pathname, isLoggedIn]);
-  return <div>HOME</div>;
+  }, [setSidebarContent, setSidebar, t, pathname, isLoggedIn, user]);
+
+  return (
+    <div>
+      <section className="next-booking">
+        <NextBooking user={user} />
+      </section>
+      <section className="service-history">
+        <MyServiceHistory user={user} />
+      </section>
+      <section className="payment-method">
+        <PaymentMethod />
+      </section>
+      <section className="calendar">
+        <CalendarComponent />
+      </section>
+    </div>
+  );
 };
 
 export default withRouter(Home);

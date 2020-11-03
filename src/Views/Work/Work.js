@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect,useCallback } from "react";
 import clsx from "clsx";
 import { Grid, Divider } from "@material-ui/core";
 import StarBorderIcon from "@material-ui/icons/StarBorder";
@@ -25,9 +25,9 @@ import { SessionContext } from "../../Provider/Provider";
 import { get, add } from "../../Services/Auth.service";
 import Service from "../../Services/index";
 import { useSidebar } from "../../Provider/SidebarProvider";
-import { onIsLoggedIn } from "../../Services/Auth.service";
 import "./StartWork.css";
 import WorkSidebar from "./WorkSidebar";
+import AddBookingSpaceBar from "./AddBookingSpaceSidebar/AddBookingSpaceSidebar";
 const newService = new Service();
 const useSession = () => React.useContext(SessionContext);
 
@@ -454,6 +454,10 @@ const Work = (props) => {
     setFileList([...fileList]);
   };
 
+  const onAddBookingCalendar = (data) => {
+    console.log("Data", data);
+  };
+
   return (
     <React.Fragment>
       {isLoggedIn && (
@@ -479,7 +483,7 @@ const Work = (props) => {
                         const newArray = services.sort(
                           (a, b) => b.active - a.active
                         );
-                        setServices((b) => [...(newArray || [])]);
+                        setServices((b) => [...(b || []), ...(newArray || [])]);
                         setActiveRecord((s) => [
                           ...(s || []),
                           ...(newArray || []),
@@ -508,6 +512,7 @@ const Work = (props) => {
                       onClick={() => {
                         setServiceVisible(true);
                         formik.resetForm({});
+                        setFileList([]);
                       }}
                     />
                   </div>
@@ -529,7 +534,6 @@ const Work = (props) => {
                             onClick={(e) => {
                               onActivateDactivate(service);
                             }}
-                            startIcon={activeLoader && <Spinner />}
                             loader={activeLoader}
                           />
 
@@ -589,11 +593,7 @@ const Work = (props) => {
               </React.Fragment>
             )}
           </section>
-          {formik.values.id_service && (
-            <section className="add-booking-space">
-              <AddBookinSpace tempArray={tempArray} />
-            </section>
-          )}
+
           {serviceVisible && (
             <section className="create-service">
               <div className={classes.content}>
@@ -953,6 +953,20 @@ const Work = (props) => {
                 </form>
               </div>
             </section>
+          )}
+          {formik.values.id_service && (
+            <section className="add-booking-space">
+              <AddBookinSpace tempArray={tempArray} />
+            </section>
+          )}
+          {formik.values.id_service && (
+            <div className="booking_time">
+              <AddBookingSpaceBar
+                onAddBookingCalendar={(data) => onAddBookingCalendar(data)}
+                user={user}
+                selectedService={editRecord}
+              />
+            </div>
           )}
         </React.Fragment>
       )}

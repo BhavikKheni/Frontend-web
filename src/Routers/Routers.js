@@ -8,7 +8,7 @@ import { SessionContext } from "../Provider/Provider.js";
 import ProfileProvider from '../Views/Profile/ProviderProfile/ProviderProfile';
 import Home from "../Views/Home/Home";
 import Work from "../Views/Work/Work";
-import CallPage from '../Views/Work/CallPage';
+import CallPage from '../Views/Work/CallPage/CallPage';
 
 const useSession = () => React.useContext(SessionContext);
 

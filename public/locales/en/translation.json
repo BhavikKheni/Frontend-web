@@ -22,7 +22,7 @@
     "go": "go"
   },
   "service": {
-    "notFoundService":"No Services Found",
+    "notFoundService": "No Services Found",
     "create-service": {
       "createService": "Create a service",
       "editService": "Edit the service",
@@ -43,7 +43,7 @@
     "serviceTitle": "Title is required",
     "Category": "Category is required",
     "SubCategory": "Sub-Category is required",
-    "thisFieldIsRequired":"This field is required"
+    "thisFieldIsRequired": "This field is required"
   },
   "providerProfile": {
     "offeredService": "Offered Services",
@@ -52,19 +52,32 @@
     "serviceQuality": "Service quality",
     "simpathy": "Simpathy",
     "latestReview": "Latest reviews",
-    "notFoundReviews":"No Reviews Found",
+    "notFoundReviews": "No Reviews Found",
     "bookService": "Book Service"
   },
   "home": {
     "messages": "Messages",
-    "myCalendar": "My calendar",
     "nextBookings": "Next bookings",
     "myServiceHistory": "My service history",
     "myProfile": "My profile",
     "paymentMethods": "Payment methods",
     "feedback": "Feedback ",
     "faq": "FAQ",
-    "support": "Support"
+    "support": "Support",
+    "myCalendar": {
+      "title": "My calendar"
+    },
+    "serviceHistory": {
+      "title": "My service history",
+      "notFoundRecord": "Records not found"
+    },
+    "nextBooking": {
+      "title": "Next Bookings",
+      "notFoundRecord": "Records not found"
+    },
+    "paymentMethod": {
+      "title": "Payment Methods"
+    }
   },
   "footer": {
     "navigationLink": {
@@ -81,6 +94,6 @@
   "video-call": {
     "title": "Would you like to leave?",
     "message": "You’re going to leave the call. Are you sure?",
-    "opinion":"What`s your oppinion"
+    "opinion": "What`s your oppinion"
   }
 }

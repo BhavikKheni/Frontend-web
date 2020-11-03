@@ -35,7 +35,7 @@ export class LocalStore {
   clear() {
     return new Promise((resolve, reject) => {
       try {
-        localStorage.removeItem(this.name);
+        localStorage.clear();
         this.datastore = null;
         resolve(true);
       } catch (err) {

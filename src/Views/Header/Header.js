@@ -22,13 +22,12 @@ import { themes } from "../../themes.js";
 import SignIn from "../Auth/SignIn/SignIn";
 import SignUp from "../Auth/SignUp/SignUp";
 import ForgotPassword from "../Auth/ForgotPassword/ForgotPassword";
-import "react-flags-select/css/react-flags-select.css";
 import OweraHeaderPic from "../../images/Owera-logo.png";
 import DialogComponent from "../../Components/Dialog/Dialog";
 import Sppiner from "../../Components/Spinner/Spinner";
 import { serverLogout } from "../../Services/Auth.service";
 import "./Header.css";
-import { LOCALSTORAGE_DATA } from "../../utils";
+import "react-flags-select/css/react-flags-select.css";
 const useSession = () => React.useContext(SessionContext);
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -187,10 +186,6 @@ const OweraHeader = (props) => {
         if (result.type === "SUCCESS") {
           onLogout(props).then((result) => {
             logout();
-            LOCALSTORAGE_DATA.remove("countries");
-            LOCALSTORAGE_DATA.remove("languages");
-            LOCALSTORAGE_DATA.remove("timezones");
-            LOCALSTORAGE_DATA.remove("token");
             setLogoutLoader(false);
             setLogout(false);
             setLogoutDisabled(false)
@@ -237,7 +232,6 @@ const OweraHeader = (props) => {
       openSignInDialog();
       setPath("/work");
     } else {
-      console.log("work call");
       history.push("/work");
     }
   };

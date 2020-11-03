@@ -10,7 +10,7 @@ import CheckIcon from "@material-ui/icons/Check";
 import ClearIcon from "@material-ui/icons/Clear";
 import { useTranslation } from "react-i18next";
 import { SessionContext } from "../../../Provider/Provider";
-import { get, add } from "../../../Services/Auth.service";
+import { get, add, setLocalStorage } from "../../../Services/Auth.service";
 import ButtonComponent from "../../../Components/Forms/Button";
 import TypographyComponent from "../../../Components/Typography/Typography";
 import { themes } from "../../../themes";
@@ -153,6 +153,9 @@ const ProfileView = (props) => {
       if (res) {
         setUserData({
           ...res.data,
+        });
+        setLocalStorage({
+          ...((res && res.data) || {}),
         });
         setLoading(false);
       } else {

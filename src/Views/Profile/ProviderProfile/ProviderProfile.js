@@ -17,21 +17,7 @@ import ServiceDetails from "./ServiceDetails/ServiceDetails";
 import LatestReviews from "./LatestReviews/LatestReviews";
 import ImageComponent from "../../../Components/Forms/Image";
 
-
-import AddIcon from "@material-ui/icons/Add";
-import { add } from "../../../Services/Auth.service";
-import DateFnsUtils from "@date-io/date-fns";
-import InputComponent from "../../../Components/Forms/Input";
-import ButtonComponent from "../../../Components/Forms/Button";
-import Sppiner from "../../../Components/Spinner/Spinner";
-
-import {
-  MuiPickersUtilsProvider,
-  KeyboardDatePicker,
-} from "@material-ui/pickers";
-
-
-import moment from "moment";
+import AddBookingSidebar from "./AddBookingSidebar";
 
 import { LOCALSTORAGE_DATA, languages_level } from "../../../utils";
 import "./ProviderProfile.css";
@@ -51,7 +37,6 @@ function renderEventContent(eventInfo) {
     </>
   );
 }
-
 
 const booked_slots = [
   {
@@ -103,14 +88,11 @@ booked_slots.forEach((val) => {
   });
 });
 
-
-const INITIAL_EVENTS = [];
 const ProfileProvider = (props) => {
   const { setSidebarContent, setSidebar } = useSidebar();
   const { t } = useTranslation();
   const classes = useStyles();
   const [isLoading, setLoading] = useState(false);
-  const [loading, setLoading2] = useState(false);
   const { state } = props && props.location;
   let { pathname } = props.location;
   const { service = {}, type } = state;
@@ -119,44 +101,6 @@ const ProfileProvider = (props) => {
   const [selectedReviews, setSelectedReview] = useState([]);
   const [allLanguages, setAllLanguges] = useState([]);
   const [averages, setAverages] = useState({});
-
-  const [fromTime, setFromTime] = useState();
-  const [toTime, setToTime] = useState();
-
-  
-  const [openSnackBar, setOpenSnackBar] = useState(false);
-  const [response, setResponse] = useState({});
-  
-  const [selectedDate, setSelectedDate] = React.useState(
-    new Date("2014-08-18T21:11:54")
-  );
-  const handleDateChange = (date) => {
-    setSelectedDate(date);
-  };
-  const onAddBooking = () => {
-    const { user, selectedService } = props;
-    const data = {
-      from_time: fromTime,
-      to_time: toTime,
-      id_service: selectedService.id_service,
-      booking_date: moment(selectedDate).format("YYYY-MM-DD"),
-      id_user: user.id_user,
-    };
-    setLoading(true);
-    add("/service/book", data)
-      .then((result) => {
-        setLoading(false);
-        setResponse(result);
-        setOpenSnackBar(true);
-      })
-      .catch((error) => {
-        setLoading(false);
-        setResponse(error);
-        console.log("Error", error);
-      });
-  };
-
-
 
   let [userData, setUserData] = useState({
     full_name: "",
@@ -248,10 +192,11 @@ const ProfileProvider = (props) => {
     }
     getData();
   }, [state]);
-
+  
+  const onAddBooking = () => {};
+  
   return (
     <div className="profile_page_wrapper provider_profile_wrapper">
-      
       <TypographyComponent title="Provider profile" variant="h4" />
       {isLoading ? (
         <div style={{ textAlign: "center" }}>
@@ -354,44 +299,40 @@ const ProfileProvider = (props) => {
               title={t("providerProfile.bookService")}
             />
             <div className="book_service_inner">
-                <div className="book_service_title">
-                  <div className="book_service_quality_review">
+              <div className="book_service_title">
+                <div className="book_service_quality_review">
+                  <TypographyComponent title="Service quality" variant="h5" />
+                  <div className="book_service_quality_review_count">
                     <TypographyComponent
-                      title="Service quality"
-                      variant="h5"
-                    />
-                    <div className="book_service_quality_review_count">
-                      <TypographyComponent
-                        title={averages && averages.average_service_quality_rating}
-                        variant="h5"
-                      />
-                      <StarRateRounded />
-                    </div>
-                    <TypographyComponent
-                      variant="h3"
-                      title={selectedService.title}
-                    />
-                  </div>
-                  <div className="book_service_quality_review">
-                    <TypographyComponent
-                      title="Simpathy"
-                      variant="h5"
-                    />
-                    <div className="book_service_quality_review_count">
-                      <TypographyComponent
-                        title={averages && averages.average_sympathy_rating}
-                        variant="h5"
-                      />
-                      <StarRateRounded />
-                    </div>
-                    <TypographyComponent
-                      variant="h6"
                       title={
-                        selectedService.price && `${selectedService.price}$/h`
+                        averages && averages.average_service_quality_rating
                       }
+                      variant="h5"
                     />
+                    <StarRateRounded />
                   </div>
+                  <TypographyComponent
+                    variant="h3"
+                    title={selectedService.title}
+                  />
                 </div>
+                <div className="book_service_quality_review">
+                  <TypographyComponent title="Simpathy" variant="h5" />
+                  <div className="book_service_quality_review_count">
+                    <TypographyComponent
+                      title={averages && averages.average_sympathy_rating}
+                      variant="h5"
+                    />
+                    <StarRateRounded />
+                  </div>
+                  <TypographyComponent
+                    variant="h6"
+                    title={
+                      selectedService.price && `${selectedService.price}$/h`
+                    }
+                  />
+                </div>
+              </div>
             </div>
             <div className="service_calendar">
               <CalendarComponent
@@ -400,63 +341,11 @@ const ProfileProvider = (props) => {
               />
 
               <div className="booking_time">
-                <div className="booking_title">
-                  <h4>Add Booking</h4>
-                  <AddIcon />
-                </div>
-                <div className="booking_row booking_time_interval">
-                  <span className="booking_time_label">From:</span>
-                  <InputComponent
-                    placeholder="00:00"
-                    value={fromTime}
-                    onChange={(e) => {
-                      setFromTime(e.target.value);
-                    }}
-                    className="booking_time_interval_input"
-                  />
-                  <span>To</span>
-                  <InputComponent
-                    placeholder="00:00"
-                    value={toTime}
-                    onChange={(e) => {
-                      setToTime(e.target.value);
-                    }}
-                    className="booking_time_interval_input"
-                  />
-                </div>
-                <div className="booking_row booking_date">
-                  <span className="booking_time_label">Date:</span>
-                  <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                    <KeyboardDatePicker
-                      disableToolbar
-                      variant="inline"
-                      format="MM/dd/yyyy"
-                      margin="normal"
-                      id="date-picker-inline"
-                      value={selectedDate}
-                      onChange={handleDateChange}
-                      KeyboardButtonProps={{
-                        "aria-label": "change date",
-                      }}
-                      className="date-picker"
-                    />
-                  </MuiPickersUtilsProvider>
-                </div>
-                <div className="booking_row booking_cost">
-                  <span className="booking_time_label">Total Cost:</span>
-                  <p className="booking_cost_price">20$</p>
-                </div>
-                <div className="confirm_booking_row">
-                  <ButtonComponent
-                    title="Confirm"
-                    type="button"
-                    startIcon={loading && <Sppiner />}
-                    onClick={() => {
-                      onAddBooking();
-                    }}
-                    className={'confirm_cta'}
-                  />
-                </div>
+                <AddBookingSidebar
+                  onAddBooking={() => onAddBooking()}
+                  user={userData}
+                  selectedService={selectedService}
+                />
               </div>
             </div>
           </section>

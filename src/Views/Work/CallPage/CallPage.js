@@ -8,15 +8,15 @@ import MicOffIcon from "@material-ui/icons/MicOff";
 import VideocamOffIcon from "@material-ui/icons/VideocamOff";
 import DesktopWindowsIcon from "@material-ui/icons/DesktopWindows";
 import CallEndIcon from "@material-ui/icons/CallEnd";
-import TypographyComponent from "../../Components/Typography/Typography";
-import ArrowIcon from "../../images/select_arrow.svg";
-import DialogComponent from "../../Components/Dialog/Dialog";
+import TypographyComponent from "../../../Components/Typography/Typography";
+import ArrowIcon from "../../../images/select_arrow.svg";
+import DialogComponent from "../../../Components/Dialog/Dialog";
 import { useTranslation } from "react-i18next";
-import { themes } from "../../themes";
-import { useSidebar } from "../../Provider/SidebarProvider";
-import NextArrow from "../../images/next_arrow_white.svg";
-import { get } from "../../Services/Auth.service";
-import Spinner from "../../Components/Spinner/Spinner";
+import { themes } from "../../../themes";
+import { useSidebar } from "../../../Provider/SidebarProvider";
+import NextArrow from "../../../images/next_arrow_white.svg";
+import { get } from "../../../Services/Auth.service";
+import Spinner from "../../../Components/Spinner/Spinner";
 import "./callpage.css";
 const DialogContent = withStyles((theme) => ({
   root: {

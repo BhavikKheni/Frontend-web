@@ -98,9 +98,9 @@ const Services = (props) => {
       per_hour_rate_max: Number(per_hour_rate_max),
       simpathy,
       service_quality,
-      live_now: value,
-      country: country,
-      provider_language,
+      // live_now: 'LIVE',
+      // country: country,
+      // provider_language,
     };
   }, [
     per_hour_rate_min,
