@@ -1,5 +1,5 @@
 import React from "react";
-import { Grid, InputBase, Avatar, Divider } from "@material-ui/core";
+import { InputBase, Avatar, Divider } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import SendIcon from "@material-ui/icons/Send";
 import MicOffIcon from "@material-ui/icons/MicOff";
@@ -7,9 +7,12 @@ import VideocamOffIcon from "@material-ui/icons/VideocamOff";
 import DesktopWindowsIcon from "@material-ui/icons/DesktopWindows";
 import TypographyComponent from "../../Components/Typography/Typography";
 import ButtonComponent from "../../Components/Forms/Button";
+import ImageComponent from "../../Components/Forms/Image";
 import { themes } from "../../themes";
 import "./StartWork.css";
 
+import { SessionContext } from "../../Provider/Provider";
+const useSession = () => React.useContext(SessionContext);
 const useStyles = makeStyles((theme) => ({
   search: {
     display: "flex",
@@ -50,37 +53,42 @@ const useStyles = makeStyles((theme) => ({
 
 const StartWork = () => {
   const classes = useStyles();
+  const { user } = useSession();
   const changeSearch = (e) => {};
 
   const onSearch = (e) => {
     e.preventDefault();
   };
+  
   return (
     <div>
       <TypographyComponent title="Service name" className="start_wrok_title" />
       <div className="start_work_hero">
-        
-          <div className="start_work_hero_left">
-            <div className="service_calling_wrapper">
-              <div className="service_calling_message">
-                <InputBase
-                  placeholder="Search"
-                  inputProps={{ "aria-label": "search" }}
-                  onChange={changeSearch}
-                />
-                <span className={classes.searchIconItem} onClick={onSearch}>
-                  <SendIcon className={classes.searchIcon} />
-                </span>
-              </div>
-              <div className="service_calling_option">
-                <MicOffIcon className="owera_link" />
-                <VideocamOffIcon className="owera_link" />
-                <DesktopWindowsIcon className="owera_link" />
-              </div>
+        <div className="start_work_hero_left">
+          <div className="service_calling_wrapper">
+            <div className="service_calling_message">
+              <InputBase
+                placeholder="Search"
+                inputProps={{ "aria-label": "search" }}
+                onChange={changeSearch}
+              />
+              <span className={classes.searchIconItem} onClick={onSearch}>
+                <SendIcon className={classes.searchIcon} />
+              </span>
+            </div>
+            <div className="service_calling_option">
+              <MicOffIcon className="owera_link" />
+              <VideocamOffIcon className="owera_link" />
+              <DesktopWindowsIcon className="owera_link" />
             </div>
           </div>
+        </div>
         <div className="start_work_hero_right">
-          <Avatar className={classes.large} />
+          {user.image ? (
+            <Avatar className={classes.large} src={user.image} />
+          ) : (
+            <ImageComponent />
+          )}
           <TypographyComponent title="Name" />
           <Divider className="divider" />
           <div className="calling-right-sidebar">

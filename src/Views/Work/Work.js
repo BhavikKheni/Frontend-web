@@ -110,7 +110,7 @@ const FormControl = withStyles((theme) => ({
 }))(MuiFormControl);
 
 const Work = (props) => {
-  const [services, setServices] = useState([]);
+  let [services, setServices] = useState([]);
   const { t } = useTranslation();
   const classes = useStyles();
   const classes1 = useStyles1();
@@ -131,10 +131,9 @@ const Work = (props) => {
   const [inActiveRecord, setInActiveRecord] = useState([]);
   const [serviceVisible, setServiceVisible] = useState(false);
   const [editRecord, setEditRecord] = useState({});
+  const [getDeletedImageArry, setDeletedImageArray] = useState([]);
   let { isLoggedIn, doLogin } = useSession();
-  const [openSignIn, setOpenSignIn] = useState(false);
-  const [openSignUp, setOpenSignUp] = useState(false);
-  const [openForgotPassword, setForgotPasswordDialog] = useState(false);
+
   const [activeLoader, setActiveLoader] = useState(false);
 
   useEffect(() => {
@@ -144,37 +143,38 @@ const Work = (props) => {
     }
   }, []);
 
-  useEffect(() => {
-    async function searchServiceLibrary() {
-      setIsJobLoading(true);
-      const res = await search("/service/list/user", {
-        user_id: user.id_user,
-        limit: limit,
-        offset: 0,
-      }).catch((err) => {
+  const searchServiceLibrary = useCallback(async () => {
+    setIsJobLoading(true);
+    const res = await search("/service/list/user", {
+      user_id: user.id_user,
+      limit: limit,
+      offset: 0,
+    }).catch((err) => {
+      setIsJobLoading(false);
+    });
+    if (res) {
+      const { data, stopped_at, type } = res || {};
+      if (type === "ERROR" || (data && data.length === 0)) {
         setIsJobLoading(false);
-        console.log(err);
-      });
-      if (res) {
-        const { data, stopped_at, type } = res || {};
-        if (type === "ERROR" || (data && data.length === 0)) {
-          setIsJobLoading(false);
-          setUpcomingMoreData(false);
-          return;
-        }
-        setUpcomingOffset(stopped_at);
-        setServices(data || []);
-        setIsJobLoading(false);
+        setUpcomingMoreData(false);
+        return;
       }
+      setUpcomingOffset(stopped_at);
+      setServices(data || []);
+      setIsJobLoading(false);
     }
+  }, []);
+
+  useEffect(() => {
     searchServiceLibrary();
-  }, [user.id_user]);
+  }, [user.id_user, searchServiceLibrary]);
 
   const onMore = async (path, offset, criteria = {}) => {
     setUpcomingLoading(true);
     let res = await search(path, {
       limit: limit,
       offset: offset,
+      user_id: user.id_user,
       ...criteria,
     });
     if (res) {
@@ -222,20 +222,103 @@ const Work = (props) => {
     return true;
   }
 
+  // Manage the deleted_images array
   function makeImage(arr, formData) {
+    let deletedImageArr = getDeletedImageArry;
     arr.forEach((imageObj, index) => {
-      formData.append("image_" + [index + 1], imageObj);
+      if (imageObj instanceof File) {
+        if (deletedImageArr[0]) {
+          formData.append(deletedImageArr[0], imageObj);
+          deletedImageArr.shift();
+          setDeletedImageArray(deletedImageArr);
+        } else {
+          formData.append("image_" + index + 1, imageObj);
+        }
+      }
     });
     return formData;
   }
 
   const onDelete = async () => {
-    const res = await newService.delete("/service/delete", {
+    const res = await newService.add("/service/delete", {
       id_service: formik.values.id_service,
-      token: copyRecord.token,
     });
     if (res.status === 200) {
     } else {
+    }
+  };
+
+  const formik = useFormik({
+    initialValues: {
+      image_1: null,
+      image_2: null,
+      image_3: null,
+      image_4: null,
+      title: "",
+      category: "",
+      subcategory: "",
+      price: "",
+      description: "",
+    },
+    onSubmit: (values, { setSubmitting }) => {
+      onSave(values, setSubmitting);
+    },
+    validationSchema: Yup.object().shape({
+      title: Yup.string().required(t("validation.serviceTitle")),
+      category: Yup.string().required(t("validation.Category")),
+      subcategory: Yup.string().required(t("validation.SubCategory")),
+    }),
+  });
+
+  const onEditService = async (record, formData, setSubmitting) => {
+    let updateRecord = Object.keys(record).reduce((diff, key) => {
+      if (record[key] === copyRecord[key]) return diff;
+      return {
+        ...diff,
+        [key]: record[key],
+      };
+    }, {});
+
+    formData = makeImage(fileList, formData);
+
+    if (updateRecord.title) {
+      formData.append("title", updateRecord.title);
+    }
+    if (updateRecord.category) {
+      formData.append("category", updateRecord.category);
+    }
+    if (updateRecord.subcategory) {
+      formData.append("subcategory", updateRecord.subcategory);
+    }
+    if (updateRecord.description) {
+      formData.append("description", updateRecord.description);
+    }
+    if (updateRecord.price) {
+      formData.append("price", updateRecord.price);
+    }
+    formData.append("id_service", record.id_service);
+    formData.append("id_user", user.id_user);
+
+    for (let i = 0; i < getDeletedImageArry.length; i++) {
+      formData.append(`deleted_images[${i}]`, getDeletedImageArry[i]);
+    }
+
+    const res = await newService
+      .upload("/service/update", formData)
+      .catch((err) => {
+        setTypeRes(err);
+        setOpenSnackbar(true);
+        setSubmitting(false);
+      });
+    if (res) {
+      const targetIndex = services.findIndex(
+        (l) => l.id_service === formik.values.id_service
+      );
+      services[targetIndex] = formik.values;
+      setServices((d) => [...d]);
+      setTypeRes(res);
+      setSubmitting(false);
+      setOpenSnackbar(true);
     }
   };
 
@@ -246,57 +329,7 @@ const Work = (props) => {
       if (record) {
         const isEdit = isEquivalent(copyRecord, record);
         if (!isEdit) {
-          let updateRecord = Object.keys(record).reduce((diff, key) => {
-            if (record[key] === copyRecord[key]) return diff;
-            return {
-              ...diff,
-              [key]: record[key],
-            };
-          }, {});
-
-          formData = makeImage(fileList, formData);
-
-          // if (updateRecord.image_1 instanceof File) {
-          //   formData.append("image_1", updateRecord.image_1);
-          // }
-          // if (updateRecord.image_2 instanceof File) {
-          //   formData.append("image_2", updateRecord.image_2);
-          // }
-          // if (updateRecord.image_3 instanceof File) {
-          //   formData.append("image_3", updateRecord.image_3);
-          // }
-          // if (updateRecord.image_4 instanceof File) {
-          //   formData.append("image_4", updateRecord.image_4);
-          // }
-          if (updateRecord.title) {
-            formData.append("title", updateRecord.title);
-          }
-          if (updateRecord.category) {
-            formData.append("category", updateRecord.category);
-          }
-          if (updateRecord.subcategory) {
-            formData.append("subcategory", updateRecord.subcategory);
-          }
-          if (updateRecord.description) {
-            formData.append("description", updateRecord.description);
-          }
-          if (updateRecord.price) {
-            formData.append("price", updateRecord.price);
-          }
-          formData.append("id_service", record.id_service);
-          formData.append("id_user", user.id_user);
-          const res = await newService
-            .upload("/service/update", formData)
-            .catch((err) => {
-              setTypeRes(err);
-              setOpenSnackbar(true);
-              setSubmitting(false);
-            });
-          if (res) {
-            setTypeRes(res);
-            setSubmitting(false);
-            setOpenSnackbar(true);
-          }
+          onEditService(record, formData, setSubmitting);
         }
       }
     } else {
@@ -308,7 +341,6 @@ const Work = (props) => {
         formData.append("subcategory", record.subcategory);
         formData.append("description", record.description);
         formData.append("price", record.price);
-        console.log("save..", formData);
         const res = await newService
           .upload("/service/add", formData)
           .catch((err) => {
@@ -336,27 +368,6 @@ const Work = (props) => {
     setOpenSnackbar(false);
   };
 
-  const formik = useFormik({
-    initialValues: {
-      image_1: null,
-      image_2: null,
-      image_3: null,
-      image_4: null,
-      title: "",
-      category: "",
-      subcategory: "",
-      price: "",
-      description: "",
-    },
-    onSubmit: (values, { setSubmitting }) => {
-      onSave(values, setSubmitting);
-    },
-    validationSchema: Yup.object().shape({
-      title: Yup.string().required(t("validation.serviceTitle")),
-      category: Yup.string().required(t("validation.Category")),
-      subcategory: Yup.string().required(t("validation.SubCategory")),
-    }),
-  });
   const handleUploadClick = (event) => {
     if (event.target.files[0]) {
       var FileSize = event.target.files[0].size / 1024 / 1024; // in MB
@@ -426,10 +437,21 @@ const Work = (props) => {
     setActiveLoader(true);
     add("/service/active", d)
       .then((res) => {
-        console.log("res activate", res);
         setActiveLoader(false);
+        searchServiceLibrary();
       })
-      .catch((err) => console.log("Error", err));
+      .catch((err) => {});
+  };
+
+  const handleOnDeleteImage = (file, index) => {
+    let a = getDeletedImageArry;
+    if (file.image_reference) {
+      a.push(file.image_reference);
+      setDeletedImageArray(a);
+    }
+
+    fileList.splice(index, 1);
+    setFileList([...fileList]);
   };
 
   return (
@@ -457,7 +479,7 @@ const Work = (props) => {
                         const newArray = services.sort(
                           (a, b) => b.active - a.active
                         );
-                        setServices((b) => [...(b || []), ...(newArray || [])]);
+                        setServices((b) => [...(newArray || [])]);
                         setActiveRecord((s) => [
                           ...(s || []),
                           ...(newArray || []),
@@ -507,6 +529,7 @@ const Work = (props) => {
                             onClick={(e) => {
                               onActivateDactivate(service);
                             }}
+                            startIcon={activeLoader && <Spinner />}
                             loader={activeLoader}
                           />
 
@@ -847,8 +870,7 @@ const Work = (props) => {
                                     <div
                                       className="image-delete"
                                       onClick={() => {
-                                        fileList.splice(i, 1);
-                                        setFileList([...fileList]);
+                                        handleOnDeleteImage(file, i);
                                       }}
                                     >
                                       <div>

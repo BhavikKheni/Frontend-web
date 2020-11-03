@@ -12,6 +12,7 @@ import SnackBarComponent from "../../../Components/SnackBar/SnackBar";
 import { Formik } from "formik";
 import { useTranslation } from "react-i18next";
 import * as Yup from "yup";
+import { LOCALSTORAGE_DATA } from "../../../utils";
 import "./signin.css";
 
 const DialogContent = withStyles((theme) => ({
@@ -42,8 +43,9 @@ const SignIn = (props) => {
             ...((res && res.user) || {}),
             token: res.auth_token,
           });
-          if(props.toPath){
-            props.history.push(props.toPath)
+          LOCALSTORAGE_DATA.set("token", res.auth_token);
+          if (props.toPath) {
+            props.history.push(props.toPath);
           }
           setLoading(false);
           setOpen(true);

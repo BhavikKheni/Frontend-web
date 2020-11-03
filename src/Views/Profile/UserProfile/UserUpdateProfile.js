@@ -1,14 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { withRouter } from "react-router-dom";
-import PhoneInput from "react-phone-input-2";
-import { Formik } from "formik";
-import * as Yup from "yup";
 import { withStyles } from "@material-ui/core/styles";
 import MenuItem from "@material-ui/core/MenuItem";
 import MuiDialogContent from "@material-ui/core/DialogContent";
-import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
-import Link from "@material-ui/core/Link";
-import TextField from "@material-ui/core/TextField";
 import MuiFormControl from "@material-ui/core/FormControl";
 import TypographyComponent from "../../../Components/Typography/Typography";
 import SelectComponent from "../../../Components/Forms/Select";
@@ -24,7 +18,6 @@ import ImageComponent from "../../../Components/Forms/Image";
 import Spinner from "../../../Components/Spinner/Spinner";
 import { LOCALSTORAGE_DATA } from "../../../utils";
 import ChangePassword from "../../../Components/ChangePassword/ChangePassword";
-import "react-phone-input-2/lib/style.css";
 import "./UserUpdateProfile.css";
 const service = new Service();
 const useSession = () => React.useContext(SessionContext);
@@ -60,13 +53,8 @@ const UpdateProfile = (props) => {
   let [copyRecord, setCopyRecord] = useState();
   const [level, setLevel] = useState(1);
   const { setSidebarContent, setSidebar } = useSidebar();
-  const [isLoading, setLoading] = useState(false);
   const [isImageUploadLoader, setImageUploadLoader] = useState(false);
   const [isImageRemoveLoader, setImageRemoveLoader] = useState(false);
-  const [openEmail, setEmail] = useState(false);
-  const [openPhone, setPhone] = useState(false);
-  const [verifyPhone, setVerifyPhone] = useState(false);
-  const [verifySucessPhone, setVerifySuccessPhone] = useState(false);
   const [languages, setLanguages] = useState([]);
   const [isError, setError] = useState(false);
   const [openErrorSnackBar, setOpenSnackBar] = useState(false);
@@ -85,6 +73,14 @@ const UpdateProfile = (props) => {
   const [updateDisabled, setUpdateDisabled] = useState(false);
   const [deleteDisabled, setDeleteDisabled] = useState(false);
   const [deActivateDisabled, setDeactivateDisabled] = useState(false);
+  const [
+    openDeleteConfirmationDialog,
+    setOpenDeleteConfirmationDialog,
+  ] = useState(false);
+  const [
+    openDeactivateConfirmationDialog,
+    setOpenDeactivateConfirmationDialog,
+  ] = useState(false);
 
   React.useEffect(() => {
     setSidebar(true);
@@ -167,14 +163,6 @@ const UpdateProfile = (props) => {
         isSetImageSize(false);
       }
     }
-  };
-
-  const closeEmail = () => {
-    setEmail(false);
-  };
-
-  const closePhone = () => {
-    setPhone(false);
   };
 
   function isEquivalent(a, b) {
@@ -309,6 +297,7 @@ const UpdateProfile = (props) => {
       setDeleteDisabled(false);
       setOpenSnackBar(true);
       setResError(res);
+      props.history.push('/')
     } else if (res && res.type === "ERROR") {
       setDeleteLoader(false);
       setOpenSnackBar(true);
@@ -331,6 +320,7 @@ const UpdateProfile = (props) => {
       setDeactivateLoader(false);
       setDeactivateDisabled(false);
       setOpenSnackBar(true);
+      props.history.push('/')
     } else if (res && res.type === "ERROR") {
       setDeactivateLoader(false);
       setOpenSnackBar(true);
@@ -500,18 +490,13 @@ const UpdateProfile = (props) => {
             <ButtonComponent
               title="Delete profile"
               type="button"
-              disabled={deleteDisabled}
-              startIcon={deleteLoader && <Spinner />}
-              onClick={() => onDelete()}
-              loader={deleteLoader}
+              onClick={() => setOpenDeleteConfirmationDialog(true)}
             />
             <ButtonComponent
               title="Deactivate profile"
               type="button"
-              disabled={deActivateDisabled}
-              startIcon={deActivateLoader && <Spinner />}
-              onClick={() => onDeactivate()}
-              loader={deActivateLoader}
+              onClick={() => setOpenDeactivateConfirmationDialog(true)}
+              
             />
             <ButtonComponent
               className="update_profile_cta"
@@ -532,209 +517,7 @@ const UpdateProfile = (props) => {
           type="change-password"
           user={user}
         />
-        <DialogComponent
-          onClose={(e) => {
-            e.stopPropagation();
-            closeEmail();
-          }}
-          open={openEmail}
-          title="Email verification"
-          subTitle1="Write your email"
-          maxHeight={291}
-          flexDirection="column"
-          alignItems="start"
-        >
-          <DialogContent style={{ textAlign: "center" }}>
-            <FormControl className="email-verify">
-              <Formik
-                initialValues={{ email: "" }}
-                onSubmit={async (values) => {
-                  setEmail(false);
-                }}
-                validationSchema={Yup.object().shape({
-                  email: Yup.string().email().required("Required"),
-                })}
-              >
-                {(props) => {
-                  const {
-                    values,
-                    touched,
-                    errors,
-                    handleChange,
-                    handleSubmit,
-                  } = props;
-                  return (
-                    <form onSubmit={handleSubmit}>
-                      <FormControl>
-                        <InputComponent
-                          label="Enter E-Mail"
-                          type="email"
-                          value={values.email}
-                          placeholder="Enter E-Mail"
-                          name="email"
-                          id="outlined-name"
-                          onChange={handleChange}
-                          helperText={
-                            errors.email && touched.email && `${errors.email}`
-                          }
-                          className="profile-form-control"
-                        />
-                      </FormControl>
-                      <div style={{ textAlign: "right" }}>
-                        <ButtonComponent
-                          variant="contained"
-                          color="primary"
-                          type="submit"
-                          className="send-code"
-                          endIcon={<ArrowForwardIosIcon />}
-                          title="Send code"
-                        />
-                      </div>
-                    </form>
-                  );
-                }}
-              </Formik>
-            </FormControl>
-          </DialogContent>
-        </DialogComponent>
-
-        <DialogComponent
-          onClose={(e) => {
-            e.stopPropagation();
-            closePhone();
-          }}
-          open={openPhone}
-          title="Phone verification"
-          subTitle1="Write your phone number"
-          maxHeight={271}
-          flexDirection="column"
-          alignItems="start"
-        >
-          <DialogContent style={{ textAlign: "center" }}>
-            <Formik
-              initialValues={{ phone: "" }}
-              onSubmit={async (values) => {
-                setPhone(false);
-                setVerifyPhone(true);
-              }}
-            >
-              {(props) => {
-                const { values, handleSubmit } = props;
-                return (
-                  <form onSubmit={handleSubmit}>
-                    <FormControl style={{ maxWidth: 458 }}>
-                      <PhoneInput
-                        value={values.phone}
-                        onChange={(phone) => {}}
-                        inputProps={{
-                          name: "phone",
-                          required: true,
-                          autoFocus: true,
-                        }}
-                        inputStyle={{
-                          width: "100%",
-                          background: "#F5F5F5",
-                          border: "1px solid #191919",
-                          borderRadius: 10,
-                          height: 55,
-                        }}
-                      />
-                      <div style={{ textAlign: "right" }}>
-                        <ButtonComponent
-                          variant="contained"
-                          color="primary"
-                          type="submit"
-                          className="send-code"
-                          endIcon={<ArrowForwardIosIcon />}
-                          title="Send code"
-                        />
-                      </div>
-                    </FormControl>
-                  </form>
-                );
-              }}
-            </Formik>
-          </DialogContent>
-        </DialogComponent>
-
-        <DialogComponent
-          onClose={(e) => {
-            e.stopPropagation();
-            setVerifyPhone(false);
-          }}
-          open={verifyPhone}
-          title="Phone verification"
-          subTitle1="We’ve send a 4 digit code to your phone number. Please enter the 
-        code to verify your number."
-          maxHeight={312}
-        >
-          <DialogContent style={{ textAlign: "center" }}>
-            <FormControl className="email-verify">
-              <FormControl className="phone-number-otp">
-                <TextField id="number1" type="number" style={{ width: 62 }} />
-                <TextField id="number2" type="number" style={{ width: 62 }} />
-                <TextField id="number3" type="number" style={{ width: 62 }} />
-                <TextField id="number4" type="number" style={{ width: 62 }} />
-                <div className="timer">
-                  <div id="counter" style={{ marginLeft: 5 }}>
-                    1:00
-                  </div>
-                </div>
-              </FormControl>
-              <div className="resend-button">
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <TypographyComponent variant="h2" title="Didn’t get code?" />
-                  <Link href="#" style={{ color: "#F5F5F5", marginLeft: 5 }}>
-                    Resend
-                  </Link>
-                </div>
-                <ButtonComponent
-                  variant="contained"
-                  color="primary"
-                  type="button"
-                  className="send-code"
-                  endIcon={<ArrowForwardIosIcon />}
-                  title="verify"
-                  onClick={() => {
-                    setVerifyPhone(false);
-                    setVerifySuccessPhone(true);
-                  }}
-                />
-              </div>
-            </FormControl>
-          </DialogContent>
-        </DialogComponent>
-        <DialogComponent
-          onClose={(e) => {
-            e.stopPropagation();
-            setVerifySuccessPhone(false);
-          }}
-          open={verifySucessPhone}
-          title="Phone verification"
-          subTitle1="Congratulations! Your phone number has been verified."
-          maxHeight={234}
-        >
-          <DialogContent style={{ textAlign: "center" }}>
-            <FormControl className="email-verify">
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "flex-end",
-                }}
-              >
-                <ButtonComponent
-                  variant="contained"
-                  color="primary"
-                  type="button"
-                  className="send-code"
-                  endIcon={<ArrowForwardIosIcon />}
-                  title="Finish"
-                  onClick={() => {}}
-                />
-              </div>
-            </FormControl>
-          </DialogContent>
-        </DialogComponent>
+        
         <DialogComponent
           onClose={(e) => {
             e.stopPropagation();
@@ -831,7 +614,55 @@ const UpdateProfile = (props) => {
           </DialogContent>
         </DialogComponent>
       </div>
+      {/* confirmataion dialog for delete profile */}
+      <DialogComponent
+        onClose={(e) => {
+          e.stopPropagation();
+          setOpenDeleteConfirmationDialog(false);
+        }}
+        open={openDeleteConfirmationDialog}
+        title="Delete Profile"
+        subTitle1="Are you sure you want to delete profile?"
+      >
+        <ButtonComponent
+          title="Cancel"
+          type="button"
+          onClick={() => setOpenDeleteConfirmationDialog(false)}
+        />
+        <ButtonComponent
+          title="Delete profile"
+          type="button"
+          disabled={deleteDisabled}
+          startIcon={deleteLoader && <Spinner />}
+          onClick={() => onDelete()}
+          loader={deleteLoader}
+        />
+      </DialogComponent>
 
+      {/* confirmataion dialog for deactivate profile */}
+      <DialogComponent
+        onClose={(e) => {
+          e.stopPropagation();
+          setOpenDeactivateConfirmationDialog(false);
+        }}
+        open={openDeactivateConfirmationDialog}
+        title="Deactivate Profile"
+        subTitle1="Are you sure you want to deactivate profile?"
+      >
+        <ButtonComponent
+          title="Cancel"
+          type="button"
+          onClick={() => setOpenDeactivateConfirmationDialog(false)}
+        />
+        <ButtonComponent
+          title="Deactivate profile"
+          type="button"
+          disabled={deActivateDisabled}
+          startIcon={deActivateLoader && <Spinner />}
+          onClick={() => onDeactivate()}
+          loader={deActivateLoader}
+        />
+      </DialogComponent>
       <SnackBarComponent
         open={openErrorSnackBar}
         onClose={handleClose}

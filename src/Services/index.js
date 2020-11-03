@@ -1,8 +1,8 @@
 const offline = false;
 const url = offline ? "http://127.0.0.1:8000" : "https://owera.herokuapp.com";
 function readToken() {
-  const result = JSON.parse(localStorage.getItem("userInfo"));
-  return result && (result.token || null);
+  const result = JSON.parse(localStorage.getItem("token"));
+  return result && (result || null);
 }
 class Service {
   constructor(props) {

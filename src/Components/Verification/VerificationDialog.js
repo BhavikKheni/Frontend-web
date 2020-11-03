@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
+import React, { useState, useCallback } from "react";
 import { withStyles } from "@material-ui/core/styles";
 import MuiDialogContent from "@material-ui/core/DialogContent";
 import DialogComponent from "../../Components/Dialog/Dialog";
@@ -29,13 +28,13 @@ const Verification = (props) => {
   const [verifyLoader2, setVerifyLoader2] = useState(false);
   const [setRes, setTypeRes] = useState("");
   const [open, setOpen] = React.useState(false);
+  const [successDialog, setSuccessDialog] = useState(false);
 
-  const handleChangeOtp = (name, event) => {
+  const handleChangeOtp = useCallback((name, event) => {
     const otpValue = event.target && event.target.value;
-    if (otpValue) {
-      setOtp((o) => ({ ...o, [name]: otpValue }));
-    }
-  };
+    setOtp((o) => ({ ...o, [name]: otpValue }));
+  }, []);
+  
   const inputfocus = (elmnt) => {
     if (elmnt.key === "Delete" || elmnt.key === "Backspace") {
       const next = elmnt.target.tabIndex - 2;
@@ -49,21 +48,30 @@ const Verification = (props) => {
       }
     }
   };
+
   const onSubmitEmailCode = async () => {
-    const data = {
+    let data = {
       id_user: user.id_user,
       code: Number(`${otp.otp1}${otp.otp2}${otp.otp3}${otp.otp4}`),
-      type: "email",
     };
+    
+    if (props.type === "email") {
+      data.type = "email";
+    } else if (props.type === "mobile") {
+      data.type = "mobile";
+    }
+    
     setVerifyLoader(true);
     const res = await add("/profile/verify", data).catch((err) => {
       setTypeRes(err);
     });
+
     if (res && res.type === "SUCCESS") {
       setVerifyLoader(false);
       setTypeRes(res);
       setOpen(true);
       props.closeVerifyDialog();
+      setSuccessDialog(true);
     } else {
       setVerifyLoader(false);
       setOpen(true);
@@ -76,131 +84,172 @@ const Verification = (props) => {
   };
 
   const onGetCodeVerifyEmail = async () => {
-    const data = {
+    let data = {
       email: user.email,
       id_user: user.id_user,
     };
-    setVerifyLoader2(true);
-    const res = await add("/profile/verifyemail", data).catch((err) => {
-      setTypeRes(err);
-      setVerifyLoader2(false);
-    });
-    if (res && res.type === "SUCCESS") {
-      setVerifyLoader2(false);
-      setTypeRes(res);
-      setOpen(true);
-    } else {
-      setOpen(true);
+    if (props.type === "email") {
+      setVerifyLoader2(true);
+      const res = await add("/profile/verifyemail", data).catch((err) => {
+        setTypeRes(err);
+        setVerifyLoader2(false);
+      });
+      if (res && res.type === "SUCCESS") {
+        setVerifyLoader2(false);
+        setTypeRes(res);
+        setOpen(true);
+      } else {
+        setOpen(true);
+      }
+    } else if (props.type === "mobile") {
+      let data = {
+        mobile: user.phone_no,
+        id_user: user.id_user,
+      };
+
+      const res = await add("/profile/verifyphone", data).catch((err) => {
+        setTypeRes(err);
+        setVerifyLoader2(false);
+      });
+      if (res && res.type === "SUCCESS") {
+        setVerifyLoader2(false);
+        setTypeRes(res);
+        setOpen(true);
+      } else {
+        setOpen(true);
+      }
     }
   };
+
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
     }
     setOpen(false);
   };
+
+  const onFinish = () => {
+    setSuccessDialog(false);
+    props.onPromotionLinkHide()
+  };
+
   return (
-    <DialogComponent
-      onClose={(e) => {
-        e.stopPropagation();
-        props.closeVerifyDialog();
-      }}
-      open={props.verify}
-      title="E-mail verification"
-      subTitle1="We’ve send a 4 digit code to your email. Please enter the code to verify your email-id."
-      className="otp_Varification"
-    >
-      <div className="dialog_container">
-        
-        <DialogContent>
-          <form onSubmit={handleSubmitOtp}>
-            <div className="dialog_form_row">
-              <input
-                name="otp1"
-                type="text"
-                autoComplete="off"
-                value={otp.otp1}
-                onChange={(e) => handleChangeOtp("otp1", e)}
-                tabIndex="1"
-                maxLength="1"
-                onKeyUp={(e) => inputfocus(e)}
-              />
-              <input
-                name="otp2"
-                type="text"
-                autoComplete="off"
-                value={otp.otp2}
-                onChange={(e) => handleChangeOtp("otp2", e)}
-                tabIndex="2"
-                maxLength="1"
-                onKeyUp={(e) => inputfocus(e)}
-              />
-              <input
-                name="otp3"
-                type="text"
-                autoComplete="off"
-                value={otp.otp3}
-                onChange={(e) => handleChangeOtp("otp3", e)}
-                tabIndex="3"
-                maxLength="1"
-                onKeyUp={(e) => inputfocus(e)}
-              />
-              <input
-                name="otp4"
-                type="text"
-                autoComplete="off"
-                value={otp.otp4}
-                onChange={(e) => handleChangeOtp("otp4", e)}
-                tabIndex="4"
-                maxLength="1"
-                onKeyUp={(e) => inputfocus(e)}
-              />
-            </div>
-            <div className="modal_bottom_cta">
-              <div>
-                <TypographyComponent
-                  variant="h2"
-                  title="Didn’t get code?"
-                  style={{ display: "inline", marginRight: '5px'}}
+    <React.Fragment>
+      <DialogComponent
+        onClose={(e) => {
+          e.stopPropagation();
+          props.closeVerifyDialog();
+        }}
+        open={props.verify}
+        title={props.title}
+        subTitle1={props.subTitle1}
+        className="otp_Varification"
+      >
+        <div className="dialog_container">
+          <DialogContent>
+            <form onSubmit={handleSubmitOtp}>
+              <div className="dialog_form_row">
+                <input
+                  name="otp1"
+                  type="text"
+                  autoComplete="off"
+                  value={otp.otp1}
+                  onChange={(e) => handleChangeOtp("otp1", e)}
+                  tabIndex="1"
+                  maxLength="1"
+                  onKeyUp={(e) => inputfocus(e)}
+                />
+                <input
+                  name="otp2"
+                  type="text"
+                  autoComplete="off"
+                  value={otp.otp2}
+                  onChange={(e) => handleChangeOtp("otp2", e)}
+                  tabIndex="2"
+                  maxLength="1"
+                  onKeyUp={(e) => inputfocus(e)}
+                />
+                <input
+                  name="otp3"
+                  type="text"
+                  autoComplete="off"
+                  value={otp.otp3}
+                  onChange={(e) => handleChangeOtp("otp3", e)}
+                  tabIndex="3"
+                  maxLength="1"
+                  onKeyUp={(e) => inputfocus(e)}
+                />
+                <input
+                  name="otp4"
+                  type="text"
+                  autoComplete="off"
+                  value={otp.otp4}
+                  onChange={(e) => handleChangeOtp("otp4", e)}
+                  tabIndex="4"
+                  maxLength="1"
+                  onKeyUp={(e) => inputfocus(e)}
                 />
               </div>
-              <div
-                onClick={() => onGetCodeVerifyEmail()}
-              >
-                {verifyLoader2 ? (
-                  <Sppiner size={20} />
-                ) : (
+              <div className="modal_bottom_cta">
+                <div>
                   <TypographyComponent
                     variant="h2"
-                    title="Resend"
-                    className='owera_link'
+                    title="Didn’t get code?"
+                    style={{ display: "inline", marginRight: "5px" }}
                   />
-                )}
+                </div>
+                <div onClick={() => onGetCodeVerifyEmail()}>
+                  {verifyLoader2 ? (
+                    <Sppiner size={20} />
+                  ) : (
+                    <TypographyComponent
+                      variant="h2"
+                      title="Resend"
+                      className="owera_link"
+                    />
+                  )}
+                </div>
+                <ButtonComponent
+                  variant="contained"
+                  color="primary"
+                  type="submit"
+                  className="send-code"
+                  startIcon={verifyLoader && <Sppiner />}
+                  title="Verify"
+                  loader={verifyLoader}
+                />
               </div>
-              <ButtonComponent
-                variant="contained"
-                color="primary"
-                type="submit"
-                className="send-code"
-                startIcon={verifyLoader && <Sppiner />}
-                title="Verify"
-                loader={verifyLoader}
-              />
-            </div>
-          </form>
-        </DialogContent>
-      </div>
-      <SnackBarComponent
-        open={open}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: "top",
-          horizontal: "center",
+            </form>
+          </DialogContent>
+        </div>
+        <SnackBarComponent
+          open={open}
+          onClose={handleClose}
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "center",
+          }}
+          message={setRes.message}
+          type={setRes.type && setRes.type.toLowerCase()}
+        ></SnackBarComponent>
+      </DialogComponent>
+      <DialogComponent
+        onClose={(e) => {
+          e.stopPropagation();
+          setSuccessDialog(false);
         }}
-        message={setRes.message}
-        type={setRes.type && setRes.type.toLowerCase()}
-      ></SnackBarComponent>
-    </DialogComponent>
+        open={successDialog}
+        title={props.title}
+        subTitle1="Congratulations! Your e-mail has been verified."
+        className="otp_Varification"
+      >
+        <div className="dialog_container">
+          <DialogContent>
+            <ButtonComponent title="Finish" onClick={onFinish} />
+          </DialogContent>
+        </div>
+      </DialogComponent>
+    </React.Fragment>
   );
 };
 export default Verification;

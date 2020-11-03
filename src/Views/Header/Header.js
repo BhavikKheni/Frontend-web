@@ -17,7 +17,7 @@ import { useTranslation } from "react-i18next";
 import { SessionContext } from "../../Provider/Provider";
 import TypographyComponent from "../../Components/Typography/Typography";
 import ButtonComponent from "../../Components/Forms/Button";
-import { onIsLoggedIn, onLogout } from "../../Services/Auth.service";
+import { onIsLoggedIn, onLogout, search } from "../../Services/Auth.service";
 import { themes } from "../../themes.js";
 import SignIn from "../Auth/SignIn/SignIn";
 import SignUp from "../Auth/SignUp/SignUp";
@@ -123,22 +123,25 @@ const OweraHeader = (props) => {
   const [openSignUp, setOpenSignUp] = useState(false);
   const [openForgotPassword, setForgotPasswordDialog] = useState(false);
   let { isLoggedIn, doLogin, logout } = useSession();
-  const [search, setSearch] = useState(false);
+  const [textSearch, setSearch] = useState(false);
   const [openLogout, setLogout] = useState(false);
   const [logoutLoader, setLogoutLoader] = useState(false);
+  const [logoutDisabled,setLogoutDisabled]=useState(false);
   let { pathname } = props.location;
   const { history } = props;
   const intervalRef = useRef(null);
-
   const [toPath, setPath] = useState("");
+
   useEffect(() => {
-    if (search.length > 3) {
-      intervalRef.current = setTimeout(() => {}, 1000);
+    if (textSearch.length > 3) {
+      intervalRef.current = setTimeout(() => {
+        fetchSearch();
+      }, 1000);
     } else {
       clearTimeout(intervalRef.current);
     }
     return () => clearTimeout(intervalRef.current);
-  }, [search]);
+  }, [textSearch, fetchSearch]);
 
   const openSignInDialog = () => {
     setOpenSignIn(true);
@@ -178,21 +181,34 @@ const OweraHeader = (props) => {
 
   const handleLogout = () => {
     setLogoutLoader(true);
+    setLogoutDisabled(true)
     serverLogout()
       .then((result) => {
         if (result.type === "SUCCESS") {
           onLogout(props).then((result) => {
             logout();
-            LOCALSTORAGE_DATA.remove('countries');
-            LOCALSTORAGE_DATA.remove('languages');
-            LOCALSTORAGE_DATA.remove('timezones');
+            LOCALSTORAGE_DATA.remove("countries");
+            LOCALSTORAGE_DATA.remove("languages");
+            LOCALSTORAGE_DATA.remove("timezones");
+            LOCALSTORAGE_DATA.remove("token");
             setLogoutLoader(false);
             setLogout(false);
+            setLogoutDisabled(false)
+            history.push('/')
           });
         }
       })
       .catch((err) => console.log(err));
   };
+
+  async function fetchSearch() {
+    const res = await search("/search", {
+      searchValue: textSearch,
+    }).catch((err) => console.log(err));
+    if (res && res) {
+      console.log("res", res);
+    }
+  }
 
   const changeSearch = (e) => {
     const searchValue = e.target.value;
@@ -259,7 +275,7 @@ const OweraHeader = (props) => {
                   <SearchIcon className={classes.searchIcon} />
                 </span>
               </div>
-              <List className={classes.root, 'header_navbar'}>
+              <List className={(classes.root, "header_navbar")}>
                 <ListItem>
                   <NotificationsNoneIcon className={classes.colorPrimary} />
                 </ListItem>
@@ -366,6 +382,7 @@ const OweraHeader = (props) => {
                   style={{
                     backgroundColor: themes.default.colors.orange,
                   }}
+                  disabled={logoutDisabled}
                   onClick={handleLogout}
                   startIcon={logoutLoader && <Sppiner />}
                 />

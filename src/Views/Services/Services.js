@@ -64,7 +64,7 @@ const Services = (props) => {
   const [per_hour_rate_min, setperHourRateMin] = useState(10);
   const [per_hour_rate_max, setperHourRateMax] = useState(99);
   const { history } = props;
-  const [value, setValue] = useState(true);
+  const [value, setValue] = useState("LIVE");
   const [simpathy, setSimpathy] = useState();
   const [service_quality, setServiceQuality] = useState();
   const [countries, setCountries] = useState([]);
@@ -82,8 +82,7 @@ const Services = (props) => {
   };
 
   const handleChangeRadio = (event) => {
-    const value1 = event.target.value === "true" ? "true" : "false";
-    setValue(value1);
+    setValue(event.target.value);
     debounced.callback();
   };
 
@@ -286,18 +285,18 @@ const Services = (props) => {
             </div>
             <div className="sidebar_row sidebar_input_radio">
               <RadioGroup
-                aria-label="live_now"
+                aria-label="service"
                 name="live_now"
-                value={String(value)}
+                value={value}
                 onChange={handleChangeRadio}
               >
                 <FormControlLabel
-                  value="true"
+                  value="LIVE"
                   control={<Radio />}
                   label="Live service"
                 />
                 <FormControlLabel
-                  value="false"
+                  value="BOOK"
                   control={<Radio />}
                   label="Book service"
                 />
@@ -463,9 +462,14 @@ const Services = (props) => {
     setVerify(false);
   };
 
+  const onPromotionLinkHide = () => {
+    setPromotion_text_hide(false);
+  };
+
   const onPromotionClick = () => {
     setPromotion_text_hide(true);
   };
+  
   return (
     <div className="service_card_content">
       {user && !user.email_verified && isLoggedIn && !promotion_text_hide && (
@@ -549,6 +553,10 @@ const Services = (props) => {
         user={user}
         verify={verify}
         closeVerifyDialog={onCloseVerifyDialog}
+        onPromotionLinkHide={onPromotionLinkHide}
+        title="E-mail verification"
+        subTitle1="We’ve send a 4 digit code to your email. Please enter the code to verify your email-id."
+        type="email"
       />
       <SnackBarComponent
         open={open}

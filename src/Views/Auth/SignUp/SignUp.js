@@ -37,11 +37,7 @@ const CustomCheckbox = withStyles({
 
 const SignUp = (props) => {
   const { t } = useTranslation();
-  const {
-    handleCloseSignUp,
-    openSignUp,
-    openSignInDialog,
-  } = props;
+  const { handleCloseSignUp, openSignUp, openSignInDialog } = props;
   const [isDisabled, setDisabled] = useState(false);
   const [isLoading, setLoading] = useState(false);
   const [open, setOpen] = React.useState(false);
@@ -100,14 +96,14 @@ const SignUp = (props) => {
         }
       })
       .catch((error) => {
-        console.log("Error", error)
+        console.log("Error", error);
         setLoading(false);
         setDisabled(false);
       });
   };
 
   const handleCloseTermsCondition = () => {
-    setTermsCondition(false)
+    setTermsCondition(false);
   };
 
   const handleClose = (event, reason) => {
@@ -254,14 +250,14 @@ const SignUp = (props) => {
                     </div>
                     <p>
                       {t("signup.registrationAgree")}
-                      <a
-                        href="javascript:;"
+                      <span
+                        className="owera_link"
                         onClick={() => {
                           setTermsCondition(true);
                         }}
                       >
                         {t("signup.termsConditions")}
-                      </a>
+                      </span>
                     </p>
                   </div>
                   <ButtonComponent
@@ -394,23 +390,23 @@ const SignUp = (props) => {
                     </div>
                   </Grid>
                   <Grid item xs={12} sm={6} md={6} lg={6} xl={6}>
-                  <div className="dialog_form_row dialog_form_checkbox_row">
-                  <FormControlLabel
-                    control={
-                      <CustomCheckbox
-                        checked={formik.values.checkedC}
-                        name="checkedC"
-                        onChange={() => {
-                          formik.setFieldValue(
-                            "checkedC",
-                            !formik.values.checkedC
-                          );
-                        }}
+                    <div className="dialog_form_row dialog_form_checkbox_row">
+                      <FormControlLabel
+                        control={
+                          <CustomCheckbox
+                            checked={formik.values.checkedC}
+                            name="checkedC"
+                            onChange={() => {
+                              formik.setFieldValue(
+                                "checkedC",
+                                !formik.values.checkedC
+                              );
+                            }}
+                          />
+                        }
                       />
-                    }
-                  />
-                  <p>{t("signup.citizenshipAgree")}</p>
-                </div>
+                      <p>{t("signup.citizenshipAgree")}</p>
+                    </div>
                   </Grid>
                   <Grid item xs={12} sm={6} md={6} lg={6} xl={6}>
                     <div className="modal_bottom_cta sign_up_first_step_cta">
@@ -435,9 +431,9 @@ const SignUp = (props) => {
                         </div>
                         <p>
                           {t("signup.registrationAgree")}
-                          <a href="javascript:;">
+                          <span className="owera_link">
                             {t("signup.termsConditions")}
-                          </a>
+                          </span>
                         </p>
                       </div>
                       <div style={{ height: 48 }}>
@@ -466,64 +462,64 @@ const SignUp = (props) => {
                       Urna, arcu risus mus in risus eget arcu. Tortor nibh nunc
                       nunc at. Duis scelerisque arcu volutpat gravida volutpat
                       quisque sit. Sed ipsum vitae cum turpis. Molestie cursus
-                      etiam nullam nisl erat volutpat elit ut. Ullamcorper mattis
-                      vestibulum enim leo ultrices a. Felis egestas posuere
-                      vestibulum, pharetra sem curs
+                      etiam nullam nisl erat volutpat elit ut. Ullamcorper
+                      mattis vestibulum enim leo ultrices a. Felis egestas
+                      posuere vestibulum, pharetra sem curs
                     </p>
                     <p>
                       Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                       Urna, arcu risus mus in risus eget arcu. Tortor nibh nunc
                       nunc at. Duis scelerisque arcu volutpat gravida volutpat
                       quisque sit. Sed ipsum vitae cum turpis. Molestie cursus
-                      etiam nullam nisl erat volutpat elit ut. Ullamcorper mattis
-                      vestibulum enim leo ultrices a. Felis egestas posuere
-                      vestibulum, pharetra sem curs
+                      etiam nullam nisl erat volutpat elit ut. Ullamcorper
+                      mattis vestibulum enim leo ultrices a. Felis egestas
+                      posuere vestibulum, pharetra sem curs
                     </p>
                     <p>
                       Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                       Urna, arcu risus mus in risus eget arcu. Tortor nibh nunc
                       nunc at. Duis scelerisque arcu volutpat gravida volutpat
                       quisque sit. Sed ipsum vitae cum turpis. Molestie cursus
-                      etiam nullam nisl erat volutpat elit ut. Ullamcorper mattis
-                      vestibulum enim leo ultrices a. Felis egestas posuere
-                      vestibulum, pharetra sem curs
+                      etiam nullam nisl erat volutpat elit ut. Ullamcorper
+                      mattis vestibulum enim leo ultrices a. Felis egestas
+                      posuere vestibulum, pharetra sem curs
                     </p>
                     <p>
                       Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                       Urna, arcu risus mus in risus eget arcu. Tortor nibh nunc
                       nunc at. Duis scelerisque arcu volutpat gravida volutpat
                       quisque sit. Sed ipsum vitae cum turpis. Molestie cursus
-                      etiam nullam nisl erat volutpat elit ut. Ullamcorper mattis
-                      vestibulum enim leo ultrices a. Felis egestas posuere
-                      vestibulum, pharetra sem curs
+                      etiam nullam nisl erat volutpat elit ut. Ullamcorper
+                      mattis vestibulum enim leo ultrices a. Felis egestas
+                      posuere vestibulum, pharetra sem curs
                     </p>
                     <p>
                       Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                       Urna, arcu risus mus in risus eget arcu. Tortor nibh nunc
                       nunc at. Duis scelerisque arcu volutpat gravida volutpat
                       quisque sit. Sed ipsum vitae cum turpis. Molestie cursus
-                      etiam nullam nisl erat volutpat elit ut. Ullamcorper mattis
-                      vestibulum enim leo ultrices a. Felis egestas posuere
-                      vestibulum, pharetra sem curs
+                      etiam nullam nisl erat volutpat elit ut. Ullamcorper
+                      mattis vestibulum enim leo ultrices a. Felis egestas
+                      posuere vestibulum, pharetra sem curs
                     </p>
                     <p>
                       Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                       Urna, arcu risus mus in risus eget arcu. Tortor nibh nunc
                       nunc at. Duis scelerisque arcu volutpat gravida volutpat
                       quisque sit. Sed ipsum vitae cum turpis. Molestie cursus
-                      etiam nullam nisl erat volutpat elit ut. Ullamcorper mattis
-                      vestibulum enim leo ultrices a. Felis egestas posuere
-                      vestibulum, pharetra sem curs
+                      etiam nullam nisl erat volutpat elit ut. Ullamcorper
+                      mattis vestibulum enim leo ultrices a. Felis egestas
+                      posuere vestibulum, pharetra sem curs
                     </p>
                     <p>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                    Urna, arcu risus mus in risus eget arcu. Tortor nibh nunc
-                    nunc at. Duis scelerisque arcu volutpat gravida volutpat
-                    quisque sit. Sed ipsum vitae cum turpis. Molestie cursus
-                    etiam nullam nisl erat volutpat elit ut. Ullamcorper mattis
-                    vestibulum enim leo ultrices a. Felis egestas posuere
-                    vestibulum, pharetra sem curs
-                  </p>
+                      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                      Urna, arcu risus mus in risus eget arcu. Tortor nibh nunc
+                      nunc at. Duis scelerisque arcu volutpat gravida volutpat
+                      quisque sit. Sed ipsum vitae cum turpis. Molestie cursus
+                      etiam nullam nisl erat volutpat elit ut. Ullamcorper
+                      mattis vestibulum enim leo ultrices a. Felis egestas
+                      posuere vestibulum, pharetra sem curs
+                    </p>
                   </div>
                 </div>
               </FormControl>
