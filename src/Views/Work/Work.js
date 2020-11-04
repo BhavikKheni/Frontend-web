@@ -25,7 +25,8 @@ import { SessionContext } from "../../Provider/Provider";
 import { get, add } from "../../Services/Auth.service";
 import Service from "../../Services/index";
 import { useSidebar } from "../../Provider/SidebarProvider";
-import "./StartWork.css";
+import { onIsLoggedIn } from "../../Services/Auth.service";
+import './Work.css';
 import WorkSidebar from "./WorkSidebar";
 import AddBookingSpaceBar from "./AddBookingSpaceSidebar/AddBookingSpaceSidebar";
 const newService = new Service();
@@ -461,14 +462,14 @@ const Work = (props) => {
   return (
     <React.Fragment>
       {isLoggedIn && (
-        <React.Fragment>
-          <section className="start_work">
-            <StartWork />
-          </section>
-          <section className="my-service-lib">
-            <TypographyComponent
+        <div className="work_page">
+          <TypographyComponent variant="h2" title="Service name" className="start_work_title" />
+          <StartWork />
+          <section className="my_services">
+            <h2>My service library <span>({services.length} Services)</span></h2>
+            {/* <TypographyComponent
               title={`My service library (${services.length})`}
-            />
+            /> */}
             {isJobLoading ? (
               <Spinner />
             ) : (
@@ -968,7 +969,7 @@ const Work = (props) => {
               />
             </div>
           )}
-        </React.Fragment>
+        </div>
       )}
       <SnackBarComponent
         open={openSnackbar}

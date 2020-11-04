@@ -1,21 +1,15 @@
+.start_work {
+  margin-bottom: 33px;
+}
 .start_work_hero {
   display: flex;
   min-height: 739px;
 }
-
-
-
-
-
-
-
-
-
-
 .start_work_hero_left {
   position: relative;
   background-color: #E5E9F8;
-  max-width: calc(100% - 223px);
+  /* max-width: calc(100% - 223px); */
+  max-width: 1160px;
   width: 100%;
 }
 .service_calling_wrapper {
@@ -29,18 +23,15 @@
   align-items: center;
   width: 100%;
 }
-
 .service_calling_message {
   max-width: 627px;
   width: 100%;
   position: relative;
   margin-right: 15px;
 }
-
 .service_calling_message .MuiInputBase-root {
   width: 100%;
 }
-
 .service_calling_wrapper input {
   font-size: 16px;
   line-height: 30px;
@@ -52,27 +43,22 @@
   border-radius: 10px;
   padding: 10px 85px 10px 25px;
 }
-
 .service_calling_wrapper input::-moz-placeholder {
   color: #303030;
   opacity: 1;
 }
-
 .service_calling_wrapper input:-moz-placeholder {
   color: #303030;
   opacity: 1;
 }
-
 .service_calling_wrapper input::-webkit-input-placeholder {
   color: #303030;
   opacity: 1;
 }
-
 .service_calling_wrapper input:-ms-input-placeholder {
   color: #303030;
   opacity: 1;
 }
-
 .service_calling_wrapper span {
   position: absolute;
   top: 0;
@@ -98,158 +84,45 @@
   height: 48px;
   margin: 0 15px;
 }
-
-
-
-
-
 .start_work_hero_right {
+  display: flex;
+  flex-flow: column;
   max-width: 223px;
   width: 100%;
   padding-left: 11px;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* .divider {
-  border: 1px solid #303030;
-} */
-/* .calling-right-sidebar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-} */
-/* .go-online {
-  color: #fff !important;
-  width: 100% !important;
-  max-width: 242px;
+.start_work_hero_right .MuiAvatar-root {
+  width: 200px;
+  height: 200px;
+  margin-bottom: 16px;
 }
-.off-line {
-  color: #fff !important;
-  background-color: #4f4f4f !important;
-  border-radius: 10px !important;
-  width: 100% !important;
-  max-width: 242px;
-} */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* create service */
-.service-price .MuiFilledInput-input {
-  padding: 7px 12px 10px;
+.work_user_total_count_title {
+  border-bottom: 1px solid #303030;
 }
-.service-rate-item {
+.work_user_total_count_wrapper {
+  flex: 1 0 auto;
+}
+.work_user_total_count {
+  margin: 25px 0;
   display: flex;
   justify-content: space-between;
 }
-.mt {
-  margin-top: 20px;
+.work_user_total_count_wrapper p {
+  font-family: 'Rubik';
+  font-size: 18px;
+  line-height: 30px;
+  color: #303030;
 }
-.cost {
-  margin-top: 30px;
+.work_user_total_count_wrapper p:last-child {
+  font-weight: 500;
 }
-.image-item {
-  background: #333333;
-  border-radius: 5px;
+.start_work_hero_right button {
   width: 100%;
-  max-width: 283px;
-  height: 100%;
-  min-height: 158px;
-  max-height: 158px;
+  color: #fff;
+  margin: 0;
+  text-transform: inherit;
+  margin-top: 25px;
 }
-.image {
-  width: 100%;
-  height: 100%;
-  max-width: 262px;
-  max-height: 157px;
-}
-.image-delete {
-  position: absolute;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  max-width: 190px;
-}
-
-/* my service library */
-
-.my-service-wrapper {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.divider {
-  border: 0.5px solid rgba(48, 48, 48, 0.5);
-}
-.edit-button {
-  background: #ffffff !important;
-  border: 1px solid #ff7a00 !important;
-  color: #ff7a00 !important;
-  box-sizing: border-box;
-  border-radius: 5px !important;
-  max-height: 26px !important;
-  padding: 20px !important;
-  width: 100% !important;
-  max-width: 77px !important;
-}
-.active-button {
-  color: #fff !important;
-  max-height: 26px !important;
-  padding: 20px !important;
-  border-radius: 5px 0px 0px 5px !important;
-  background-color: #2fb41a !important;
-  width: 100% !important;
-  max-width: 85px !important;
-}
-.deactivate-button {
-  background-color: #ff0000 !important;
-}
-.inActive-button {
-  background: #ffffff !important;
-  border: 1px solid #ff0000 !important;
-  box-sizing: border-box !important;
-  border-radius: 0px 5px 5px 0px !important;
-  color: #ff0000 !important;
-  font-style: normal !important;
-  font-weight: normal !important;
-  font-size: 12px !important;
-  line-height: 24px !important;
-}
-.service-quality {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.simpathy {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.start_work_hero_right button.go_offline {
+  background: #4F4F4F;
 }

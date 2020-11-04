@@ -157,6 +157,7 @@ header button.MuiButtonBase-root ~ button {
 }
 .select_down_arrow {
   position: relative;
+  width: 100%;
 }
 .select_down_arrow:after {
   content: '';

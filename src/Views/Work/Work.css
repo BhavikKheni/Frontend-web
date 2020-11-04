@@ -1,0 +1,23 @@
+.work_page h2 {
+  font-family: 'Rubik';
+  font-size: 36px;
+  line-height: 48px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: #4F4F4F;
+}
+
+/* My Services */
+.my_services {
+  max-width: 1160px;
+  width: 100%;
+}
+.my_services h2 {
+  color: #4F4F4F;
+}
+.my_services h2 span {
+  font-size: 14px;
+  line-height: 24px;
+  font-weight: normal;
+}
+/* My Services Over*/

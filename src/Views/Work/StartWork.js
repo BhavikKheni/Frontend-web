@@ -9,7 +9,8 @@ import TypographyComponent from "../../Components/Typography/Typography";
 import ButtonComponent from "../../Components/Forms/Button";
 import ImageComponent from "../../Components/Forms/Image";
 import { themes } from "../../themes";
-import "./StartWork.css";
+// import styles from './StartWork.module.css';
+import './StartWork.css';
 
 import { SessionContext } from "../../Provider/Provider";
 const useSession = () => React.useContext(SessionContext);
@@ -61,8 +62,7 @@ const StartWork = () => {
   };
   
   return (
-    <div>
-      <TypographyComponent title="Service name" className="start_wrok_title" />
+    <section className="start_work">
       <div className="start_work_hero">
         <div className="start_work_hero_left">
           <div className="service_calling_wrapper">
@@ -84,30 +84,27 @@ const StartWork = () => {
           </div>
         </div>
         <div className="start_work_hero_right">
-          {user.image ? (
-            <Avatar className={classes.large} src={user.image} />
-          ) : (
-            <ImageComponent />
-          )}
-          <TypographyComponent title="Name" />
-          <Divider className="divider" />
-          <div className="calling-right-sidebar">
-            <TypographyComponent title="Total time:" />
-            <TypographyComponent title="00:00:00" />
+          <Avatar className={classes.large} />
+          <div className="work_user_total_count_wrapper">
+            <TypographyComponent title="Name" className="work_user_total_count_title" />
+            <div className="work_user_total_count">
+              <TypographyComponent title="Total time:" />
+              <TypographyComponent title="00:00:00" />
+            </div>
+            <div className="work_user_total_count">
+              <TypographyComponent title="Total earned:" />
+              <TypographyComponent title="00.00 $" />
+            </div>
+            <div className="work_user_total_count">
+              <TypographyComponent title="Hourly rate" />
+              <TypographyComponent title="00.00/h" />
+            </div>
           </div>
-          <div className="calling-right-sidebar">
-            <TypographyComponent title="Total earned:" />
-            <TypographyComponent title="00.00 $" />
-          </div>
-          <div className="calling-right-sidebar">
-            <TypographyComponent title="Hourly rate" />
-            <TypographyComponent title="00.00/h" />
-          </div>
-          <ButtonComponent title="Go online" className="go-online" />
-          <ButtonComponent title="Off online" className="off-line" />
+            <ButtonComponent title="Go online" className="go_online" />
+            <ButtonComponent title="Go offline" className="go_offline" />
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 
