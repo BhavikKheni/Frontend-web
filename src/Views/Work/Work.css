@@ -8,16 +8,139 @@
 }
 
 /* My Services */
-.my_services {
+.my_work_services {
   max-width: 1160px;
   width: 100%;
 }
-.my_services h2 {
+.my_work_services h2 {
   color: #4F4F4F;
 }
-.my_services h2 span {
+.my_work_services h2 span {
   font-size: 14px;
   line-height: 24px;
   font-weight: normal;
+}
+.my_work_services_filter {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+  margin-bottom: 8px;
+}
+.my_work_services_filter button {
+  height: 25px;
+  padding: 5px;
+  margin: 0;
+  width: 85px;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: normal;
+  letter-spacing: 0.02em;
+  text-transform: inherit;
+  transition: all 0.3s ease-in-out 0s;
+}
+.my_work_services_filter button.active_service_button {
+  background-color: transparent;
+  border: 1px solid #2fb41a;
+  color: #2fb41a;
+  border-radius: 5px 0px 0px 5px;
+}
+.my_work_services_filter button.active_service_button:hover,
+.my_work_services_filter button.create_new_service_button:hover {
+  background-color: #2fb41a;
+  color: #fff;
+}
+.my_work_services_filter button.inactive_service_button {
+  border: 1px solid #FF0000;
+  border-radius: 0px 5px 5px 0px;
+  background-color: transparent;
+  color: #ff0000;
+}
+.my_work_services_filter button.inactive_service_button:hover {
+  background-color: #ff0000;
+  color: #fff;
+}
+.my_work_services_filter button.create_new_service_button {
+  background-color: transparent;
+  border: 1px solid #2fb41a;
+  color: #2fb41a;
+  width: 130px;
+  border-radius: 5px;
+}
+
+
+.my_work_service_library {
+  max-height: 583px;
+  overflow-y: auto;
+  direction: rtl;
+  padding-left: 45px;
+  margin: 13px 0;
+}
+.my_service {
+  direction: ltr;
+  display: flex;
+}
+.my_service ~ .my_service {
+  margin-top: 25px;
+}
+.my_service button {
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 30px;
+  text-align: center;
+  letter-spacing: 0.02em;
+  height: 26px;
+  text-transform: inherit;
+  border-radius: 5px;
+  padding: 5px;
+  margin: 0;
+}
+.my_service button ~ button {
+  margin-left: 11px;
+}
+.my_service button.activate_service_button {
+  min-width: 85px;
+  background-color: #2FB41A;
+  color: #fff;
+}
+.my_service button.deactivate_service_button.activate_service_button {
+  background-color: #FF0000;
+  color: #fff;
+}
+.my_service button.edit_service_button {
+  min-width: 77px;
+  background-color: transparent;
+  color: #FF7A00;
+  border: 1px solid #FF7A00;
+}
+.my_service p {
+  font-family: 'Rubik';
+  font-size: 14px;
+  line-height: normal;
+  letter-spacing: 0.02em;
+  color: #4F4F4F;
+  line-height: 25px;
+}
+.my_service p.work_service_price {
+  min-width: 75px;
+  text-align: center;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+.my_service p.work_service_title {
+  font-size: 16px;
+  max-width: 480px;
+  width: 100%;
+  margin-right: auto;
+}
+.work_service_review {
+  display: flex;
+  align-items: center;
+  margin-left: 25px;
+}
+.my_service p.work_service_review_name {
+  margin-right: 17px;
+}
+.my_service .work_service_review svg {
+  margin-left: 3px;
 }
 /* My Services Over*/

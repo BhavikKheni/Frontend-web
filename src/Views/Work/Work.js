@@ -465,7 +465,7 @@ const Work = (props) => {
         <div className="work_page">
           <TypographyComponent variant="h2" title="Service name" className="start_work_title" />
           <StartWork />
-          <section className="my_services">
+          <section className="my_work_services">
             <h2>My service library <span>({services.length} Services)</span></h2>
             {/* <TypographyComponent
               title={`My service library (${services.length})`}
@@ -474,12 +474,12 @@ const Work = (props) => {
               <Spinner />
             ) : (
               <React.Fragment>
-                <div className="my-service-wrapper">
+                <div className="my_work_services_filter">
                   <div>
                     <ButtonComponent
                       title={"Active"}
                       type="button"
-                      className="active-button"
+                      className="active_service_button"
                       onClick={() => {
                         const newArray = services.sort(
                           (a, b) => b.active - a.active
@@ -494,7 +494,7 @@ const Work = (props) => {
 
                     <ButtonComponent
                       title="Inactive"
-                      className="inActive-button"
+                      className="inactive_service_button"
                       type="button"
                       onClick={() => {
                         const newArray = services.sort(
@@ -508,7 +508,7 @@ const Work = (props) => {
                   <div>
                     <ButtonComponent
                       title="Create service"
-                      className="create-button"
+                      className="create_new_service_button"
                       type="button"
                       onClick={() => {
                         setServiceVisible(true);
@@ -518,19 +518,28 @@ const Work = (props) => {
                     />
                   </div>
                 </div>
-                <Divider className="divider" />
-                {services && !services.length ? (
-                  <span>{t("service.notFoundService")}</span>
-                ) : (
-                  services.map((service, index) => {
-                    return (
-                      <Grid container spacing={3} key={index}>
-                        <Grid item xs={12} md={3}>
+
+                <Grid container spacing={3}>
+                  <Grid item xs={12} md={12}>
+                    <Divider
+                      style={{
+                        border: "0.5px solid #9E9E9E",
+                      }}
+                    />
+                  </Grid>
+                </Grid>
+                <div className="my_work_service_library">
+                  {services && !services.length ? (
+                    <span>{t("service.notFoundService")}</span>
+                  ) : (
+                    services.map((service, index) => {
+                      return (
+                        <div className="my_service">
                           <ButtonComponent
                             title={service.active ? "Activate" : "Deactivate"}
                             className={clsx(
-                              { "deactivate-button": !service.active },
-                              "active-button"
+                              { "deactivate_service_button": !service.active },
+                              "activate_service_button"
                             )}
                             onClick={(e) => {
                               onActivateDactivate(service);
@@ -540,42 +549,29 @@ const Work = (props) => {
 
                           <ButtonComponent
                             title="Edit"
-                            className="edit-button"
+                            className="edit_service_button"
                             onClick={() => {
                               onEdit(service);
                               setEditRecord(service);
                             }}
                           />
-                        </Grid>
-                        <Grid item xs={12} md={1}>
-                          <TypographyComponent title={service.price} />
-                        </Grid>
-                        <Grid item xs={12} md={1}>
-                          <TypographyComponent title={service.title} />
-                        </Grid>
-                        <Hidden smDown>
-                          <Grid item xs={12} md={1}></Grid>
-                        </Hidden>
-                        <Grid item xs={12} md={1}>
-                          <TypographyComponent title="Service quality" />
-                        </Grid>
-                        <Grid item xs={12} md={2}>
-                          <div className="service-quality">
+                          <TypographyComponent title={service.price} className="work_service_price" />
+                          <TypographyComponent title={service.title} className="work_service_title" />
+                          <div className="work_service_review">
+                            <TypographyComponent title="Service quality" className="work_service_review_name" />
                             <TypographyComponent title="5" />
                             <StarBorderIcon />
                           </div>
-                        </Grid>
-                        <Grid item xs={12} md={3}>
-                          <TypographyComponent title="Sympathy" />
-                          <div className="simpathy">
+                          <div className="work_service_review">
+                            <TypographyComponent title="Sympathy" className="work_service_review_name"/>
                             <TypographyComponent title="4.5" />
                             <StarBorderIcon />
                           </div>
-                        </Grid>
-                      </Grid>
-                    );
-                  })
-                )}
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
                 {isUpcomingMoreData && services && services.length > 0 && (
                   <div>
                     {isUpcomingLoading ? (
@@ -590,7 +586,15 @@ const Work = (props) => {
                     )}
                   </div>
                 )}
-                <Divider className="divider" />
+                <Grid container spacing={3}>
+                  <Grid item xs={12} md={12}>
+                    <Divider
+                      style={{
+                        border: "0.5px solid #9E9E9E",
+                      }}
+                    />
+                  </Grid>
+                </Grid>
               </React.Fragment>
             )}
           </section>

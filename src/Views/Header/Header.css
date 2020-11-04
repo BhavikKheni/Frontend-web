@@ -180,23 +180,24 @@ header .header_navbar {
     margin-left: 11px !important;
 }
 
-.flag-select.country_flag {
+header .flag-select.country_flag {
     min-height: 54px;
     padding-bottom: 0;
 }
 
-.flag-select__btn {
+header .flag-select__btn {
     position: relative;
     text-align: left;
     outline: none;
     padding: 12px 30px 10px 0;
     margin-top: 15px;
     min-height: 40px;
+    min-height: inherit;
     cursor: pointer;
 }
 
-.flag-select__btn,
-.flag-select__options {
+header .flag-select__btn,
+header .flag-select__options {
     min-width: 170px;
 }
 
