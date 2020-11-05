@@ -6,44 +6,36 @@ import interactionPlugin from "@fullcalendar/interaction";
 import "date-fns";
 import DateFnsUtils from "@date-io/date-fns";
 import "./Calendar.css";
-
 const CalendarComponent = (props) => {
-  const {INITIAL_EVENTS ,renderEventContent } = props;
-
+  const { INITIAL_EVENTS, renderEventContent } = props;
   return (
     <FullCalendar
       plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-
-      
-
       headerToolbar={{
         left: "today prevYear,prev,title,next,nextYear",
         right: "dayGridMonth,timeGridWeek,timeGridDay",
-        center: ""
+        center: "",
       }}
       dayHeaderFormat={{
         day: "numeric",
         weekday: "short",
         month: "long",
       }}
-
       titleFormat={{
         month: "long",
-        year: "numeric"
+        year: "numeric",
       }}
-
       initialView="timeGridWeek"
       formatDate={{
         month: "long",
         year: "numeric",
         day: "numeric",
       }}
+      // businessHours={true}
       editable={true}
-      selectable={false}
-      selectMirror={true}
-      dayMaxEvents={true}
+      eventConstraint={"businessHours"} // disabled drag and drop in whole calendar
       eventContent={renderEventContent && renderEventContent}
-      initialEvents={INITIAL_EVENTS}
+      events={INITIAL_EVENTS}
     />
   );
 };

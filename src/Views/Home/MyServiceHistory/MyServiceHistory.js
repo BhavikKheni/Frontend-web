@@ -10,6 +10,7 @@ import Divider from "@material-ui/core/Divider";
 import { search } from "../../../Services/Auth.service";
 import Spinner from "../../../Components/Spinner/Spinner";
 import TypographyComponent from "../../../Components/Typography/Typography";
+import moment from "moment";
 let limit = 10;
 const path = "/service/bookings/list";
 
@@ -20,6 +21,9 @@ const useStyles = makeStyles((theme) => ({
   heading: {
     fontSize: theme.typography.pxToRem(15),
     fontWeight: theme.typography.fontWeightRegular,
+  },
+  details: {
+    flexDirection: "column",
   },
 }));
 
@@ -38,7 +42,8 @@ const MyServiceHistory = (props) => {
       limit: limit,
       offset: 0,
       id_user: user.id_user,
-      status: ["NEXT"],
+      status: "FINISHED",
+      role: "CLIENT",
     };
     setIsLoading(true);
     search(path, params)
@@ -106,24 +111,42 @@ const MyServiceHistory = (props) => {
       ) : records && !records.length ? (
         <span>{t("home.serviceHistory.notFoundRecord")}</span>
       ) : (
-        records.map((r, index) => (
+        records.map((record, index) => (
           <Grid container spacing={3} key={index}>
-            <Accordion>
+            <Accordion key={index}>
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls="panel1a-content"
                 id="panel1a-header"
               >
-                <TypographyComponent className={classes.heading}>
-                  Accordion 1
-                </TypographyComponent>
+                <span></span>
+                <span>{moment(record.from_time).format("HH:mm")}</span>
+                <span>{moment(record.to_time).format("HH:mm")}</span>
+                <span>{record.title}</span>
               </AccordionSummary>
-              <AccordionDetails>
-                <TypographyComponent>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
-                  eget.
-                </TypographyComponent>
+              <AccordionDetails className={classes.details}>
+                <div>
+                  <TypographyComponent title="Provider name" />
+                </div>
+                <div>
+                  <TypographyComponent title={record.provider_name} />
+                </div>
+                <div>
+                  <TypographyComponent title="Total price" />
+                  <TypographyComponent title={`${record.price}/£`} />
+                  <div>
+                    <TypographyComponent title="Status" />
+                    <TypographyComponent title={record.status} />
+                  </div>
+                </div>
+                <div>
+                  <TypographyComponent title="Transaction id" />
+                  <TypographyComponent title="ipi_1HSRfRCYjANOKpKjodn7KML5" />
+                </div>
+                <div>
+                  <TypographyComponent title="Order id" />
+                  <TypographyComponent title="ipi_1HSRfRCYjANOKpKjodn7KML5" />
+                </div>
               </AccordionDetails>
             </Accordion>
           </Grid>

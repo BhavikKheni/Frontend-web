@@ -1,11 +1,11 @@
-import React, { useState, useEffect,useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import clsx from "clsx";
 import { Grid, Divider } from "@material-ui/core";
 import StarBorderIcon from "@material-ui/icons/StarBorder";
 import TypographyComponent from "../../Components/Typography/Typography";
 import ButtonComponent from "../../Components/Forms/Button";
 import StartWork from "./StartWork";
-import AddBookinSpace from "./AddBookingSpace";
+import AddBookingSpace from "./AddBookingSpace";
 import { search } from "../../Services/Auth.service";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -28,59 +28,11 @@ import { useSidebar } from "../../Provider/SidebarProvider";
 import { onIsLoggedIn } from "../../Services/Auth.service";
 import './Work.css';
 import WorkSidebar from "./WorkSidebar";
-import AddBookingSpaceBar from "./AddBookingSpaceSidebar/AddBookingSpaceSidebar";
+import AddBookingSpaceBar from "../../Components/Booking/AddBookingSpaceSidebar/AddBookingSpacebarSide";
+import moment from "moment";
 const newService = new Service();
 const useSession = () => React.useContext(SessionContext);
 
-const booked_slots = [
-  {
-    id: 1,
-    startDate: "2020-10-27T01:10:00",
-    endDate: "2020-10-27T11:00:00",
-    title: "Test event",
-    booked_by: 1,
-    color: "red",
-    resize: false,
-  },
-];
-const available_slots = [
-  {
-    startDate: "2020-10-27T12:10:00",
-    endDate: "2020-10-27T11:00:00",
-    color: "green",
-    editable: true,
-    title: "Available slot",
-  },
-  {
-    id: 2,
-    startDate: "2020-10-27T07:00:00",
-    endDate: "2020-10-27T11:00:00",
-    title: "Test event",
-    booked_by: 159,
-    color: "blue",
-    editable: false,
-  },
-];
-var tempArray = [];
-
-available_slots.forEach((val) => {
-  tempArray.push({
-    start: val.startDate,
-    color: val.color,
-    editable: val.editable,
-    id: val.id,
-    title: val.title,
-  });
-});
-booked_slots.forEach((val) => {
-  tempArray.push({
-    start: val.startDate,
-    color: val.color,
-    editable: val.editable,
-    id: val.id,
-    title: val.title,
-  });
-});
 const limit = 10;
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -133,9 +85,13 @@ const Work = (props) => {
   const [serviceVisible, setServiceVisible] = useState(false);
   const [editRecord, setEditRecord] = useState({});
   const [getDeletedImageArry, setDeletedImageArray] = useState([]);
-  let { isLoggedIn, doLogin } = useSession();
+  let { isLoggedIn } = useSession();
 
   const [activeLoader, setActiveLoader] = useState(false);
+  const [slots, setAllSlots] = useState([]);
+  const [availableSlots, setAvailableSlots] = useState([]);
+  const [addActiveClassName, setActiveClassName] = useState("");
+  const [addClassInActiveName, setInActiveClassName] = useState("");
 
   useEffect(() => {
     var elmnt = document.getElementsByClassName("start_work");
@@ -169,6 +125,47 @@ const Work = (props) => {
   useEffect(() => {
     searchServiceLibrary();
   }, [user.id_user, searchServiceLibrary]);
+  useEffect(() => {
+    async function fetchSlots() {
+      const params = {
+        from_date: moment().startOf("week").format("YYYY-MM-DD"),
+        to_date: moment().endOf("week").format("YYYY-MM-DD"),
+      };
+      const response = await search("/slot/list", params).catch((err) => {
+        console.log("error", err);
+      });
+
+      if (response) {
+        setAvailableSlots(response["available_slots"]);
+
+        let tempArray = [];
+        response["available_slots"].forEach((slot) => {
+          tempArray.push({
+            groupId: "availableForMeeting",
+            start: moment(slot.startDate).format("YYYY-MM-DDTHH:mm:ss"),
+            end: moment(slot.endDate).format("YYYY-MM-DDTHH:mm:ss"),
+            display: "background",
+            // constraint: 'availableForMeeting',
+          });
+        });
+        response["booked_slots"].forEach((slot) => {
+          tempArray.push({
+            id: slot.slot_id,
+            start: moment(slot.startDate).format("YYYY-MM-DDTHH:mm:ss"),
+            end: moment(slot.endDate).format("YYYY-MM-DDTHH:mm:ss"),
+            title: slot.service_title,
+            description: "Booked",
+            booked_by: slot.booked_by,
+            color: "#4F4F4F",
+            resize: false,
+            overlap: false,
+          });
+        });
+        setAllSlots([...tempArray]);
+      }
+    }
+    fetchSlots();
+  }, []);
 
   const onMore = async (path, offset, criteria = {}) => {
     setUpcomingLoading(true);
@@ -457,6 +454,44 @@ const Work = (props) => {
 
   const onAddBookingCalendar = (data) => {
     console.log("Data", data);
+
+    // availableSlots.forEach((slot) => {
+    //   const startDate = moment(slot.startDate).format("YYYY-MM-DDTHH:mm:ss");
+    //   const endDate = moment(slot.endDate).format("YYYY-MM-DDTHH:mm:ss");
+    // });
+    setAllSlots((d) => [...(d || []), data]);
+  };
+
+  const onCreateService = () => {
+    if (user.email_verified) {
+      setServiceVisible(true);
+      formik.resetForm({});
+      setFileList([]);
+      var elmnt = document.getElementsByClassName("create-service");
+      if (elmnt[0]) {
+        elmnt[0].scrollIntoView();
+      }
+    } else {
+      setOpenSnackbar(true);
+      setTypeRes({
+        message: "Please verify your email",
+        type: "error",
+      });
+    }
+  };
+
+  const onIsActive = () => {
+    const newArray = services.sort((a, b) => b.active - a.active);
+    setServices((services) => [...newArray]);
+    setActiveRecord((services) => [...newArray]);
+    setActiveClassName("is_active_service");
+  };
+
+  const onIsInActive = () => {
+    const newArray = services.sort((a, b) => a.active - b.active);
+    setServices((services) => [...newArray]);
+    setInActiveRecord((services) => [...newArray]);
+    setInActiveClassName("is_in_active_service");
   };
 
   return (
@@ -479,29 +514,18 @@ const Work = (props) => {
                     <ButtonComponent
                       title={"Active"}
                       type="button"
-                      className="active_service_button"
+                      className={clsx("active_service_button", addActiveClassName)}
                       onClick={() => {
-                        const newArray = services.sort(
-                          (a, b) => b.active - a.active
-                        );
-                        setServices((b) => [...(b || []), ...(newArray || [])]);
-                        setActiveRecord((s) => [
-                          ...(s || []),
-                          ...(newArray || []),
-                        ]);
+                        onIsActive("isActive");
                       }}
                     />
 
                     <ButtonComponent
                       title="Inactive"
-                      className="inactive_service_button"
+                      className={clsx("inactive_service_button", addClassInActiveName)}
                       type="button"
                       onClick={() => {
-                        const newArray = services.sort(
-                          (a, b) => a.active - b.active
-                        );
-                        setServices((services) => [...newArray]);
-                        setInActiveRecord((services) => [...newArray]);
+                        onIsInActive();
                       }}
                     />
                   </div>
@@ -511,9 +535,7 @@ const Work = (props) => {
                       className="create_new_service_button"
                       type="button"
                       onClick={() => {
-                        setServiceVisible(true);
-                        formik.resetForm({});
-                        setFileList([]);
+                        onCreateService();
                       }}
                     />
                   </div>
@@ -534,7 +556,7 @@ const Work = (props) => {
                   ) : (
                     services.map((service, index) => {
                       return (
-                        <div className="my_service">
+                        <div className="my_service" key={index}>
                           <ButtonComponent
                             title={service.active ? "Activate" : "Deactivate"}
                             className={clsx(
@@ -961,7 +983,7 @@ const Work = (props) => {
           )}
           {formik.values.id_service && (
             <section className="add-booking-space">
-              <AddBookinSpace tempArray={tempArray} />
+              <AddBookingSpace tempArray={slots} />
             </section>
           )}
           {formik.values.id_service && (

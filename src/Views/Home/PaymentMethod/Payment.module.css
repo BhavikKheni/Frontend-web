@@ -1,0 +1,54 @@
+.payment_add_wrapper {
+  display: flex;
+  align-items: center;
+}
+.payment_card {
+  background: #ffffff;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  width: 100%;
+  max-width: 293px;
+  height: 100%;
+  max-height: 150px;
+}
+.payment_item_card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.payment_add_card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  min-height: 150px;
+}
+.payment_card_content {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  cursor: pointer;
+}
+.card_wrapper {
+  width: 100%;
+  max-width: 456px;
+  height: 100%;
+  min-height: 209px;
+  background-color: #ffffff;
+  padding: 27px 76px 15px 68px;
+}
+.card_form {
+  width: 100%;
+  max-width: 312px;
+  height: 100%;
+  min-height: 167px;
+  background-color: #000;
+  padding: 10px;
+}
+.card_items {
+  background: #434343;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.cardElement {
+}

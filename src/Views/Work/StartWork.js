@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { InputBase, Avatar, Divider } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import SendIcon from "@material-ui/icons/Send";
@@ -9,10 +9,11 @@ import TypographyComponent from "../../Components/Typography/Typography";
 import ButtonComponent from "../../Components/Forms/Button";
 import ImageComponent from "../../Components/Forms/Image";
 import { themes } from "../../themes";
-// import styles from './StartWork.module.css';
-import './StartWork.css';
-
+import { add } from "../../Services/Auth.service";
 import { SessionContext } from "../../Provider/Provider";
+import Spinner from "../../Components/Spinner/Spinner";
+import SnackBarComponent from "../../Components/SnackBar/SnackBar";
+import "./StartWork.css";
 const useSession = () => React.useContext(SessionContext);
 const useStyles = makeStyles((theme) => ({
   search: {
@@ -55,12 +56,65 @@ const useStyles = makeStyles((theme) => ({
 const StartWork = () => {
   const classes = useStyles();
   const { user } = useSession();
+  const [onLineServiceLoader, setOnLineServiceLoader] = useState(false);
+  const [offLineServiceLoader, setOffLineServiceLoader] = useState(false);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [error, setError] = useState({});
+
+  async function setLiveService(type) {
+    const param = {
+      id_user: user.id_user,
+      live_state: type,
+    };
+
+    if (type === "ONLINE") {
+      setOnLineServiceLoader(true);
+    } else if (type === "OFFLINE") {
+      setOffLineServiceLoader(true);
+    }
+    add("/service/livestate", param)
+      .then((res) => {
+        if (res && res) {
+          setError(res);
+          if (type === "ONLINE") {
+            setOnLineServiceLoader(false);
+          } else if (type === "OFFLINE") {
+            setOffLineServiceLoader(false);
+          }
+          setOpenSnackbar(true);
+        }
+      })
+      .catch((error) => {
+        setError(error);
+        setOpenSnackbar(true);
+        if (type === "ONLINE") {
+          setOnLineServiceLoader(false);
+        } else if (type === "OFFLINE") {
+          setOffLineServiceLoader(false);
+        }
+      });
+  }
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenSnackbar(false);
+  };
+
   const changeSearch = (e) => {};
 
   const onSearch = (e) => {
     e.preventDefault();
   };
-  
+
+  const onGoOnline = () => {
+    setLiveService("ONLINE");
+  };
+
+  const onGoOffline = () => {
+    setLiveService("OFFLINE");
+  };
+
   return (
     <section className="start_work">
       <div className="start_work_hero">
@@ -100,10 +154,34 @@ const StartWork = () => {
               <TypographyComponent title="00.00/h" />
             </div>
           </div>
-            <ButtonComponent title="Go online" className="go_online" />
-            <ButtonComponent title="Go offline" className="go_offline" />
+          <ButtonComponent
+            title="Go online"
+            className="go_online"
+            startIcon={onLineServiceLoader && <Spinner />}
+            onClick={() => {
+              onGoOnline();
+            }}
+          />
+          <ButtonComponent
+            title="Off online"
+            className="go_offline"
+            startIcon={offLineServiceLoader && <Spinner />}
+            onClick={() => {
+              onGoOffline();
+            }}
+          />
         </div>
       </div>
+      <SnackBarComponent
+        open={openSnackbar}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        message={error.message}
+        type={error.type && error.type.toLowerCase()}
+      />
     </section>
   );
 };

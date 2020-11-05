@@ -15,9 +15,7 @@ import DefaultServiceImage from "../../images/default-image.jpeg";
 import "react-animated-slider/build/horizontal.css";
 import "./ServiceCard.css";
 const useStyles = makeStyles((theme) => ({
-  root: {
-    
-  },
+  root: {},
   media: {
     height: 0,
     paddingTop: "60.25%", // 16:9
@@ -65,12 +63,8 @@ const ServiceCardComponent = (props) => {
               />
             </div>
             <div className="service_review">
-              <TypographyComponent
-                title={service_quality_rating}
-              />
-              <StarBorderIcon
-                className="card_start_review"
-              />
+              <TypographyComponent title={service_quality_rating} />
+              <StarBorderIcon className="card_start_review" />
             </div>
           </div>
           <div className="service">
@@ -78,39 +72,33 @@ const ServiceCardComponent = (props) => {
               <TypographyComponent title="Simpathy" />
             </div>
             <div className="service_review">
-              <TypographyComponent
-                title={sympathy_rating}
-              />
-              <StarBorderIcon
-                className="card_start_review"
-              />
+              <TypographyComponent title={sympathy_rating} />
+              <StarBorderIcon className="card_start_review" />
             </div>
           </div>
         </div>
         <div className="card-buttons">
-        {service_provider_live_now ? (
-          <React.Fragment>
-            <div className="phoneIconCard" onClick={onPhone}>
-              <PhoneIcon/>
+          {service_provider_live_now ? (
+            <React.Fragment>
+              <div className="phoneIconCard" onClick={onPhone}>
+                <PhoneIcon />
+              </div>
+              <div className="calendarIconCard" onClick={onCalendar}>
+                <CalendarTodayIcon />
+              </div>
+            </React.Fragment>
+          ) : (
+            <div className="calendar_book_service" onClick={onCalendar}>
+              <CalendarTodayIcon />
+              <TypographyComponent title="Book Service" />
             </div>
-            <div className="calendarIconCard" onClick={onCalendar}>
-              <CalendarTodayIcon/>
-            </div>
-          </React.Fragment>
-        ):(
-          <div className="calendar_book_service" onClick={onCalendar}>
-            <CalendarTodayIcon/>
-            <TypographyComponent
-                title="Book Service"
-            />
-          </div>
-        )}
+          )}
         </div>
       </div>
     );
   };
   return (
-    <Card className={clsx(classes.root, 'job_card')}>
+    <Card className={clsx(classes.root, "job_card")}>
       <div className="job_card_inner">
         <Slider>
           {images.length > 0 ? (
@@ -119,7 +107,7 @@ const ServiceCardComponent = (props) => {
                 key={i}
                 style={{
                   background: ` URL('${image.image}') no-repeat  center  center `,
-                  backgroundSize: '100%',
+                  backgroundSize: "100%",
                 }}
               >
                 {imageRender()}
@@ -127,43 +115,39 @@ const ServiceCardComponent = (props) => {
             ))
           ) : (
             <div
-            style={{
-              background: ` URL('${DefaultServiceImage}') no-repeat  center  center `,
-              backgroundSize: '100%',
-            }}
-            // className="previousButton nextButton"
-          >
-            {imageRender()}
-          </div>
+              style={{
+                background: ` URL('${DefaultServiceImage}') no-repeat  center  center `,
+                backgroundSize: "100%",
+              }}
+              // className="previousButton nextButton"
+            >
+              {imageRender()}
+            </div>
           )}
         </Slider>
         <CardActions disableSpacing className={"card_ratings"}>
           <div className="card-actions">
             <div className="card-actions-title" onClick={onServiceTitle}>
               <TooltipComponent title={title} placement="bottom">
-                <Typography
-                className="card_title"
-                >
-                  {title}
-                </Typography>
+                <Typography className="card_title">{title}</Typography>
               </TooltipComponent>
             </div>
             <div style={{ cursor: "pointer" }} onClick={onProviderName}>
               <TooltipComponent title={providerName || ""} placement="bottom">
-                <Typography
-                  className="card_description"
-                >
+                <Typography className="card_description">
                   {providerName}
                 </Typography>
               </TooltipComponent>
             </div>
           </div>
           <div className="card-status">
-          <span
-            className={clsx(service_provider_live_now ? "live-now" : "offline")}
-          >
-            {service_provider_live_now === true ? "Live now" : "offline"}
-          </span>
+            <span
+              className={clsx(
+                service_provider_live_now === "LIVE" ? "live-now" : "offline"
+              )}
+            >
+              {service_provider_live_now === "LIVE" ? "live-now" : "Offline"}
+            </span>
             <span className="price">{`${price}$/h`}</span>
           </div>
         </CardActions>

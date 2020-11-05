@@ -8,7 +8,7 @@ import CalendarComponent from "./MyCalendar/MyCalendar";
 import MyServiceHistory from "./MyServiceHistory/MyServiceHistory";
 import NextBooking from "./NextBooking/NextBooking";
 import PaymentMethod from "./PaymentMethod/PaymentMethod";
-import AddBookingSidebar from "../../Components/AddBookingSidebar/AddBookingSidebar";
+import AddBookingSidebar from "../../Components/Booking/AddBookingSidebar/AddBookingSidebar";
 
 const useSession = () => React.useContext(SessionContext);
 

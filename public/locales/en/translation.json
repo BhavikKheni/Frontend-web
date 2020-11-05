@@ -73,7 +73,8 @@
     },
     "nextBooking": {
       "title": "Next Bookings",
-      "notFoundRecord": "Records not found"
+      "notFoundRecord": "Records not found",
+      "deleteDialog": "Booking purpose"
     },
     "paymentMethod": {
       "title": "Payment Methods"
@@ -95,5 +96,8 @@
     "title": "Would you like to leave?",
     "message": "You’re going to leave the call. Are you sure?",
     "opinion": "What`s your oppinion"
+  },
+  "payment": {
+    "addCard": "Add card"
   }
 }

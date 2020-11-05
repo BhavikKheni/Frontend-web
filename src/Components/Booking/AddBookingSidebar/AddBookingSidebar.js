@@ -6,33 +6,34 @@ import {
 import moment from "moment";
 import DateFnsUtils from "@date-io/date-fns";
 import AddIcon from "@material-ui/icons/Add";
-import InputComponent from "../../../Components/Forms/Input";
-import ButtonComponent from "../../../Components/Forms/Button";
-import Sppiner from "../../../Components/Spinner/Spinner";
+import InputComponent from "../../Forms/Input";
+import ButtonComponent from "../../Forms/Button";
+import Sppiner from "../../Spinner/Spinner";
 import { add } from "../../../Services/Auth.service";
-import SnackBarComponent from "../../../Components/SnackBar/SnackBar";
+import SnackBarComponent from "../../SnackBar/SnackBar";
 
 const AddBookingSidebar = (props) => {
-  const [fromTime, setFromTime] = useState();
-  const [toTime, setToTime] = useState();
-
+  const [fromTime, setFromTime] = useState("");
+  const [toTime, setToTime] = useState("");
   const [openSnackBar, setOpenSnackBar] = useState(false);
   const [response, setResponse] = useState({});
   const [selectedDate, setSelectedDate] = React.useState(new Date());
   const [isLoading, setLoading] = useState(false);
   const [data, setData] = useState([]);
   const { user, selectedService } = props;
+  
   const handleDateChange = (date) => {
     setSelectedDate(date);
   };
 
   const onAddBooking = () => {
+    const date = moment(selectedDate).format("YYYY-MM-DD");
     const bookingData = {
-      from_time: fromTime,
-      to_time: toTime,
       id_service: selectedService.id_service,
-      booking_date: moment(selectedDate).format("YYYY-MM-DD"),
+      start: `${date}T${fromTime}:00`,
+      end: `${date}T${toTime}:00`,
       id_user: user.id_user,
+      color: "red",
     };
     setData(bookingData);
     props.onAddBooking(bookingData);
@@ -71,6 +72,7 @@ const AddBookingSidebar = (props) => {
         <span className="booking_time_label">From:</span>
         <InputComponent
           placeholder="00:00"
+          type="time"
           value={fromTime}
           onChange={(e) => {
             setFromTime(e.target.value);
@@ -80,6 +82,7 @@ const AddBookingSidebar = (props) => {
         <span>To</span>
         <InputComponent
           placeholder="00:00"
+          type="time"
           value={toTime}
           onChange={(e) => {
             setToTime(e.target.value);
@@ -116,15 +119,6 @@ const AddBookingSidebar = (props) => {
           type="button"
           onClick={() => {
             onAddBooking();
-          }}
-          className={"confirm_cta"}
-        />
-        <ButtonComponent
-          title="Save"
-          type="button"
-          startIcon={isLoading && <Sppiner />}
-          onClick={() => {
-            onSaveAddBooking();
           }}
           className={"confirm_cta"}
         />

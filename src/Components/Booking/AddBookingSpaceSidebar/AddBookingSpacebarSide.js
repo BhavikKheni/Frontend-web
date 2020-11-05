@@ -6,11 +6,11 @@ import {
 import moment from "moment";
 import DateFnsUtils from "@date-io/date-fns";
 import AddIcon from "@material-ui/icons/Add";
-import InputComponent from "../../../Components/Forms/Input";
-import ButtonComponent from "../../../Components/Forms/Button";
-import Sppiner from "../../../Components/Spinner/Spinner";
+import InputComponent from "../../Forms/Input";
+import ButtonComponent from "../../Forms/Button";
+import Sppiner from "../../Spinner/Spinner";
 import { add } from "../../../Services/Auth.service";
-import SnackBarComponent from "../../../Components/SnackBar/SnackBar";
+import SnackBarComponent from "../../SnackBar/SnackBar";
 
 const AddBookingSpaceSidebar = (props) => {
   const [fromTime, setFromTime] = useState("");
@@ -27,12 +27,13 @@ const AddBookingSpaceSidebar = (props) => {
   };
 
   const onAddBooking = () => {
+    const date = moment(selectedDate).format("YYYY-MM-DD");
     const bookingData = {
-      from_time: fromTime,
-      to_time: toTime,
       id_service: selectedService.id_service,
-      booking_date: moment(selectedDate).format("YYYY-MM-DD"),
+      start: `${date}T${fromTime}:00`,
+      end: `${date}T${toTime}:00`,
       id_user: user.id_user,
+      color: "red",
     };
     setData(bookingData);
     props.onAddBookingCalendar(bookingData);

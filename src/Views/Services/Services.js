@@ -98,7 +98,7 @@ const Services = (props) => {
       per_hour_rate_max: Number(per_hour_rate_max),
       simpathy,
       service_quality,
-      live_now: 'LIVE',
+      live_now: value,
       country: country,
       provider_language,
     };
@@ -398,14 +398,14 @@ const Services = (props) => {
     //update auth api call karva ni
   };
 
-  const onPhone = (element) => {
+  const goToPhone = (element) => {
     history.push("/call-page", {
       service: element,
       userId: element.provider_id_user,
     });
   };
 
-  const onCalendar = (element) => {
+  const goToCalendar = (element) => {
     history.push("/profile-provider", {
       type: "calendar-view",
       service: element,
@@ -413,7 +413,7 @@ const Services = (props) => {
     });
   };
 
-  const onServiceTitle = (element) => {
+  const goToServiceTitle = (element) => {
     history.push("/profile-provider", {
       service: element,
       type: "job-details",
@@ -421,7 +421,7 @@ const Services = (props) => {
     });
   };
 
-  const onProviderName = (element) => {
+  const goToProviderName = (element) => {
     history.push("/profile-provider", {
       userId: element.provider_id_user,
       service: element,
@@ -511,10 +511,10 @@ const Services = (props) => {
                 service_quality_rating={element.service_quality_rating}
                 sympathy_rating={element.sympathy_rating}
                 service_provider_live_now={element.service_provider_live_now}
-                onPhone={() => onPhone(element)}
-                onCalendar={() => onCalendar(element)}
-                onServiceTitle={() => onServiceTitle(element)}
-                onProviderName={() => onProviderName(element)}
+                onPhone={() => goToPhone(element)}
+                onCalendar={() => goToCalendar(element)}
+                onServiceTitle={() => goToServiceTitle(element)}
+                onProviderName={() => goToProviderName(element)}
               />
             ))
           )}

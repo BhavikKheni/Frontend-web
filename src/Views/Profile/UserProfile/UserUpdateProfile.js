@@ -18,6 +18,7 @@ import ImageComponent from "../../../Components/Forms/Image";
 import Spinner from "../../../Components/Spinner/Spinner";
 import { LOCALSTORAGE_DATA } from "../../../utils";
 import ChangePassword from "../../../Components/ChangePassword/ChangePassword";
+import { serverLogout } from "../../../Services/Auth.service";
 import "./UserUpdateProfile.css";
 const service = new Service();
 const useSession = () => React.useContext(SessionContext);
@@ -39,7 +40,7 @@ const languages_level = [
   { language_level_id: 3, label: "ADVANCED" },
 ];
 const UpdateProfile = (props) => {
-  let { user } = useSession();
+  let { user, logout } = useSession();
   let [userData, setUserData] = useState({
     first_name: "",
     last_name: "",
@@ -297,7 +298,8 @@ const UpdateProfile = (props) => {
       setDeleteDisabled(false);
       setOpenSnackBar(true);
       setResError(res);
-      props.history.push('/')
+      onLogout();
+      props.history.push("/");
     } else if (res && res.type === "ERROR") {
       setDeleteLoader(false);
       setOpenSnackBar(true);
@@ -320,7 +322,8 @@ const UpdateProfile = (props) => {
       setDeactivateLoader(false);
       setDeactivateDisabled(false);
       setOpenSnackBar(true);
-      props.history.push('/')
+      onLogout();
+      props.history.push("/");
     } else if (res && res.type === "ERROR") {
       setDeactivateLoader(false);
       setOpenSnackBar(true);
@@ -333,6 +336,18 @@ const UpdateProfile = (props) => {
       return;
     }
     setOpenSnackBar(false);
+  };
+
+  const onLogout = () => {
+    serverLogout()
+      .then((result) => {
+        if (result.type === "SUCCESS") {
+          onLogout(props).then((result) => {
+            logout();
+          });
+        }
+      })
+      .catch((err) => console.log(err));
   };
 
   return (
@@ -496,7 +511,6 @@ const UpdateProfile = (props) => {
               title="Deactivate profile"
               type="button"
               onClick={() => setOpenDeactivateConfirmationDialog(true)}
-              
             />
             <ButtonComponent
               className="update_profile_cta"
@@ -517,7 +531,7 @@ const UpdateProfile = (props) => {
           type="change-password"
           user={user}
         />
-        
+
         <DialogComponent
           onClose={(e) => {
             e.stopPropagation();

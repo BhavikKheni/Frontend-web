@@ -3,9 +3,8 @@ import { withRouter } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { CircularProgress } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import Grid from "@material-ui/core/Grid";
 import CheckIcon from "@material-ui/icons/Check";
-import { get } from "../../../Services/Auth.service";
+import { get, search } from "../../../Services/Auth.service";
 import TypographyComponent from "../../../Components/Typography/Typography";
 import { themes } from "../../../themes";
 import { useSidebar } from "../../../Provider/SidebarProvider";
@@ -16,84 +15,40 @@ import OfferedServices from "./OfferedServices/OfferedServices";
 import ServiceDetails from "./ServiceDetails/ServiceDetails";
 import LatestReviews from "./LatestReviews/LatestReviews";
 import ImageComponent from "../../../Components/Forms/Image";
-
-import AddBookingSidebar from "./AddBookingSidebar";
-
+import AddBookingSidebar from "../../../Components/Booking/AddBookingSidebar/AddBookingSidebar";
 import { LOCALSTORAGE_DATA, languages_level } from "../../../utils";
+import moment from "moment";
 import "./ProviderProfile.css";
 
-const useStyles = makeStyles((theme) => ({
-  large: {
-    width: theme.spacing(20),
-    height: theme.spacing(20),
-  },
-}));
-let todayStr = new Date().toISOString().replace(/T.*$/, ""); // YYYY-MM-DD of today
 function renderEventContent(eventInfo) {
   return (
     <>
-      <b>{eventInfo.timeText}</b>
-      <i>{eventInfo.event.title}</i>
+      <div>
+        <i
+          style={{
+            color: "#4AC836",
+            fontWeight: "normal",
+            fontStyle: "normal",
+            fontSize: "10px",
+          }}
+        >
+          {eventInfo.event.extendedProps.description}
+        </i>
+        <br />
+        <b>{eventInfo.timeText}</b>
+        <br />
+        <i>{eventInfo.event.title}</i>
+      </div>
     </>
   );
 }
 
-const booked_slots = [
-  {
-    id: 1,
-    startDate: "2020-11-01T01:10:00",
-    endDate: "2020-11-02T11:00:00",
-    title: "Test event",
-    booked_by: 1,
-    color: "red",
-    resize: false,
-  },
-];
-const available_slots = [
-  {
-    startDate: "2020-11-01T12:10:00",
-    endDate: "2020-11-02T11:00:00",
-    color: "green",
-    editable: true,
-    title: "Available slot",
-  },
-  {
-    id: 2,
-    startDate: "2020-11-01T07:00:00",
-    endDate: "2020-11-01T11:00:00",
-    title: "Test event",
-    booked_by: 159,
-    color: "blue",
-    editable: false,
-  },
-];
-var tempArray = [];
-
-available_slots.forEach((val) => {
-  tempArray.push({
-    start: val.startDate,
-    color: val.color,
-    editable: val.editable,
-    id: val.id,
-    title: val.title,
-  });
-});
-booked_slots.forEach((val) => {
-  tempArray.push({
-    start: val.startDate,
-    color: val.color,
-    editable: val.editable,
-    id: val.id,
-    title: val.title,
-  });
-});
 
 const ProfileProvider = (props) => {
   const { setSidebarContent, setSidebar } = useSidebar();
   const { t } = useTranslation();
-  const classes = useStyles();
   const [isLoading, setLoading] = useState(false);
-  const { state } = props && props.location;
+  const { state = {} } = props.location && props.location;
   let { pathname } = props.location;
   const { service = {}, type } = state;
   const { history } = props;
@@ -101,7 +56,8 @@ const ProfileProvider = (props) => {
   const [selectedReviews, setSelectedReview] = useState([]);
   const [allLanguages, setAllLanguges] = useState([]);
   const [averages, setAverages] = useState({});
-
+  const [slots, setAllSlots] = useState([]);
+  const [availableSlots, setAvailableSlots] = useState([]);
   let [userData, setUserData] = useState({
     full_name: "",
     country: "",
@@ -142,9 +98,48 @@ const ProfileProvider = (props) => {
         setAllLanguges(storage_laguages.data);
       }
     }
+    async function fetchSlots() {
+      const params = {
+        from_date: moment().startOf("week").format("YYYY-MM-DD"),
+        to_date: moment().endOf("week").format("YYYY-MM-DD"),
+      };
+      const response = await search("/slot/list", params).catch((err) => {
+        console.log("error", err);
+      });
+
+      if (response) {
+        setAvailableSlots(response["available_slots"]);
+        
+        let tempArray = [];
+        response["available_slots"].forEach((slot) => {
+          tempArray.push({
+            groupId: "availableForMeeting",
+            start: moment(slot.startDate).format("YYYY-MM-DDTHH:mm:ss"),
+            end: moment(slot.endDate).format("YYYY-MM-DDTHH:mm:ss"),
+            display: "background",
+            // constraint: 'availableForMeeting',
+          });
+        });
+        response["booked_slots"].forEach((slot) => {
+          tempArray.push({
+            id: slot.slot_id,
+            start: moment(slot.startDate).format("YYYY-MM-DDTHH:mm:ss"),
+            end: moment(slot.endDate).format("YYYY-MM-DDTHH:mm:ss"),
+            title: slot.service_title,
+            description: "Booked",
+            booked_by: slot.booked_by,
+            color: "#4F4F4F",
+            resize: false,
+            overlap: false,
+          });
+        });
+        setAllSlots([...tempArray]);
+      }
+    }
+    fetchSlots();
     fetchLanguages();
   }, []);
-
+  
   useEffect(() => {
     async function getService() {
       const res = await get(`/service/${service.id_service}`);
@@ -167,10 +162,12 @@ const ProfileProvider = (props) => {
       } else {
       }
     }
-    if (service.id_service) {
+    if (service && service.id_service) {
       getService();
+    } else {
+      props.history.push("/");
     }
-  }, [service.id_service, type]);
+  }, [service.id_service, type, props.history, service]);
 
   useEffect(() => {
     async function getData() {
@@ -192,9 +189,15 @@ const ProfileProvider = (props) => {
     }
     getData();
   }, [state]);
-  
-  const onAddBooking = () => {};
-  
+
+  const onAddBooking = (data) => {
+    // availableSlots.forEach((slot) => {
+    //   const startDate = moment(slot.startDate).format("YYYY-MM-DDTHH:mm:ss");
+    //   const endDate = moment(slot.endDate).format("YYYY-MM-DDTHH:mm:ss");
+    // });
+    setAllSlots((d) => [...(d || []), data]);
+  };
+
   return (
     <div className="profile_page_wrapper provider_profile_wrapper">
       <TypographyComponent title="Provider profile" variant="h4" />
@@ -336,13 +339,13 @@ const ProfileProvider = (props) => {
             </div>
             <div className="service_calendar">
               <CalendarComponent
-                INITIAL_EVENTS={tempArray}
+                INITIAL_EVENTS={slots}
                 renderEventContent={renderEventContent}
               />
 
               <div className="booking_time">
                 <AddBookingSidebar
-                  onAddBooking={() => onAddBooking()}
+                  onAddBooking={(data) => onAddBooking(data)}
                   user={userData}
                   selectedService={selectedService}
                 />
