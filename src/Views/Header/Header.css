@@ -4,10 +4,10 @@
 } */
 
 .header_inner {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  padding: 25px 0 18px;
+    display: flex;
+    /* align-items: center; */
+    width: 100%;
+    padding: 25px 0 11px;
 }
 
 .header_brand_wrapper {
@@ -157,9 +157,9 @@ header .header_navbar {
 }
 
 .login_button {
-  display: flex;
-  align-items: center;
-  margin-top: 9px;
+    display: flex;
+    align-items: center;
+    margin-top: 12px;
 }
 
 .login_button button {
@@ -181,19 +181,23 @@ header .header_navbar {
 }
 
 header .flag-select.country_flag {
-  min-height: 54px;
-  padding-bottom: 0;
+    /* display: flex;
+    align-items: center;
+    justify-content: flex-start; */
+    min-height: 50px;
+    padding-bottom: 0;
 }
 
 header .flag-select__btn {
-  position: relative;
-  text-align: left;
-  outline: none;
-  padding: 12px 30px 10px 0;
-  margin-top: 15px;
-  min-height: 40px;
-  min-height: inherit;
-  cursor: pointer;
+    position: relative;
+    text-align: left;
+    outline: none;
+    padding: 0 30px 0 0;
+    /* margin-top: 15px; */
+    /* min-height: 40px;
+    min-height: inherit; */
+    min-height: 50px;
+    cursor: pointer;
 }
 
 header .flag-select__btn,

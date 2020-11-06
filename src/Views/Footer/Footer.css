@@ -68,7 +68,7 @@
 }
 .get_touch_links {
     display: flex;
-    align-items: center;
+    /* align-items: center; */
     max-width: 782px;
     width: 100%;
 }

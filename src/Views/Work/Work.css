@@ -78,6 +78,7 @@
 .my_service {
   direction: ltr;
   display: flex;
+  overflow: hidden;
 }
 .my_service ~ .my_service {
   margin-top: 25px;
@@ -138,9 +139,14 @@
   margin-left: 25px;
 }
 .my_service p.work_service_review_name {
+  white-space: nowrap;
   margin-right: 17px;
 }
 .my_service .work_service_review svg {
   margin-left: 3px;
+}
+.my_work_services .load-more {
+  margin-top: 50px;
+  margin-bottom: 20px;
 }
 /* My Services Over*/

@@ -627,12 +627,11 @@ const Work = (props) => {
                   )}
                 </div>
                 {isUpcomingMoreData && services && services.length > 0 && (
-                  <div>
+                  <div className="load-more">
                     {isUpcomingLoading ? (
                       <Spinner />
                     ) : (
                       <div
-                        className="load-more"
                         onClick={() =>
                           onMore("/service/list/user", upcomingoffset, {})
                         }
@@ -654,173 +653,140 @@ const Work = (props) => {
           </section>
 
           {serviceVisible && (
-            <section className="create-service">
+            <section className="create_service">
               <div className={classes.content}>
-                <Grid container spacing={3}>
-                  <Grid item xs={12} md={10}>
-                    <TypographyComponent
-                      title={
-                        formik.values.id_service
-                          ? t("service.create-service.editService")
-                          : t("service.create-service.createService")
-                      }
-                      variant="h3"
-                      style={{
-                        color: themes.default.colors.darkGray,
-                      }}
-                    />
-                  </Grid>
-                </Grid>
-                <Grid container spacing={3}>
-                  <Grid item xs={12} md={10}>
+                <TypographyComponent
+                  title={
+                    formik.values.id_service
+                      ? t("service.create-service.editService")
+                      : t("service.create-service.createService")
+                  }
+                  variant="h2"
+                  style={{
+                    color: themes.default.colors.darkGray,
+                  }}
+                />
+                <form onSubmit={formik.handleSubmit} className="create_service_form">
+                  <div className="create_service_form_location">
                     <TypographyComponent
                       title={t("service.create-service.nameAllocation")}
-                      variant="h2"
-                      style={{
-                        color: themes.default.colors.darkGray,
-                        fontWeight: 500,
-                        marginBottom: 10,
-                        marginTop: 20,
-                      }}
+                      variant="h6"
                     />
-                  </Grid>
-                </Grid>
-                <form onSubmit={formik.handleSubmit}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={10}>
-                      <Grid container spacing={3}>
-                        <Grid item xs={12} md={5}>
-                          <Grid container spacing={3}>
-                            <Grid item xs={12} md={12}>
-                              <FormControl
-                                variant="outlined"
-                                className={classes1.formControl}
-                                error={formik.errors.title ? true : false}
-                              >
-                                <InputComponent
-                                  label="Sevice name"
-                                  type="text"
-                                  placeholder="Service name"
-                                  name="title"
-                                  autoFocus
-                                  handleBlur={formik.handleBlur}
-                                  onChange={formik.handleChange}
-                                  value={formik.values.title}
-                                  error={
-                                    formik.errors.title && formik.touched.title
-                                      ? true
-                                      : false
-                                  }
-                                  helperText={
-                                    formik.errors.title &&
-                                    formik.touched.title &&
-                                    `${formik.errors.title}`
-                                  }
-                                  styles={{ maxHeight: 80, height: "100%" }}
-                                />
-                              </FormControl>
-                            </Grid>
-                            <Grid item xs={12} md={12}>
-                              <TypographyComponent title="Describe the service of your dream as specific and simple you can so others can find you easily." />
-                            </Grid>
-                          </Grid>
-                        </Grid>
-                        <Hidden smDown>
-                          <Grid item xs={12} md={1}></Grid>
-                        </Hidden>
-                        <Grid item xs={12} md={5}>
-                          <Grid container spacing={3}>
-                            <Grid item xs={12} md={12}>
-                              <FormControl
-                                variant="outlined"
-                                className={classes1.formControl}
-                                error={
-                                  formik.errors.category &&
-                                  formik.touched.category
-                                    ? true
-                                    : false
-                                }
-                              >
-                                <SelectComponent
-                                  name="category"
-                                  label="Category"
-                                  value={formik.values.category}
-                                  onChange={(e) => {
-                                    formik.setFieldValue(
-                                      "category",
-                                      e.target.value
-                                    );
-                                    const sub =
-                                      category &&
-                                      category.filter(
-                                        (f) => Number(f.id) === e.target.value
-                                      );
-                                    setSubCategories(sub[0].sub_categories);
-                                    if (sub[0]) {
-                                      formik.setFieldValue(
-                                        "subcategory",
-                                        sub[0].sub_categories[0].id_category
-                                      );
-                                    }
-                                  }}
-                                  error={formik.errors.category ? true : false}
-                                >
-                                  {category &&
-                                    category.map((m, i) => (
-                                      <MenuItem
-                                        key={Number(m.id)}
-                                        value={Number(m.id)}
-                                        className={classes.formControl}
-                                      >
-                                        {m.name}
-                                      </MenuItem>
-                                    ))}
-                                </SelectComponent>
-                              </FormControl>
-                            </Grid>
-                            <Grid item xs={12} md={12}>
-                              <FormControl
-                                variant="outlined"
+                    <div className="create_service_form_location_left">
+                      <FormControl
+                        variant="outlined"
+                        className={classes1.formControl, 'form_row_wrapper'}
+                        error={formik.errors.title ? true : false}
+                      >
+                        <InputComponent
+                          label="Sevice name"
+                          type="text"
+                          placeholder="Service name"
+                          name="title"
+                          autoFocus
+                          handleBlur={formik.handleBlur}
+                          onChange={formik.handleChange}
+                          value={formik.values.title}
+                          error={
+                            formik.errors.title && formik.touched.title
+                              ? true
+                              : false
+                          }
+                          helperText={
+                            formik.errors.title &&
+                            formik.touched.title &&
+                            `${formik.errors.title}`
+                          }
+                          styles={{ maxHeight: 80, height: "100%" }}
+                        />
+                      </FormControl>
+                      <TypographyComponent title="Describe the service of your dream as specific and simple you can so others can find you easily." />
+                    </div>
+                    
+                    <div className="create_service_form_location_right">
+                      <FormControl
+                        variant="outlined"
+                        className={classes1.formControl, 'form_row_wrapper'}
+                        error={
+                          formik.errors.category &&
+                          formik.touched.category
+                            ? true
+                            : false
+                        }
+                      >
+                        <SelectComponent
+                          name="category"
+                          label="Category"
+                          value={formik.values.category}
+                          onChange={(e) => {
+                            formik.setFieldValue(
+                              "category",
+                              e.target.value
+                            );
+                            const sub =
+                              category &&
+                              category.filter(
+                                (f) => Number(f.id) === e.target.value
+                              );
+                            setSubCategories(sub[0].sub_categories);
+                            if (sub[0]) {
+                              formik.setFieldValue(
+                                "subcategory",
+                                sub[0].sub_categories[0].id_category
+                              );
+                            }
+                          }}
+                          error={formik.errors.category ? true : false}
+                        >
+                          {category &&
+                            category.map((m, i) => (
+                              <MenuItem
+                                key={Number(m.id)}
+                                value={Number(m.id)}
                                 className={classes.formControl}
-                                error={
-                                  formik.errors.subcategory &&
-                                  formik.touched.subcategory
-                                    ? true
-                                    : false
-                                }
                               >
-                                <SelectComponent
-                                  name="subcategory"
-                                  label="Sub-Category"
-                                  value={formik.values.subcategory}
-                                  onChange={formik.handleChange}
-                                >
-                                  {subCategories &&
-                                    subCategories.map((m, i) => (
-                                      <MenuItem
-                                        key={Number(m.id_category)}
-                                        value={Number(m.id_category)}
-                                      >
-                                        {m.category_name}
-                                      </MenuItem>
-                                    ))}
-                                </SelectComponent>
-                              </FormControl>
-                            </Grid>
-                          </Grid>
-                        </Grid>
-                      </Grid>
-                    </Grid>
-                  </Grid>
+                                {m.name}
+                              </MenuItem>
+                            ))}
+                        </SelectComponent>
+                      </FormControl>
+                      <FormControl
+                        variant="outlined"
+                        className={classes.formControl, 'form_row_wrapper'}
+                        error={
+                          formik.errors.subcategory &&
+                          formik.touched.subcategory
+                            ? true
+                            : false
+                        }
+                      >
+                        <SelectComponent
+                          name="subcategory"
+                          label="Sub-Category"
+                          value={formik.values.subcategory}
+                          onChange={formik.handleChange}
+                        >
+                          {subCategories &&
+                            subCategories.map((m, i) => (
+                              <MenuItem
+                                key={Number(m.id_category)}
+                                value={Number(m.id_category)}
+                              >
+                                {m.category_name}
+                              </MenuItem>
+                            ))}
+                        </SelectComponent>
+                      </FormControl>
+                    </div>
+                    
+                  </div>
+                  
+                  
                   <Grid container spacing={3}>
                     <Grid item xs={12} md={10}>
                       <TypographyComponent
-                        variant="h2"
+                        variant="h6"
                         title="Description"
-                        style={{
-                          color: themes.default.colors.darkGray,
-                          fontWeight: "500",
-                        }}
                       />
                     </Grid>
                   </Grid>
@@ -828,6 +794,10 @@ const Work = (props) => {
                     <Grid item xs={12} md={10}>
                       <Grid container spacing={3}>
                         <Grid item xs={12} md={11}>
+                            <FormControl
+                            variant="outlined"
+                            className={classes1.formControl, 'form_row_wrapper'}
+                          >
                           <InputComponent
                             type="text"
                             name="description"
@@ -844,6 +814,7 @@ const Work = (props) => {
                     What can I expect from this service?
                     What are the key information?"
                           />
+                        </FormControl>
                         </Grid>
                       </Grid>
                     </Grid>
@@ -851,7 +822,7 @@ const Work = (props) => {
                   <Grid container spacing={3}>
                     <Grid item xs={12} md={10}>
                       <TypographyComponent
-                        variant="h2"
+                        variant="h6"
                         title="Price setting"
                         style={{
                           color: themes.default.colors.darkGray,
