@@ -654,334 +654,258 @@ const Work = (props) => {
 
           {serviceVisible && (
             <section className="create_service">
-              <div className={classes.content}>
-                <TypographyComponent
-                  title={
-                    formik.values.id_service
-                      ? t("service.create-service.editService")
-                      : t("service.create-service.createService")
-                  }
-                  variant="h2"
-                  style={{
-                    color: themes.default.colors.darkGray,
-                  }}
-                />
-                <form onSubmit={formik.handleSubmit} className="create_service_form">
-                  <div className="create_service_form_location">
-                    <TypographyComponent
-                      title={t("service.create-service.nameAllocation")}
-                      variant="h6"
-                    />
-                    <div className="create_service_form_location_left">
-                      <FormControl
-                        variant="outlined"
-                        className={classes1.formControl, 'form_row_wrapper'}
-                        error={formik.errors.title ? true : false}
-                      >
-                        <InputComponent
-                          label="Sevice name"
-                          type="text"
-                          placeholder="Service name"
-                          name="title"
-                          autoFocus
-                          handleBlur={formik.handleBlur}
-                          onChange={formik.handleChange}
-                          value={formik.values.title}
-                          error={
-                            formik.errors.title && formik.touched.title
-                              ? true
-                              : false
-                          }
-                          helperText={
-                            formik.errors.title &&
-                            formik.touched.title &&
-                            `${formik.errors.title}`
-                          }
-                          styles={{ maxHeight: 80, height: "100%" }}
-                        />
-                      </FormControl>
+              <TypographyComponent
+                title={
+                  formik.values.id_service
+                    ? t("service.create-service.editService")
+                    : t("service.create-service.createService")
+                }
+                variant="h2"
+              />
+              <form onSubmit={formik.handleSubmit} className="create_service_form">
+                <div className="create_service_form_location">
+                  <TypographyComponent
+                    title={t("service.create-service.nameAllocation")}
+                    variant="h6"
+                  />
+                  <div className="create_service_form_location_left">
+                    <FormControl
+                      variant="outlined"
+                      className={'form_row'}
+                      error={formik.errors.title ? true : false}
+                    >
+                      <InputComponent
+                        label="Sevice name"
+                        type="text"
+                        name="title"
+                        autoFocus
+                        handleBlur={formik.handleBlur}
+                        onChange={formik.handleChange}
+                        value={formik.values.title}
+                        error={
+                          formik.errors.title && formik.touched.title
+                            ? true
+                            : false
+                        }
+                        helperText={
+                          formik.errors.title &&
+                          formik.touched.title &&
+                          `${formik.errors.title}`
+                        }
+                        styles={{ maxHeight: 80, height: "100%" }}
+                      />
+                    </FormControl>
+                    <div className="form_row">
                       <TypographyComponent title="Describe the service of your dream as specific and simple you can so others can find you easily." />
                     </div>
-                    
-                    <div className="create_service_form_location_right">
-                      <FormControl
-                        variant="outlined"
-                        className={classes1.formControl, 'form_row_wrapper'}
-                        error={
-                          formik.errors.category &&
-                          formik.touched.category
-                            ? true
-                            : false
-                        }
-                      >
-                        <SelectComponent
-                          name="category"
-                          label="Category"
-                          value={formik.values.category}
-                          onChange={(e) => {
-                            formik.setFieldValue(
-                              "category",
-                              e.target.value
-                            );
-                            const sub =
-                              category &&
-                              category.filter(
-                                (f) => Number(f.id) === e.target.value
-                              );
-                            setSubCategories(sub[0].sub_categories);
-                            if (sub[0]) {
-                              formik.setFieldValue(
-                                "subcategory",
-                                sub[0].sub_categories[0].id_category
-                              );
-                            }
-                          }}
-                          error={formik.errors.category ? true : false}
-                        >
-                          {category &&
-                            category.map((m, i) => (
-                              <MenuItem
-                                key={Number(m.id)}
-                                value={Number(m.id)}
-                                className={classes.formControl}
-                              >
-                                {m.name}
-                              </MenuItem>
-                            ))}
-                        </SelectComponent>
-                      </FormControl>
-                      <FormControl
-                        variant="outlined"
-                        className={classes.formControl, 'form_row_wrapper'}
-                        error={
-                          formik.errors.subcategory &&
-                          formik.touched.subcategory
-                            ? true
-                            : false
-                        }
-                      >
-                        <SelectComponent
-                          name="subcategory"
-                          label="Sub-Category"
-                          value={formik.values.subcategory}
-                          onChange={formik.handleChange}
-                        >
-                          {subCategories &&
-                            subCategories.map((m, i) => (
-                              <MenuItem
-                                key={Number(m.id_category)}
-                                value={Number(m.id_category)}
-                              >
-                                {m.category_name}
-                              </MenuItem>
-                            ))}
-                        </SelectComponent>
-                      </FormControl>
-                    </div>
-                    
                   </div>
                   
+                  <div className="create_service_form_location_right">
+                    <FormControl
+                      variant="outlined"
+                      className={'form_row'}
+                      error={
+                        formik.errors.category &&
+                        formik.touched.category
+                          ? true
+                          : false
+                      }
+                    >
+                      <SelectComponent
+                        name="category"
+                        label="Category"
+                        value={formik.values.category}
+                        native
+                        onChange={(e) => {
+                          formik.setFieldValue(
+                            "category",
+                            e.target.value
+                          );
+                          const sub =
+                            category &&
+                            category.filter(
+                              (f) => Number(f.id) === Number(e.target.value)
+                            );
+                          setSubCategories(sub[0].sub_categories);
+                          if (sub[0] && sub[0].sub_categories.length > 0) {
+                            formik.setFieldValue(
+                              "subcategory",
+                              sub[0].sub_categories[0].id_category
+                            );
+                          }
+                        }}
+                        error={formik.errors.category ? true : false}
+                      >
+                        {category &&
+                          category.map((m, i) => (
+                            <option
+                              key={Number(m.id)}
+                              value={Number(m.id)}
+                              className={classes.formControl}
+                            >
+                              {m.name}
+                            </option>
+                          ))}
+                      </SelectComponent>
+                    </FormControl>
+                    <FormControl
+                      variant="outlined"
+                      className={'form_row'}
+                      error={
+                        formik.errors.subcategory &&
+                        formik.touched.subcategory
+                          ? true
+                          : false
+                      }
+                    >
+                      <SelectComponent
+                        name="subcategory"
+                        label="Sub-Category"
+                        value={formik.values.subcategory}
+                        native
+                        onChange={formik.handleChange}
+                      >
+                        {subCategories &&
+                          subCategories.map((m, i) => (
+                            <option
+                              key={Number(m.id_category)}
+                              value={Number(m.id_category)}
+                            >
+                              {m.category_name}
+                            </option>
+                          ))}
+                      </SelectComponent>
+                    </FormControl>
+                  </div>
                   
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={10}>
-                      <TypographyComponent
-                        variant="h6"
-                        title="Description"
-                      />
-                    </Grid>
-                  </Grid>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={10}>
-                      <Grid container spacing={3}>
-                        <Grid item xs={12} md={11}>
-                            <FormControl
-                            variant="outlined"
-                            className={classes1.formControl, 'form_row_wrapper'}
-                          >
-                          <InputComponent
-                            type="text"
-                            name="description"
-                            value={formik.values.description}
-                            onChange={formik.handleChange}
-                            multiline
-                            rows={10}
-                            fullWidth
-                            InputLabelProps={{
-                              shrink: true,
-                            }}
-                            placeholder="Please briefly describe your service...
-                    In which situation can i use this service?
-                    What can I expect from this service?
+                </div>
+                
+              <TypographyComponent
+                variant="h6"
+                title="Description"
+              />
+
+              <div className="create_service_form_description">
+                <FormControl
+                  variant="outlined"
+                  className={'form_row'}
+                >
+                  <InputComponent
+                    type="text"
+                    name="description"
+                    value={formik.values.description}
+                    onChange={formik.handleChange}
+                    multiline
+                    rows={10}
+                    fullWidth
+                    fullHeight
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    placeholder="Please briefly describe your service... 
+                    In which situation can i use this service? 
+                    What can I expect from this service? 
                     What are the key information?"
-                          />
-                        </FormControl>
-                        </Grid>
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={10}>
-                      <TypographyComponent
-                        variant="h6"
-                        title="Price setting"
-                        style={{
-                          color: themes.default.colors.darkGray,
-                          fontWeight: 500,
-                        }}
+                  />
+                </FormControl>
+              </div>
+
+              <TypographyComponent
+                variant="h6"
+                title="Price setting"
+              />
+
+              <div className="create_service_form_price_setting">
+                <div className="create_service_form_price">
+                  <TypographyComponent
+                    variant="h6"
+                    title="My hourly price"
+                  />
+                  <InputComponent
+                    name="price"
+                    value={formik.values.price}
+                    onChange={formik.handleChange}
+                    placeholder="00.00£"
+                  />
+                </div>
+                <TypographyComponent title="Uppon your price will be sett the conditions of a payment service provider and the comission of Owera. All employees of Owera thank you for using our service and enabling our workplaces. Enjoy this winn winn situation because this is our philosophy to achiefe." />
+              </div>
+              
+              <TypographyComponent
+                variant="h6"
+                title="Pictures"
+              />
+
+              <div className="create_service_form_img">
+                {fileList &&
+                  fileList.map((file, i) => (
+                    <div className="create_service_form_img_item">
+                      <img
+                        alt="Profile"
+                        src={file && makeImageUrl(file)}
                       />
-                    </Grid>
-                  </Grid>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={10}>
-                      <Grid container spacing={3}>
-                        <Grid item xs={12} md={5}>
-                          <div
-                            style={{
-                              display: "flex",
-                              justifyContent: "space-between",
-                              alignItems: "center",
-                            }}
-                          >
-                            <TypographyComponent
-                              variant="h2"
-                              title="My hourly price"
-                              style={{
-                                color: themes.default.colors.darkGray,
-                              }}
-                            />
-                            <InputComponent
-                              name="price"
-                              value={formik.values.price}
-                              onChange={formik.handleChange}
-                              styles={{
-                                maxHeight: 38,
-                                height: "100%",
-                                maxWidth: 91,
-                              }}
-                              className="service-price"
-                            />
-                          </div>
-                        </Grid>
-                        <Hidden smDown>
-                          <Grid item xs={12} md={1}></Grid>
-                        </Hidden>
-                        <Grid item xs={12} md={5}>
-                          <TypographyComponent title="Uppon your price will be sett the conditions of a payment service provider and the comission of Owera. All employees of Owera thank you for using our service and enabling our workplaces. Enjoy this winn winn situation because this is our philosophy to achiefe." />
-                        </Grid>
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={10}>
-                      <TypographyComponent
-                        variant="h2"
-                        title="Pictures"
-                        style={{
-                          color: themes.default.colors.darkGray,
-                          fontWeight: "bold",
+                      <div
+                        className="create_service_form_img_delete"
+                        onClick={() => {
+                          handleOnDeleteImage(file, i);
                         }}
-                      />
-                    </Grid>
-                  </Grid>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={10}>
-                      <Grid container spacing={3}>
-                        <Grid item xs={12} md={11}>
-                          <Grid container spacing={3}>
-                            {fileList &&
-                              fileList.map((file, i) => (
-                                <Grid item xs={12} md={3} key={i}>
-                                  <div className="image-item">
-                                    <img
-                                      alt="Profile"
-                                      src={file && makeImageUrl(file)}
-                                      className="image"
-                                    />
-                                    <div
-                                      className="image-delete"
-                                      onClick={() => {
-                                        handleOnDeleteImage(file, i);
-                                      }}
-                                    >
-                                      <div>
-                                        <label>Delete picture</label>
-                                      </div>
-                                      <div>
-                                        <DeleteIcon />
-                                      </div>
-                                    </div>
-                                  </div>
-                                </Grid>
-                              ))}
-                            {fileList.length >= 4 ? null : (
-                              <Grid item xs={12} md={3}>
-                                <div className="image-item">
-                                  <input
-                                    type="file"
-                                    name={`image_${fileList.length + 1}`}
-                                    id={`image_${fileList.length + 1}`}
-                                    style={{ display: "none" }}
-                                    onChange={(event) =>
-                                      handleUploadClick(event)
-                                    }
-                                  />
-                                  <div
-                                    style={{
-                                      display: "flex",
-                                      justifyContent: "space-between",
-                                      color: "#fff",
-                                      padding: "20px",
-                                    }}
-                                    onClick={() => {
-                                      document
-                                        .getElementById(
-                                          `image_${fileList.length + 1}`
-                                        )
-                                        .click();
-                                    }}
-                                  >
-                                    <label htmlFor="file">Upload image</label>
-                                    <AddIcon />
-                                  </div>
-                                </div>
-                              </Grid>
-                            )}
-                          </Grid>
-                        </Grid>
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={10}>
-                      {formik.values.id_service && (
-                        <ButtonComponent
-                          title="Delete service"
-                          onClick={() => {
-                            onDelete();
-                          }}
-                          variant="outlined"
-                          style={{
-                            backgroundColor: "#fff",
-                            border: "1px solid #FF0000",
-                            color: "#FF0000",
-                          }}
-                        />
-                      )}
-                      <ButtonComponent
-                        variant="contained"
-                        color="primary"
-                        type="submit"
-                        disabled={formik.isSubmitting}
-                        title={
-                          formik.values.id_service
-                            ? "Save changes"
-                            : "Create service"
+                      >
+                        <label>Delete picture</label>
+                        <DeleteIcon />
+                      </div>
+                    </div>
+                  ))}
+                  {fileList.length >= 4 ? null : (
+                    <div className="create_service_form_img_item">
+                      <input
+                        type="file"
+                        name={`image_${fileList.length + 1}`}
+                        id={`image_${fileList.length + 1}`}
+                        style={{ display: "none" }}
+                        onChange={(event) =>
+                          handleUploadClick(event)
                         }
                       />
-                    </Grid>
-                  </Grid>
-                </form>
+                      <div
+                        className="create_service_form_img_add_item"
+                        onClick={() => {
+                          document
+                            .getElementById(
+                              `image_${fileList.length + 1}`
+                            )
+                            .click();
+                        }}
+                      >
+                        <label htmlFor="file">Upload image</label>
+                        <AddIcon />
+                      </div>
+                    </div>
+                  )}
               </div>
+              
+              <div className="create_service_form_cta_row">
+                {formik.values.id_service && (
+                  <ButtonComponent
+                    title="Delete service"
+                    onClick={() => {
+                      onDelete();
+                    }}
+                    variant="outlined"
+                  />
+                )}
+                <ButtonComponent
+                  variant="contained"
+                  color="primary"
+                  type="submit"
+                  disabled={formik.isSubmitting}
+                  title={
+                    formik.values.id_service
+                      ? "Save changes"
+                      : "Create service"
+                  }
+                />
+              </div>
+              </form>
             </section>
           )}
           {formik.values.id_service && (
