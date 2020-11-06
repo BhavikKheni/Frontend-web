@@ -26,9 +26,9 @@ import { get, add } from "../../Services/Auth.service";
 import Service from "../../Services/index";
 import { useSidebar } from "../../Provider/SidebarProvider";
 import { onIsLoggedIn } from "../../Services/Auth.service";
-import './Work.css';
+import "./Work.css";
 import WorkSidebar from "./WorkSidebar";
-import AddBookingSpaceBar from "../../Components/Booking/AddBookingSpaceSidebar/AddBookingSpacebarSide";
+import AddBookingSpaceBar from "../../Components/Booking/AddBookingSpaceSidebar/AddBookingSpaceSidebar";
 import moment from "moment";
 const newService = new Service();
 const useSession = () => React.useContext(SessionContext);
@@ -142,8 +142,8 @@ const Work = (props) => {
         response["available_slots"].forEach((slot) => {
           tempArray.push({
             groupId: "availableForMeeting",
-            start: moment(slot.startDate).format("YYYY-MM-DDTHH:mm:ss"),
-            end: moment(slot.endDate).format("YYYY-MM-DDTHH:mm:ss"),
+            start: moment(slot.startDate).toISOString(),
+            end: moment(slot.endDate).toISOString(),
             display: "background",
             // constraint: 'availableForMeeting',
           });
@@ -151,8 +151,8 @@ const Work = (props) => {
         response["booked_slots"].forEach((slot) => {
           tempArray.push({
             id: slot.slot_id,
-            start: moment(slot.startDate).format("YYYY-MM-DDTHH:mm:ss"),
-            end: moment(slot.endDate).format("YYYY-MM-DDTHH:mm:ss"),
+            start: moment(slot.startDate).toISOString(),
+            end: moment(slot.endDate).toISOString(),
             title: slot.service_title,
             description: "Booked",
             booked_by: slot.booked_by,
@@ -436,7 +436,14 @@ const Work = (props) => {
     add("/service/active", d)
       .then((res) => {
         setActiveLoader(false);
-        searchServiceLibrary();
+        const targetIndex = services.findIndex(
+          (l) => l.id_service === service.id_service
+        );
+        services[targetIndex] = {
+          ...service,
+          active: service.active ? false : true,
+        };
+        setServices((d) => [...d]);
       })
       .catch((err) => {});
   };
@@ -498,10 +505,16 @@ const Work = (props) => {
     <React.Fragment>
       {isLoggedIn && (
         <div className="work_page">
-          <TypographyComponent variant="h2" title="Service name" className="start_work_title" />
+          <TypographyComponent
+            variant="h2"
+            title="Service name"
+            className="start_work_title"
+          />
           <StartWork />
           <section className="my_work_services">
-            <h2>My service library <span>({services.length} Services)</span></h2>
+            <h2>
+              My service library <span>({services.length} Services)</span>
+            </h2>
             {/* <TypographyComponent
               title={`My service library (${services.length})`}
             /> */}
@@ -514,7 +527,10 @@ const Work = (props) => {
                     <ButtonComponent
                       title={"Active"}
                       type="button"
-                      className={clsx("active_service_button", addActiveClassName)}
+                      className={clsx(
+                        "active_service_button",
+                        addActiveClassName
+                      )}
                       onClick={() => {
                         onIsActive("isActive");
                       }}
@@ -522,7 +538,10 @@ const Work = (props) => {
 
                     <ButtonComponent
                       title="Inactive"
-                      className={clsx("inactive_service_button", addClassInActiveName)}
+                      className={clsx(
+                        "inactive_service_button",
+                        addClassInActiveName
+                      )}
                       type="button"
                       onClick={() => {
                         onIsInActive();
@@ -560,12 +579,13 @@ const Work = (props) => {
                           <ButtonComponent
                             title={service.active ? "Activate" : "Deactivate"}
                             className={clsx(
-                              { "deactivate_service_button": !service.active },
+                              { deactivate_service_button: !service.active },
                               "activate_service_button"
                             )}
                             onClick={(e) => {
                               onActivateDactivate(service);
                             }}
+                            startIcon={activeLoader && <Spinner />}
                             loader={activeLoader}
                           />
 
@@ -577,15 +597,27 @@ const Work = (props) => {
                               setEditRecord(service);
                             }}
                           />
-                          <TypographyComponent title={service.price} className="work_service_price" />
-                          <TypographyComponent title={service.title} className="work_service_title" />
+                          <TypographyComponent
+                            title={service.price}
+                            className="work_service_price"
+                          />
+                          <TypographyComponent
+                            title={service.title}
+                            className="work_service_title"
+                          />
                           <div className="work_service_review">
-                            <TypographyComponent title="Service quality" className="work_service_review_name" />
+                            <TypographyComponent
+                              title="Service quality"
+                              className="work_service_review_name"
+                            />
                             <TypographyComponent title="5" />
                             <StarBorderIcon />
                           </div>
                           <div className="work_service_review">
-                            <TypographyComponent title="Sympathy" className="work_service_review_name"/>
+                            <TypographyComponent
+                              title="Sympathy"
+                              className="work_service_review_name"
+                            />
                             <TypographyComponent title="4.5" />
                             <StarBorderIcon />
                           </div>

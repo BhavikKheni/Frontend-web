@@ -30,8 +30,8 @@ const AddBookingSpaceSidebar = (props) => {
     const date = moment(selectedDate).format("YYYY-MM-DD");
     const bookingData = {
       id_service: selectedService.id_service,
-      start: `${date}T${fromTime}:00`,
-      end: `${date}T${toTime}:00`,
+      start: moment(`${date} ${fromTime}`).format(),
+      end: moment(`${date} ${toTime}`).format(),
       id_user: user.id_user,
       color: "red",
     };

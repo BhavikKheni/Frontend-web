@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Grid, InputBase, Avatar, Divider } from "@material-ui/core";
 import Rating from "@material-ui/lab/Rating";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
@@ -15,9 +15,12 @@ import { useTranslation } from "react-i18next";
 import { themes } from "../../../themes";
 import { useSidebar } from "../../../Provider/SidebarProvider";
 import NextArrow from "../../../images/next_arrow_white.svg";
-import { get } from "../../../Services/Auth.service";
+import { get, add } from "../../../Services/Auth.service";
 import Spinner from "../../../Components/Spinner/Spinner";
+import { connect, createLocalTracks } from "twilio-video";
+import { SessionContext } from "../../../Provider/Provider";
 import "./callpage.css";
+const useSession = () => React.useContext(SessionContext);
 const DialogContent = withStyles((theme) => ({
   root: {
     padding: theme.spacing(2),
@@ -65,12 +68,14 @@ const useStyles = makeStyles((theme) => ({
 const CallPage = (props) => {
   const classes = useStyles();
   const { t } = useTranslation();
+  const { user } = useSession();
   const [counter, setCounter] = React.useState(5);
   const [simpathy, setSimpathy] = useState();
   const [service_quality, setServiceQuality] = useState();
   const { setSidebarContent, setSidebar } = useSidebar();
   const [endCallOpen, setEndCallOpen] = useState(false);
-  const { state } = props && props.location;
+  const { state = {} } = props && props.location;
+  const [room, setRoom] = useState(null);
   const [isLoading, setLoading] = useState(false);
   let [userData, setUserData] = useState({
     first_name: "",
@@ -83,7 +88,12 @@ const CallPage = (props) => {
   useEffect(() => {
     async function getData() {
       setLoading(true);
-      const res = await get(`/profile/${state && state.userId}`);
+      const res = await get(`/profile/${state && state.userId}`).catch(
+        (err) => {
+          setLoading(false);
+        }
+      );
+
       if (res) {
         setUserData({
           ...res.data,
@@ -106,10 +116,9 @@ const CallPage = (props) => {
   const [dynamicCounter, setDynamicCounter] = useState();
   const [timerId, setTimerID] = useState("");
 
-  var count1 = dynamicCounter;
-  var counter1 = setInterval(timer, 1000);
-
-  function timer() {
+  const timer = useCallback(() => {
+    var count1 = dynamicCounter;
+    var counter1 = setInterval(timer, 1000);
     count1 = count1 - 1;
     if (count1 === -1) {
       clearInterval(counter1);
@@ -124,7 +133,7 @@ const CallPage = (props) => {
 
     document.getElementById(timerId).innerHTML =
       hours + "hours : " + minutes + "minutes :" + seconds;
-  }
+  }, [dynamicCounter, timerId]);
   // var counter = 5;
 
   // setInterval(function () {
@@ -156,8 +165,8 @@ const CallPage = (props) => {
               <TypographyComponent title="120 Min" />
             </div>
             <div className="stay-Longer">
-              <spna>Stay Longer?</spna>
-              <img src={ArrowIcon} alt="stay longer" />
+              <span>Stay Longer?</span>
+              {/* <img src={ArrowIcon} alt="stay longer" /> */}
             </div>
             <div>
               <span
@@ -204,9 +213,8 @@ const CallPage = (props) => {
     isLoading,
     userData.first_name,
     userData.last_name,
-    userData.image
+    userData.image,
   ]);
-
   const onEndCall = () => {
     setEndCallOpen(true);
   };
@@ -219,6 +227,110 @@ const CallPage = (props) => {
 
   const onLeave = () => {};
 
+  const onFinish = useCallback(() => {
+    const params = {
+      user_id: user.id_user,
+      meeting_id: state.booking_id,
+    };
+    function attachTrack(track, container) {
+      container.appendChild(track.attach());
+    }
+    function participantConnected(participant) {
+      participant.tracks.forEach((publication) => {
+        if (publication.isSubscribed) {
+          attachTrack(
+            publication.track,
+            document.getElementById("remote-media-div")
+          );
+        }
+      });
+      participant.on("trackSubscribed", (track) => {
+        attachTrack(track, document.getElementById("remote-media-div"));
+      });
+    }
+
+    add("/video/join", params).then((res) => {
+      // Temporary code start - This code will execute if the auth token is invalid/expired/not-logged-in
+      console.log(res);
+
+      // Temporary code end
+
+      let twilio_video_token = res.data.video_token;
+
+      createLocalTracks({
+        audio: true,
+        video: { width: 150, height: 150 },
+      }).then(function (localTracks) {
+        const localMediaContainer = document.getElementById("local-media");
+        localTracks.forEach(function (track) {
+          localMediaContainer.innerHTML = "";
+          localMediaContainer.appendChild(track.attach());
+        });
+      });
+      connect(twilio_video_token, { booking_id: state.booking_id }).then(
+        (room) => {
+          console.log(`Successfully joined a Room: ${room}`);
+          setRoom(room);
+          // Log any Participants already connected to the Room
+
+          room.participants.forEach(participantConnected);
+
+          room.participants.forEach((participant) => {
+            console.log(
+              `Participant "${participant.identity}" is connected to the Room`
+            );
+            participant.tracks.forEach((publication) => {
+              console.log("publication", publication);
+              if (publication.track) {
+                document
+                  .getElementById("remote-media-div-already")
+                  .appendChild(publication.track.attach());
+              }
+            });
+          });
+
+          room.on("participantConnected", (participant) => {
+            console.log(`Participant "${participant.identity}" connected`);
+
+            participant.tracks.forEach((publication) => {
+              if (publication.isSubscribed) {
+                const track = publication.track;
+                document
+                  .getElementById("remote-media-div")
+                  .appendChild(track.attach());
+              }
+            });
+
+            participant.on("trackSubscribed", (track) => {
+              document
+                .getElementById("remote-media-div")
+                .appendChild(track.attach());
+            });
+            room.participants.forEach((participant) => {
+              participant.tracks.forEach((track) => {
+                document
+                  .getElementById("remote-media-div")
+                  .appendChild(track.attach());
+              });
+
+              participant.on("trackAdded", (track) => {
+                document
+                  .getElementById("remote-media-div")
+                  .appendChild(track.attach());
+              });
+            });
+          });
+        },
+        (error) => {
+          console.error(`Unable to connect to Room: ${error.message}`);
+        }
+      );
+    });
+  },[state.booking_id,user.id_user]);
+
+  // useEffect(() => {
+  //   onFinish();
+  // }, [onFinish]);
   return (
     <React.Fragment>
       <Grid container spacing={3}>
@@ -227,7 +339,7 @@ const CallPage = (props) => {
             <TypographyComponent title="Service title" />
             <span id="count">{counter && counter}</span>
             <div>
-              <TypographyComponent title="video-call.opinion" />
+              <TypographyComponent title={t("video-call.opinion")} />
               <Rating
                 name="quality"
                 value={service_quality}
@@ -251,7 +363,7 @@ const CallPage = (props) => {
                   }}
                 >
                   <span>Repost abuse</span>
-                  <img alt="Report abuse" src={NextArrow} />
+                  {/* <img alt="Report abuse" src={NextArrow} /> */}
                 </div>
                 <div
                   onClick={() => {
@@ -259,9 +371,13 @@ const CallPage = (props) => {
                   }}
                 >
                   <span>Leave</span>
-                  <img alt="leave" src={NextArrow} />
+                  {/* <img alt="leave" src={NextArrow} /> */}
                 </div>
               </div>
+            </div>
+            <div className="remoteVideoContainer">
+              <div id="remote-media-div-already"></div>
+              <div id="remote-media-div"></div>
             </div>
             <div className="service_calling_wrapper">
               <InputBase

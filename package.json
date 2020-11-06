@@ -32,6 +32,7 @@
     "react-phone-input-2": "^2.13.8",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.3",
+    "twilio-video": "^2.7.3",
     "use-debounce": "^5.0.1",
     "yup": "^0.29.3"
   },

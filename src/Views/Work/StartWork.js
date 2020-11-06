@@ -138,9 +138,16 @@ const StartWork = () => {
           </div>
         </div>
         <div className="start_work_hero_right">
-          <Avatar className={classes.large} />
+          {user.image === null ? (
+            <ImageComponent />
+          ) : (
+            <Avatar className={classes.large} src={user.image} />
+          )}
           <div className="work_user_total_count_wrapper">
-            <TypographyComponent title="Name" className="work_user_total_count_title" />
+            <TypographyComponent
+              title={`${user.first_name} ${user.last_name}`}
+              className="work_user_total_count_title"
+            />
             <div className="work_user_total_count">
               <TypographyComponent title="Total time:" />
               <TypographyComponent title="00:00:00" />
@@ -163,7 +170,7 @@ const StartWork = () => {
             }}
           />
           <ButtonComponent
-            title="Off online"
+            title="Go offline"
             className="go_offline"
             startIcon={offLineServiceLoader && <Spinner />}
             onClick={() => {

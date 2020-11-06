@@ -20,7 +20,7 @@ const Home = (props) => {
   const { setSidebarContent, setSidebar } = useSidebar();
 
   const onAddBooking = (data) => {
-    console.log("Data",data)
+    console.log("Data", data);
   };
 
   useEffect(() => {
@@ -106,6 +106,13 @@ const Home = (props) => {
       </div>
     );
   }, [setSidebarContent, setSidebar, t, pathname, isLoggedIn, user]);
+
+  useEffect(() => {
+    var elmnt = document.getElementsByClassName("next-booking");
+    if (elmnt[0]) {
+      elmnt[0].scrollIntoView();
+    }
+  }, []);
 
   return (
     <div>

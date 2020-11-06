@@ -143,10 +143,16 @@ const ServiceCardComponent = (props) => {
           <div className="card-status">
             <span
               className={clsx(
-                service_provider_live_now === "LIVE" ? "live-now" : "offline"
+                service_provider_live_now &&
+                  service_provider_live_now.toLowerCase() === "live"
+                  ? "live-now"
+                  : "offline"
               )}
             >
-              {service_provider_live_now === "LIVE" ? "live-now" : "Offline"}
+              {service_provider_live_now &&
+              service_provider_live_now.toLowerCase() === "live"
+                ? "live-now"
+                : "Offline"}
             </span>
             <span className="price">{`${price}$/h`}</span>
           </div>

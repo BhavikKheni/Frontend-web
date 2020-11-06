@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import $ from "jquery";
 import { BrowserRouter as Router } from "react-router-dom";
 import AppProvider from "./Provider/Provider";
+import AuthProvider from "./Provider/AuthProvider";
 import SidebarProvider from "./Provider/SidebarProvider";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 import { themes } from "./themes";
@@ -63,7 +64,9 @@ const App = (props) => {
         <ThemeProvider theme={theme}>
           <Router>
             <SidebarProvider>
-              <LayoutWrapper />
+              <AuthProvider>
+                <LayoutWrapper />
+              </AuthProvider>
             </SidebarProvider>
           </Router>
         </ThemeProvider>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { withRouter } from "react-router-dom";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
@@ -28,6 +28,9 @@ import Sppiner from "../../Components/Spinner/Spinner";
 import { serverLogout } from "../../Services/Auth.service";
 import "./Header.css";
 import "react-flags-select/css/react-flags-select.css";
+import { useDebouncedCallback } from "use-debounce";
+import Popover from "@material-ui/core/Popover";
+
 const useSession = () => React.useContext(SessionContext);
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -122,25 +125,53 @@ const OweraHeader = (props) => {
   const [openSignUp, setOpenSignUp] = useState(false);
   const [openForgotPassword, setForgotPasswordDialog] = useState(false);
   let { isLoggedIn, doLogin, logout } = useSession();
-  const [textSearch, setSearch] = useState(false);
+  const [textSearch, setSearch] = useState("");
   const [openLogout, setLogout] = useState(false);
   const [logoutLoader, setLogoutLoader] = useState(false);
-  const [logoutDisabled,setLogoutDisabled]=useState(false);
+  const [logoutDisabled, setLogoutDisabled] = useState(false);
   let { pathname } = props.location;
   const { history } = props;
-  const intervalRef = useRef(null);
   const [toPath, setPath] = useState("");
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [searchRecords, setSearchRecords] = useState([]);
+  const [searchLoader, setSearchLoader] = useState(false);
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
-  useEffect(() => {
-    if (textSearch.length > 3) {
-      intervalRef.current = setTimeout(() => {
-        fetchSearch();
-      }, 1000);
-    } else {
-      clearTimeout(intervalRef.current);
+  const open = Boolean(anchorEl);
+  const id = open ? "simple-popover" : undefined;
+
+  const debounced = useDebouncedCallback(
+    () => {
+      fetchRecord();
+    },
+    1500,
+    { maxWait: 2000 }
+  );
+
+  useEffect(
+    () => () => {
+      debounced.flush();
+    },
+    [debounced]
+  );
+
+  async function fetchRecord() {
+    setSearchLoader(true);
+    const res = await search("/search", {
+      searchValue: textSearch,
+    }).catch((err) => {
+      console.log(err);
+      setSearchLoader(false);
+    });
+    if (res && res) {
+      if (res[0] && res[0].data.length) {
+        setSearchRecords(res[0].data);
+        setSearchLoader(false);
+      }
     }
-    return () => clearTimeout(intervalRef.current);
-  }, [textSearch, fetchSearch]);
+  }
 
   const openSignInDialog = () => {
     setOpenSignIn(true);
@@ -180,7 +211,7 @@ const OweraHeader = (props) => {
 
   const handleLogout = () => {
     setLogoutLoader(true);
-    setLogoutDisabled(true)
+    setLogoutDisabled(true);
     serverLogout()
       .then((result) => {
         if (result.type === "SUCCESS") {
@@ -188,26 +219,21 @@ const OweraHeader = (props) => {
             logout();
             setLogoutLoader(false);
             setLogout(false);
-            setLogoutDisabled(false)
-            history.push('/')
+            setLogoutDisabled(false);
+            history.push("/");
           });
         }
       })
       .catch((err) => console.log(err));
   };
 
-  async function fetchSearch() {
-    const res = await search("/search", {
-      searchValue: textSearch,
-    }).catch((err) => console.log(err));
-    if (res && res) {
-      console.log("res", res);
-    }
-  }
-
   const changeSearch = (e) => {
     const searchValue = e.target.value;
     setSearch(searchValue);
+    if (searchValue.length > 3) {
+      debounced.callback(searchValue);
+      setAnchorEl(e.currentTarget);
+    }
   };
 
   const onSearch = (e) => {
@@ -234,6 +260,15 @@ const OweraHeader = (props) => {
     } else {
       history.push("/work");
     }
+  };
+
+  const goToServiceDetails = (element) => {
+    history.push("/profile-provider", {
+      service: element,
+      type: "job-details",
+    });
+    setSearch("");
+    setAnchorEl(null);
   };
 
   return (
@@ -263,6 +298,7 @@ const OweraHeader = (props) => {
                 <InputBase
                   placeholder="Search"
                   inputProps={{ "aria-label": "search" }}
+                  value={textSearch}
                   onChange={changeSearch}
                 />
                 <span className={classes.searchIconItem} onClick={onSearch}>
@@ -385,6 +421,31 @@ const OweraHeader = (props) => {
           </DialogContent>
         </div>
       </DialogComponent>
+  
+      <Popover
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "left",
+        }}
+      >
+        {searchLoader ? (
+          <Sppiner />
+        ) : (
+          searchRecords && searchRecords.map((m, index) => (
+            <div key={index} className="search-item">
+              <span onClick={() => goToServiceDetails(m)}>{m.title}</span>
+            </div>
+          ))
+        )}
+      </Popover>
       <SignIn
         onClose={handleCloseSignIn}
         openSignIn={openSignIn}

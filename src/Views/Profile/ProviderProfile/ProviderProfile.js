@@ -114,8 +114,8 @@ const ProfileProvider = (props) => {
         response["available_slots"].forEach((slot) => {
           tempArray.push({
             groupId: "availableForMeeting",
-            start: moment(slot.startDate).format("YYYY-MM-DDTHH:mm:ss"),
-            end: moment(slot.endDate).format("YYYY-MM-DDTHH:mm:ss"),
+            start: moment(slot.startDate).toISOString(),
+            end: moment(slot.endDate).toISOString(),
             display: "background",
             // constraint: 'availableForMeeting',
           });
@@ -123,8 +123,8 @@ const ProfileProvider = (props) => {
         response["booked_slots"].forEach((slot) => {
           tempArray.push({
             id: slot.slot_id,
-            start: moment(slot.startDate).format("YYYY-MM-DDTHH:mm:ss"),
-            end: moment(slot.endDate).format("YYYY-MM-DDTHH:mm:ss"),
+            start: moment(slot.startDate).toISOString(),
+            end: moment(slot.endDate).toISOString(),
             title: slot.service_title,
             description: "Booked",
             booked_by: slot.booked_by,

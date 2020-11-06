@@ -84,9 +84,11 @@ const NextBooking = (props) => {
     }
   };
 
-  const goToMeeting = () => {
+  const goToMeeting = (element) => {
     const { history } = props;
-    history.push("/work");
+    history.push("/call-page", {
+      booking_id: "79615AEGHJ",
+    });
   };
 
   return (

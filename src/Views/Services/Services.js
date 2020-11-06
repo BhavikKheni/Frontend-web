@@ -13,6 +13,7 @@ import Spinner from "../../Components/Spinner/Spinner";
 import { search, add, get } from "../../Services/Auth.service";
 import SnackBarComponent from "../../Components/SnackBar/SnackBar";
 import { SessionContext } from "../../Provider/Provider";
+import { AuthenticationContext } from "../../Provider/AuthProvider";
 import { useSidebar } from "../../Provider/SidebarProvider";
 import SelectComponent from "../../Components/Forms/Select";
 import TypographyComponent from "../../Components/Typography/Typography";
@@ -21,9 +22,11 @@ import ChangePassword from "../../Components/ChangePassword/ChangePassword";
 import { LOCALSTORAGE_DATA } from "../../utils";
 import Verification from "../../Components/Verification/VerificationDialog";
 import "./service.css";
-
+import SignIn from "../Auth/SignIn/SignIn";
 import { useDebouncedCallback } from "use-debounce";
 const useSession = () => React.useContext(SessionContext);
+const useSession1 = () => React.useContext(AuthenticationContext);
+
 const limit = 10;
 
 const useStyles = makeStyles((theme) => ({
@@ -50,6 +53,14 @@ const Services = (props) => {
   const classes = useStyles();
   const { t } = useTranslation();
   let { logout, user, isLoggedIn } = useSession();
+  const {
+    openSignIn,
+    handleCloseSignIn,
+    openSignUpDialog,
+    openForgotPasswordDialog,
+    openSignInDialog,
+    LoggedIn,
+  } = useSession1();
   const [isLoading, setIsLoading] = useState(false);
   const [sidebarLoader, setSidebarLoader] = useState(false);
   const [services, setServices] = useState([]);
@@ -399,18 +410,36 @@ const Services = (props) => {
   };
 
   const goToPhone = (element) => {
-    history.push("/call-page", {
-      service: element,
-      userId: element.provider_id_user,
-    });
+    if (user && user.id === element.provider_id_user) {
+      setTypeRes({
+        message: "You can't this service because it is belongs to you",
+        type: "error",
+      });
+    } else {
+      if (isLoggedIn) {
+        history.push("/call-page", {
+          service: element,
+          userId: element.provider_id_user,
+        });
+      } else {
+        openSignInDialog();
+      }
+    }
   };
 
   const goToCalendar = (element) => {
-    history.push("/profile-provider", {
-      type: "calendar-view",
-      service: element,
-      userId: element.provider_id_user,
-    });
+    if (user && user.id === element.provider_id_user) {
+      setTypeRes({
+        message: "You can't this service because it is belongs to you",
+        type: "error",
+      });
+    } else {
+      history.push("/profile-provider", {
+        type: "calendar-view",
+        service: element,
+        userId: element.provider_id_user,
+      });
+    }
   };
 
   const goToServiceTitle = (element) => {
@@ -469,7 +498,7 @@ const Services = (props) => {
   const onPromotionClick = () => {
     setPromotion_text_hide(true);
   };
-  
+
   return (
     <div className="service_card_content">
       {user && !user.email_verified && isLoggedIn && !promotion_text_hide && (
@@ -557,6 +586,14 @@ const Services = (props) => {
         title="E-mail verification"
         subTitle1="We’ve send a 4 digit code to your email. Please enter the code to verify your email-id."
         type="email"
+      />
+      <SignIn
+        onClose={handleCloseSignIn}
+        openSignIn={openSignIn}
+        openSignUpDialog={openSignUpDialog}
+        openForgotPasswordDialog={openForgotPasswordDialog}
+        handleCloseSignIn={handleCloseSignIn}
+        setLogin={LoggedIn}
       />
       <SnackBarComponent
         open={open}
