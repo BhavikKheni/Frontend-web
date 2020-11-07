@@ -10,7 +10,7 @@ const LatestReviews = (props) => {
   const { t } = useTranslation();
   const { selectedReviews } = props;
   return (
-    <React.Fragment>
+    <section className="latest-reviews">
       <TypographyComponent
         variant="h4"
         title={t("providerProfile.latestReview")}
@@ -68,7 +68,7 @@ const LatestReviews = (props) => {
           />
         </Grid>
       </Grid>
-    </React.Fragment>
+    </section>
   );
 };
 

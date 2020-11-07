@@ -15,7 +15,7 @@ const ServicesDetails = (props) => {
   const onCalendar = () => {};
 
   return (
-    <React.Fragment>
+    <section className="service-details">
       <TypographyComponent
         variant="h4"
         title={t("providerProfile.serviceDetails")}
@@ -77,7 +77,7 @@ const ServicesDetails = (props) => {
             </div>
           ))}
       </div>
-    </React.Fragment>
+    </section>
   );
 };
 

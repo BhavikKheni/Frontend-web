@@ -4,7 +4,7 @@ import { Grid, Divider } from "@material-ui/core";
 import StarBorderIcon from "@material-ui/icons/StarBorder";
 import TypographyComponent from "../../Components/Typography/Typography";
 import ButtonComponent from "../../Components/Forms/Button";
-import StartWork from "./StartWork";
+import StartWork from "./StartWork/StartWork";
 import AddBookingSpace from "./AddBookingSpace";
 import { search } from "../../Services/Auth.service";
 import { useFormik } from "formik";
