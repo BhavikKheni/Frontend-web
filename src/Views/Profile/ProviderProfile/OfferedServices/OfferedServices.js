@@ -4,18 +4,20 @@ import Rating from "@material-ui/lab/Rating";
 import Divider from "@material-ui/core/Divider";
 import { useTranslation } from "react-i18next";
 import TypographyComponent from "../../../../Components/Typography/Typography";
-import { themes } from "../../../../themes";
 
 const OfferedServices = (props) => {
+
   const {
     userData,
     setSelectedService,
     setSelectedReview,
     setAverages,
   } = props;
+
   const { t } = useTranslation();
+
   return (
-    <React.Fragment>
+    <section className="offered-services">
       <Grid container spacing={3}>
         <Grid item xs={12} md={12}>
           <TypographyComponent
@@ -35,56 +37,56 @@ const OfferedServices = (props) => {
       </Grid>
 
       <div className="offered_services_inner">
-            {userData.services_created &&
-              userData.services_created.map((o, i) => {
-                return (
-                  <div
-                    key={i}
-                    onClick={() => {
-                      setSelectedService(o);
-                      const { reviews_list } = o.reviews || [];
-                      const { averages } = o.reviews || {};
-                      setSelectedReview(reviews_list);
-                      setAverages(averages);
-                    }}
-                    className="offered_services_item"
-                  >
-                      <TypographyComponent
-                        variant="h2"
-                        title={`${o.price}$/h`}
-                      />
-                      <TypographyComponent variant="h5" title={o.title} />
-                      <div className="offered_services_review">
-                        <TypographyComponent
-                          variant="h6"
-                          title={"Service Quality"}
-                        />
-                        <Rating
-                          name="Quality"
-                          value={
-                            o.reviews.averages &&
-                            o.reviews.averages.average_service_quality_rating
-                          }
-                          size="small"
-                          disabled
-                        />
-                      </div>
-                      <div className="offered_services_review">
-                        <TypographyComponent variant="h6" title="Simpathy" />
-                        <Rating
-                          name="simpathy"
-                          value={
-                            o.reviews.averages &&
-                            o.reviews.averages.average_sympathy_rating
-                          }
-                          size="small"
-                          disabled
-                        />
-                      </div>
+        {userData.services_created &&
+          userData.services_created.map((o, i) => {
+            return (
+              <div
+                key={i}
+                onClick={() => {
+                  setSelectedService(o);
+                  const { reviews_list } = o.reviews || [];
+                  const { averages } = o.reviews || {};
+                  setSelectedReview(reviews_list);
+                  setAverages(averages);
+                }}
+                className="offered_services_item"
+              >
+                  <TypographyComponent
+                    variant="h2"
+                    title={`${o.price}$/h`}
+                  />
+                  <TypographyComponent variant="h5" title={o.title} />
+                  <div className="offered_services_review">
+                    <TypographyComponent
+                      variant="h6"
+                      title={"Service Quality"}
+                    />
+                    <Rating
+                      name="Quality"
+                      value={
+                        o.reviews.averages &&
+                        o.reviews.averages.average_service_quality_rating
+                      }
+                      size="small"
+                      disabled
+                    />
                   </div>
-                );
-              })}
-          </div>
+                  <div className="offered_services_review">
+                    <TypographyComponent variant="h6" title="Simpathy" />
+                    <Rating
+                      name="simpathy"
+                      value={
+                        o.reviews.averages &&
+                        o.reviews.averages.average_sympathy_rating
+                      }
+                      size="small"
+                      disabled
+                    />
+                  </div>
+              </div>
+            );
+          })}
+        </div>
       <Grid container spacing={3}>
         <Grid item xs={12} md={12}>
           <Divider
@@ -94,7 +96,7 @@ const OfferedServices = (props) => {
           />
         </Grid>
       </Grid>
-    </React.Fragment>
+    </section>
   );
 };
 

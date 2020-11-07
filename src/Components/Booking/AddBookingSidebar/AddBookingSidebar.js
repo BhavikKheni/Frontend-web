@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { forwardRef, useState, useImperativeHandle } from "react";
 import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
@@ -8,20 +8,48 @@ import DateFnsUtils from "@date-io/date-fns";
 import AddIcon from "@material-ui/icons/Add";
 import InputComponent from "../../Forms/Input";
 import ButtonComponent from "../../Forms/Button";
-import Sppiner from "../../Spinner/Spinner";
+import Spinner from "../../Spinner/Spinner";
 import { add } from "../../../Services/Auth.service";
 import SnackBarComponent from "../../SnackBar/SnackBar";
 
-const AddBookingSidebar = (props) => {
-  const [fromTime, setFromTime] = useState("");
-  const [toTime, setToTime] = useState("");
+const AddBookingSidebar = forwardRef ((props, ref) => {
+
+  const [getFromTime, setFromTime] = useState("");
+  const [getToTime, setToTime] = useState("");
   const [openSnackBar, setOpenSnackBar] = useState(false);
   const [response, setResponse] = useState({});
-  const [selectedDate, setSelectedDate] = React.useState(new Date());
+  const [selectedDate, setSelectedDate] = React.useState();
   const [isLoading, setLoading] = useState(false);
   const [data, setData] = useState([]);
   const { user, selectedService } = props;
+  const [getSlotDetails, setSlotDetails] = useState({});
   
+  useImperativeHandle(ref, () => ({
+    getSeletedSlotDetails(selectedSlotDetails) {
+      console.log("AAAA", selectedSlotDetails.start);
+      console.log("in log", selectedSlotDetails.extendedProps.slot_id);
+      setSlotDetails(selectedSlotDetails);
+      setDateTimeFieldValue(selectedSlotDetails);
+      calculatePrice();
+    }
+  }));
+
+  const setDateTimeFieldValue = (dateTime) => {
+    setSelectedDate(dateTime.start);
+    setFromTime(moment(dateTime.start).format("HH:mm"));
+    setToTime(moment(dateTime.end).format("HH:mm"));
+  }
+
+  const calculatePrice = () => {
+    console.log("selectedService: ", selectedService);
+    console.log("Price: ", selectedService.price);
+    const pricePerHour = selectedService.price;
+    const pricePerMinute = pricePerHour/60;
+    
+    const startTime = moment(getFromTime, "HH:mm");
+    const endTime = moment(getToTime, "HH:mm");
+  }
+
   const handleDateChange = (date) => {
     setSelectedDate(date);
   };
@@ -30,8 +58,8 @@ const AddBookingSidebar = (props) => {
     const date = moment(selectedDate).format("YYYY-MM-DD");
     const bookingData = {
       id_service: selectedService.id_service,
-      start: moment(`${date} ${fromTime}`).format(),
-      end: moment(`${date} ${toTime}`).format(),
+      start: moment(`${date} ${getFromTime}`).format(),
+      end: moment(`${date} ${getToTime}`).format(),
       id_user: user.id_user,
       color: "red",
     };
@@ -63,6 +91,16 @@ const AddBookingSidebar = (props) => {
     setOpenSnackBar(false);
   };
 
+  const onChangeFromTime = (e) => {
+    setFromTime(e.target.value)
+    calculatePrice();
+  }
+
+  const onChangeToTime = (e) => {
+    setToTime(e.target.value)
+    calculatePrice();
+  }
+
   return (
     <React.Fragment>
       <div className="booking_title">
@@ -74,9 +112,9 @@ const AddBookingSidebar = (props) => {
         <InputComponent
           placeholder="00:00"
           type="time"
-          value={fromTime}
+          value={getFromTime}
           onChange={(e) => {
-            setFromTime(e.target.value);
+            onChangeFromTime(e);
           }}
           className="booking_time_interval_input"
         />
@@ -84,9 +122,9 @@ const AddBookingSidebar = (props) => {
         <InputComponent
           placeholder="00:00"
           type="time"
-          value={toTime}
+          value={getToTime}
           onChange={(e) => {
-            setToTime(e.target.value);
+            onChangeToTime(e);
           }}
           className="booking_time_interval_input"
         />
@@ -136,6 +174,6 @@ const AddBookingSidebar = (props) => {
       />
     </React.Fragment>
   );
-};
+});
 
 export default AddBookingSidebar;

@@ -4,10 +4,18 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import "date-fns";
-import DateFnsUtils from "@date-io/date-fns";
 import "./Calendar.css";
+
 const CalendarComponent = (props) => {
+
   const { INITIAL_EVENTS, renderEventContent } = props;
+
+  const onSelectSlot = (event) => {
+    // alert('Event: ' + JSON.stringify(event));
+    // alert('Event: ' + event.extendedProps.slot_id);
+    props.onSelectBookingSlot(event);
+  }
+
   return (
     <FullCalendar
       plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
@@ -34,8 +42,11 @@ const CalendarComponent = (props) => {
       // businessHours={true}
       editable={true}
       eventConstraint={"businessHours"} // disabled drag and drop in whole calendar
-      eventContent={renderEventContent && renderEventContent}
+      eventContent={renderEventContent}
       events={INITIAL_EVENTS}
+      eventClick= {(info) => {
+        onSelectSlot(info.event);
+      }}
     />
   );
 };
