@@ -1,0 +1,50 @@
+.next_booking_wrapper {
+  max-height: 230px;
+  overflow: auto;
+}
+
+.next_booking_item {
+  display: flex;
+  align-items: center;
+}
+
+.next_booking_item + .next_booking_item {
+  margin-top: 25px;
+}
+
+.next_booking_item button {
+  font-size: 12px;
+  line-height: 18px;
+  letter-spacing: 0.02em;
+  font-weight: normal;
+  color: #FFFFFF;
+  text-transform: inherit;
+  height: 25px;
+  max-width: 112px;
+  width: 100%;
+  border-radius: 5px;
+  margin: 0 13px 0 0;
+}
+
+.next_booking_item p {
+  font-family: 'Rubik';
+  line-height: 30px;
+  letter-spacing: 0.02em;
+  color: #303030;
+  min-width: 85px;
+  text-align: center;
+  margin: 0 3px;
+}
+
+.next_booking_item p:last-of-type {
+  text-align: left;
+  max-width: 60%;
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.next_booking_item svg {
+  margin-left: auto;
+}

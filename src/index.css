@@ -110,6 +110,16 @@ header button.MuiButtonBase-root ~ button {
   padding: 30px 0 30px 20px;
 }
 
+.main_content h2 {
+  font-family: 'Rubik';
+  font-size: 36px;
+  line-height: 48px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: #303030;
+  margin-bottom: 20px;
+}
+
 .spinner_loading {
   display: flex;
   align-items: center;
@@ -184,3 +194,30 @@ header button.MuiButtonBase-root ~ button {
   color: rgba(0, 0, 0, 0.38);
   cursor: default;
 }
+
+
+/* more_info_popover (On home page) */
+.more_info_popover .MuiPaper-root {
+  border: 1px solid rgba(25, 25, 25, 0.9);
+  border-radius: 10px;
+  min-width: 236px;
+  padding: 25px 42px 16px 22px;
+}
+.more_info_popover_close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+}
+.more_info_popover p {
+  font-family: 'Rubik';
+  font-size: 14px;
+  line-height: 24px;
+  letter-spacing: 0.02em;
+  color: #303030;
+  cursor: pointer;
+}
+/* more_info_popover */

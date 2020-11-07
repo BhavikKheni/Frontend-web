@@ -74,39 +74,31 @@ const PaymentMethod = (props) => {
 
   return (
     <React.Fragment>
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={12}>
-          <TypographyComponent
-            title={t("home.paymentMethod.title")}
-            variant="h3"
-          />
-        </Grid>
-      </Grid>
-      <div className={clsx(Styles.payment_add_wrapper)}>
+      <TypographyComponent
+        title={t("home.paymentMethod.title")}
+        variant="h2"
+      />
+      <div className={clsx(Styles.payment_card_wrapper)}>
         <Card className={clsx(Styles.payment_card)}>
-          <CardHeader title="Visa" variant="h6" />
-          <CardContent>
+          <CardHeader title="Visa" variant="h6" className={clsx(Styles.card_title)} />
+          <CardContent className={clsx(Styles.payment_card_content)}>
             <div className={clsx(Styles.payment_item_card)}>
-              <TypographyComponent title="Name of card" />
-              <TypographyComponent title="Expired on" />
+              <TypographyComponent title="Name of card" className={clsx(Styles.user_card_name)} />
+              <TypographyComponent title="expired on" />
             </div>
             <div className={clsx(Styles.payment_item_card)}>
               <TypographyComponent title="xxxx xxxx xxxx 9843" />
-              <TypographyComponent title="00/00" />
+              <TypographyComponent title="00/00" className={clsx(Styles.user_card_expired_date)} />
             </div>
           </CardContent>
         </Card>
-        <Card className={clsx(Styles.payment_card, Styles.payment_add_card)}>
+        <Card className={clsx(Styles.payment_card, Styles.payment_add_new_card)}>
           <CardContent
-            className={clsx(Styles.payment_card_content)}
+            className={clsx(Styles.add_payment_card)}
             onClick={() => onAdd()}
           >
-            <div>
-              <AddIcon />
-            </div>
-            <div>
-              <TypographyComponent title="Add payment method" />
-            </div>
+            <AddIcon />
+            <TypographyComponent title="Add payment method" />
           </CardContent>
         </Card>
       </div>

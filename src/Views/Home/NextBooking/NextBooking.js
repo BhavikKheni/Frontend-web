@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import clsx from "clsx";
 import { withRouter } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
@@ -11,6 +12,7 @@ import ButtonComponent from "../../../Components/Forms/Button";
 import TypographyComponent from "../../../Components/Typography/Typography";
 import { search } from "../../../Services/Auth.service";
 import moment from "moment";
+import Styles from "./NextBooking.module.css";
 
 let limit = 10;
 const path = "/service/bookings/list";
@@ -19,6 +21,23 @@ const NextBooking = (props) => {
   const { t } = useTranslation();
   const { user } = props;
   const [records, setRecords] = useState([]);
+  // const [records, setRecords] = useState([
+  //   {
+  //     to_time: "05 October 2011 14:48",
+  //     from_time: "05 October 2011 14:48",
+  //     title: "Create app",
+  //   },
+  //   {
+  //     to_time: "05 October 2011 14:48",
+  //     from_time: "05 October 2011 14:48",
+  //     title: "Create app",
+  //   },
+  //   {
+  //     to_time: "05 October 2011 14:48",
+  //     from_time: "05 October 2011 14:48",
+  //     title: "Create app",
+  //   },
+  // ]);
   const [isLoading, setIsLoading] = useState(false);
   const [isUpcomingMoreData, setUpcomingMoreData] = useState(true);
   const [isUpcomingLoading, setUpcomingLoading] = useState(false);
@@ -93,14 +112,10 @@ const NextBooking = (props) => {
 
   return (
     <React.Fragment>
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={12}>
-          <TypographyComponent
-            title={t("home.nextBooking.title")}
-            variant="h3"
-          />
-        </Grid>
-      </Grid>
+      <TypographyComponent
+        title={t("home.nextBooking.title")}
+        variant="h2"
+      />
 
       <Grid container spacing={3}>
         <Grid item xs={12} md={12}>
@@ -117,28 +132,19 @@ const NextBooking = (props) => {
         <span>{t("home.nextBooking.notFoundRecord")}</span>
       ) : (
         records.map((r, index) => (
-          <Grid container spacing={3} key={index}>
-            <Grid item xs={12} md={3}>
+          // <div className={clsx(Styles.next_booking_wrapper)} >
+            
+            <div className={clsx(Styles.next_booking_item)} key={index}>
               <ButtonComponent
                 title="Go to meeting"
                 onClick={() => goToMeeting()}
               />
-            </Grid>
-            <Grid item xs={12} md={1}>
               <TypographyComponent title="11/03/2020" />
-            </Grid>
-            <Grid item xs={12} md={1}>
               <TypographyComponent
                 title={moment(r.from_time).format("HH:mm")}
               />
-            </Grid>
-            <Grid item xs={12} md={1}>
               <TypographyComponent title={moment(r.to_time).format("HH:mm")} />
-            </Grid>
-            <Grid item xs={12} md={1}>
               <TypographyComponent title={r.title} />
-            </Grid>
-            <Grid item xs={12} md={3}>
               <MoreVertIcon
                 aria-describedby={id}
                 variant="contained"
@@ -146,8 +152,9 @@ const NextBooking = (props) => {
                 onClick={(event) => handleClick(event, r)}
                 style={{ cursor: "pointer" }}
               />
-            </Grid>
-          </Grid>
+            </div>
+
+          // </div>
         ))
       )}
       {isUpcomingMoreData && records && records.length > 0 && (
@@ -177,21 +184,19 @@ const NextBooking = (props) => {
         anchorEl={anchorEl}
         onClose={handleClose}
         anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "center",
+          vertical: "top",
+          horizontal: "right",
         }}
         transformOrigin={{
           vertical: "top",
-          horizontal: "center",
+          horizontal: "right",
         }}
+        className='more_info_popover'
       >
-        <CloseIcon onClick={handleClose} />
-        <div>
-          <TypographyComponent
-            title="Cancel Booking"
-            style={{ cursor: "pointer" }}
-          />
-        </div>
+        <CloseIcon onClick={handleClose} className="more_info_popover_close" />
+        <TypographyComponent
+          title="Cancel Booking"
+        />
       </Popover>
     </React.Fragment>
   );

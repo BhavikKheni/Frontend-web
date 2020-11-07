@@ -1,35 +1,73 @@
-.payment_add_wrapper {
+.payment_card_wrapper {
   display: flex;
   align-items: center;
+  margin-bottom: 50px;
 }
-.payment_card {
+.payment_card_wrapper .payment_card {
   background: #ffffff;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
   border-radius: 8px;
-  width: 100%;
   max-width: 293px;
-  height: 100%;
-  max-height: 150px;
+  width: 100%;
+  height: 150px;
+  padding: 7px 16px;
 }
-.payment_item_card {
+.payment_card_wrapper .payment_card + .payment_card {
+  margin-left: 32px;
+}
+.payment_card_wrapper .card_title {
+  padding: 0;
+  margin-bottom: 14px;
+}
+.payment_card_wrapper .card_title span {
+  font-family: 'Rubik';
+  font-weight: 500;
+  line-height: 36px;
+  letter-spacing: 0.02em;
+  color: #303030;
+}
+.payment_card_wrapper .payment_item_card {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
-.payment_add_card {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  min-height: 150px;
+.payment_card_wrapper .payment_card_content {
+  padding: 0 !important;
 }
-.payment_card_content {
+.payment_card_wrapper .payment_add_new_card {
   display: flex;
   justify-content: center;
-  flex-direction: column;
+  padding: 0;
+  transition: all 0.3s ease-in-out 0s;
+}
+.payment_card_wrapper .payment_add_new_card:hover {
+  transform: scale(1.04);
+  transition: all 0.3s ease-in-out 0s;
+}
+.payment_card_wrapper .payment_add_new_card  .add_payment_card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-flow: column;
+  padding: 0;
+  width: 100%;
   cursor: pointer;
 }
-.card_wrapper {
+.payment_card_wrapper p {
+  font-family: 'Rubik';
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  color: #303030;
+}
+.payment_card_wrapper .user_card_name,
+.payment_card_wrapper .payment_add_new_card  .add_payment_card p {
+  font-size: 14px;
+  font-weight: 500;
+}
+.payment_card_wrapper .user_card_expired_date {
+  font-size: 14px;
+}
+.payment_card_wrapper .card_wrapper {
   width: 100%;
   max-width: 456px;
   height: 100%;
@@ -37,7 +75,7 @@
   background-color: #ffffff;
   padding: 27px 76px 15px 68px;
 }
-.card_form {
+.payment_card_wrapper .card_form {
   width: 100%;
   max-width: 312px;
   height: 100%;
@@ -45,7 +83,7 @@
   background-color: #000;
   padding: 10px;
 }
-.card_items {
+.payment_card_wrapper .card_items {
   background: #434343;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.05);
 }

@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import clsx from "clsx";
 import { withRouter, Link } from "react-router-dom";
 import { MenuItem, Divider } from "@material-ui/core";
 import { useSidebar } from "../../Provider/SidebarProvider";
@@ -9,6 +10,7 @@ import MyServiceHistory from "./MyServiceHistory/MyServiceHistory";
 import NextBooking from "./NextBooking/NextBooking";
 import PaymentMethod from "./PaymentMethod/PaymentMethod";
 import AddBookingSidebar from "../../Components/Booking/AddBookingSidebar/AddBookingSidebar";
+import Styles from "./home.module.css";
 
 const useSession = () => React.useContext(SessionContext);
 
@@ -115,11 +117,11 @@ const Home = (props) => {
   }, []);
 
   return (
-    <div>
+    <div className={clsx(Styles.home_page)}>
       <section className="next-booking">
         <NextBooking user={user} />
       </section>
-      <section className="service-history">
+      <section className={clsx(Styles.service_history)}>
         <MyServiceHistory user={user} />
       </section>
       <section className="payment-method">

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import clsx from "clsx";
 import { useTranslation } from "react-i18next";
 import { makeStyles } from "@material-ui/core/styles";
 import Accordion from "@material-ui/core/Accordion";
@@ -11,6 +12,7 @@ import { search } from "../../../Services/Auth.service";
 import Spinner from "../../../Components/Spinner/Spinner";
 import TypographyComponent from "../../../Components/Typography/Typography";
 import moment from "moment";
+import Styles from "./MyServiceHistory.module.css";
 let limit = 10;
 const path = "/service/bookings/list";
 
@@ -88,14 +90,10 @@ const MyServiceHistory = (props) => {
 
   return (
     <React.Fragment>
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={12}>
-          <TypographyComponent
-            title={t("home.serviceHistory.title")}
-            variant="h3"
-          />
-        </Grid>
-      </Grid>
+      <TypographyComponent
+        title={t("home.serviceHistory.title")}
+        variant="h2"
+      />
 
       <Grid container spacing={3}>
         <Grid item xs={12} md={12}>
@@ -112,44 +110,37 @@ const MyServiceHistory = (props) => {
         <span>{t("home.serviceHistory.notFoundRecord")}</span>
       ) : (
         records.map((record, index) => (
-          <Grid container spacing={3} key={index}>
+          <div className={clsx(Styles.previous_service)} key={index}>
             <Accordion key={index}>
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls="panel1a-content"
                 id="panel1a-header"
+                className={clsx(Styles.previous_service_title)}
               >
-                <span></span>
-                <span>{moment(record.from_time).format("HH:mm")}</span>
-                <span>{moment(record.to_time).format("HH:mm")}</span>
-                <span>{record.title}</span>
+                <p>00/00/2020</p>
+                <p>{moment(record.from_time).format("HH:mm")}</p>
+                <p>{moment(record.to_time).format("HH:mm")}</p>
+                <p>{record.title}</p>
               </AccordionSummary>
-              <AccordionDetails className={classes.details}>
-                <div>
+              <AccordionDetails className={clsx(Styles.previous_service_content)}>
+                <div className={clsx(Styles.previous_service_info_title)}>
                   <TypographyComponent title="Provider name" />
-                </div>
-                <div>
-                  <TypographyComponent title={record.provider_name} />
-                </div>
-                <div>
                   <TypographyComponent title="Total price" />
-                  <TypographyComponent title={`${record.price}/£`} />
-                  <div>
-                    <TypographyComponent title="Status" />
-                    <TypographyComponent title={record.status} />
-                  </div>
-                </div>
-                <div>
+                  <TypographyComponent title="Status" />
                   <TypographyComponent title="Transaction id" />
-                  <TypographyComponent title="ipi_1HSRfRCYjANOKpKjodn7KML5" />
-                </div>
-                <div>
                   <TypographyComponent title="Order id" />
+                </div>
+                <div className={clsx(Styles.previous_service_info_value)}>
+                  <TypographyComponent title={record.provider_name} />
+                  <TypographyComponent title={`${record.price}/£`} />
+                  <TypographyComponent title={record.status} />
+                  <TypographyComponent title="ipi_1HSRfRCYjANOKpKjodn7KML5" />
                   <TypographyComponent title="ipi_1HSRfRCYjANOKpKjodn7KML5" />
                 </div>
               </AccordionDetails>
             </Accordion>
-          </Grid>
+          </div>
         ))
       )}
       {isUpcomingMoreData && records && records.length > 0 && (
@@ -160,6 +151,9 @@ const MyServiceHistory = (props) => {
             <div
               className="load-more"
               onClick={() => onMore(path, upcomingoffset, {})}
+              style={{
+                marginBottom: "10px",
+              }}
             ></div>
           )}
         </div>
