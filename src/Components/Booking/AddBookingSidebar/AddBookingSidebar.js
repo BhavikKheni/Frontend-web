@@ -19,15 +19,13 @@ const AddBookingSidebar = forwardRef ((props, ref) => {
   const [openSnackBar, setOpenSnackBar] = useState(false);
   const [response, setResponse] = useState({});
   const [selectedDate, setSelectedDate] = React.useState();
-  const [isLoading, setLoading] = useState(false);
-  const [data, setData] = useState([]);
   const { user, selectedService } = props;
   const [getSlotDetails, setSlotDetails] = useState({});
+  const [getTotalCost, setTotalCost] = useState(null);
+  const [getFinalTime, setFinalTime] = useState(null);
   
   useImperativeHandle(ref, () => ({
     getSeletedSlotDetails(selectedSlotDetails) {
-      console.log("AAAA", selectedSlotDetails.start);
-      console.log("in log", selectedSlotDetails.extendedProps.slot_id);
       setSlotDetails(selectedSlotDetails);
       setDateTimeFieldValue(selectedSlotDetails);
       calculatePrice();
@@ -40,49 +38,78 @@ const AddBookingSidebar = forwardRef ((props, ref) => {
     setToTime(moment(dateTime.end).format("HH:mm"));
   }
 
+  // Calculate the final price for booking
   const calculatePrice = () => {
-    console.log("selectedService: ", selectedService);
-    console.log("Price: ", selectedService.price);
     const pricePerHour = selectedService.price;
     const pricePerMinute = pricePerHour/60;
-    
-    const startTime = moment(getFromTime, "HH:mm");
-    const endTime = moment(getToTime, "HH:mm");
+
+    const startTimeInMinutes = getTimeInMinutes(getFromTime);
+    const endTimeInMinutes = getTimeInMinutes(getToTime);
+
+    const finalTime = endTimeInMinutes - startTimeInMinutes;
+    setFinalTime(finalTime);
+  
+    const totalCost = finalTime*pricePerMinute;
+    setTotalCost(totalCost.toFixed(2));
+  }
+
+  // Function will convert 13:45 time to minutes
+  const getTimeInMinutes = (time) => {
+    const hourTime = parseInt((time).toString().split(":")[0]);
+    const minuteTime = parseInt((time).toString().split(":")[1]);
+    const timeInMinutes = (hourTime*60)+(minuteTime);
+    return timeInMinutes;
   }
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
   };
 
+  const checkIfValidSlotSelectedOrNot = () => {
+    const actualSlotFromTime = getTimeInMinutes(moment(getSlotDetails.start).format("HH:mm"));
+    const actualSlotToTime = getTimeInMinutes(moment(getSlotDetails.end).format("HH:mm"));
+
+    const slotBookingFromTime = getTimeInMinutes(getFromTime);
+    const slotBookingToTime = getTimeInMinutes(getToTime);
+
+    if (actualSlotFromTime > slotBookingFromTime || actualSlotToTime < slotBookingToTime) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
   const onAddBooking = () => {
-    const date = moment(selectedDate).format("YYYY-MM-DD");
-    const bookingData = {
-      id_service: selectedService.id_service,
-      start: moment(`${date} ${getFromTime}`).format(),
-      end: moment(`${date} ${getToTime}`).format(),
-      id_user: user.id_user,
-      color: "red",
-    };
-    console.log(bookingData);
-    setData(bookingData);
-    props.onAddBooking(bookingData);
+    if (checkIfValidSlotSelectedOrNot()) {
+      // const bookingData = {
+      //   id_service: selectedService.id_service,
+      //   start: moment(`${date} ${getFromTime}`).format(),
+      //   end: moment(`${date} ${getToTime}`).format(),
+      //   id_user: user.id_user,
+      //   color: "red",
+      // };
+      // setData(bookingData);
+      // props.onAddBooking(bookingData);
+    } else {
+      alert("Slot is not available for your selected date and time");
+    }
   };
 
-  const onSaveAddBooking = () => {
-    props.onAddBooking(data);
-    setLoading(true);
-    add("/service/book", data)
-      .then((result) => {
-        setLoading(false);
-        setResponse(result);
-        setOpenSnackBar(true);
-      })
-      .catch((error) => {
-        setLoading(false);
-        setResponse(error);
-        console.log("Error", error);
-      });
-  };
+  // Need to remove this function
+  // const onSaveAddBooking = () => {
+  //   props.onAddBooking(data);
+  //   setLoading(true);
+  //   add("/service/book", data)
+  //     .then((result) => {
+  //       setLoading(false);
+  //       setResponse(result);
+  //       setOpenSnackBar(true);
+  //     })
+  //     .catch((error) => {
+  //       setLoading(false);
+  //       setResponse(error);
+  //     });
+  // };
 
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -148,10 +175,18 @@ const AddBookingSidebar = forwardRef ((props, ref) => {
           />
         </MuiPickersUtilsProvider>
       </div>
-      <div className="booking_row booking_cost">
-        <span className="booking_time_label">Total Cost:</span>
-        <p className="booking_cost_price">20$</p>
-      </div>
+      {getTotalCost && getFinalTime && (
+        <>
+          <div className="booking_row booking_cost">
+            <span className="booking_time_label">Total Cost:</span>
+            <p className="booking_cost_price">{getTotalCost}$</p>
+          </div>
+          <div className="booking_row booking_cost">
+            <span className="booking_time_label">Duration:</span>
+            <p className="booking_cost_price">{getFinalTime}</p>
+          </div>
+        </>
+      )}
       <div className="confirm_booking_row">
         <ButtonComponent
           title="Confirm"
