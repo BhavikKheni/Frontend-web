@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import clsx from "clsx";
+import { makeStyles } from "@material-ui/core/styles";
 import { withRouter } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
@@ -12,12 +12,82 @@ import ButtonComponent from "../../../Components/Forms/Button";
 import TypographyComponent from "../../../Components/Typography/Typography";
 import { search } from "../../../Services/Auth.service";
 import moment from "moment";
-import Styles from "./NextBooking.module.css";
 
 let limit = 10;
 const path = "/service/bookings/list";
 
+const useStyles = makeStyles((theme) => ({
+
+  root: {
+    width: "100%",
+  },
+
+  heading: {
+    fontSize: theme.typography.pxToRem(15),
+    fontWeight: theme.typography.fontWeightRegular,
+  },
+
+  next_booking_wrapper : {
+    maxHeight: '230px',
+    overflow: 'auto',
+    marginTop: '24px',
+    direction: 'rtl',
+  },
+  
+  next_booking_item : {
+    display: 'flex',
+    alignItems: 'center',
+    direction: 'ltr',
+    marginBottom: '25px',
+
+    '& button' : {
+      fontSize: '12px',
+      lineHeight: '18px',
+      letterSpacing: '0.02em',
+      fontWeight: 'normal',
+      color: '#FFFFFF',
+      textTransform: 'inherit',
+      height: '25px',
+      maxWidth: '112px',
+      width:'100%',
+      borderRadius: '5px',
+      margin: '0 13px 0 0',
+    },
+
+    '& p' : {
+      fontFamily: 'Rubik',
+      lineHeight: '30px',
+      letterSpacing: '0.02em',
+      color: '#303030',
+      minWidth: '85px',
+      textAlign: 'center',
+      margin: '0 3px',
+
+      '&:last-of-type' : {
+        textAlign: 'left',
+        maxWidth: '60%',
+        width: '100%',
+        overflow: 'hidden',
+        whiteSpace: 'nowrap',
+        textOverflow: 'ellipsis',
+      },
+    },
+
+    '& svg' : {
+      marginLeft: 'auto',
+    }, 
+  },
+  
+  no_records_found: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: '80px',
+  }
+}));
+
 const NextBooking = (props) => {
+  const classes = useStyles();
   const { t } = useTranslation();
   const { user } = props;
   const [records, setRecords] = useState([]);
@@ -126,15 +196,15 @@ const NextBooking = (props) => {
           />
         </Grid>
       </Grid>
-      <div className={clsx(Styles.next_booking_wrapper)} >
+      <div className={classes.next_booking_wrapper} >
         {isLoading ? (
           <Spinner />
         ) : records && !records.length ? (
-          <span>{t("home.nextBooking.notFoundRecord")}</span>
+          <span className={classes.no_records_found}>{t("home.nextBooking.notFoundRecord")}</span>
         ) : (
           records.map((r, index) => (
               
-              <div className={clsx(Styles.next_booking_item)} key={index}>
+              <div className={classes.next_booking_item} key={index}>
                 <ButtonComponent
                   title="Go to meeting"
                   onClick={() => goToMeeting()}

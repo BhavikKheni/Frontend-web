@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from "react";
-import clsx from "clsx";
 import { useTranslation } from "react-i18next";
 import { makeStyles } from "@material-ui/core/styles";
 import Accordion from "@material-ui/core/Accordion";
@@ -12,7 +11,6 @@ import { search } from "../../../Services/Auth.service";
 import Spinner from "../../../Components/Spinner/Spinner";
 import TypographyComponent from "../../../Components/Typography/Typography";
 import moment from "moment";
-import Styles from "./MyServiceHistory.module.css";
 let limit = 10;
 const path = "/service/bookings/list";
 
@@ -20,13 +18,116 @@ const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
   },
+
   heading: {
     fontSize: theme.typography.pxToRem(15),
     fontWeight: theme.typography.fontWeightRegular,
   },
+
   details: {
     flexDirection: "column",
   },
+
+  previous_service_wrapper: {
+    maxHeight: '457px',
+    overflow: 'auto',
+    overflowX: 'hidden',
+    margin: '15px 0',
+    direction: 'rtl',
+  },
+
+  previous_service : {
+    marginTop: '10px',
+    direction: 'ltr',
+
+    '& previous_service_title': {
+      display: 'flex',
+      flexDirection: 'row-reverse',
+      padding: '0',
+    },
+  },
+
+  previous_service_title: {
+    display: 'flex',
+    flexFlow: 'row-reverse',
+    padding: '0',
+    minHeight: 'inherit',
+
+    '&.Mui-expanded' : {
+      minHeight : 'inherit'
+    },
+
+    '& .MuiAccordionSummary-content' : {
+      margin: '0',
+    },
+
+    '& .MuiIconButton-root' : {
+      padding: '0px 20px',
+
+      '& .MuiIconButton-label': {
+        // backgroundImage: url('./images/select_arrow.svg'),
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'contain',
+        backgroundPosition: 'center',
+        width: '20px',
+        height: '10px',    
+
+        '& svg' : {
+          display: 'none',
+        },
+      },
+    },
+
+    '& p' : {
+      fontFamily: 'Rubik',
+      fontSize: '13px',
+      lineHeight: '24px',
+      letterSpacing: '-0.015em',
+      color: '#303030',
+      minWidth: '90px',
+      textAlign: 'center',
+      margin: '0 5px',
+    },
+
+    '& .Mui-expanded' : {
+      '& p': {
+        fontSize: '14px',
+        fontWeight: '500',
+      }
+    }
+  },
+
+  previous_service_content: {
+    display: 'flex',
+    alignItems: 'flex-start', 
+    paddingLeft: '65px',
+
+    '& p' : {
+      fontFamily: 'Rubik',
+      fontSize: '12px',
+      lineHeight: '24px',
+      letterSpacing: '0.02em',
+      color: '#303030',
+    }
+  },
+
+  previous_service_info_title : {
+    maxWidth: '280px',
+    width: '100%',
+  },
+
+  previous_service_info_value : {
+    '& p' : {
+      fontWeight: '500',
+    }
+  },
+
+  no_records_found: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: '80px',
+  }
 }));
 
 const MyServiceHistory = (props) => {
@@ -146,14 +247,14 @@ const MyServiceHistory = (props) => {
           />
         </Grid>
       </Grid>
-      <div className={clsx(Styles.previous_service_wrapper)}>
+      <div className={classes.previous_service_wrapper}>
         {isLoading ? (
           <Spinner />
         ) : records && !records.length ? (
-          <span>{t("home.serviceHistory.notFoundRecord")}</span>
+          <span className={classes.no_records_found}>{t("home.serviceHistory.notFoundRecord")}</span>
         ) : (
           records.map((record, index) => (
-            <div className={clsx(Styles.previous_service)} key={index}>
+            <div className={classes.previous_service} key={index}>
               <Accordion 
                 key={index}
                 style={{
@@ -164,22 +265,22 @@ const MyServiceHistory = (props) => {
                   expandIcon={<ExpandMoreIcon />}
                   aria-controls="panel1a-content"
                   id="panel1a-header"
-                  className={clsx(Styles.previous_service_title)}
+                  className={classes.previous_service_title}
                 >
                   <p>00/00/2020</p>
                   <p>{moment(record.from_time).format("HH:mm")}</p>
                   <p>{moment(record.to_time).format("HH:mm")}</p>
                   <p>{record.title}</p>
                 </AccordionSummary>
-                <AccordionDetails className={clsx(Styles.previous_service_content)}>
-                  <div className={clsx(Styles.previous_service_info_title)}>
+                <AccordionDetails className={classes.previous_service_content}>
+                  <div className={classes.previous_service_info_title}>
                     <TypographyComponent title="Provider name" />
                     <TypographyComponent title="Total price" />
                     <TypographyComponent title="Status" />
                     <TypographyComponent title="Transaction id" />
                     <TypographyComponent title="Order id" />
                   </div>
-                  <div className={clsx(Styles.previous_service_info_value)}>
+                  <div className={classes.previous_service_info_value}>
                     <TypographyComponent title={record.provider_name} />
                     <TypographyComponent title={`${record.price}/£`} />
                     <TypographyComponent title={record.status} />
