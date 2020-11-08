@@ -1,19 +1,12 @@
 import React, { forwardRef, useState, useImperativeHandle } from "react";
-import {
-  MuiPickersUtilsProvider,
-  KeyboardDatePicker,
-} from "@material-ui/pickers";
 import moment from "moment";
-import DateFnsUtils from "@date-io/date-fns";
 import AddIcon from "@material-ui/icons/Add";
 import InputComponent from "../../Forms/Input";
 import ButtonComponent from "../../Forms/Button";
-import Spinner from "../../Spinner/Spinner";
 import { add } from "../../../Services/Auth.service";
 import SnackBarComponent from "../../SnackBar/SnackBar";
 
-const AddBookingSidebar = forwardRef ((props, ref) => {
-
+const AddBookingSidebar = forwardRef((props, ref) => {
   const [getFromTime, setFromTime] = useState("");
   const [getToTime, setToTime] = useState("");
   const [openSnackBar, setOpenSnackBar] = useState(false);
@@ -23,61 +16,64 @@ const AddBookingSidebar = forwardRef ((props, ref) => {
   const [getSlotDetails, setSlotDetails] = useState({});
   const [getTotalCost, setTotalCost] = useState(null);
   const [getFinalTime, setFinalTime] = useState(null);
-  
+
   useImperativeHandle(ref, () => ({
     getSeletedSlotDetails(selectedSlotDetails) {
       setSlotDetails(selectedSlotDetails);
       setDateTimeFieldValue(selectedSlotDetails);
-      calculatePrice();
-    }
+      
+    },
   }));
 
   const setDateTimeFieldValue = (dateTime) => {
     setSelectedDate(dateTime.start);
     setFromTime(moment(dateTime.start).format("HH:mm"));
     setToTime(moment(dateTime.end).format("HH:mm"));
-  }
+    calculatePrice(moment(dateTime.start).format("HH:mm"),moment(dateTime.end).format("HH:mm"));
+  };
 
   // Calculate the final price for booking
-  const calculatePrice = () => {
+  const calculatePrice = (get_from_time,get_to_time) => {
     const pricePerHour = selectedService.price;
-    const pricePerMinute = pricePerHour/60;
-
-    const startTimeInMinutes = getTimeInMinutes(getFromTime);
-    const endTimeInMinutes = getTimeInMinutes(getToTime);
+    const pricePerMinute = pricePerHour / 60;
+    const startTimeInMinutes = getTimeInMinutes(get_from_time);
+    const endTimeInMinutes = getTimeInMinutes(get_to_time);
 
     const finalTime = endTimeInMinutes - startTimeInMinutes;
     setFinalTime(finalTime);
-  
-    const totalCost = finalTime*pricePerMinute;
+
+    const totalCost = finalTime * pricePerMinute;
     setTotalCost(totalCost.toFixed(2));
-  }
+  };
 
   // Function will convert 13:45 time to minutes
   const getTimeInMinutes = (time) => {
-    const hourTime = parseInt((time).toString().split(":")[0]);
-    const minuteTime = parseInt((time).toString().split(":")[1]);
-    const timeInMinutes = (hourTime*60)+(minuteTime);
+    const hourTime = parseInt(time.toString().split(":")[0]);
+    const minuteTime = parseInt(time.toString().split(":")[1]);
+    const timeInMinutes = hourTime * 60 + minuteTime;
     return timeInMinutes;
-  }
-
-  const handleDateChange = (date) => {
-    setSelectedDate(date);
   };
 
   const checkIfValidSlotSelectedOrNot = () => {
-    const actualSlotFromTime = getTimeInMinutes(moment(getSlotDetails.start).format("HH:mm"));
-    const actualSlotToTime = getTimeInMinutes(moment(getSlotDetails.end).format("HH:mm"));
+    const actualSlotFromTime = getTimeInMinutes(
+      moment(getSlotDetails.start).format("HH:mm")
+    );
+    const actualSlotToTime = getTimeInMinutes(
+      moment(getSlotDetails.end).format("HH:mm")
+    );
 
     const slotBookingFromTime = getTimeInMinutes(getFromTime);
     const slotBookingToTime = getTimeInMinutes(getToTime);
 
-    if (actualSlotFromTime > slotBookingFromTime || actualSlotToTime < slotBookingToTime) {
+    if (
+      actualSlotFromTime > slotBookingFromTime ||
+      actualSlotToTime < slotBookingToTime
+    ) {
       return false;
     } else {
       return true;
     }
-  }
+  };
 
   const onAddBooking = () => {
     if (checkIfValidSlotSelectedOrNot()) {
@@ -119,20 +115,19 @@ const AddBookingSidebar = forwardRef ((props, ref) => {
   };
 
   const onChangeFromTime = (e) => {
-    setFromTime(e.target.value)
-    calculatePrice();
-  }
+    setFromTime(e.target.value);
+    calculatePrice(e.target.value,getToTime);
+  };
 
   const onChangeToTime = (e) => {
-    setToTime(e.target.value)
-    calculatePrice();
-  }
+    setToTime(e.target.value);
+    calculatePrice(getFromTime,e.target.value);
+  };
 
   return (
     <React.Fragment>
       <div className="booking_title">
         <h4>Add Booking</h4>
-        <AddIcon />
       </div>
       <div className="booking_row booking_time_interval">
         <span className="booking_time_label">From:</span>
@@ -158,22 +153,7 @@ const AddBookingSidebar = forwardRef ((props, ref) => {
       </div>
       <div className="booking_row booking_date">
         <span className="booking_time_label">Date:</span>
-        <MuiPickersUtilsProvider utils={DateFnsUtils}>
-          <KeyboardDatePicker
-            disableToolbar
-            variant="inline"
-            format="MM/dd/yyyy"
-            margin="normal"
-            id="date-picker-inline"
-            value={selectedDate}
-            onChange={handleDateChange}
-            KeyboardButtonProps={{
-              "aria-label": "change date",
-            }}
-            className="date-picker"
-            disablePast
-          />
-        </MuiPickersUtilsProvider>
+        <span>{moment(selectedDate).format('YYYY-MM-DD')}</span>
       </div>
       {getTotalCost && getFinalTime && (
         <>

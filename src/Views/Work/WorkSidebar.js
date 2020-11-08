@@ -19,7 +19,7 @@ const WorkSidebar = (props) => {
       </MenuItem>
       <MenuItem
         onClick={() => {
-          var elmnt = document.getElementsByClassName("my-service-lib");
+          var elmnt = document.getElementsByClassName("my_work_services");
           if (elmnt[0]) {
             elmnt[0].scrollIntoView();
           }
@@ -29,7 +29,7 @@ const WorkSidebar = (props) => {
       </MenuItem>
       <MenuItem
         onClick={() => {
-          var elmnt = document.getElementsByClassName("add-booking-space");
+          var elmnt = document.getElementsByClassName("add_booking_space");
           if (elmnt[0]) {
             elmnt[0].scrollIntoView();
           }
@@ -39,7 +39,7 @@ const WorkSidebar = (props) => {
       </MenuItem>
       <MenuItem
         onClick={() => {
-          var elmnt = document.getElementsByClassName("create-service");
+          var elmnt = document.getElementsByClassName("create_service");
           if (elmnt[0]) {
             elmnt[0].scrollIntoView();
           }

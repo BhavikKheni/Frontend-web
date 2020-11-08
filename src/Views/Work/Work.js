@@ -11,24 +11,21 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useTranslation } from "react-i18next";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
-import MenuItem from "@material-ui/core/MenuItem";
 import MuiFormControl from "@material-ui/core/FormControl";
-import Hidden from "@material-ui/core/Hidden";
 import AddIcon from "@material-ui/icons/Add";
 import DeleteIcon from "@material-ui/icons/Delete";
 import SelectComponent from "../../Components/Forms/Select";
 import InputComponent from "../../Components/Forms/Input";
 import SnackBarComponent from "../../Components/SnackBar/SnackBar";
-import { themes } from "../../themes";
 import Spinner from "../../Components/Spinner/Spinner";
 import { SessionContext } from "../../Provider/Provider";
 import { get, add } from "../../Services/Auth.service";
 import Service from "../../Services/index";
 import { useSidebar } from "../../Provider/SidebarProvider";
-import { onIsLoggedIn } from "../../Services/Auth.service";
 import "./Work.css";
 import WorkSidebar from "./WorkSidebar";
 import AddBookingSpaceBar from "../../Components/Booking/AddBookingSpaceSidebar/AddBookingSpaceSidebar";
+import ConfirmDialog from "../../Components/ConfirmDialog/ConfirmDialog";
 import moment from "moment";
 const newService = new Service();
 const useSession = () => React.useContext(SessionContext);
@@ -45,14 +42,6 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2),
   },
 }));
-const useStyles1 = makeStyles((theme) => ({
-  formControl: {
-    minWidth: 120,
-  },
-  selectEmpty: {
-    marginTop: theme.spacing(2),
-  },
-}));
 const FormControl = withStyles((theme) => ({
   root: {
     width: "100%",
@@ -66,7 +55,6 @@ const Work = (props) => {
   let [services, setServices] = useState([]);
   const { t } = useTranslation();
   const classes = useStyles();
-  const classes1 = useStyles1();
   let { user } = useSession();
   const [openSnackbar, setOpenSnackbar] = React.useState(false);
   const [setRes, setTypeRes] = React.useState("");
@@ -92,7 +80,9 @@ const Work = (props) => {
   const [availableSlots, setAvailableSlots] = useState([]);
   const [addActiveClassName, setActiveClassName] = useState("");
   const [addClassInActiveName, setInActiveClassName] = useState("");
-
+  const [conformDeleteDialogOpen, setConformDeleteDialogOpen] = useState(false);
+  const [deleteLoader, setDeleteLoader] = useState(false);
+  const [saveLoader, setSaveLoader] = useState(false);
   useEffect(() => {
     var elmnt = document.getElementsByClassName("start_work");
     if (elmnt[0]) {
@@ -238,11 +228,35 @@ const Work = (props) => {
   }
 
   const onDelete = async () => {
-    const res = await newService.add("/service/delete", {
-      id_service: formik.values.id_service,
-    });
-    if (res.status === 200) {
+    setDeleteLoader(true);
+    const res = await newService
+      .add("/service/delete", {
+        id_service: formik.values.id_service,
+      })
+      .catch((err) => {
+        setOpenSnackbar(true);
+        setRes({
+          message: err,
+          type: "error",
+        });
+        setDeleteLoader(false);
+      });
+    if (res.type === "SUCCESS") {
+      const targetIndex = services.findIndex(
+        (l) => l.id === formik.values.id_service
+      );
+      services.splice(targetIndex, 1);
+      setServices((d) => [...d]);
+      setServiceVisible(false);
+      formik.setFieldValue("id_service", null);
+      setConformDeleteDialogOpen(false);
+      setDeleteLoader(false);
     } else {
+      setOpenSnackbar(true);
+      setRes({
+        message: res.message,
+        type: res.type,
+      });
     }
   };
 
@@ -300,7 +314,7 @@ const Work = (props) => {
     for (let i = 0; i < getDeletedImageArry.length; i++) {
       formData.append(`deleted_images[${i}]`, getDeletedImageArry[i]);
     }
-
+    setSaveLoader(true);
     const res = await newService
       .upload("/service/update", formData)
       .catch((err) => {
@@ -308,13 +322,25 @@ const Work = (props) => {
         setOpenSnackbar(true);
         setSubmitting(false);
       });
-    if (res) {
+    if (res && res.type === "SUCCESS") {
       const targetIndex = services.findIndex(
         (l) => l.id_service === formik.values.id_service
       );
       services[targetIndex] = formik.values;
       setServices((d) => [...d]);
-      setTypeRes(res);
+      setSaveLoader(false);
+      setTypeRes({
+        message: res.message,
+        type: "success",
+      });
+      setSubmitting(false);
+      setOpenSnackbar(true);
+    } else {
+      setSaveLoader(false);
+      setTypeRes({
+        message: res.message,
+        type: "error",
+      });
       setSubmitting(false);
       setOpenSnackbar(true);
     }
@@ -342,16 +368,25 @@ const Work = (props) => {
         const res = await newService
           .upload("/service/add", formData)
           .catch((err) => {
+            setSaveLoader(false);
             setSubmitting(false);
             setTypeRes(res);
             setSubmitting(false);
             setOpenSnackbar(true);
           });
         if (res && res.type === "SUCCESS") {
-          setTypeRes(res);
+          setSaveLoader(false);
+          setTypeRes({
+            message: res.message,
+            type: "success",
+          });
           setOpenSnackbar(true);
         } else {
-          setTypeRes(res);
+          setSaveLoader(false);
+          setTypeRes({
+            message: res.message,
+            type: "error",
+          });
           setSubmitting(false);
           setOpenSnackbar(true);
         }
@@ -412,7 +447,7 @@ const Work = (props) => {
     }
     formik.setFieldValue("subcategory", sub[0].sub_categories[0].id_category);
     setFileList([...response.images]);
-    var elmnt = document.getElementsByClassName("create-service");
+    var elmnt = document.getElementsByClassName("create_service");
     if (elmnt[0]) {
       elmnt[0].scrollIntoView();
     }
@@ -474,7 +509,7 @@ const Work = (props) => {
       setServiceVisible(true);
       formik.resetForm({});
       setFileList([]);
-      var elmnt = document.getElementsByClassName("create-service");
+      var elmnt = document.getElementsByClassName("create_service");
       if (elmnt[0]) {
         elmnt[0].scrollIntoView();
       }
@@ -626,6 +661,16 @@ const Work = (props) => {
                     })
                   )}
                 </div>
+
+                <Grid container spacing={3}>
+                  <Grid item xs={12} md={12}>
+                    <Divider
+                      style={{
+                        border: "0.5px solid #9E9E9E",
+                      }}
+                    />
+                  </Grid>
+                </Grid>
                 {isUpcomingMoreData && services && services.length > 0 && (
                   <div className="load-more">
                     {isUpcomingLoading ? (
@@ -639,15 +684,6 @@ const Work = (props) => {
                     )}
                   </div>
                 )}
-                <Grid container spacing={3}>
-                  <Grid item xs={12} md={12}>
-                    <Divider
-                      style={{
-                        border: "0.5px solid #9E9E9E",
-                      }}
-                    />
-                  </Grid>
-                </Grid>
               </React.Fragment>
             )}
           </section>
@@ -662,7 +698,10 @@ const Work = (props) => {
                 }
                 variant="h2"
               />
-              <form onSubmit={formik.handleSubmit} className="create_service_form">
+              <form
+                onSubmit={formik.handleSubmit}
+                className="create_service_form"
+              >
                 <div className="create_service_form_location">
                   <TypographyComponent
                     title={t("service.create-service.nameAllocation")}
@@ -671,7 +710,7 @@ const Work = (props) => {
                   <div className="create_service_form_location_left">
                     <FormControl
                       variant="outlined"
-                      className={'form_row'}
+                      className={"form_row"}
                       error={formik.errors.title ? true : false}
                     >
                       <InputComponent
@@ -699,14 +738,13 @@ const Work = (props) => {
                       <TypographyComponent title="Describe the service of your dream as specific and simple you can so others can find you easily." />
                     </div>
                   </div>
-                  
+
                   <div className="create_service_form_location_right">
                     <FormControl
                       variant="outlined"
-                      className={'form_row'}
+                      className={"form_row"}
                       error={
-                        formik.errors.category &&
-                        formik.touched.category
+                        formik.errors.category && formik.touched.category
                           ? true
                           : false
                       }
@@ -717,10 +755,7 @@ const Work = (props) => {
                         value={formik.values.category}
                         native
                         onChange={(e) => {
-                          formik.setFieldValue(
-                            "category",
-                            e.target.value
-                          );
+                          formik.setFieldValue("category", e.target.value);
                           const sub =
                             category &&
                             category.filter(
@@ -750,10 +785,9 @@ const Work = (props) => {
                     </FormControl>
                     <FormControl
                       variant="outlined"
-                      className={'form_row'}
+                      className={"form_row"}
                       error={
-                        formik.errors.subcategory &&
-                        formik.touched.subcategory
+                        formik.errors.subcategory && formik.touched.subcategory
                           ? true
                           : false
                       }
@@ -777,84 +811,65 @@ const Work = (props) => {
                       </SelectComponent>
                     </FormControl>
                   </div>
-                  
                 </div>
-                
-              <TypographyComponent
-                variant="h6"
-                title="Description"
-              />
 
-              <div className="create_service_form_description">
-                <FormControl
-                  variant="outlined"
-                  className={'form_row'}
-                >
-                  <InputComponent
-                    type="text"
-                    name="description"
-                    value={formik.values.description}
-                    onChange={formik.handleChange}
-                    multiline
-                    rows={10}
-                    fullWidth
-                    fullHeight
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    placeholder="Please briefly describe your service... 
+                <TypographyComponent variant="h6" title="Description" />
+
+                <div className="create_service_form_description">
+                  <FormControl variant="outlined" className={"form_row"}>
+                    <InputComponent
+                      type="text"
+                      name="description"
+                      value={formik.values.description}
+                      onChange={formik.handleChange}
+                      multiline
+                      rows={10}
+                      fullWidth
+                      fullHeight
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                      placeholder="Please briefly describe your service... 
                     In which situation can i use this service? 
                     What can I expect from this service? 
                     What are the key information?"
-                  />
-                </FormControl>
-              </div>
-
-              <TypographyComponent
-                variant="h6"
-                title="Price setting"
-              />
-
-              <div className="create_service_form_price_setting">
-                <div className="create_service_form_price">
-                  <TypographyComponent
-                    variant="h6"
-                    title="My hourly price"
-                  />
-                  <InputComponent
-                    name="price"
-                    value={formik.values.price}
-                    onChange={formik.handleChange}
-                    placeholder="00.00£"
-                  />
+                    />
+                  </FormControl>
                 </div>
-                <TypographyComponent title="Uppon your price will be sett the conditions of a payment service provider and the comission of Owera. All employees of Owera thank you for using our service and enabling our workplaces. Enjoy this winn winn situation because this is our philosophy to achiefe." />
-              </div>
-              
-              <TypographyComponent
-                variant="h6"
-                title="Pictures"
-              />
 
-              <div className="create_service_form_img">
-                {fileList &&
-                  fileList.map((file, i) => (
-                    <div className="create_service_form_img_item">
-                      <img
-                        alt="Profile"
-                        src={file && makeImageUrl(file)}
-                      />
-                      <div
-                        className="create_service_form_img_delete"
-                        onClick={() => {
-                          handleOnDeleteImage(file, i);
-                        }}
-                      >
-                        <label>Delete picture</label>
-                        <DeleteIcon />
+                <TypographyComponent variant="h6" title="Price setting" />
+
+                <div className="create_service_form_price_setting">
+                  <div className="create_service_form_price">
+                    <TypographyComponent variant="h6" title="My hourly price" />
+                    <InputComponent
+                      name="price"
+                      value={formik.values.price}
+                      onChange={formik.handleChange}
+                      placeholder="00.00£"
+                    />
+                  </div>
+                  <TypographyComponent title="Uppon your price will be sett the conditions of a payment service provider and the comission of Owera. All employees of Owera thank you for using our service and enabling our workplaces. Enjoy this winn winn situation because this is our philosophy to achiefe." />
+                </div>
+
+                <TypographyComponent variant="h6" title="Pictures" />
+
+                <div className="create_service_form_img">
+                  {fileList &&
+                    fileList.map((file, i) => (
+                      <div className="create_service_form_img_item" key={i}>
+                        <img alt="Profile" src={file && makeImageUrl(file)} />
+                        <div
+                          className="create_service_form_img_delete"
+                          onClick={() => {
+                            handleOnDeleteImage(file, i);
+                          }}
+                        >
+                          <label>Delete picture</label>
+                          <DeleteIcon />
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
                   {fileList.length >= 4 ? null : (
                     <div className="create_service_form_img_item">
                       <input
@@ -862,17 +877,13 @@ const Work = (props) => {
                         name={`image_${fileList.length + 1}`}
                         id={`image_${fileList.length + 1}`}
                         style={{ display: "none" }}
-                        onChange={(event) =>
-                          handleUploadClick(event)
-                        }
+                        onChange={(event) => handleUploadClick(event)}
                       />
                       <div
                         className="create_service_form_img_add_item"
                         onClick={() => {
                           document
-                            .getElementById(
-                              `image_${fileList.length + 1}`
-                            )
+                            .getElementById(`image_${fileList.length + 1}`)
                             .click();
                         }}
                       >
@@ -881,30 +892,32 @@ const Work = (props) => {
                       </div>
                     </div>
                   )}
-              </div>
-              
-              <div className="create_service_form_cta_row">
-                {formik.values.id_service && (
+                </div>
+
+                <div className="create_service_form_cta_row">
+                  {formik.values.id_service && (
+                    <ButtonComponent
+                      title="Delete service"
+                      onClick={() => {
+                        setConformDeleteDialogOpen(true);
+                      }}
+                      variant="outlined"
+                    />
+                  )}
                   <ButtonComponent
-                    title="Delete service"
-                    onClick={() => {
-                      onDelete();
-                    }}
-                    variant="outlined"
+                    variant="contained"
+                    color="primary"
+                    type="submit"
+                    startIcon={saveLoader && <Spinner />}
+                    loader={saveLoader}
+                    disabled={formik.isSubmitting}
+                    title={
+                      formik.values.id_service
+                        ? "Save changes"
+                        : "Create service"
+                    }
                   />
-                )}
-                <ButtonComponent
-                  variant="contained"
-                  color="primary"
-                  type="submit"
-                  disabled={formik.isSubmitting}
-                  title={
-                    formik.values.id_service
-                      ? "Save changes"
-                      : "Create service"
-                  }
-                />
-              </div>
+                </div>
               </form>
             </section>
           )}
@@ -923,6 +936,15 @@ const Work = (props) => {
             </div>
           )}
         </div>
+      )}
+      {formik.values.id_service && (
+        <ConfirmDialog
+          open={conformDeleteDialogOpen}
+          onClose={() => setConformDeleteDialogOpen(false)}
+          onConfirm={() => onDelete()}
+          onCancel={() => setConformDeleteDialogOpen(false)}
+          loader={deleteLoader}
+        />
       )}
       <SnackBarComponent
         open={openSnackbar}
