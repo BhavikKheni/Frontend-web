@@ -1,8 +1,18 @@
+.previous_service_wrapper {
+  max-height: 457px;
+  overflow: auto;
+  overflow-x: hidden;
+  /* padding-left: 30px; */
+  margin: 15px 0;
+  direction: rtl;
+}
 .previous_service {
   margin-top: 10px;
-  margin-bottom: 10px;
+  direction: ltr;
 }
 .previous_service .previous_service_title {
+  display: flex;
+  flex-direction: row-reverse;
   padding: 0;
 }
 .previous_service_title p {

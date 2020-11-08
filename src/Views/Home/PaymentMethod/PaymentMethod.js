@@ -17,6 +17,7 @@ import AddIcon from "@material-ui/icons/Add";
 import TypographyComponent from "../../../Components/Typography/Typography";
 import DialogComponent from "../../../Components/Dialog/Dialog";
 import ButtonComponent from "../../../Components/Forms/Button";
+import DeleteIcon from "@material-ui/icons/Delete";
 import Styles from "./Payment.module.css";
 
 const DialogContent = withStyles((theme) => ({
@@ -91,6 +92,10 @@ const PaymentMethod = (props) => {
               <TypographyComponent title="00/00" className={clsx(Styles.user_card_expired_date)} />
             </div>
           </CardContent>
+          <div className={clsx(Styles.payment_card_delete)}>
+            <DeleteIcon />
+            <label>Remove Card</label>
+          </div>
         </Card>
         <Card className={clsx(Styles.payment_card, Styles.payment_add_new_card)}>
           <CardContent

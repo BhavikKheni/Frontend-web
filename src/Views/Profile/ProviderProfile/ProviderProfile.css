@@ -284,8 +284,8 @@
   border-radius: 15px;
   max-width: 227px;
   width: 227px;
-  height: 100%;
-  max-height: 246px;
+  height: auto;
+  /* max-height: 246px; */
   padding: 7px 14px 12px;
 }
 .booking_title {
@@ -311,6 +311,12 @@
 .booking_row + .booking_row {
   margin-top: 15px;
 }
+.booking_time_interval {
+  flex-wrap: wrap;
+}
+.booking_time .booking_time_interval .booking_time_label {
+  width: 100%;
+}
 .booking_time .booking_time_label {
   font-family: 'Montserrat';
   line-height: 30px;
@@ -318,6 +324,9 @@
 }
 .booking_time_interval_input {
   max-width: 55px;
+}
+.booking_time .booking_time_interval .booking_time_interval_input {
+  max-width: 70px;
 }
 .booking_time fieldset {
   border-color: #BDBDBD;
@@ -331,6 +340,20 @@
   height: 33px;
   padding: 6px;
   text-align: center;
+  overflow: hidden;
+  position: relative;
+  -webkit-user-select: none;  /* Chrome all / Safari all */
+  -moz-user-select: none;     /* Firefox all */
+  -ms-user-select: none;      /* IE 10+ */
+  user-select: none;          /* Likely future */  
+}
+input[type="time" i]::-webkit-calendar-picker-indicator {
+  background-image: none;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  margin: 0 auto !important;
+  margin-inline-start: 0 !important;
 }
 .booking_date .date-picker {
   max-width: 150px;

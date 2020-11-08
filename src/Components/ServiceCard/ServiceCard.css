@@ -185,7 +185,7 @@ polygon {
   transform: translateY(-50%);
   content: '';
   height: 20px;
-  width: 9px;
+  width: 11px;
   background-image: url('../../images/next_arrow_white.svg');
   background-repeat: no-repeat;
   background-size: cover;

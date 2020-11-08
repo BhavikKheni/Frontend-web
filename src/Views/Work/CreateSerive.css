@@ -115,36 +115,63 @@
   position: relative;
   background: #333333;
   border-radius: 5px;
-  padding-bottom: 40px;
+  /* padding-bottom: 40px; */
+  transition: all 0.3s ease-in-out 0s;
+}
+.create_service_form_img_item:hover {
+  transform: scale(1.04);
+  transition: all 0.3s ease-in-out 0s;
 }
 .create_service_form_img_item ~ .create_service_form_img_item {
-  margin-left: 10px;
+  margin-left: 30px;
 }
 .create_service_form_img_item img {
   height: 100%;
   width: 100%;
 }
 .create_service_form_img_add_item {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 100%;
+  width: 100%;
   display: flex;
-  justify-content: space-between;
-  color: rgb(255, 255, 255);
-  padding: 20px 25px;
+  flex-wrap: wrap;
+  flex-flow: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color:#fff;
+  padding: 10px 25px;
   cursor: pointer;
 }
 .create_service_form_img_delete {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  bottom: 0;
-  width: 100%;
-  padding: 10px 25px;
-  cursor: pointer;
   position: absolute;
-  height: 40px;
-  color: #fff;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #ff0000;
+  background-color: rgba(0, 0, 0, 0.8);
+  height: 100%;
+  width: 100%;
+  cursor: pointer;
+  display: flex;
+  flex-wrap: wrap;
+  flex-flow: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 10px 25px;
+  opacity: 0;
+  pointer-events: none;
 }
-.create_service_form_img_add_item:hover, .create_service_form_img_delete:hover {
-  opacity: 0.7;
+.create_service_form_img_delete label {
+  pointer-events: none;
+}
+.create_service_form_img_item:hover .create_service_form_img_delete {
+  opacity: 1;
+  pointer-events: inherit;
 }
 .create_service_form_cta_row {
   margin-top: 50px;
@@ -157,4 +184,20 @@
   background: #4AC836;
   text-transform: inherit;
   margin: 0;
+}
+.create_service_form_cta_row .create_service_form_delete_cta {
+  background-color: transparent;
+  border: 1px solid #FF0000;
+  box-sizing: border-box;
+  border-radius: 10px;
+  color: #FF0000;
+  transition: all 0.3s ease-in-out 0s;
+}
+.create_service_form_cta_row .create_service_form_delete_cta:hover {
+  background-color: #FF0000;
+  color: #fff;
+  transition: all 0.3s ease-in-out 0s;
+}
+.create_service_form_cta_row button + button {
+  margin-left: 20px;
 }

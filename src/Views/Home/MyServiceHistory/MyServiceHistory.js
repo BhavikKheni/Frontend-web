@@ -34,6 +34,48 @@ const MyServiceHistory = (props) => {
   const classes = useStyles();
   const { user } = props;
   const [records, setRecords] = useState([]);
+  // const [records, setRecords] = useState([
+  //   {
+  //     to_time: "05 October 2011 14:48",
+  //     from_time: "05 October 2011 14:48",
+  //     title: "Create app",
+  //     provider_name: "Bhavik",
+  //     status: "Pending",
+  //     price: 300,
+  //   },
+  //   {
+  //     to_time: "05 October 2011 14:48",
+  //     from_time: "05 October 2011 14:48",
+  //     title: "Create app",
+  //     provider_name: "Bhavik",
+  //     status: "Pending",
+  //     price: 300,
+  //   },
+  //   {
+  //     to_time: "05 October 2011 14:48",
+  //     from_time: "05 October 2011 14:48",
+  //     title: "Create app",
+  //     provider_name: "Bhavik",
+  //     status: "Pending",
+  //     price: 300,
+  //   },
+  //   {
+  //     to_time: "05 October 2011 14:48",
+  //     from_time: "05 October 2011 14:48",
+  //     title: "Create app",
+  //     provider_name: "Bhavik",
+  //     status: "Pending",
+  //     price: 300,
+  //   },
+  //   {
+  //     to_time: "05 October 2011 14:48",
+  //     from_time: "05 October 2011 14:48",
+  //     title: "Create app",
+  //     provider_name: "Bhavik",
+  //     status: "Pending",
+  //     price: 300,
+  //   },
+  // ]);
   const [isLoading, setIsLoading] = useState(false);
   const [isUpcomingMoreData, setUpcomingMoreData] = useState(true);
   const [isUpcomingLoading, setUpcomingLoading] = useState(false);
@@ -104,45 +146,53 @@ const MyServiceHistory = (props) => {
           />
         </Grid>
       </Grid>
-      {isLoading ? (
-        <Spinner />
-      ) : records && !records.length ? (
-        <span>{t("home.serviceHistory.notFoundRecord")}</span>
-      ) : (
-        records.map((record, index) => (
-          <div className={clsx(Styles.previous_service)} key={index}>
-            <Accordion key={index}>
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1a-content"
-                id="panel1a-header"
-                className={clsx(Styles.previous_service_title)}
+      <div className={clsx(Styles.previous_service_wrapper)}>
+        {isLoading ? (
+          <Spinner />
+        ) : records && !records.length ? (
+          <span>{t("home.serviceHistory.notFoundRecord")}</span>
+        ) : (
+          records.map((record, index) => (
+            <div className={clsx(Styles.previous_service)} key={index}>
+              <Accordion 
+                key={index}
+                style={{
+                  boxShadow:"none"
+                }}
               >
-                <p>00/00/2020</p>
-                <p>{moment(record.from_time).format("HH:mm")}</p>
-                <p>{moment(record.to_time).format("HH:mm")}</p>
-                <p>{record.title}</p>
-              </AccordionSummary>
-              <AccordionDetails className={clsx(Styles.previous_service_content)}>
-                <div className={clsx(Styles.previous_service_info_title)}>
-                  <TypographyComponent title="Provider name" />
-                  <TypographyComponent title="Total price" />
-                  <TypographyComponent title="Status" />
-                  <TypographyComponent title="Transaction id" />
-                  <TypographyComponent title="Order id" />
-                </div>
-                <div className={clsx(Styles.previous_service_info_value)}>
-                  <TypographyComponent title={record.provider_name} />
-                  <TypographyComponent title={`${record.price}/£`} />
-                  <TypographyComponent title={record.status} />
-                  <TypographyComponent title="ipi_1HSRfRCYjANOKpKjodn7KML5" />
-                  <TypographyComponent title="ipi_1HSRfRCYjANOKpKjodn7KML5" />
-                </div>
-              </AccordionDetails>
-            </Accordion>
-          </div>
-        ))
-      )}
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls="panel1a-content"
+                  id="panel1a-header"
+                  className={clsx(Styles.previous_service_title)}
+                >
+                  <p>00/00/2020</p>
+                  <p>{moment(record.from_time).format("HH:mm")}</p>
+                  <p>{moment(record.to_time).format("HH:mm")}</p>
+                  <p>{record.title}</p>
+                </AccordionSummary>
+                <AccordionDetails className={clsx(Styles.previous_service_content)}>
+                  <div className={clsx(Styles.previous_service_info_title)}>
+                    <TypographyComponent title="Provider name" />
+                    <TypographyComponent title="Total price" />
+                    <TypographyComponent title="Status" />
+                    <TypographyComponent title="Transaction id" />
+                    <TypographyComponent title="Order id" />
+                  </div>
+                  <div className={clsx(Styles.previous_service_info_value)}>
+                    <TypographyComponent title={record.provider_name} />
+                    <TypographyComponent title={`${record.price}/£`} />
+                    <TypographyComponent title={record.status} />
+                    <TypographyComponent title="ipi_1HSRfRCYjANOKpKjodn7KML5" />
+                    <TypographyComponent title="ipi_1HSRfRCYjANOKpKjodn7KML5" />
+                  </div>
+                </AccordionDetails>
+              </Accordion>
+            </div>
+          ))
+        )}
+      </div>
+      
       {isUpcomingMoreData && records && records.length > 0 && (
         <div>
           {isUpcomingLoading ? (
@@ -152,7 +202,7 @@ const MyServiceHistory = (props) => {
               className="load-more"
               onClick={() => onMore(path, upcomingoffset, {})}
               style={{
-                marginBottom: "10px",
+                marginBottom: "15px",
               }}
             ></div>
           )}

@@ -1,11 +1,15 @@
 .next_booking_wrapper {
   max-height: 230px;
   overflow: auto;
+  /* padding-left: 30px; */
+  margin: 24px 0;
+  direction: rtl;
 }
 
 .next_booking_item {
   display: flex;
   align-items: center;
+  direction: ltr;
 }
 
 .next_booking_item + .next_booking_item {

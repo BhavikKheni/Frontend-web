@@ -207,22 +207,29 @@ const SignUp = (props) => {
                   />
                 </div>
                 {/* Agreement Checkboxes */}
-                <div className="dialog_form_row dialog_form_checkbox_row">
-                  <FormControlLabel
-                    control={
-                      <CustomCheckbox
-                        checked={formik.values.checkedC}
-                        name="checkedC"
-                        onChange={() => {
-                          formik.setFieldValue(
-                            "checkedC",
-                            !formik.values.checkedC
-                          );
-                        }}
+                <div className="dialog_form_row">
+                  <div className="dialog_form_checkbox_row">
+                    <div className="dialog_form_checkbox_input_wrapper">
+                      <FormControlLabel
+                        control={
+                          <CustomCheckbox
+                            checked={formik.values.checkedC}
+                            name="checkedC"
+                            onChange={() => {
+                              formik.setFieldValue(
+                                "checkedC",
+                                !formik.values.checkedC
+                              );
+                            }}
+                          />
+                        }
                       />
-                    }
-                  />
-                  <p>{t("signup.citizenshipAgree")}</p>
+                      <FormHelperText className="checkbox_error">
+                        {formik.errors.checkedC && `${formik.errors.checkedC}`}
+                      </FormHelperText>
+                    </div>
+                    <p>{t("signup.citizenshipAgree")}</p>
+                  </div>
                 </div>
 
                 <div className="modal_bottom_cta sign_up_first_step_cta">
@@ -287,6 +294,7 @@ const SignUp = (props) => {
       <DialogComponent
         onClose={handleCloseTermsCondition}
         open={openTermsCondition}
+        title={t("signup.termsConditions")}
         className="terms-condition-form-wrapper"
       >
         <div className="dialog_container">
@@ -298,10 +306,6 @@ const SignUp = (props) => {
               className="terms-condition-form"
             >
               <FormControl className="dialog_form_control_inner">
-                <TypographyComponent
-                  variant="h3"
-                  title={t("signup.termsConditions")}
-                />
                 <Grid container spacing={3} className="terms-condition-item">
                   <Grid item xs={12} sm={6} md={6} lg={6} xl={6}>
                     <div className="dialog_form_row">
@@ -390,22 +394,29 @@ const SignUp = (props) => {
                     </div>
                   </Grid>
                   <Grid item xs={12} sm={6} md={6} lg={6} xl={6}>
-                    <div className="dialog_form_row dialog_form_checkbox_row">
-                      <FormControlLabel
-                        control={
-                          <CustomCheckbox
-                            checked={formik.values.checkedC}
-                            name="checkedC"
-                            onChange={() => {
-                              formik.setFieldValue(
-                                "checkedC",
-                                !formik.values.checkedC
-                              );
-                            }}
+                  <div className="dialog_form_row">
+                    <div className="dialog_form_checkbox_row">
+                      <div className="dialog_form_checkbox_input_wrapper">
+                          <FormControlLabel
+                            control={
+                              <CustomCheckbox
+                                checked={formik.values.checkedC}
+                                name="checkedC"
+                                onChange={() => {
+                                  formik.setFieldValue(
+                                    "checkedC",
+                                    !formik.values.checkedC
+                                  );
+                                }}
+                              />
+                            }
                           />
-                        }
-                      />
-                      <p>{t("signup.citizenshipAgree")}</p>
+                          <FormHelperText className="checkbox_error">
+                            {formik.errors.checkedC && `${formik.errors.checkedC}`}
+                          </FormHelperText>
+                        </div>
+                        <p>{t("signup.citizenshipAgree")}</p>
+                      </div>
                     </div>
                   </Grid>
                   <Grid item xs={12} sm={6} md={6} lg={6} xl={6}>
@@ -428,6 +439,9 @@ const SignUp = (props) => {
                               />
                             }
                           />
+                          <FormHelperText className="checkbox_error">
+                            {formik.errors.checked && `${formik.errors.checked}`}
+                          </FormHelperText>
                         </div>
                         <p>
                           {t("signup.registrationAgree")}
@@ -436,6 +450,7 @@ const SignUp = (props) => {
                           </span>
                         </p>
                       </div>
+                      
                       <div style={{ height: 48 }}>
                         <ButtonComponent
                           variant="contained"

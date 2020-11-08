@@ -244,7 +244,8 @@ input:-webkit-autofill:focus {
 }
 .dialog_form_checkbox_input_wrapper .checkbox_error {
     left: -4px;
-    bottom: -20px;
+    top: 40px;
+    bottom: inherit;
     white-space: nowrap;
 }
 .dialog_form_checkbox_input_wrapper .checkbox_error:empty {

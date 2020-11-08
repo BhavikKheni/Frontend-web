@@ -126,37 +126,39 @@ const NextBooking = (props) => {
           />
         </Grid>
       </Grid>
-      {isLoading ? (
-        <Spinner />
-      ) : records && !records.length ? (
-        <span>{t("home.nextBooking.notFoundRecord")}</span>
-      ) : (
-        records.map((r, index) => (
-          // <div className={clsx(Styles.next_booking_wrapper)} >
-            
-            <div className={clsx(Styles.next_booking_item)} key={index}>
-              <ButtonComponent
-                title="Go to meeting"
-                onClick={() => goToMeeting()}
-              />
-              <TypographyComponent title="11/03/2020" />
-              <TypographyComponent
-                title={moment(r.from_time).format("HH:mm")}
-              />
-              <TypographyComponent title={moment(r.to_time).format("HH:mm")} />
-              <TypographyComponent title={r.title} />
-              <MoreVertIcon
-                aria-describedby={id}
-                variant="contained"
-                color="primary"
-                onClick={(event) => handleClick(event, r)}
-                style={{ cursor: "pointer" }}
-              />
-            </div>
+      <div className={clsx(Styles.next_booking_wrapper)} >
+        {isLoading ? (
+          <Spinner />
+        ) : records && !records.length ? (
+          <span>{t("home.nextBooking.notFoundRecord")}</span>
+        ) : (
+          records.map((r, index) => (
+              
+              <div className={clsx(Styles.next_booking_item)} key={index}>
+                <ButtonComponent
+                  title="Go to meeting"
+                  onClick={() => goToMeeting()}
+                />
+                <TypographyComponent title="11/03/2020" />
+                <TypographyComponent
+                  title={moment(r.from_time).format("HH:mm")}
+                />
+                <TypographyComponent title={moment(r.to_time).format("HH:mm")} />
+                <TypographyComponent title={r.title} />
+                <MoreVertIcon
+                  aria-describedby={id}
+                  variant="contained"
+                  color="primary"
+                  onClick={(event) => handleClick(event, r)}
+                  style={{ cursor: "pointer" }}
+                />
+              </div>
 
-          // </div>
-        ))
-      )}
+            // </div>
+          ))
+        )}
+      </div>
+      
       {isUpcomingMoreData && records && records.length > 0 && (
         <div>
           {isUpcomingLoading ? (

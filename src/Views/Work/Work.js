@@ -902,6 +902,7 @@ const Work = (props) => {
                         setConformDeleteDialogOpen(true);
                       }}
                       variant="outlined"
+                      className="create_service_form_delete_cta"
                     />
                   )}
                   <ButtonComponent
@@ -916,6 +917,7 @@ const Work = (props) => {
                         ? "Save changes"
                         : "Create service"
                     }
+                    className="create_service_form_save_cta"
                   />
                 </div>
               </form>
