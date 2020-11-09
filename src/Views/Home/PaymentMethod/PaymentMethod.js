@@ -95,7 +95,7 @@ const useStyles = makeStyles((theme) => ({
       transform: 'scale(1.04)',
       transition: 'all 0.3s ease-in-out 0s',
 
-      '& .payment_card_delete' : {
+      '& $payment_card_delete' : {
         opacity: 1,
         pointerEvents: 'inherit',
       },

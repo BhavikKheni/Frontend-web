@@ -528,7 +528,7 @@ const Services = (props) => {
       ) : (
         <div className="service_card_wrapper">
           {services && !services.length ? (
-            <span>{t("service.notFoundService")}</span>
+            <span className="no_records_found">{t("service.notFoundService")}</span>
           ) : (
             services.map((element, index) => (
               <ServiceCardComponent

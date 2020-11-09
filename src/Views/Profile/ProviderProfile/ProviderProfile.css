@@ -158,15 +158,6 @@
   direction: rtl;
   margin: 15px auto;
 }
-.latest_reviews_inner:empty {
-  min-height: 100px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.latest_reviews_inner:empty:after {
-  content: 'No review found';
-}
 .provider_profile_review_item {
   position: relative;
   background: #EDF6FE;
@@ -321,12 +312,6 @@
   font-family: 'Montserrat';
   line-height: 30px;
   letter-spacing: -0.015em;
-}
-.booking_time_interval_input {
-  max-width: 55px;
-}
-.booking_time .booking_time_interval .booking_time_interval_input {
-  max-width: 70px;
 }
 .booking_time fieldset {
   border-color: #BDBDBD;

@@ -95,3 +95,10 @@ tbody tr {
 .service_calendar .fc .fc-button-primary:focus, .service_calendar .fc .fc-button-primary:focus:active {
     box-shadow: none !important;
 }
+
+.fc-event .fc-event-main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}

@@ -28,7 +28,7 @@ const LatestReviews = (props) => {
 
       <div className="latest_reviews_inner">
       {selectedReviews && selectedReviews.length === 0 ? (
-            <span>{t('providerProfile.notFoundReviews')}</span>
+            <span className="no_records_found">{t('providerProfile.notFoundReviews')}</span>
           ) : (
             selectedReviews && selectedReviews.map((review, index) => (
               <div

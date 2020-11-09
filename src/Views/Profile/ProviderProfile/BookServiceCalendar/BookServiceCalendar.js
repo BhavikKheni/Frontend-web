@@ -11,21 +11,10 @@ import "../ProviderProfile.css";
 function renderEventContent(eventInfo) {
   return (
     <React.Fragment>
-      <div>
-        <i
-          style={{
-            color: "#4AC836",
-            fontWeight: "normal",
-            fontStyle: "normal",
-            fontSize: "10px",
-          }}
-        >
-          {eventInfo.event.extendedProps.slot_id}
-        </i>
-        <br />
+      <div className="calendar_meeting_data">
         <b>{eventInfo.timeText}</b>
         <br />
-        <i>{eventInfo.event.title}</i>
+        <span>{eventInfo.event.title}</span>
       </div>
     </React.Fragment>
   );
@@ -69,7 +58,8 @@ const BookServiceCalendar = ({ averageRatingInfo, selectedServiceDetails, userDa
         start: slot.startDate,
         end: slot.endDate,
         draggable: false,
-        slot_id: slot.slot_id
+        slot_id: slot.slot_id,
+        color: '#4AC836'
       });
     });
 
@@ -138,7 +128,7 @@ const BookServiceCalendar = ({ averageRatingInfo, selectedServiceDetails, userDa
             <TypographyComponent
               variant="h6"
               title={
-                selectedServiceDetails.price && `${selectedServiceDetails.price}$/h`
+                selectedServiceDetails.price && `${selectedServiceDetails.price} CHF/h`
               }
             />
           </div>

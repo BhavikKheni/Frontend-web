@@ -53,7 +53,7 @@ const OfferedServices = (props) => {
               >
                   <TypographyComponent
                     variant="h2"
-                    title={`${o.price}$/h`}
+                    title={`${o.price} CHF/h`}
                   />
                   <TypographyComponent variant="h5" title={o.title} />
                   <div className="offered_services_review">

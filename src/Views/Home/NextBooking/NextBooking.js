@@ -31,6 +31,7 @@ const useStyles = makeStyles((theme) => ({
     maxHeight: '230px',
     overflow: 'auto',
     marginTop: '24px',
+    marginBottom: '24px',
     direction: 'rtl',
   },
   
@@ -38,7 +39,11 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
     direction: 'ltr',
-    marginBottom: '25px',
+
+    '& + $next_booking_item' : {
+      marginTop: '25px'
+    },
+  
 
     '& button' : {
       fontSize: '12px',
@@ -77,13 +82,6 @@ const useStyles = makeStyles((theme) => ({
       marginLeft: 'auto',
     }, 
   },
-  
-  no_records_found: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: '80px',
-  }
 }));
 
 const NextBooking = (props) => {
@@ -200,7 +198,7 @@ const NextBooking = (props) => {
         {isLoading ? (
           <Spinner />
         ) : records && !records.length ? (
-          <span className={classes.no_records_found}>{t("home.nextBooking.notFoundRecord")}</span>
+          <span className="no_records_found">{t("home.nextBooking.notFoundRecord")}</span>
         ) : (
           records.map((r, index) => (
               

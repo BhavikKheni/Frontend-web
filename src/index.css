@@ -85,6 +85,13 @@ background: #D2D2D2;
   cursor: pointer;
 }
 
+.no_records_found {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 80px;
+}
+
 /* header */
 header .navbar-brand {
   margin-right: 20px;
@@ -125,6 +132,7 @@ header button.MuiButtonBase-root ~ button {
   align-items: center;
   justify-content: center;
   height: 100%;
+  overflow: hidden;
 }
 
 /* card */

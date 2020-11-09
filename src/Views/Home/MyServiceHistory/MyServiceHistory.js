@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import downArrowImage from '../../../images/select_arrow.svg';
 import { useTranslation } from "react-i18next";
 import { makeStyles } from "@material-ui/core/styles";
 import Accordion from "@material-ui/core/Accordion";
@@ -65,7 +66,7 @@ const useStyles = makeStyles((theme) => ({
       padding: '0px 20px',
 
       '& .MuiIconButton-label': {
-        // backgroundImage: url('./images/select_arrow.svg'),
+        backgroundImage: `url('${downArrowImage}')`,
         backgroundRepeat: 'no-repeat',
         backgroundSize: 'contain',
         backgroundPosition: 'center',
@@ -121,13 +122,6 @@ const useStyles = makeStyles((theme) => ({
       fontWeight: '500',
     }
   },
-
-  no_records_found: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: '80px',
-  }
 }));
 
 const MyServiceHistory = (props) => {
@@ -251,7 +245,7 @@ const MyServiceHistory = (props) => {
         {isLoading ? (
           <Spinner />
         ) : records && !records.length ? (
-          <span className={classes.no_records_found}>{t("home.serviceHistory.notFoundRecord")}</span>
+          <span className="no_records_found">{t("home.serviceHistory.notFoundRecord")}</span>
         ) : (
           records.map((record, index) => (
             <div className={classes.previous_service} key={index}>

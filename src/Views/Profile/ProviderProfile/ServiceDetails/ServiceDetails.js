@@ -37,7 +37,7 @@ const ServicesDetails = (props) => {
           </div>
           <TypographyComponent
            variant="h6"
-            title={selectedService.price && `${selectedService.price}$/h`}
+            title={selectedService.price && `${selectedService.price} CHF/h`}
           />
           
           <div className="about_service">
