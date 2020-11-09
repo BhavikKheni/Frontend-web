@@ -12,9 +12,10 @@ import Sppiner from "../../Spinner/Spinner";
 import { add } from "../../../Services/Auth.service";
 import SnackBarComponent from "../../SnackBar/SnackBar";
 
-const AddBookingSpaceSidebar = (props) => {
-  const [fromTime, setFromTime] = useState("");
-  const [toTime, setToTime] = useState("");
+const AddBookingSlotSideBar = (props) => {
+
+  const [getFromTime, setFromTime] = useState("");
+  const [getToTime, setToTime] = useState("");
   const [openSnackBar, setOpenSnackBar] = useState(false);
   const [response, setResponse] = useState({});
   const [selectedDate, setSelectedDate] = React.useState(new Date());
@@ -26,12 +27,12 @@ const AddBookingSpaceSidebar = (props) => {
     setSelectedDate(date);
   };
 
-  const onAddBooking = () => {
+  const onSaveSlot = () => {
     const date = moment(selectedDate).format("YYYY-MM-DD");
     const bookingData = {
       id_service: selectedService.id_service,
-      start: moment(`${date} ${fromTime}`).format(),
-      end: moment(`${date} ${toTime}`).format(),
+      start: moment(`${date} ${getFromTime}`).format(),
+      end: moment(`${date} ${getToTime}`).format(),
       id_user: user.id_user,
       color: "red",
     };
@@ -61,19 +62,27 @@ const AddBookingSpaceSidebar = (props) => {
     setOpenSnackBar(false);
   };
 
+  const onChangeFromTime = (e) => {
+    setFromTime(e.target.value);
+  };
+
+  const onChangeToTime = (e) => {
+    setToTime(e.target.value);
+  };
+
   return (
     <React.Fragment>
       <div className="booking_title">
-        <h4>Add Booking space</h4>
+        <h4>Add Booking Space</h4>
       </div>
       <div className="booking_row booking_time_interval">
         <span className="booking_time_label">From:</span>
         <InputComponent
           placeholder="00:00"
           type="time"
-          value={fromTime}
+          value={getFromTime}
           onChange={(e) => {
-            setFromTime(e.target.value);
+            onChangeFromTime(e);
           }}
           className="booking_time_interval_input"
         />
@@ -81,31 +90,20 @@ const AddBookingSpaceSidebar = (props) => {
         <InputComponent
           placeholder="00:00"
           type="time"
-          value={toTime}
+          value={getToTime}
           onChange={(e) => {
-            setToTime(e.target.value);
+            onChangeToTime(e);
           }}
           className="booking_time_interval_input"
         />
       </div>
       <div className="booking_row booking_date">
-        <span className="booking_time_label">Date:</span>
-        <MuiPickersUtilsProvider utils={DateFnsUtils}>
-          <KeyboardDatePicker
-            disableToolbar
-            variant="inline"
-            format="MM/dd/yyyy"
-            margin="normal"
-            id="date-picker-inline"
-            value={selectedDate}
-            onChange={handleDateChange}
-            KeyboardButtonProps={{
-              "aria-label": "change date",
-            }}
-            className="date-picker"
-            disablePast
-          />
-        </MuiPickersUtilsProvider>
+        <span className="booking_time_label">From Date:</span>
+        <span>{moment(selectedDate).format('YYYY-MM-DD')}</span>
+      </div>
+      <div className="booking_row booking_date">
+        <span className="booking_time_label">To Date:</span>
+        <span>{moment(selectedDate).format('YYYY-MM-DD')}</span>
       </div>
       <div className="confirm_booking_row">
         <ButtonComponent
@@ -113,11 +111,11 @@ const AddBookingSpaceSidebar = (props) => {
           type="button"
           endIcon={<AddIcon />}
           onClick={() => {
-            onAddBooking();
+            onSaveSlot();
           }}
           className={"confirm_cta"}
         />
-        <ButtonComponent
+        {/* <ButtonComponent
           title="save"
           type="button"
           startIcon={isLoading && <Sppiner />}
@@ -125,7 +123,7 @@ const AddBookingSpaceSidebar = (props) => {
             onSaveAddBooking();
           }}
           className={"confirm_cta"}
-        />
+        /> */}
       </div>
       <SnackBarComponent
         open={openSnackBar}
@@ -141,4 +139,4 @@ const AddBookingSpaceSidebar = (props) => {
   );
 };
 
-export default AddBookingSpaceSidebar;
+export default AddBookingSlotSideBar;

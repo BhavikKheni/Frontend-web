@@ -5,7 +5,7 @@ import StarBorderIcon from "@material-ui/icons/StarBorder";
 import TypographyComponent from "../../Components/Typography/Typography";
 import ButtonComponent from "../../Components/Forms/Button";
 import StartWork from "./StartWork/StartWork";
-import AddBookingSpace from "./AddBookingSpace";
+import AddBookingSlotCalendar from "./AddBookingSlotCalendar/AddBookingSlotCalendar";
 import { search } from "../../Services/Auth.service";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -24,10 +24,9 @@ import Service from "../../Services/index";
 import { useSidebar } from "../../Provider/SidebarProvider";
 import "./Work.css";
 import WorkSidebar from "./WorkSidebar";
-import AddBookingSpaceBar from "../../Components/Booking/AddBookingSpaceSidebar/AddBookingSpaceSidebar";
 import ConfirmDialog from "../../Components/ConfirmDialog/ConfirmDialog";
-import moment from "moment";
 const newService = new Service();
+
 const useSession = () => React.useContext(SessionContext);
 
 const limit = 10;
@@ -42,6 +41,7 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2),
   },
 }));
+
 const FormControl = withStyles((theme) => ({
   root: {
     width: "100%",
@@ -76,13 +76,12 @@ const Work = (props) => {
   let { isLoggedIn } = useSession();
 
   const [activeLoader, setActiveLoader] = useState(false);
-  const [slots, setAllSlots] = useState([]);
-  const [availableSlots, setAvailableSlots] = useState([]);
   const [addActiveClassName, setActiveClassName] = useState("");
   const [addClassInActiveName, setInActiveClassName] = useState("");
   const [conformDeleteDialogOpen, setConformDeleteDialogOpen] = useState(false);
   const [deleteLoader, setDeleteLoader] = useState(false);
   const [saveLoader, setSaveLoader] = useState(false);
+
   useEffect(() => {
     var elmnt = document.getElementsByClassName("start_work");
     if (elmnt[0]) {
@@ -115,47 +114,6 @@ const Work = (props) => {
   useEffect(() => {
     searchServiceLibrary();
   }, [user.id_user, searchServiceLibrary]);
-  useEffect(() => {
-    async function fetchSlots() {
-      const params = {
-        from_date: moment().startOf("week").format("YYYY-MM-DD"),
-        to_date: moment().endOf("week").format("YYYY-MM-DD"),
-      };
-      const response = await search("/slot/list", params).catch((err) => {
-        console.log("error", err);
-      });
-
-      if (response) {
-        setAvailableSlots(response["available_slots"]);
-
-        let tempArray = [];
-        response["available_slots"].forEach((slot) => {
-          tempArray.push({
-            groupId: "availableForMeeting",
-            start: moment(slot.startDate).toISOString(),
-            end: moment(slot.endDate).toISOString(),
-            display: "background",
-            // constraint: 'availableForMeeting',
-          });
-        });
-        response["booked_slots"].forEach((slot) => {
-          tempArray.push({
-            id: slot.slot_id,
-            start: moment(slot.startDate).toISOString(),
-            end: moment(slot.endDate).toISOString(),
-            title: slot.service_title,
-            description: "Booked",
-            booked_by: slot.booked_by,
-            color: "#4F4F4F",
-            resize: false,
-            overlap: false,
-          });
-        });
-        setAllSlots([...tempArray]);
-      }
-    }
-    fetchSlots();
-  }, []);
 
   const onMore = async (path, offset, criteria = {}) => {
     setUpcomingLoading(true);
@@ -494,16 +452,6 @@ const Work = (props) => {
     setFileList([...fileList]);
   };
 
-  const onAddBookingCalendar = (data) => {
-    console.log("Data", data);
-
-    // availableSlots.forEach((slot) => {
-    //   const startDate = moment(slot.startDate).format("YYYY-MM-DDTHH:mm:ss");
-    //   const endDate = moment(slot.endDate).format("YYYY-MM-DDTHH:mm:ss");
-    // });
-    setAllSlots((d) => [...(d || []), data]);
-  };
-
   const onCreateService = () => {
     if (user.email_verified) {
       setServiceVisible(true);
@@ -606,7 +554,7 @@ const Work = (props) => {
                 </Grid>
                 <div className="my_work_service_library">
                   {services && !services.length ? (
-                    <span>{t("service.notFoundService")}</span>
+                    <span className="no_records_found">{t("service.notFoundService")}</span>
                   ) : (
                     services.map((service, index) => {
                       return (
@@ -923,20 +871,10 @@ const Work = (props) => {
               </form>
             </section>
           )}
-          {formik.values.id_service && (
-            <section className="add-booking-space">
-              <AddBookingSpace tempArray={slots} />
-            </section>
-          )}
-          {formik.values.id_service && (
-            <div className="booking_time">
-              <AddBookingSpaceBar
-                onAddBookingCalendar={(data) => onAddBookingCalendar(data)}
-                user={user}
-                selectedService={editRecord}
-              />
-            </div>
-          )}
+          <AddBookingSlotCalendar 
+            id_service={formik.values.id_service} 
+            editRecord={editRecord}
+          />
         </div>
       )}
       {formik.values.id_service && (

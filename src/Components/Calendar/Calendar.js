@@ -3,14 +3,12 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import moment from "moment";
-import $ from "jquery";
 import "date-fns";
 import "./Calendar.css";
 
 const CalendarComponent = (props) => {
 
-  const { INITIAL_EVENTS, renderEventContent } = props;
+  const { INITIAL_EVENTS, renderEventContent, selectable=false } = props;
 
   const onSelectSlot = (event) => {
     props.onSelectBookingSlot(event);
@@ -46,13 +44,16 @@ const CalendarComponent = (props) => {
       //   start: moment().subtract(1, 'days'),
       //  end: moment().startOf('year').add(100, 'year')
       //  }}
+      selectable={selectable}
       eventContent={renderEventContent}
       events={INITIAL_EVENTS}
       eventClick= {(info) => {
-        console.log("aaa", info.event.extendedProps.isBooked);
         if (!info.event.extendedProps.isBooked) {
           onSelectSlot(info.event);
         }
+      }}
+      select= {(info) => {
+        alert('selected ' + info.startStr + ' to ' + info.endStr);
       }}
     />
   );
