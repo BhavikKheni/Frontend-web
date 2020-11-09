@@ -159,11 +159,11 @@ const AddBookingSidebar = forwardRef((props, ref) => {
         <>
           <div className="booking_row booking_cost">
             <span className="booking_time_label">Total Cost:</span>
-            <p className="booking_cost_price">{getTotalCost}$</p>
+            <p className="booking_cost_price">{getTotalCost} CHF</p>
           </div>
           <div className="booking_row booking_cost">
             <span className="booking_time_label">Duration:</span>
-            <p className="booking_cost_price">{getFinalTime}</p>
+            <p className="booking_cost_price">{getFinalTime} Minutes</p>
           </div>
         </>
       )}

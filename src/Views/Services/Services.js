@@ -235,7 +235,7 @@ const Services = (props) => {
               </FormControl>
             </div>
             <div className="sidebar_row select_price_range">
-              <TypographyComponent title="Price per hour"></TypographyComponent>
+              <TypographyComponent title="Price per hour (CHF)"></TypographyComponent>
               <div className="select_price_range_inner">
                 <TextField
                   type="number"

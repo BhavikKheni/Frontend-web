@@ -3,6 +3,8 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
+import moment from "moment";
+import $ from "jquery";
 import "date-fns";
 import "./Calendar.css";
 
@@ -11,8 +13,6 @@ const CalendarComponent = (props) => {
   const { INITIAL_EVENTS, renderEventContent } = props;
 
   const onSelectSlot = (event) => {
-    // alert('Event: ' + JSON.stringify(event));
-    // alert('Event: ' + event.extendedProps.slot_id);
     props.onSelectBookingSlot(event);
   }
 
@@ -42,10 +42,17 @@ const CalendarComponent = (props) => {
       // businessHours={true}
       editable={true}
       eventConstraint={"businessHours"} // disabled drag and drop in whole calendar
+      // selectConstraint= {{
+      //   start: moment().subtract(1, 'days'),
+      //  end: moment().startOf('year').add(100, 'year')
+      //  }}
       eventContent={renderEventContent}
       events={INITIAL_EVENTS}
       eventClick= {(info) => {
-        onSelectSlot(info.event);
+        console.log("aaa", info.event.extendedProps.isBooked);
+        if (!info.event.extendedProps.isBooked) {
+          onSelectSlot(info.event);
+        }
       }}
     />
   );

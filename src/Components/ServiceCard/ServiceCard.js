@@ -151,10 +151,10 @@ const ServiceCardComponent = (props) => {
             >
               {service_provider_live_now &&
               service_provider_live_now.toLowerCase() === "live"
-                ? "live-now"
+                ? "Live now"
                 : "Offline"}
             </span>
-            <span className="price">{`${price}$/h`}</span>
+            <span className="price">{`${price} CHF/h`}</span>
           </div>
         </CardActions>
       </div>

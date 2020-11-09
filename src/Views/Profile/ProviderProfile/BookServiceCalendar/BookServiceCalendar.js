@@ -78,11 +78,15 @@ const BookServiceCalendar = ({ averageRatingInfo, selectedServiceDetails, userDa
         id: slot.slot_id,
         start: slot.startDate,
         end: slot.endDate,
+        isBooked: true,
         title: slot.service_title,
         booked_by: slot.booked_by,
         color: "#4F4F4F",
         resize: false,
         overlap: false,
+        selectable: false,
+        editable: false,
+        clickable: false
       });
     });
     setAllSlots([...tempArray]);
