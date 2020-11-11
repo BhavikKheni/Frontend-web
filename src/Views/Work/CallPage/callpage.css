@@ -1,3 +1,95 @@
+.start_work_hero_left {
+  position: relative;
+  background-color: #E5E9F8;
+  /* max-width: calc(100% - 223px); */
+  max-width: 1160px;
+  width: 100%;
+}
+.service_calling_wrapper {
+  position: absolute;
+  bottom: 0;
+  left: 30px;
+  overflow: hidden;
+  margin-top: 12px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+.service_calling_message {
+  max-width: 627px;
+  width: 100%;
+  position: relative;
+  margin-right: 15px;
+}
+.service_calling_message .MuiInputBase-root {
+  width: 100%;
+}
+.service_calling_wrapper input {
+  font-size: 16px;
+  line-height: 30px;
+  letter-spacing: 0.02em;
+  color: #303030;
+  height: 48px;
+  background: #ffffff;
+  border: 1px solid #2fb41a;
+  border-radius: 10px;
+  padding: 10px 85px 10px 25px;
+}
+.service_calling_wrapper input::-moz-placeholder {
+  color: #303030;
+  opacity: 1;
+}
+.service_calling_wrapper input:-moz-placeholder {
+  color: #303030;
+  opacity: 1;
+}
+.service_calling_wrapper input::-webkit-input-placeholder {
+  color: #303030;
+  opacity: 1;
+}
+.service_calling_wrapper input:-ms-input-placeholder {
+  color: #303030;
+  opacity: 1;
+}
+.service_calling_wrapper span {
+  position: absolute;
+  top: 0;
+  right: 0;
+  text-align: center;
+  height: 48px;
+  width: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 10px;
+}
+.service_calling_wrapper span svg {
+  margin: 0 auto;
+}
+.service_calling_option {
+  display: flex;
+  align-items: center;
+}
+.service_calling_option svg {
+  width: 48px;
+  height: 48px;
+  margin: 0 15px;
+}
+.start_work_hero_right {
+  display: flex;
+  flex-flow: column;
+  max-width: 223px;
+  width: 100%;
+  padding-left: 11px;
+}
+.start_work_hero_right .MuiAvatar-root {
+  width: 200px;
+  height: 200px;
+  margin-bottom: 16px;
+}
+
 /* .service_call {
     display: flex;
     align-items: center;

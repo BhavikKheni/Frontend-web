@@ -156,7 +156,7 @@ const NextBooking = (props) => {
   const goToMeeting = (element) => {
     const { history } = props;
     history.push("/call-page", {
-      booking_id: "79615AEGHJ",
+      record:element
     });
   };
 

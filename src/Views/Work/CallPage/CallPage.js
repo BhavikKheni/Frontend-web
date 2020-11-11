@@ -5,7 +5,9 @@ import { makeStyles, withStyles } from "@material-ui/core/styles";
 import MuiDialogContent from "@material-ui/core/DialogContent";
 import SendIcon from "@material-ui/icons/Send";
 import MicOffIcon from "@material-ui/icons/MicOff";
+import MicIcon from "@material-ui/icons/Mic";
 import VideocamOffIcon from "@material-ui/icons/VideocamOff";
+import VideocamIcon from "@material-ui/icons/Videocam";
 import DesktopWindowsIcon from "@material-ui/icons/DesktopWindows";
 import CallEndIcon from "@material-ui/icons/CallEnd";
 import TypographyComponent from "../../../Components/Typography/Typography";
@@ -77,6 +79,9 @@ const CallPage = (props) => {
   const { state = {} } = props && props.location;
   const [room, setRoom] = useState(null);
   const [isLoading, setLoading] = useState(false);
+  const [audio, setAudio] = useState(true);
+  const [onVideo, setVideo] = useState(true);
+  const bookingId = state.record && state.record.id_booking;
   let [userData, setUserData] = useState({
     first_name: "",
     last_name: "",
@@ -88,11 +93,9 @@ const CallPage = (props) => {
   useEffect(() => {
     async function getData() {
       setLoading(true);
-      const res = await get(`/profile/${state && state.userId}`).catch(
-        (err) => {
-          setLoading(false);
-        }
-      );
+      const res = await get(`/profile/${user.id_user}`).catch((err) => {
+        setLoading(false);
+      });
 
       if (res) {
         setUserData({
@@ -227,10 +230,36 @@ const CallPage = (props) => {
 
   const onLeave = () => {};
 
+  const audioTracksdisable = () => {
+    room.localParticipant.audioTracks.forEach((publication) => {
+      if (audio) {
+        publication.track.disable();
+        setAudio(false);
+        console.log("local audio disabled");
+      } else {
+        publication.track.enable();
+        setAudio(true);
+        console.log("local audio enable");
+      }
+    });
+  };
+  const videoTracksdisable = () => {
+    // handle video call here
+    room.localParticipant.videoTracks.forEach((publication) => {
+      if (onVideo) {
+        setVideo(false);
+        publication.track.disable();
+      } else {
+        setVideo(true);
+        publication.track.enable();
+      }
+    });
+  };
+
   const onFinish = useCallback(() => {
     const params = {
       user_id: user.id_user,
-      meeting_id: state.booking_id,
+      booking_id: bookingId,
     };
     function attachTrack(track, container) {
       container.appendChild(track.attach());
@@ -255,7 +284,7 @@ const CallPage = (props) => {
 
       // Temporary code end
 
-      let twilio_video_token = res.data.video_token;
+      let video_token = res.data.video_token;
 
       createLocalTracks({
         audio: true,
@@ -267,7 +296,7 @@ const CallPage = (props) => {
           localMediaContainer.appendChild(track.attach());
         });
       });
-      connect(twilio_video_token, { booking_id: state.booking_id }).then(
+      connect(video_token, { booking_id: bookingId }).then(
         (room) => {
           console.log(`Successfully joined a Room: ${room}`);
           setRoom(room);
@@ -326,16 +355,63 @@ const CallPage = (props) => {
         }
       );
     });
-  },[state.booking_id,user.id_user]);
+  }, [bookingId, user.id_user]);
 
-  // useEffect(() => {
-  //   onFinish();
-  // }, [onFinish]);
+  useEffect(() => {
+    onFinish();
+  }, [onFinish]);
   return (
     <React.Fragment>
       <Grid container spacing={3}>
         <Grid item xs={12} md={10}>
-          <div className="service_call">
+          <div className="remoteVideoContainer">
+            <div id="remote-media-div-already"></div>
+            <div id="remote-media-div"></div>
+          </div>
+          <div className="localVideoContainer">
+            <div id="local-media" style={{ height: "150px", width: "150px" }} />
+          </div>
+          <div className="start_work_hero_left">
+            <div className="service_calling_wrapper">
+              <div className="service_calling_message">
+                <InputBase
+                  placeholder="Search"
+                  inputProps={{ "aria-label": "search" }}
+                  onChange={changeSearch}
+                />
+                <span className={classes.searchIconItem} onClick={onSearch}>
+                  <SendIcon className={classes.searchIcon} />
+                </span>
+              </div>
+              <div className="service_calling_option">
+                {audio ? (
+                  <MicIcon
+                    onClick={() => audioTracksdisable()}
+                    className="owera_link"
+                  />
+                ) : (
+                  <MicOffIcon
+                    onClick={() => audioTracksdisable()}
+                    className="owera_link"
+                  />
+                )}
+                {onVideo ? (
+                  <VideocamIcon
+                    onClick={() => videoTracksdisable()}
+                    className="owera_link"
+                  />
+                ) : (
+                  <VideocamOffIcon
+                    onClick={() => videoTracksdisable()}
+                    className="owera_link"
+                  />
+                )}
+                
+                <DesktopWindowsIcon className="owera_link" />
+              </div>
+            </div>
+          </div>
+          {/* <div className="service_call">
             <TypographyComponent title="Service title" />
             <span id="count">{counter && counter}</span>
             <div>
@@ -364,20 +440,18 @@ const CallPage = (props) => {
                 >
                   <span>Repost abuse</span>
                   {/* <img alt="Report abuse" src={NextArrow} /> */}
-                </div>
+          {/* </div>
                 <div
                   onClick={() => {
                     onLeave();
                   }}
                 >
-                  <span>Leave</span>
-                  {/* <img alt="leave" src={NextArrow} /> */}
-                </div>
+                  <span>Leave</span> */}
+          {/* <img alt="leave" src={NextArrow} /> */}
+          {/* </div>
               </div>
             </div>
-            <div className="remoteVideoContainer">
-              <div id="remote-media-div-already"></div>
-              <div id="remote-media-div"></div>
+           
             </div>
             <div className="service_calling_wrapper">
               <InputBase
@@ -390,11 +464,9 @@ const CallPage = (props) => {
               </span>
             </div>
             <div>
-              <MicOffIcon />
-              <VideocamOffIcon /> <DesktopWindowsIcon />
               <CallEndIcon onClick={() => onEndCall()} />
-            </div>
-          </div>
+            </div> 
+          </div> */}
         </Grid>
       </Grid>
       <DialogComponent
