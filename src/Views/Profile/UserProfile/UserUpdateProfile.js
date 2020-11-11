@@ -631,7 +631,6 @@ const UpdateProfile = (props) => {
         </DialogComponent>
       </div>
       {/* confirmataion dialog for delete profile */}
-
       <ConfirmDialog
         open={openDeleteConfirmationDialog}
         onClose={() => setOpenDeleteConfirmationDialog(false)}
@@ -649,7 +648,6 @@ const UpdateProfile = (props) => {
         loader={deActivateLoader}
         disabled={deActivateDisabled}
       />
-
       <SnackBarComponent
         open={openErrorSnackBar}
         onClose={handleClose}

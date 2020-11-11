@@ -29,8 +29,8 @@ const AddBookingSlotCalendar = (props) => {
 
   const getSlotDetails = async () => {
     const params = {
-      from_date: moment().startOf("week").format("YYYY-MM-DD"),
-      to_date: moment().endOf("week").format("YYYY-MM-DD"),
+      from_datetime: moment().startOf("week").format("YYYY-MM-DD"),
+      to_datetime: moment().endOf("week").format("YYYY-MM-DD"),
     };
     const response = await search("/slot/list", params).catch((err) => {
       console.log("error", err);
@@ -46,7 +46,7 @@ const AddBookingSlotCalendar = (props) => {
 
     let tempArray = [];
 
-    data["available_slots"].forEach((slot) => {
+    data["available_slots"] &&data["available_slots"].forEach((slot) => {
       tempArray.push({
         groupId: "availableForMeeting",
         start: moment(slot.startDate).toISOString(),
@@ -56,7 +56,7 @@ const AddBookingSlotCalendar = (props) => {
       });
     });
 
-    data["booked_slots"].forEach((slot) => {
+    data["booked_slots"] && data["booked_slots"].forEach((slot) => {
       tempArray.push({
         id: slot.slot_id,
         start: moment(slot.startDate).toISOString(),

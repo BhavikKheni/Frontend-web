@@ -110,7 +110,7 @@ const NextBooking = (props) => {
       const params = {
         limit: limit,
         offset: 0,
-        role: "CLIENT",
+        role: "PROVIDER",
         id_user: user.id_user,
         status: "NEXT",
       };
@@ -162,7 +162,7 @@ const NextBooking = (props) => {
 
   return (
     <React.Fragment>
-      <TypographyComponent title={t("home.nextBooking.title")} variant="h2" />
+      <TypographyComponent title={t("home.nextBooking.titleProvider")} variant="h2" />
 
       <Grid container spacing={3}>
         <Grid item xs={12} md={12}>

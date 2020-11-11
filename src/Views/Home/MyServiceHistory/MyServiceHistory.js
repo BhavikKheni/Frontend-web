@@ -130,48 +130,6 @@ const MyServiceHistory = (props) => {
   const classes = useStyles();
   const { user } = props;
   const [records, setRecords] = useState([]);
-  // const [records, setRecords] = useState([
-  //   {
-  //     to_time: "05 October 2011 14:48",
-  //     from_time: "05 October 2011 14:48",
-  //     title: "Create app",
-  //     provider_name: "Bhavik",
-  //     status: "Pending",
-  //     price: 300,
-  //   },
-  //   {
-  //     to_time: "05 October 2011 14:48",
-  //     from_time: "05 October 2011 14:48",
-  //     title: "Create app",
-  //     provider_name: "Bhavik",
-  //     status: "Pending",
-  //     price: 300,
-  //   },
-  //   {
-  //     to_time: "05 October 2011 14:48",
-  //     from_time: "05 October 2011 14:48",
-  //     title: "Create app",
-  //     provider_name: "Bhavik",
-  //     status: "Pending",
-  //     price: 300,
-  //   },
-  //   {
-  //     to_time: "05 October 2011 14:48",
-  //     from_time: "05 October 2011 14:48",
-  //     title: "Create app",
-  //     provider_name: "Bhavik",
-  //     status: "Pending",
-  //     price: 300,
-  //   },
-  //   {
-  //     to_time: "05 October 2011 14:48",
-  //     from_time: "05 October 2011 14:48",
-  //     title: "Create app",
-  //     provider_name: "Bhavik",
-  //     status: "Pending",
-  //     price: 300,
-  //   },
-  // ]);
   const [isLoading, setIsLoading] = useState(false);
   const [isUpcomingMoreData, setUpcomingMoreData] = useState(true);
   const [isUpcomingLoading, setUpcomingLoading] = useState(false);

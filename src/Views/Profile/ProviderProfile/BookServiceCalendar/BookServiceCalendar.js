@@ -41,8 +41,8 @@ const BookServiceCalendar = ({
   // Fetch the slots details
   const getSlotDetails = async () => {
     const params = {
-      from_date: moment().startOf("week").format("YYYY-MM-DD"),
-      to_date: moment().endOf("week").format("YYYY-MM-DD"),
+      from_datetime: moment().startOf("week").format("YYYY-MM-DD"),
+      to_datetime: moment().endOf("week").format("YYYY-MM-DD"),
     };
 
     await search("/slot/list", params)

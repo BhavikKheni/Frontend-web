@@ -67,14 +67,15 @@
     "myCalendar": {
       "title": "My calendar"
     },
-    "serviceHistory": {
+    "serviceHistory": { 
       "title": "My service history",
       "notFoundRecord": "Records not found"
     },
     "nextBooking": {
-      "title": "Next Bookings",
+      "title": "Next Bookings Consumer",
       "notFoundRecord": "Records not found",
-      "deleteDialog": "Booking purpose"
+      "deleteDialog": "Booking purpose",
+      "titleProvider":"Next Bookings Provider"
     },
     "paymentMethod": {
       "title": "Payment Methods"

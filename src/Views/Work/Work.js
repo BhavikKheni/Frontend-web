@@ -81,6 +81,7 @@ const Work = (props) => {
   const [conformDeleteDialogOpen, setConformDeleteDialogOpen] = useState(false);
   const [deleteLoader, setDeleteLoader] = useState(false);
   const [saveLoader, setSaveLoader] = useState(false);
+  const [totalServices, setTotalServices] = useState(0);
 
   useEffect(() => {
     scrollToSection("start_work");
@@ -102,11 +103,12 @@ const Work = (props) => {
         setUpcomingMoreData(false);
         return;
       }
+      setTotalServices()
       setUpcomingOffset(stopped_at);
       setServices(data || []);
       setIsJobLoading(false);
     }
-  }, []);
+  }, [user.id_user]);
 
   useEffect(() => {
     searchServiceLibrary();
@@ -494,7 +496,7 @@ const Work = (props) => {
         </section>
         <section className="my_work_services">
           <h2>
-            My service library <span>({services.length} Services)</span>
+            My service library <span>({totalServices} Services)</span>
           </h2>
           {/* <TypographyComponent
               title={`My service library (${services.length})`}

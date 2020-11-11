@@ -1,5 +1,13 @@
 const offline = false;
-const url = offline ? "http://127.0.0.1:8000" : process.env.REACT_APP_PROXY_URL;
+let customURL;
+
+if (process.env.NODE_ENV === "development") {
+  customURL = process.env.REACT_APP_DEVELOPMENT_URL;
+} else {
+  customURL = process.env.REACT_APP_PRODUCTION_URL;
+}
+
+const url = offline ? "http://127.0.0.1:8000" : customURL;
 function readToken() {
   const result = JSON.parse(localStorage.getItem("token"));
   return result && (result || null);

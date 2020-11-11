@@ -11,26 +11,11 @@ import TypographyComponent from "../../Typography/Typography";
 import DialogComponent from "../../Dialog/Dialog";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import DialogContent from "@material-ui/core/DialogContent";
-import { CardCvcElement } from "@stripe/react-stripe-js";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import Select from "@material-ui/core/Select";
 import Radio from "@material-ui/core/Radio";
+import ConfirmBookingDialog from "../ConfirmBookingDialog/ConfirmBookingDialog";
 
-const CARD_OPTIONS = {
-  style: {
-    base: {
-      fontSize: "18px",
-      color: "#000",
-      letterSpacing: "0.025em",
-      "::placeholder": {
-        color: "#000",
-      },
-    },
-    invalid: {
-      color: "#9e2146",
-    },
-  },
-};
 const useStyles = makeStyles((theme) => ({
   timeFields: {
     display: "flex",
@@ -62,7 +47,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const AddBookingSidebar = forwardRef((props, ref) => {
-  const classes = useStyles();
   const [getFromTime, setFromTime] = useState("");
   const [getToTime, setToTime] = useState("");
   const [openSnackBar, setOpenSnackBar] = useState(false);
@@ -73,12 +57,8 @@ const AddBookingSidebar = forwardRef((props, ref) => {
   const [getTotalCost, setTotalCost] = useState(null);
   const [getFinalTime, setFinalTime] = useState(null);
   const [open, setOpen] = useState(false);
-  const [cardVisible, setCardVisible] = useState(false);
-  const [selectedValue, setSelectedValue] = React.useState("a");
-
-  const handleChange = (event) => {
-    setSelectedValue(event.target.value);
-  };
+  const [isLoading, setLoading] = useState(false);
+  const [disabled, setDisabled] = useState(false);
 
   useImperativeHandle(ref, () => ({
     getSeletedSlotDetails(selectedSlotDetails) {
@@ -156,22 +136,6 @@ const AddBookingSidebar = forwardRef((props, ref) => {
     }
   };
 
-  // Need to remove this function
-  // const onSaveAddBooking = () => {
-  //   props.onAddBooking(data);
-  //   setLoading(true);
-  //   add("/service/book", data)
-  //     .then((result) => {
-  //       setLoading(false);
-  //       setResponse(result);
-  //       setOpenSnackBar(true);
-  //     })
-  //     .catch((error) => {
-  //       setLoading(false);
-  //       setResponse(error);
-  //     });
-  // };
-
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
@@ -187,6 +151,34 @@ const AddBookingSidebar = forwardRef((props, ref) => {
   const onChangeToTime = (e) => {
     setToTime(e.target.value);
     calculatePrice(getFromTime, e.target.value);
+  };
+
+  const onSetBooking = () => {
+    const date = moment(selectedDate).format("YYYY-MM-DD");
+    const data = {
+      id_service: selectedService.id_service,
+      id_user: user.id_user,
+      from_datetime: moment(`${date} ${getFromTime}`).format(
+        "YYYY-MM-DD HH:mm:ss"
+      ),
+      to_datetime: moment(`${date} ${getToTime}`).format("YYYY-MM-DD HH:mm:ss"),
+    };
+    console.log(data);
+    setLoading(true);
+    setDisabled(true);
+    add("/service/book", data)
+      .then((result) => {
+        setOpen(false);
+        setDisabled(false);
+        setLoading(false);
+        setResponse(result);
+        setOpenSnackBar(true);
+      })
+      .catch((error) => {
+        setDisabled(false);
+        setLoading(false);
+        setResponse(error);
+      });
   };
 
   return (
@@ -237,7 +229,7 @@ const AddBookingSidebar = forwardRef((props, ref) => {
           title="Confirm"
           type="button"
           onClick={() => {
-            onAddBooking();
+            // onAddBooking();
             setOpen(true);
           }}
           className={"confirm_cta"}
@@ -251,99 +243,15 @@ const AddBookingSidebar = forwardRef((props, ref) => {
         title="Confirm booking"
       >
         <DialogContent>
-          <TypographyComponent
-            title={selectedService && selectedService.title}
-            className={classes.textColor}
-          />
-          <TypographyComponent
-            className={classes.textColor}
-            title={
-              selectedService &&
-              selectedService.provider_details &&
-              `${selectedService.provider_details.first_name} ${selectedService.provider_details.last_name}`
-            }
-          />
-          <div className={classes.timeFields}>
-            <div className={classes.textColor}>
-              <div className={classes.item}>
-                <TypographyComponent title="Start time:" />
-                <TypographyComponent title={getFromTime} />
-              </div>
-              <div className={classes.item}>
-                <TypographyComponent title="End time:" />
-                <TypographyComponent title={getToTime} />
-              </div>
-            </div>
-            <div className={classes.textColor}>
-              <div className={classes.item}>
-                <TypographyComponent title="Start date:" />
-                <TypographyComponent
-                  title={moment(selectedDate).format("DD-MM-YYYY")}
-                />
-              </div>
-              <div className={classes.item}>
-                <TypographyComponent title="total:" />
-                <TypographyComponent title={getTotalCost} />
-              </div>
-            </div>
-          </div>
-          <div className={classes.selectCards}>
-            <span
-              onClick={() => setCardVisible(true)}
-              className={classes.textColor}
-            >
-              select cards
-            </span>
-          </div>
-          {cardVisible ? (
-            <Select
-              native
-              value={1}
-              onChange={() => {}}
-              label="cards"
-              inputProps={{
-                name: "card",
-                id: "outlined-card",
-              }}
-            >
-              <option value={30}>
-                <Radio
-                  checked={selectedValue === "a"}
-                  // onChange={handleChange}
-                  value="a"
-                  name="radio-button-demo"
-                  inputProps={{ "aria-label": "A" }}
-                />
-                Thirty
-              </option>
-            </Select>
-          ) : (
-            <div className={classes.card_wrapper}>
-              <div className={classes.item}>
-                <TypographyComponent title="Select card" />
-                <ExpandMoreIcon />
-              </div>
-              <div className={clsx(classes.textColor, classes.card_list_item)}>
-                <span>VISA</span>
-                <div className={classes.item}>
-                  <span>Name on card</span>
-                  <span>expired on</span>
-                </div>
-                <div className={classes.item}>
-                  <span>xxxx xxxx xxxx xxx36</span>
-                  <span>00/00</span>
-                </div>
-              </div>
-              <div>
-                <CardCvcElement options={CARD_OPTIONS} />
-              </div>
-            </div>
-          )}
-
-          <ButtonComponent
-            title="Buy to set booking"
-            endIcon={<ChevronRightIcon />}
-            style={{ color: classes.textColor }}
+          <ConfirmBookingDialog
+            selectedService={selectedService}
+            getFromTime={getFromTime}
+            getToTime={getToTime}
+            selectedDate={selectedDate}
+            getTotalCost={getTotalCost}
+            onSetBooking={() => onSetBooking()}
+            isLoading={isLoading}
+            disabled={disabled}
           />
         </DialogContent>
       </DialogComponent>
