@@ -116,7 +116,12 @@ const StartWork = () => {
   };
 
   return (
-    <section className="start_work">
+    <React.Fragment>
+      <TypographyComponent
+        variant="h2"
+        title="Service name"
+        className="start_work_title"
+      />
       <div className="start_work_hero">
         <div className="start_work_hero_left">
           <div className="service_calling_wrapper">
@@ -189,7 +194,7 @@ const StartWork = () => {
         message={error.message}
         type={error.type && error.type.toLowerCase()}
       />
-    </section>
+    </React.Fragment>
   );
 };
 

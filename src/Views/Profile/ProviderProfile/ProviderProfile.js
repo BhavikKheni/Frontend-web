@@ -9,8 +9,8 @@ import ProfileProviderSidebar from "./ProviderProfileSidebar";
 import OfferedServices from "./OfferedServices/OfferedServices";
 import ServiceDetails from "./ServiceDetails/ServiceDetails";
 import LatestReviews from "./LatestReviews/LatestReviews";
-import ProviderDetails from './ProviderDetails/ProviderDetails';
-import BookServiceCalendar from './BookServiceCalendar/BookServiceCalendar';
+import ProviderDetails from "./ProviderDetails/ProviderDetails";
+import BookServiceCalendar from "./BookServiceCalendar/BookServiceCalendar";
 import "./ProviderProfile.css";
 
 const ProfileProvider = (props) => {
@@ -73,19 +73,20 @@ const ProfileProvider = (props) => {
 
   // Get the service details
   const getServiceDetails = async () => {
-    const res = await get(`/service/${service.id_service}`);
+    const res = await get(`/service/${service.id_service}`).catch((error) => {
+      console.log(error);
+    });
     if (res) {
       setSelectedService({ ...res });
-      const { reviews_list } = res.reviews || [];
+      const { reviews_list = [] } = res.reviews || [];
       setSelectedReview(reviews_list);
-
       if (type === "job-details") {
         scrollToSection("service-details");
       } else if (type === "calendar-view") {
         scrollToSection("calendar");
       }
     }
-  }
+  };
 
   // Get the languages
   const getLanguages = async () => {
@@ -99,28 +100,30 @@ const ProfileProvider = (props) => {
     } else {
       setAllLanguges(storage_laguages.data);
     }
-  }
+  };
 
   // Get the profile details
   const getProfileDetails = async () => {
     setLoading(true);
     if (state && state.userId) {
-      await get(`/profile/${state.userId}`).then(res => {
-        setLoading(false);
-        setUserData({...res.data});
-      }).catch((error) => {
-        setLoading(false);
-      });
+      await get(`/profile/${state.userId}`)
+        .then((res) => {
+          setLoading(false);
+          setUserData({ ...res.data });
+        })
+        .catch((error) => {
+          setLoading(false);
+        });
     }
-  }
-  
+  };
+
   // This function help us to scroll a page to specific section
   const scrollToSection = (sectionName) => {
     var elementCalendar = document.getElementsByClassName(sectionName);
     if (elementCalendar[0]) {
       elementCalendar[0].scrollIntoView();
     }
-  }
+  };
 
   const showLoader = () => {
     return (
@@ -128,7 +131,7 @@ const ProfileProvider = (props) => {
         <CircularProgress />
       </div>
     );
-  }
+  };
 
   return (
     <div className="profile_page_wrapper provider_profile_wrapper">
@@ -137,10 +140,7 @@ const ProfileProvider = (props) => {
         showLoader()
       ) : (
         <React.Fragment>
-          <ProviderDetails 
-            userData={userData}
-            allLanguages={allLanguages}
-          />
+          <ProviderDetails userData={userData} allLanguages={allLanguages} />
           <OfferedServices
             userData={userData}
             setSelectedService={setSelectedService}
@@ -151,12 +151,10 @@ const ProfileProvider = (props) => {
             averages={averages}
             selectedService={selectedService}
           />
-          <LatestReviews 
-            selectedReviews={selectedReviews}
-          />
+          <LatestReviews selectedReviews={selectedReviews} />
           <BookServiceCalendar
-            averageRatingInfo={averages} 
-            selectedServiceDetails={selectedService}  
+            averageRatingInfo={averages}
+            selectedServiceDetails={selectedService}
             userData={userData}
           />
         </React.Fragment>

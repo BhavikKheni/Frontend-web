@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { withRouter, Link, Route } from "react-router-dom";
-import { makeStyles, withStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import { MenuItem } from "@material-ui/core";
-import MuiDialogContent from "@material-ui/core/DialogContent";
-import MuiFormControl from "@material-ui/core/FormControl";
 import Breadcrumbs from "@material-ui/core/Breadcrumbs";
-import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
 import CheckIcon from "@material-ui/icons/Check";
 import ClearIcon from "@material-ui/icons/Clear";
 import { useTranslation } from "react-i18next";
@@ -15,13 +12,13 @@ import ButtonComponent from "../../../Components/Forms/Button";
 import TypographyComponent from "../../../Components/Typography/Typography";
 import { themes } from "../../../themes";
 import { useSidebar } from "../../../Provider/SidebarProvider";
-import DialogComponent from "../../../Components/Dialog/Dialog";
 import SnackBarComponent from "../../../Components/SnackBar/SnackBar";
 import Spinner from "../../../Components/Spinner/Spinner";
 import UpdateProfile from "./UserUpdateProfile";
 import { LOCALSTORAGE_DATA, languages_level } from "../../../utils";
 import ImageComponent from "../../../Components/Forms/Image";
 import TooltipComponent from "../../../Components/Tooltip/Tooltip";
+import Verification from "../../../Components/Verification/VerificationDialog";
 import "./UserProfile.css";
 
 const useSession = () => React.useContext(SessionContext);
@@ -43,43 +40,22 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const DialogContent = withStyles((theme) => ({
-  root: {
-    padding: theme.spacing(2),
-  },
-}))(MuiDialogContent);
-
-const FormControl = withStyles((theme) => ({
-  root: {
-    width: "100%",
-  },
-}))(MuiFormControl);
 const ProfileView = (props) => {
   const classes = useStyles();
   const { setSidebarContent, setSidebar } = useSidebar();
   const [isLoading, setLoading] = useState(false);
   const [allLanguages, setAllLanguges] = useState([]);
   const [verify, setVerify] = useState(false);
-  const [verifySucess, setVerifySuccess] = useState(false);
   const [setRes, setTypeRes] = useState("");
   const [title, setTitle] = useState("");
   const [subTitle, setSubTitle] = useState("");
-  const [successTitle, setSuccessTitle] = useState("");
-  const [successSubTitle, setSuccessSubTitle] = useState("");
   const [type, setType] = useState("");
   const [open, setOpen] = useState(false);
   const [isEmailVerifyLoader, setEmailVerifyLoader] = useState(false);
   const [isDisabledEmailVerify, setIsDisabledEmailVerify] = useState(false);
-  const [profilVerifyLoader, setProfilVerifyLoader] = useState(false);
-  const [isProfilVerifyDisable, setProfilVerifyDisable] = useState(false);
   const [isMobileVerifyLoader, setIsMobileVerifyLoader] = useState(false);
   const [isDisabledMobileVerify, setIsDisabledMobileVerify] = useState(false);
-  const [otp, setOtp] = useState({
-    otp1: "",
-    otp2: "",
-    otp3: "",
-    otp4: "",
-  });
+
   let [userData, setUserData] = useState({
     first_name: "",
     last_name: "",
@@ -190,27 +166,6 @@ const ProfileView = (props) => {
     }
   };
 
-  const handleChangeOtp = (name, event) => {
-    const otpValue = event.target && event.target.value;
-    if (otpValue) {
-      setOtp((o) => ({ ...o, [name]: otpValue }));
-    }
-  };
-
-  const inputfocus = (elmnt) => {
-    if (elmnt.key === "Delete" || elmnt.key === "Backspace") {
-      const next = elmnt.target.tabIndex - 2;
-      if (next > -1) {
-        elmnt.target.form.elements[next].focus();
-      }
-    } else {
-      const next = elmnt.target.tabIndex;
-      if (next < 4) {
-        elmnt.target.form.elements[next].focus();
-      }
-    }
-  };
-
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
@@ -240,14 +195,14 @@ const ProfileView = (props) => {
       } else {
         setOpen(true);
       }
-    } else if (type === "mobile") {
+    } else if (type === "phone") {
       const data = {
         phone: userData.phone_no,
         id_user: userData.id_user,
       };
       setIsMobileVerifyLoader(true);
       setIsDisabledMobileVerify(true);
-      const res = await add("/profile/verifyphone", data).catch((err) => {
+      const res = await add("/profile/verifymobile", data).catch((err) => {
         setTypeRes(err);
         setIsDisabledMobileVerify(false);
         setIsMobileVerifyLoader(false);
@@ -264,60 +219,10 @@ const ProfileView = (props) => {
     }
   };
 
-  const handleSubmitOtp = (e) => {
-    e.preventDefault();
-    onVerifyEmail();
+  const onCloseVerifyDialog = () => {
+    setVerify(false);
   };
 
-  const onVerifyEmail = async () => {
-    if (type === "email") {
-      const data = {
-        id_user: userData.id_user,
-        code: Number(`${otp.otp1}${otp.otp2}${otp.otp3}${otp.otp4}`),
-        type: "email",
-      };
-      setProfilVerifyLoader(true);
-      setProfilVerifyDisable(true);
-      const res = await add("/profile/verify", data).catch((err) => {
-        setTypeRes(err);
-        setProfilVerifyLoader(false);
-        setProfilVerifyDisable(false);
-      });
-      if (res && res.type === "SUCCESS") {
-        setProfilVerifyLoader(false);
-        setVerify(false);
-        setTypeRes(res);
-        setOpen(true);
-        setVerifySuccess(true);
-        setSuccessTitle("E-mail verification");
-        setSuccessSubTitle(
-          "Congratulations! Your e-mail id has been verified."
-        );
-      } else {
-        setOpen(true);
-      }
-    }
-    if (type === "mobile") {
-      const data = {
-        id_user: userData.id_user,
-        code: Number(`${otp.otp1}${otp.otp2}${otp.otp3}${otp.otp4}`),
-        type: "phone",
-      };
-      const res = await add("/profile/verify", data).catch((err) => {
-        setTypeRes(err);
-      });
-      if (res && res.type === "SUCCESS") {
-        setVerify(true);
-        setTypeRes(res);
-        setOpen(true);
-        setVerifySuccess(true);
-        setSuccessTitle("Phone verification");
-        setSuccessSubTitle("Congratulations! Your phone id has been verified.");
-      } else {
-        setOpen(true);
-      }
-    }
-  };
   return (
     <div className="profile_page_wrapper">
       <Breadcrumbs aria-label="breadcrumb">
@@ -448,9 +353,10 @@ const ProfileView = (props) => {
               {!userData.phone_verified && (
                 <ButtonComponent
                   title="Verify"
+                  type="button"
                   onClick={() => {
                     onVerifyEmailDailog();
-                    setType("mobile");
+                    setType("phone");
                     setTitle("Mobile verification");
                     setSubTitle(
                       "We’ve send a 4 digit code to your mobile. Please enter the code to verify your mobile."
@@ -481,130 +387,15 @@ const ProfileView = (props) => {
           )}
         />
       )}
-      <DialogComponent
-        onClose={(e) => {
-          e.stopPropagation();
-          setVerify(false);
-        }}
-        open={verify}
+      <Verification
+        user={user}
+        verify={verify}
+        closeVerifyDialog={onCloseVerifyDialog}
         title={title}
         subTitle1={subTitle}
-        maxHeight={312}
-      >
-        <DialogContent style={{ textAlign: "center" }}>
-          <form onSubmit={handleSubmitOtp}>
-            <div className="otpContainer">
-              <div className="otpContainer">
-                <input
-                  name="otp1"
-                  type="text"
-                  autoComplete="off"
-                  className="otpInput"
-                  value={otp.otp1}
-                  onChange={(e) => handleChangeOtp("otp1", e)}
-                  tabIndex="1"
-                  maxLength="1"
-                  onKeyUp={(e) => inputfocus(e)}
-                />
-                <input
-                  name="otp2"
-                  type="text"
-                  autoComplete="off"
-                  className="otpInput"
-                  value={otp.otp2}
-                  onChange={(e) => handleChangeOtp("otp2", e)}
-                  tabIndex="2"
-                  maxLength="1"
-                  onKeyUp={(e) => inputfocus(e)}
-                />
-                <input
-                  name="otp3"
-                  type="text"
-                  autoComplete="off"
-                  className="otpInput"
-                  value={otp.otp3}
-                  onChange={(e) => handleChangeOtp("otp3", e)}
-                  tabIndex="3"
-                  maxLength="1"
-                  onKeyUp={(e) => inputfocus(e)}
-                />
-                <input
-                  name="otp4"
-                  type="text"
-                  autoComplete="off"
-                  className="otpInput"
-                  value={otp.otp4}
-                  onChange={(e) => handleChangeOtp("otp4", e)}
-                  tabIndex="4"
-                  maxLength="1"
-                  onKeyUp={(e) => inputfocus(e)}
-                />
+        type={type}
+      />
 
-                <div className="resend-button">
-                  <div
-                    className="get-code"
-                    onClick={() => onVerifyEmailDailog()}
-                  >
-                    <TypographyComponent
-                      variant="h2"
-                      title="Didn’t get code?"
-                    />
-                    <TypographyComponent
-                      variant="h2"
-                      title="Resend"
-                      style={{ color: "#F5F5F5", marginLeft: 5 }}
-                    />
-                  </div>
-                  <ButtonComponent
-                    variant="contained"
-                    color="primary"
-                    type="submit"
-                    className="send-code"
-                    title="verify"
-                    startIcon={profilVerifyLoader && <Spinner />}
-                    endIcon={<ArrowForwardIosIcon />}
-                    disabled={isProfilVerifyDisable}
-                    loader={profilVerifyLoader}
-                  />
-                </div>
-              </div>
-            </div>
-          </form>
-        </DialogContent>
-      </DialogComponent>
-      <DialogComponent
-        onClose={(e) => {
-          e.stopPropagation();
-          setVerifySuccess(false);
-        }}
-        open={verifySucess}
-        title={successTitle}
-        subTitle1={successSubTitle}
-        maxHeight={234}
-      >
-        <DialogContent style={{ textAlign: "center" }}>
-          <FormControl className="email-verify">
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "flex-end",
-              }}
-            >
-              <ButtonComponent
-                variant="contained"
-                color="primary"
-                type="button"
-                className="send-code"
-                endIcon={<ArrowForwardIosIcon />}
-                title="Finish"
-                onClick={() => {
-                  setVerifySuccess(false);
-                }}
-              />
-            </div>
-          </FormControl>
-        </DialogContent>
-      </DialogComponent>
       <SnackBarComponent
         open={open}
         onClose={handleClose}

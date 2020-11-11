@@ -1,5 +1,5 @@
 const offline = false;
-const url = offline ? "http://127.0.0.1:8000" : "https://owera.herokuapp.com";
+const url = offline ? "http://127.0.0.1:8000" : process.env.REACT_APP_PROXY_URL;
 function readToken() {
   const result = JSON.parse(localStorage.getItem("token"));
   return result && (result || null);

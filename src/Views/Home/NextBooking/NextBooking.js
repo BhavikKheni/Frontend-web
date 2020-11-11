@@ -10,6 +10,7 @@ import CloseIcon from "@material-ui/icons/Close";
 import Spinner from "../../../Components/Spinner/Spinner";
 import ButtonComponent from "../../../Components/Forms/Button";
 import TypographyComponent from "../../../Components/Typography/Typography";
+import TooltipComponent from "../../../Components/Tooltip/Tooltip";
 import { search } from "../../../Services/Auth.service";
 import moment from "moment";
 
@@ -17,7 +18,6 @@ let limit = 10;
 const path = "/service/bookings/list";
 
 const useStyles = makeStyles((theme) => ({
-
   root: {
     width: "100%",
   },
@@ -27,60 +27,59 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: theme.typography.fontWeightRegular,
   },
 
-  next_booking_wrapper : {
-    maxHeight: '230px',
-    overflow: 'auto',
-    marginTop: '24px',
-    marginBottom: '24px',
-    direction: 'rtl',
+  next_booking_wrapper: {
+    maxHeight: "230px",
+    overflow: "auto",
+    marginTop: "24px",
+    marginBottom: "24px",
+    direction: "rtl",
   },
-  
-  next_booking_item : {
-    display: 'flex',
-    alignItems: 'center',
-    direction: 'ltr',
 
-    '& + $next_booking_item' : {
-      marginTop: '25px'
-    },
-  
+  next_booking_item: {
+    display: "flex",
+    alignItems: "center",
+    direction: "ltr",
 
-    '& button' : {
-      fontSize: '12px',
-      lineHeight: '18px',
-      letterSpacing: '0.02em',
-      fontWeight: 'normal',
-      color: '#FFFFFF',
-      textTransform: 'inherit',
-      height: '25px',
-      maxWidth: '112px',
-      width:'100%',
-      borderRadius: '5px',
-      margin: '0 13px 0 0',
+    "& + $next_booking_item": {
+      marginTop: "25px",
     },
 
-    '& p' : {
-      fontFamily: 'Rubik',
-      lineHeight: '30px',
-      letterSpacing: '0.02em',
-      color: '#303030',
-      minWidth: '85px',
-      textAlign: 'center',
-      margin: '0 3px',
+    "& button": {
+      fontSize: "12px",
+      lineHeight: "18px",
+      letterSpacing: "0.02em",
+      fontWeight: "normal",
+      color: "#FFFFFF",
+      textTransform: "inherit",
+      height: "25px",
+      maxWidth: "112px",
+      width: "100%",
+      borderRadius: "5px",
+      margin: "0 13px 0 0",
+    },
 
-      '&:last-of-type' : {
-        textAlign: 'left',
-        maxWidth: '60%',
-        width: '100%',
-        overflow: 'hidden',
-        whiteSpace: 'nowrap',
-        textOverflow: 'ellipsis',
+    "& p": {
+      fontFamily: "Rubik",
+      lineHeight: "30px",
+      letterSpacing: "0.02em",
+      color: "#303030",
+      minWidth: "85px",
+      textAlign: "center",
+      margin: "0 3px",
+
+      "&:last-of-type": {
+        textAlign: "left",
+        maxWidth: "60%",
+        width: "100%",
+        overflow: "hidden",
+        whiteSpace: "nowrap",
+        textOverflow: "ellipsis",
       },
     },
 
-    '& svg' : {
-      marginLeft: 'auto',
-    }, 
+    "& svg": {
+      marginLeft: "auto",
+    },
   },
 }));
 
@@ -180,10 +179,7 @@ const NextBooking = (props) => {
 
   return (
     <React.Fragment>
-      <TypographyComponent
-        title={t("home.nextBooking.title")}
-        variant="h2"
-      />
+      <TypographyComponent title={t("home.nextBooking.title")} variant="h2" />
 
       <Grid container spacing={3}>
         <Grid item xs={12} md={12}>
@@ -194,39 +190,42 @@ const NextBooking = (props) => {
           />
         </Grid>
       </Grid>
-      <div className={classes.next_booking_wrapper} >
+      <div className={classes.next_booking_wrapper}>
         {isLoading ? (
           <Spinner />
         ) : records && !records.length ? (
-          <span className="no_records_found">{t("home.nextBooking.notFoundRecord")}</span>
+          <span className="no_records_found">
+            {t("home.nextBooking.notFoundRecord")}
+          </span>
         ) : (
           records.map((r, index) => (
-              
-              <div className={classes.next_booking_item} key={index}>
-                <ButtonComponent
-                  title="Go to meeting"
-                  onClick={() => goToMeeting()}
-                />
-                <TypographyComponent title="11/03/2020" />
-                <TypographyComponent
-                  title={moment(r.from_time).format("HH:mm")}
-                />
-                <TypographyComponent title={moment(r.to_time).format("HH:mm")} />
+            <div className={classes.next_booking_item} key={index}>
+              <ButtonComponent
+                title="Go to meeting"
+                onClick={() => goToMeeting()}
+              />
+              <TypographyComponent title="11/03/2020" />
+              <TypographyComponent
+                title={moment(r.from_time).format("HH:mm")}
+              />
+              <TypographyComponent title={moment(r.to_time).format("HH:mm")} />
+              <TooltipComponent title={r.title} placement="bottom">
                 <TypographyComponent title={r.title} />
-                <MoreVertIcon
-                  aria-describedby={id}
-                  variant="contained"
-                  color="primary"
-                  onClick={(event) => handleClick(event, r)}
-                  style={{ cursor: "pointer" }}
-                />
-              </div>
+              </TooltipComponent>
+              <MoreVertIcon
+                aria-describedby={id}
+                variant="contained"
+                color="primary"
+                onClick={(event) => handleClick(event, r)}
+                style={{ cursor: "pointer" }}
+              />
+            </div>
 
             // </div>
           ))
         )}
       </div>
-      
+
       {isUpcomingMoreData && records && records.length > 0 && (
         <div>
           {isUpcomingLoading ? (
@@ -261,12 +260,10 @@ const NextBooking = (props) => {
           vertical: "top",
           horizontal: "right",
         }}
-        className='more_info_popover'
+        className="more_info_popover"
       >
         <CloseIcon onClick={handleClose} className="more_info_popover_close" />
-        <TypographyComponent
-          title="Cancel Booking"
-        />
+        <TypographyComponent title="Cancel Booking" />
       </Popover>
     </React.Fragment>
   );

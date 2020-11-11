@@ -5,7 +5,11 @@ import DialogComponent from "../../Components/Dialog/Dialog";
 import ButtonComponent from "../../Components/Forms/Button";
 import Sppiner from "../../Components/Spinner/Spinner";
 import TypographyComponent from "../../Components/Typography/Typography";
-import { add } from "../../Services/Auth.service";
+import {
+  add,
+  setLocalStorage,
+  getLocalStorage,
+} from "../../Services/Auth.service";
 import SnackBarComponent from "../../Components/SnackBar/SnackBar";
 import "./VerificationDialog.css";
 
@@ -34,7 +38,7 @@ const Verification = (props) => {
     const otpValue = event.target && event.target.value;
     setOtp((o) => ({ ...o, [name]: otpValue }));
   }, []);
-  
+
   const inputfocus = (elmnt) => {
     if (elmnt.key === "Delete" || elmnt.key === "Backspace") {
       const next = elmnt.target.tabIndex - 2;
@@ -52,15 +56,15 @@ const Verification = (props) => {
   const onSubmitEmailCode = async () => {
     let data = {
       id_user: user.id_user,
-      code: Number(`${otp.otp1}${otp.otp2}${otp.otp3}${otp.otp4}`),
+      code: `${otp.otp1}${otp.otp2}${otp.otp3}${otp.otp4}`,
     };
-    
+
     if (props.type === "email") {
       data.type = "email";
-    } else if (props.type === "mobile") {
-      data.type = "mobile";
+    } else if (props.type === "phone") {
+      data.type = "phone";
     }
-    
+
     setVerifyLoader(true);
     const res = await add("/profile/verify", data).catch((err) => {
       setTypeRes(err);
@@ -70,9 +74,16 @@ const Verification = (props) => {
       setVerifyLoader(false);
       setTypeRes(res);
       setOpen(true);
+      getLocalStorage().then((res) => {
+        setLocalStorage({ ...res, email_verified: true });
+      });
       props.closeVerifyDialog();
       setSuccessDialog(true);
-    } else {
+    } else if (res && res.type === "ERROR") {
+      setTypeRes({
+        message: res.message,
+        type: res.type,
+      });
       setVerifyLoader(false);
       setOpen(true);
     }
@@ -130,7 +141,9 @@ const Verification = (props) => {
 
   const onFinish = () => {
     setSuccessDialog(false);
-    props.onPromotionLinkHide()
+    if(props.onPromotionLinkHide){
+      props.onPromotionLinkHide();
+    }
   };
 
   return (

@@ -43,7 +43,7 @@ const MyCalendar = (props) => {
 
       if (response) {
         let tempArray = [];
-        response["available_slots"].forEach((slot) => {
+        response["available_slots"] && response["available_slots"].forEach((slot) => {
           tempArray.push({
             groupId: "availableForMeeting",
             start: moment(slot.startDate).format(),
@@ -52,7 +52,7 @@ const MyCalendar = (props) => {
             // constraint: 'availableForMeeting',
           });
         });
-        response["booked_slots"].forEach((slot) => {
+        response["booked_slots"] && response["booked_slots"].forEach((slot) => {
           tempArray.push({
             id: slot.slot_id,
             start: moment(slot.startDate).format(),

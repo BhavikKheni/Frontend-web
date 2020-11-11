@@ -12,7 +12,7 @@ import DialogComponent from "../../../Components/Dialog/Dialog";
 import SnackBarComponent from "../../../Components/SnackBar/SnackBar";
 import { SessionContext } from "../../../Provider/Provider";
 import { useSidebar } from "../../../Provider/SidebarProvider";
-import { get, add } from "../../../Services/Auth.service";
+import { get, add, onLogout } from "../../../Services/Auth.service";
 import Service from "../../../Services/index";
 import ImageComponent from "../../../Components/Forms/Image";
 import Spinner from "../../../Components/Spinner/Spinner";
@@ -20,6 +20,7 @@ import { LOCALSTORAGE_DATA } from "../../../utils";
 import ChangePassword from "../../../Components/ChangePassword/ChangePassword";
 import { serverLogout } from "../../../Services/Auth.service";
 import "./UserUpdateProfile.css";
+import ConfirmDialog from "../../../Components/ConfirmDialog/ConfirmDialog";
 const service = new Service();
 const useSession = () => React.useContext(SessionContext);
 
@@ -298,7 +299,7 @@ const UpdateProfile = (props) => {
       setDeleteDisabled(false);
       setOpenSnackBar(true);
       setResError(res);
-      onLogout();
+      doLogout();
       props.history.push("/");
     } else if (res && res.type === "ERROR") {
       setDeleteLoader(false);
@@ -322,7 +323,7 @@ const UpdateProfile = (props) => {
       setDeactivateLoader(false);
       setDeactivateDisabled(false);
       setOpenSnackBar(true);
-      onLogout();
+      doLogout();
       props.history.push("/");
     } else if (res && res.type === "ERROR") {
       setDeactivateLoader(false);
@@ -338,12 +339,13 @@ const UpdateProfile = (props) => {
     setOpenSnackBar(false);
   };
 
-  const onLogout = () => {
+  const doLogout = () => {
     serverLogout()
       .then((result) => {
         if (result.type === "SUCCESS") {
-          onLogout(props).then((result) => {
+          onLogout().then((result) => {
             logout();
+            props.history.push("/");
           });
         }
       })
@@ -629,54 +631,25 @@ const UpdateProfile = (props) => {
         </DialogComponent>
       </div>
       {/* confirmataion dialog for delete profile */}
-      <DialogComponent
-        onClose={(e) => {
-          e.stopPropagation();
-          setOpenDeleteConfirmationDialog(false);
-        }}
-        open={openDeleteConfirmationDialog}
-        title="Delete Profile"
-        subTitle1="Are you sure you want to delete profile?"
-      >
-        <ButtonComponent
-          title="Cancel"
-          type="button"
-          onClick={() => setOpenDeleteConfirmationDialog(false)}
-        />
-        <ButtonComponent
-          title="Delete profile"
-          type="button"
-          disabled={deleteDisabled}
-          startIcon={deleteLoader && <Spinner />}
-          onClick={() => onDelete()}
-          loader={deleteLoader}
-        />
-      </DialogComponent>
 
+      <ConfirmDialog
+        open={openDeleteConfirmationDialog}
+        onClose={() => setOpenDeleteConfirmationDialog(false)}
+        onConfirm={() => onDelete()}
+        onCancel={() => setOpenDeleteConfirmationDialog(false)}
+        loader={deleteLoader}
+        disabled={deleteDisabled}
+      />
       {/* confirmataion dialog for deactivate profile */}
-      <DialogComponent
-        onClose={(e) => {
-          e.stopPropagation();
-          setOpenDeactivateConfirmationDialog(false);
-        }}
+      <ConfirmDialog
         open={openDeactivateConfirmationDialog}
-        title="Deactivate Profile"
-        subTitle1="Are you sure you want to deactivate profile?"
-      >
-        <ButtonComponent
-          title="Cancel"
-          type="button"
-          onClick={() => setOpenDeactivateConfirmationDialog(false)}
-        />
-        <ButtonComponent
-          title="Deactivate profile"
-          type="button"
-          disabled={deActivateDisabled}
-          startIcon={deActivateLoader && <Spinner />}
-          onClick={() => onDeactivate()}
-          loader={deActivateLoader}
-        />
-      </DialogComponent>
+        onClose={() => setOpenDeactivateConfirmationDialog(false)}
+        onConfirm={() => onDeactivate()}
+        onCancel={() => setOpenDeactivateConfirmationDialog(false)}
+        loader={deActivateLoader}
+        disabled={deActivateDisabled}
+      />
+
       <SnackBarComponent
         open={openErrorSnackBar}
         onClose={handleClose}

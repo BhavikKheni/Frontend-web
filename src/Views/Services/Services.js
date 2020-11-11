@@ -492,7 +492,7 @@ const Services = (props) => {
   };
 
   const onPromotionLinkHide = () => {
-    setPromotion_text_hide(false);
+    setPromotion_text_hide(true);
   };
 
   const onPromotionClick = () => {
@@ -549,7 +549,7 @@ const Services = (props) => {
           )}
         </div>
       )}
-      {isUpcomingMoreData && services && services.length > 0 && (
+      {isUpcomingMoreData && services && services.length > 0 && !isLoading &&(
         <div>
           {isUpcomingLoading ? (
             <Spinner />

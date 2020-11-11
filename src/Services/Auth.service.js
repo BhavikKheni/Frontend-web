@@ -49,7 +49,7 @@ export const search = (url, data) => {
   });
   return result;
 };
-export const onLogout = (props) => {
+export const onLogout = () => {
   const storage = new LocalStore();
   const result = new Promise((resolve, reject) => {
     storage

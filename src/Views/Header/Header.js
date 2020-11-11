@@ -215,7 +215,7 @@ const OweraHeader = (props) => {
     serverLogout()
       .then((result) => {
         if (result.type === "SUCCESS") {
-          onLogout(props).then((result) => {
+          onLogout().then((result) => {
             logout();
             setLogoutLoader(false);
             setLogout(false);

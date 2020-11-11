@@ -11,6 +11,7 @@ import Divider from "@material-ui/core/Divider";
 import { search } from "../../../Services/Auth.service";
 import Spinner from "../../../Components/Spinner/Spinner";
 import TypographyComponent from "../../../Components/Typography/Typography";
+import TooltipComponent from '../../../Components/Tooltip/Tooltip'
 import moment from "moment";
 let limit = 10;
 const path = "/service/bookings/list";
@@ -264,7 +265,9 @@ const MyServiceHistory = (props) => {
                   <p>00/00/2020</p>
                   <p>{moment(record.from_time).format("HH:mm")}</p>
                   <p>{moment(record.to_time).format("HH:mm")}</p>
+                  <TooltipComponent title={record.title} placement="bottom">
                   <p>{record.title}</p>
+                  </TooltipComponent>
                 </AccordionSummary>
                 <AccordionDetails className={classes.previous_service_content}>
                   <div className={classes.previous_service_info_title}>

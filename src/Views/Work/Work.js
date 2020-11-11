@@ -83,10 +83,7 @@ const Work = (props) => {
   const [saveLoader, setSaveLoader] = useState(false);
 
   useEffect(() => {
-    var elmnt = document.getElementsByClassName("start_work");
-    if (elmnt[0]) {
-      elmnt[0].scrollIntoView();
-    }
+    scrollToSection("start_work");
   }, []);
 
   const searchServiceLibrary = useCallback(async () => {
@@ -405,9 +402,17 @@ const Work = (props) => {
     }
     formik.setFieldValue("subcategory", sub[0].sub_categories[0].id_category);
     setFileList([...response.images]);
-    var elmnt = document.getElementsByClassName("create_service");
-    if (elmnt[0]) {
-      elmnt[0].scrollIntoView();
+    scrollToSection("create_service");
+  };
+
+  const scrollToSection = (sectionName) => {
+    var elementCalendar = document.getElementsByClassName(sectionName);
+    if (elementCalendar[0]) {
+      elementCalendar[0].scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+        inline: "nearest",
+      });
     }
   };
 
@@ -457,10 +462,7 @@ const Work = (props) => {
       setServiceVisible(true);
       formik.resetForm({});
       setFileList([]);
-      var elmnt = document.getElementsByClassName("create_service");
-      if (elmnt[0]) {
-        elmnt[0].scrollIntoView();
-      }
+      scrollToSection("create_service");
     } else {
       setOpenSnackbar(true);
       setTypeRes({
@@ -486,397 +488,394 @@ const Work = (props) => {
 
   return (
     <React.Fragment>
-      {isLoggedIn && (
-        <div className="work_page">
-          <TypographyComponent
-            variant="h2"
-            title="Service name"
-            className="start_work_title"
-          />
+      <div className="work_page">
+        <section className="start_work">
           <StartWork />
-          <section className="my_work_services">
-            <h2>
-              My service library <span>({services.length} Services)</span>
-            </h2>
-            {/* <TypographyComponent
+        </section>
+        <section className="my_work_services">
+          <h2>
+            My service library <span>({services.length} Services)</span>
+          </h2>
+          {/* <TypographyComponent
               title={`My service library (${services.length})`}
             /> */}
-            {isJobLoading ? (
-              <Spinner />
-            ) : (
-              <React.Fragment>
-                <div className="my_work_services_filter">
-                  <div>
-                    <ButtonComponent
-                      title={"Active"}
-                      type="button"
-                      className={clsx(
-                        "active_service_button",
-                        addActiveClassName
-                      )}
-                      onClick={() => {
-                        onIsActive("isActive");
-                      }}
-                    />
+          {isJobLoading ? (
+            <Spinner />
+          ) : (
+            <React.Fragment>
+              <div className="my_work_services_filter">
+                <div>
+                  <ButtonComponent
+                    title={"Active"}
+                    type="button"
+                    className={clsx(
+                      "active_service_button",
+                      addActiveClassName
+                    )}
+                    onClick={() => {
+                      onIsActive("isActive");
+                    }}
+                  />
 
-                    <ButtonComponent
-                      title="Inactive"
-                      className={clsx(
-                        "inactive_service_button",
-                        addClassInActiveName
-                      )}
-                      type="button"
-                      onClick={() => {
-                        onIsInActive();
-                      }}
-                    />
-                  </div>
-                  <div>
-                    <ButtonComponent
-                      title="Create service"
-                      className="create_new_service_button"
-                      type="button"
-                      onClick={() => {
-                        onCreateService();
-                      }}
-                    />
-                  </div>
+                  <ButtonComponent
+                    title="Inactive"
+                    className={clsx(
+                      "inactive_service_button",
+                      addClassInActiveName
+                    )}
+                    type="button"
+                    onClick={() => {
+                      onIsInActive();
+                    }}
+                  />
                 </div>
+                <div>
+                  <ButtonComponent
+                    title="Create service"
+                    className="create_new_service_button"
+                    type="button"
+                    onClick={() => {
+                      onCreateService();
+                    }}
+                  />
+                </div>
+              </div>
 
-                <Grid container spacing={3}>
-                  <Grid item xs={12} md={12}>
-                    <Divider
-                      style={{
-                        border: "0.5px solid #9E9E9E",
-                      }}
-                    />
-                  </Grid>
+              <Grid container spacing={3}>
+                <Grid item xs={12} md={12}>
+                  <Divider
+                    style={{
+                      border: "0.5px solid #9E9E9E",
+                    }}
+                  />
                 </Grid>
-                <div className="my_work_service_library">
-                  {services && !services.length ? (
-                    <span className="no_records_found">{t("service.notFoundService")}</span>
-                  ) : (
-                    services.map((service, index) => {
-                      return (
-                        <div className="my_service" key={index}>
-                          <ButtonComponent
-                            title={service.active ? "Activate" : "Deactivate"}
-                            className={clsx(
-                              { deactivate_service_button: !service.active },
-                              "activate_service_button"
-                            )}
-                            onClick={(e) => {
-                              onActivateDactivate(service);
-                            }}
-                            startIcon={activeLoader && <Spinner />}
-                            loader={activeLoader}
-                          />
+              </Grid>
+              <div className="my_work_service_library">
+                {services && !services.length ? (
+                  <span className="no_records_found">
+                    {t("service.notFoundService")}
+                  </span>
+                ) : (
+                  services.map((service, index) => {
+                    return (
+                      <div className="my_service" key={index}>
+                        <ButtonComponent
+                          title={service.active ? "Activate" : "Deactivate"}
+                          className={clsx(
+                            { deactivate_service_button: !service.active },
+                            "activate_service_button"
+                          )}
+                          onClick={(e) => {
+                            onActivateDactivate(service);
+                          }}
+                          startIcon={activeLoader && <Spinner />}
+                          loader={activeLoader}
+                        />
 
-                          <ButtonComponent
-                            title="Edit"
-                            className="edit_service_button"
-                            onClick={() => {
-                              onEdit(service);
-                              setEditRecord(service);
-                            }}
-                          />
+                        <ButtonComponent
+                          title="Edit"
+                          className="edit_service_button"
+                          onClick={() => {
+                            onEdit(service);
+                            setEditRecord(service);
+                          }}
+                        />
+                        <TypographyComponent
+                          title={service.price}
+                          className="work_service_price"
+                        />
+                        <TypographyComponent
+                          title={service.title}
+                          className="work_service_title"
+                        />
+                        <div className="work_service_review">
                           <TypographyComponent
-                            title={service.price}
-                            className="work_service_price"
+                            title="Service quality"
+                            className="work_service_review_name"
                           />
-                          <TypographyComponent
-                            title={service.title}
-                            className="work_service_title"
-                          />
-                          <div className="work_service_review">
-                            <TypographyComponent
-                              title="Service quality"
-                              className="work_service_review_name"
-                            />
-                            <TypographyComponent title="5" />
-                            <StarBorderIcon />
-                          </div>
-                          <div className="work_service_review">
-                            <TypographyComponent
-                              title="Sympathy"
-                              className="work_service_review_name"
-                            />
-                            <TypographyComponent title="4.5" />
-                            <StarBorderIcon />
-                          </div>
+                          <TypographyComponent title="5" />
+                          <StarBorderIcon />
                         </div>
-                      );
-                    })
+                        <div className="work_service_review">
+                          <TypographyComponent
+                            title="Sympathy"
+                            className="work_service_review_name"
+                          />
+                          <TypographyComponent title="4.5" />
+                          <StarBorderIcon />
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+
+              <Grid container spacing={3}>
+                <Grid item xs={12} md={12}>
+                  <Divider
+                    style={{
+                      border: "0.5px solid #9E9E9E",
+                    }}
+                  />
+                </Grid>
+              </Grid>
+              {isUpcomingMoreData && services && services.length > 0 && (
+                <div>
+                  {isUpcomingLoading ? (
+                    <Spinner />
+                  ) : (
+                    <div
+                      className="load-more"
+                      onClick={() =>
+                        onMore("/service/list/user", upcomingoffset, {})
+                      }
+                    ></div>
                   )}
                 </div>
+              )}
+            </React.Fragment>
+          )}
+        </section>
 
-                <Grid container spacing={3}>
-                  <Grid item xs={12} md={12}>
-                    <Divider
-                      style={{
-                        border: "0.5px solid #9E9E9E",
-                      }}
+        {serviceVisible && (
+          <section className="create_service">
+            <TypographyComponent
+              title={
+                formik.values.id_service
+                  ? t("service.create-service.editService")
+                  : t("service.create-service.createService")
+              }
+              variant="h2"
+            />
+            <form
+              onSubmit={formik.handleSubmit}
+              className="create_service_form"
+            >
+              <div className="create_service_form_location">
+                <TypographyComponent
+                  title={t("service.create-service.nameAllocation")}
+                  variant="h6"
+                />
+                <div className="create_service_form_location_left">
+                  <FormControl
+                    variant="outlined"
+                    className={"form_row"}
+                    error={formik.errors.title ? true : false}
+                  >
+                    <InputComponent
+                      label="Sevice name"
+                      type="text"
+                      name="title"
+                      autoFocus
+                      handleBlur={formik.handleBlur}
+                      onChange={formik.handleChange}
+                      value={formik.values.title}
+                      error={
+                        formik.errors.title && formik.touched.title
+                          ? true
+                          : false
+                      }
+                      helperText={
+                        formik.errors.title &&
+                        formik.touched.title &&
+                        `${formik.errors.title}`
+                      }
+                      styles={{ maxHeight: 80, height: "100%" }}
                     />
-                  </Grid>
-                </Grid>
-                {isUpcomingMoreData && services && services.length > 0 && (
-                  <div className="load-more">
-                    {isUpcomingLoading ? (
-                      <Spinner />
-                    ) : (
-                      <div
-                        onClick={() =>
-                          onMore("/service/list/user", upcomingoffset, {})
-                        }
-                      ></div>
-                    )}
-                  </div>
-                )}
-              </React.Fragment>
-            )}
-          </section>
-
-          {serviceVisible && (
-            <section className="create_service">
-              <TypographyComponent
-                title={
-                  formik.values.id_service
-                    ? t("service.create-service.editService")
-                    : t("service.create-service.createService")
-                }
-                variant="h2"
-              />
-              <form
-                onSubmit={formik.handleSubmit}
-                className="create_service_form"
-              >
-                <div className="create_service_form_location">
-                  <TypographyComponent
-                    title={t("service.create-service.nameAllocation")}
-                    variant="h6"
-                  />
-                  <div className="create_service_form_location_left">
-                    <FormControl
-                      variant="outlined"
-                      className={"form_row"}
-                      error={formik.errors.title ? true : false}
-                    >
-                      <InputComponent
-                        label="Sevice name"
-                        type="text"
-                        name="title"
-                        autoFocus
-                        handleBlur={formik.handleBlur}
-                        onChange={formik.handleChange}
-                        value={formik.values.title}
-                        error={
-                          formik.errors.title && formik.touched.title
-                            ? true
-                            : false
-                        }
-                        helperText={
-                          formik.errors.title &&
-                          formik.touched.title &&
-                          `${formik.errors.title}`
-                        }
-                        styles={{ maxHeight: 80, height: "100%" }}
-                      />
-                    </FormControl>
-                    <div className="form_row">
-                      <TypographyComponent title="Describe the service of your dream as specific and simple you can so others can find you easily." />
-                    </div>
-                  </div>
-
-                  <div className="create_service_form_location_right">
-                    <FormControl
-                      variant="outlined"
-                      className={"form_row"}
-                      error={
-                        formik.errors.category && formik.touched.category
-                          ? true
-                          : false
-                      }
-                    >
-                      <SelectComponent
-                        name="category"
-                        label="Category"
-                        value={formik.values.category}
-                        native
-                        onChange={(e) => {
-                          formik.setFieldValue("category", e.target.value);
-                          const sub =
-                            category &&
-                            category.filter(
-                              (f) => Number(f.id) === Number(e.target.value)
-                            );
-                          setSubCategories(sub[0].sub_categories);
-                          if (sub[0] && sub[0].sub_categories.length > 0) {
-                            formik.setFieldValue(
-                              "subcategory",
-                              sub[0].sub_categories[0].id_category
-                            );
-                          }
-                        }}
-                        error={formik.errors.category ? true : false}
-                      >
-                        {category &&
-                          category.map((m, i) => (
-                            <option
-                              key={Number(m.id)}
-                              value={Number(m.id)}
-                              className={classes.formControl}
-                            >
-                              {m.name}
-                            </option>
-                          ))}
-                      </SelectComponent>
-                    </FormControl>
-                    <FormControl
-                      variant="outlined"
-                      className={"form_row"}
-                      error={
-                        formik.errors.subcategory && formik.touched.subcategory
-                          ? true
-                          : false
-                      }
-                    >
-                      <SelectComponent
-                        name="subcategory"
-                        label="Sub-Category"
-                        value={formik.values.subcategory}
-                        native
-                        onChange={formik.handleChange}
-                      >
-                        {subCategories &&
-                          subCategories.map((m, i) => (
-                            <option
-                              key={Number(m.id_category)}
-                              value={Number(m.id_category)}
-                            >
-                              {m.category_name}
-                            </option>
-                          ))}
-                      </SelectComponent>
-                    </FormControl>
+                  </FormControl>
+                  <div className="form_row">
+                    <TypographyComponent title="Describe the service of your dream as specific and simple you can so others can find you easily." />
                   </div>
                 </div>
 
-                <TypographyComponent variant="h6" title="Description" />
-
-                <div className="create_service_form_description">
-                  <FormControl variant="outlined" className={"form_row"}>
-                    <InputComponent
-                      type="text"
-                      name="description"
-                      value={formik.values.description}
-                      onChange={formik.handleChange}
-                      multiline
-                      rows={10}
-                      fullWidth
-                      fullHeight
-                      InputLabelProps={{
-                        shrink: true,
+                <div className="create_service_form_location_right">
+                  <FormControl
+                    variant="outlined"
+                    className={"form_row"}
+                    error={
+                      formik.errors.category && formik.touched.category
+                        ? true
+                        : false
+                    }
+                  >
+                    <SelectComponent
+                      name="category"
+                      label="Category"
+                      value={formik.values.category}
+                      native
+                      onChange={(e) => {
+                        formik.setFieldValue("category", e.target.value);
+                        const sub =
+                          category &&
+                          category.filter(
+                            (f) => Number(f.id) === Number(e.target.value)
+                          );
+                        setSubCategories(sub[0].sub_categories);
+                        if (sub[0] && sub[0].sub_categories.length > 0) {
+                          formik.setFieldValue(
+                            "subcategory",
+                            sub[0].sub_categories[0].id_category
+                          );
+                        }
                       }}
-                      placeholder="Please briefly describe your service... 
+                      error={formik.errors.category ? true : false}
+                    >
+                      {category &&
+                        category.map((m, i) => (
+                          <option
+                            key={Number(m.id)}
+                            value={Number(m.id)}
+                            className={classes.formControl}
+                          >
+                            {m.name}
+                          </option>
+                        ))}
+                    </SelectComponent>
+                  </FormControl>
+                  <FormControl
+                    variant="outlined"
+                    className={"form_row"}
+                    error={
+                      formik.errors.subcategory && formik.touched.subcategory
+                        ? true
+                        : false
+                    }
+                  >
+                    <SelectComponent
+                      name="subcategory"
+                      label="Sub-Category"
+                      value={formik.values.subcategory}
+                      native
+                      onChange={formik.handleChange}
+                    >
+                      {subCategories &&
+                        subCategories.map((m, i) => (
+                          <option
+                            key={Number(m.id_category)}
+                            value={Number(m.id_category)}
+                          >
+                            {m.category_name}
+                          </option>
+                        ))}
+                    </SelectComponent>
+                  </FormControl>
+                </div>
+              </div>
+
+              <TypographyComponent variant="h6" title="Description" />
+
+              <div className="create_service_form_description">
+                <FormControl variant="outlined" className={"form_row"}>
+                  <InputComponent
+                    type="text"
+                    name="description"
+                    value={formik.values.description}
+                    onChange={formik.handleChange}
+                    multiline
+                    rows={10}
+                    fullWidth
+                    fullHeight
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    placeholder="Please briefly describe your service... 
                     In which situation can i use this service? 
                     What can I expect from this service? 
                     What are the key information?"
-                    />
-                  </FormControl>
-                </div>
+                  />
+                </FormControl>
+              </div>
 
-                <TypographyComponent variant="h6" title="Price setting" />
+              <TypographyComponent variant="h6" title="Price setting" />
 
-                <div className="create_service_form_price_setting">
-                  <div className="create_service_form_price">
-                    <TypographyComponent variant="h6" title="My hourly price" />
-                    <InputComponent
-                      name="price"
-                      value={formik.values.price}
-                      onChange={formik.handleChange}
-                      placeholder="00.00£"
-                    />
-                  </div>
-                  <TypographyComponent title="Uppon your price will be sett the conditions of a payment service provider and the comission of Owera. All employees of Owera thank you for using our service and enabling our workplaces. Enjoy this winn winn situation because this is our philosophy to achiefe." />
-                </div>
-
-                <TypographyComponent variant="h6" title="Pictures" />
-
-                <div className="create_service_form_img">
-                  {fileList &&
-                    fileList.map((file, i) => (
-                      <div className="create_service_form_img_item" key={i}>
-                        <img alt="Profile" src={file && makeImageUrl(file)} />
-                        <div
-                          className="create_service_form_img_delete"
-                          onClick={() => {
-                            handleOnDeleteImage(file, i);
-                          }}
-                        >
-                          <label>Delete picture</label>
-                          <DeleteIcon />
-                        </div>
-                      </div>
-                    ))}
-                  {fileList.length >= 4 ? null : (
-                    <div className="create_service_form_img_item">
-                      <input
-                        type="file"
-                        name={`image_${fileList.length + 1}`}
-                        id={`image_${fileList.length + 1}`}
-                        style={{ display: "none" }}
-                        onChange={(event) => handleUploadClick(event)}
-                      />
-                      <div
-                        className="create_service_form_img_add_item"
-                        onClick={() => {
-                          document
-                            .getElementById(`image_${fileList.length + 1}`)
-                            .click();
-                        }}
-                      >
-                        <label htmlFor="file">Upload image</label>
-                        <AddIcon />
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                <div className="create_service_form_cta_row">
-                  {formik.values.id_service && (
-                    <ButtonComponent
-                      title="Delete service"
-                      onClick={() => {
-                        setConformDeleteDialogOpen(true);
-                      }}
-                      variant="outlined"
-                      className="create_service_form_delete_cta"
-                    />
-                  )}
-                  <ButtonComponent
-                    variant="contained"
-                    color="primary"
-                    type="submit"
-                    startIcon={saveLoader && <Spinner />}
-                    loader={saveLoader}
-                    disabled={formik.isSubmitting}
-                    title={
-                      formik.values.id_service
-                        ? "Save changes"
-                        : "Create service"
-                    }
-                    className="create_service_form_save_cta"
+              <div className="create_service_form_price_setting">
+                <div className="create_service_form_price">
+                  <TypographyComponent variant="h6" title="My hourly price" />
+                  <InputComponent
+                    name="price"
+                    value={formik.values.price}
+                    onChange={formik.handleChange}
+                    placeholder="00.00£"
                   />
                 </div>
-              </form>
-            </section>
-          )}
-          <AddBookingSlotCalendar 
-            id_service={formik.values.id_service} 
-            editRecord={editRecord}
-          />
-        </div>
-      )}
+                <TypographyComponent title="Uppon your price will be sett the conditions of a payment service provider and the comission of Owera. All employees of Owera thank you for using our service and enabling our workplaces. Enjoy this winn winn situation because this is our philosophy to achiefe." />
+              </div>
+
+              <TypographyComponent variant="h6" title="Pictures" />
+
+              <div className="create_service_form_img">
+                {fileList &&
+                  fileList.map((file, i) => (
+                    <div className="create_service_form_img_item" key={i}>
+                      <img alt="Profile" src={file && makeImageUrl(file)} />
+                      <div
+                        className="create_service_form_img_delete"
+                        onClick={() => {
+                          handleOnDeleteImage(file, i);
+                        }}
+                      >
+                        <label>Delete picture</label>
+                        <DeleteIcon />
+                      </div>
+                    </div>
+                  ))}
+                {fileList.length >= 4 ? null : (
+                  <div className="create_service_form_img_item">
+                    <input
+                      type="file"
+                      name={`image_${fileList.length + 1}`}
+                      id={`image_${fileList.length + 1}`}
+                      style={{ display: "none" }}
+                      onChange={(event) => handleUploadClick(event)}
+                    />
+                    <div
+                      className="create_service_form_img_add_item"
+                      onClick={() => {
+                        document
+                          .getElementById(`image_${fileList.length + 1}`)
+                          .click();
+                      }}
+                    >
+                      <label htmlFor="file">Upload image</label>
+                      <AddIcon />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="create_service_form_cta_row">
+                {formik.values.id_service && (
+                  <ButtonComponent
+                    title="Delete service"
+                    onClick={() => {
+                      setConformDeleteDialogOpen(true);
+                    }}
+                    variant="outlined"
+                    className="create_service_form_delete_cta"
+                  />
+                )}
+                <ButtonComponent
+                  variant="contained"
+                  color="primary"
+                  type="submit"
+                  startIcon={saveLoader && <Spinner />}
+                  loader={saveLoader}
+                  disabled={formik.isSubmitting}
+                  title={
+                    formik.values.id_service ? "Save changes" : "Create service"
+                  }
+                  className="create_service_form_save_cta"
+                />
+              </div>
+            </form>
+          </section>
+        )}
+        <AddBookingSlotCalendar
+          id_service={formik.values.id_service}
+          editRecord={editRecord}
+        />
+      </div>
+
       {formik.values.id_service && (
         <ConfirmDialog
           open={conformDeleteDialogOpen}
