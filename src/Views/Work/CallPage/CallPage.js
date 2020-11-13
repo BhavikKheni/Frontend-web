@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Grid, InputBase, Avatar, Divider } from "@material-ui/core";
-import Rating from "@material-ui/lab/Rating";
 import { makeStyles } from "@material-ui/core/styles";
 import SendIcon from "@material-ui/icons/Send";
 import MicOffIcon from "@material-ui/icons/MicOff";
@@ -8,24 +7,21 @@ import MicIcon from "@material-ui/icons/Mic";
 import VideocamOffIcon from "@material-ui/icons/VideocamOff";
 import VideocamIcon from "@material-ui/icons/Videocam";
 import DesktopWindowsIcon from "@material-ui/icons/DesktopWindows";
+import { connect, createLocalTracks } from "twilio-video";
 import CallEndIcon from "@material-ui/icons/CallEnd";
-import TypographyComponent from "../../../Components/Typography/Typography";
-import ArrowIcon from "../../../images/select_arrow.svg";
-
 import { useTranslation } from "react-i18next";
+import ArrowIcon from "../../../images/select_arrow.svg";
 import { themes } from "../../../themes";
 import { useSidebar } from "../../../Provider/SidebarProvider";
-
 import { get, add } from "../../../Services/Auth.service";
 import Spinner from "../../../Components/Spinner/Spinner";
-import { connect, createLocalTracks } from "twilio-video";
 import { SessionContext } from "../../../Provider/Provider";
 import ImageComponent from "../../../Components/Forms/Image";
+import TypographyComponent from "../../../Components/Typography/Typography";
 import ConfirmPopupForLeavingCall from "./ConfirmPopup/ConfirmPopup";
 import "./callpage.css";
 
 const useSession = () => React.useContext(SessionContext);
-
 
 const useStyles = makeStyles((theme) => ({
   search: {
@@ -62,56 +58,28 @@ const useStyles = makeStyles((theme) => ({
   large: {
     width: theme.spacing(20),
     height: theme.spacing(20),
-  },
-  endCallWrapper: {
-    display: "flex",
-    justifyContent: "flex-end",
-    alignItems: "center",
-  },
-  continueCallBtn: {
-    backgroundColor: "#2FB41A",
-    borderRadius: 10,
-    height: 48,
-    padding: 12,
-    color: "#fff",
-    display: "flex",
-    alignItems: "center",
-    cursor: "pointer",
-  },
-  endCallBtn: {
-    backgroundColor: "#FF0000",
-    borderRadius: 10,
-    border: "1px solid #FF0000",
-    height: 48,
-    padding: 12,
-    marginRight: 10,
-    color: "#fff",
-    display: "flex",
-    alignItems: "center",
-    cursor: "pointer",
-  },
-  endCallMessage: {
-    color: "#fff",
-  },
+  }
 }));
 
 const CallPage = (props) => {
+
+  const { state = {} } = props && props.location;
+  const bookingId = state.record && state.record.id_booking;
+
   const classes = useStyles();
   const { t } = useTranslation();
   const { user } = useSession();
-  const [counter, setCounter] = React.useState(5);
+  const [counter, setCounter] = useState(5);
   const [simpathy, setSimpathy] = useState();
   const [service_quality, setServiceQuality] = useState();
   const { setSidebarContent, setSidebar } = useSidebar();
-
-  const { state = {} } = props && props.location;
   const [room, setRoom] = useState(null);
   const [isLoading, setLoading] = useState(false);
   const [audio, setAudio] = useState(true);
   const [onVideo, setVideo] = useState(true);
   const [isOpenConfirmPopup, openConfirmPopup] = useState(false);
-  const bookingId = state.record && state.record.id_booking;
-
+  const [dynamicCounter, setDynamicCounter] = useState();
+  const [timerId, setTimerID] = useState("");
   let [userData, setUserData] = useState({
     first_name: "",
     last_name: "",
@@ -123,63 +91,29 @@ const CallPage = (props) => {
   };
 
   useEffect(() => {
-    async function getData() {
-      setLoading(true);
-      const res = await get(`/profile/${user.id_user}`).catch((err) => {
-        setLoading(false);
-      });
-
-      if (res) {
-        setUserData({
-          ...res.data,
-        });
-        setLoading(false);
-      } else {
-        setLoading(false);
-      }
-    }
-    getData();
+    getProfileInfo();
   }, [state]);
 
+  const getProfileInfo = async () => {
+    setLoading(true);
+    const res = await get(`/profile/${user.id_user}`).catch((err) => {
+      setLoading(false);
+    });
+
+    if (res) {
+      setUserData({
+        ...res.data,
+      });
+      setLoading(false);
+    } else {
+      setLoading(false);
+    }
+  }
+
   useEffect(() => {
-    const timer =
-      counter > 0 && setInterval(() => setCounter(counter - 1), 1000);
+    const timer = counter > 0 && setInterval(() => setCounter(counter - 1), 1000);
     return () => clearInterval(timer);
   }, [counter]);
-
-  const [dynamicCounter, setDynamicCounter] = useState();
-  const [timerId, setTimerID] = useState("");
-
-  const timer = useCallback(() => {
-    var count1 = dynamicCounter;
-    var counter1 = setInterval(timer, 1000);
-    count1 = count1 - 1;
-    if (count1 === -1) {
-      clearInterval(counter1);
-      return;
-    }
-
-    var seconds = count1 % 60;
-    var minutes = Math.floor(count1 / 60);
-    var hours = Math.floor(minutes / 60);
-    minutes %= 60;
-    hours %= 60;
-
-    document.getElementById(timerId).innerHTML =
-      hours + "hours : " + minutes + "minutes :" + seconds;
-  }, [dynamicCounter, timerId]);
-  // var counter = 5;
-
-  // setInterval(function () {
-  //   counter--;
-  //   if (counter >= 0) {
-  //     let span = document.getElementById("count");
-  //     span.innerHTML = counter;
-  //   }
-  //   if (counter === 0) {
-  //     clearInterval(counter);
-  //   }
-  // }, 1000);
 
   useEffect(() => {
     setSidebar(true);
