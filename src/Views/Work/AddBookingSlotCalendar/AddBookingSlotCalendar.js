@@ -18,15 +18,7 @@ const AddBookingSlotCalendar = (props) => {
   const { id_service, editRecord } = props;
   const [slots, setAllSlots] = useState([]);
   const [availableSlots, setAvailableSlots] = useState([]);
-  // Refresh the calendar after create slot
-  const onAddBookingCalendar = (data) => {
-    console.log("Data", data);
-
-    // availableSlots.forEach((slot) => {
-    //   const startDate = moment(slot.startDate).format("YYYY-MM-DDTHH:mm:ss");
-    //   const endDate = moment(slot.endDate).format("YYYY-MM-DDTHH:mm:ss");
-    // });
-  };
+  const [getSelectedDateTime, setSelectedDateTime] = useState(null);
 
   useEffect(() => {
     getSlotDetails();
@@ -79,7 +71,18 @@ const AddBookingSlotCalendar = (props) => {
       });
   
     setAllSlots([...tempArray]);
+  }
+
+  // Refresh the calendar after create slot
+  const onAddBookingCalendar = (data) => {
+    getSlotDetails();
   };
+
+  const setSelectedDate = (selected) => {
+    console.log("AA", selected);
+    setSelectedDateTime(selected);
+  }
+
   return (
     <React.Fragment>
       {id_service && (
@@ -90,6 +93,8 @@ const AddBookingSlotCalendar = (props) => {
              INITIAL_EVENTS={slots}
               renderEventContent={renderEventContent}
               selectable={true}
+              onSelectDate={(e) => setSelectedDate(e)}
+              onDateChange={() => {getSlotDetails()}}
             />
           </div>
         </section>
@@ -100,6 +105,7 @@ const AddBookingSlotCalendar = (props) => {
             onAddBookingCalendar={(data) => onAddBookingCalendar(data)}
             user={user}
             selectedService={editRecord}
+            getSelectedDateTime={getSelectedDateTime}
           />
         </div>
       )}
