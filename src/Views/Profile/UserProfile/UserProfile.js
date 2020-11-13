@@ -161,9 +161,7 @@ const ProfileView = (props) => {
   };
 
   const newImagePath = (path) => {
-    if (path) {
-      setUserData({ ...userData, image: path });
-    }
+    setUserData({ ...userData, image: path });
   };
 
   const handleClose = (event, reason) => {

@@ -136,6 +136,10 @@ const Services = (props) => {
     },
     [debounced]
   );
+  
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  });
 
   async function asyncFetchData() {
     setIsLoading(true);
@@ -410,7 +414,8 @@ const Services = (props) => {
   };
 
   const goToPhone = (element) => {
-    if (user && user.id === element.provider_id_user) {
+    if (user && user.id_user === element.provider_id_user) {
+      setOpen(true);
       setTypeRes({
         message: "You can't this service because it is belongs to you",
         type: "error",
@@ -428,7 +433,8 @@ const Services = (props) => {
   };
 
   const goToCalendar = (element) => {
-    if (user && user.id === element.provider_id_user) {
+    if (user && user.id_user === element.provider_id_user) {
+      setOpen(true);
       setTypeRes({
         message: "You can't this service because it is belongs to you",
         type: "error",
@@ -528,7 +534,9 @@ const Services = (props) => {
       ) : (
         <div className="service_card_wrapper">
           {services && !services.length ? (
-            <span className="no_records_found">{t("service.notFoundService")}</span>
+            <span className="no_records_found">
+              {t("service.notFoundService")}
+            </span>
           ) : (
             services.map((element, index) => (
               <ServiceCardComponent
@@ -549,7 +557,7 @@ const Services = (props) => {
           )}
         </div>
       )}
-      {isUpcomingMoreData && services && services.length > 0 && !isLoading &&(
+      {isUpcomingMoreData && services && services.length > 0 && !isLoading && (
         <div>
           {isUpcomingLoading ? (
             <Spinner />

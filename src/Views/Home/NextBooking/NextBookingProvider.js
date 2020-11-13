@@ -156,7 +156,7 @@ const NextBooking = (props) => {
   const goToMeeting = (element) => {
     const { history } = props;
     history.push("/call-page", {
-      booking_id: "79615AEGHJ",
+      record:element
     });
   };
 
@@ -185,7 +185,7 @@ const NextBooking = (props) => {
             <div className={classes.next_booking_item} key={index}>
               <ButtonComponent
                 title="Go to meeting"
-                onClick={() => goToMeeting()}
+                onClick={() => goToMeeting(r)}
               />
               <TypographyComponent title="11/03/2020" />
               <TypographyComponent

@@ -80,8 +80,9 @@ const ChangePassword = (props) => {
             }}
             validationSchema={Yup.object().shape({
               password: Yup.string().required("Password is required"),
+              current_password: Yup.string().required("Current Password is required"),
               confirm_password: Yup.string()
-                .required("Password is required")
+                .required("Confirm Password is required")
                 .test(
                   "passwords-match",
                   "Confirm Passwords must match with Password",
@@ -116,7 +117,6 @@ const ChangePassword = (props) => {
                       name="password"
                       value={values.password}
                       id="change-password"
-                      autoFocus
                       onChange={handleChange}
                       error={errors.password ? true : false}
                       helperText={errors.password && `${errors.password}`}

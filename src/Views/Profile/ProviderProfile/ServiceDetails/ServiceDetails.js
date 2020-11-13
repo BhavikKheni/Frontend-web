@@ -12,7 +12,12 @@ const ServicesDetails = (props) => {
 
   const onPhone = () => {};
 
-  const onCalendar = () => {};
+  const goToCalendar = () => {
+    var elmnt = document.getElementsByClassName("book-service");
+    if (elmnt[0]) {
+      elmnt[0].scrollIntoView();
+    }
+  };
 
   return (
     <section className="service-details">
@@ -28,8 +33,8 @@ const ServicesDetails = (props) => {
       <div className="service_inner">
         <div className="service_left">
           <div className="about_meeting">
-            <div onClick={onCalendar} className="calendarIcon">
-              <CalendarTodayIcon/>
+            <div onClick={()=>goToCalendar()} className="calendarIcon">
+              <CalendarTodayIcon />
             </div>
             <div onClick={onPhone} className="phoneIcon">
               <PhoneIcon/>

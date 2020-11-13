@@ -4,7 +4,6 @@ import Checkbox from "@material-ui/core/Checkbox";
 import { FormControl, CircularProgress } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import MuiDialogContent from "@material-ui/core/DialogContent";
-import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
 import Grid from "@material-ui/core/Grid";
 import InputComponent from "../../../Components/Forms/Input";
 import ButtonComponent from "../../../Components/Forms/Button";
@@ -14,7 +13,6 @@ import DialogComponent from "../../../Components/Dialog/Dialog";
 import SnackBarComponent from "../../../Components/SnackBar/SnackBar";
 import { themes } from "../../../themes";
 import { useFormik } from "formik";
-import * as Yup from "yup";
 import { useTranslation } from "react-i18next";
 import "./Signup.css";
 import FormHelperText from "@material-ui/core/FormHelperText";
@@ -58,31 +56,32 @@ const SignUp = (props) => {
     },
     validate: (values) => {
       const errors = {};
-      if (!values.email) {
+      if (!values.first_name) {
+        errors.first_name = t("validation.firstName");
+      } else if (!values.last_name) {
+        errors.last_name = t("validation.lastName");
+      } else if (!values.email) {
         errors.email = t("validation.email");
       } else if (
         !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
       ) {
         errors.email = t("validation.inValidateEmail");
+      } else if (!values.phone_number) {
+        errors.phone_number = t("validation.phoneNumber");
+      } else if (!values.password) {
+        errors.password = t("validation.password");
+      } else if (!values.checkedC) {
+        errors.checkedC = t("validation.thisFieldIsRequired");
+      } else if (!values.checked) {
+        errors.checked = t("validation.thisFieldIsRequired");
       }
       return errors;
     },
-    validationSchema: Yup.object().shape({
-      password: Yup.string().required(t("validation.password")),
-      first_name: Yup.string().required(t("validation.firstName")),
-      last_name: Yup.string().required(t("validation.lastName")),
-      phone_number: Yup.string().required(t("validation.phoneNumber")),
-      checkedC: Yup.boolean()
-        .required("Required")
-        .oneOf([true], t("validation.thisFieldIsRequired")),
-      checked: Yup.boolean()
-        .required("Required")
-        .oneOf([true], t("validation.thisFieldIsRequired")),
-    }),
   });
 
   const onSubmit = (values) => {
     setLoading(true);
+    setDisabled(true);
     add("/signup", values)
       .then((res) => {
         if (res && res.type === "SUCCESS") {
@@ -132,6 +131,7 @@ const SignUp = (props) => {
         maxHeight={500}
       >
         {/* Signup Popup */}
+        <TypographyComponent title={t("signup.header")} />
         <div className="dialog_container">
           <DialogContent style={{ overflow: "inherit" }}>
             <form onSubmit={formik.handleSubmit} className="signup-form">
@@ -394,9 +394,9 @@ const SignUp = (props) => {
                     </div>
                   </Grid>
                   <Grid item xs={12} sm={6} md={6} lg={6} xl={6}>
-                  <div className="dialog_form_row">
-                    <div className="dialog_form_checkbox_row">
-                      <div className="dialog_form_checkbox_input_wrapper">
+                    <div className="dialog_form_row">
+                      <div className="dialog_form_checkbox_row">
+                        <div className="dialog_form_checkbox_input_wrapper">
                           <FormControlLabel
                             control={
                               <CustomCheckbox
@@ -412,7 +412,8 @@ const SignUp = (props) => {
                             }
                           />
                           <FormHelperText className="checkbox_error">
-                            {formik.errors.checkedC && `${formik.errors.checkedC}`}
+                            {formik.errors.checkedC &&
+                              `${formik.errors.checkedC}`}
                           </FormHelperText>
                         </div>
                         <p>{t("signup.citizenshipAgree")}</p>
@@ -440,7 +441,8 @@ const SignUp = (props) => {
                             }
                           />
                           <FormHelperText className="checkbox_error">
-                            {formik.errors.checked && `${formik.errors.checked}`}
+                            {formik.errors.checked &&
+                              `${formik.errors.checked}`}
                           </FormHelperText>
                         </div>
                         <p>
@@ -450,7 +452,7 @@ const SignUp = (props) => {
                           </span>
                         </p>
                       </div>
-                      
+
                       <div style={{ height: 48 }}>
                         <ButtonComponent
                           variant="contained"

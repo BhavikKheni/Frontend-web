@@ -48,6 +48,10 @@ const OfferedServices = (props) => {
                   const { averages } = o.reviews || {};
                   setSelectedReview(reviews_list);
                   setAverages(averages);
+                  var elementCalendar = document.getElementsByClassName('service-details');
+                  if (elementCalendar[0]) {
+                    elementCalendar[0].scrollIntoView();
+                  }
                 }}
                 className="offered_services_item"
               >

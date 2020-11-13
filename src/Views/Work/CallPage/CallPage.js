@@ -21,6 +21,7 @@ import { get, add } from "../../../Services/Auth.service";
 import Spinner from "../../../Components/Spinner/Spinner";
 import { connect, createLocalTracks } from "twilio-video";
 import { SessionContext } from "../../../Provider/Provider";
+import ImageComponent from "../../../Components/Forms/Image";
 import "./callpage.css";
 const useSession = () => React.useContext(SessionContext);
 const DialogContent = withStyles((theme) => ({
@@ -65,6 +66,36 @@ const useStyles = makeStyles((theme) => ({
     width: theme.spacing(20),
     height: theme.spacing(20),
   },
+  endCallWrapper: {
+    display: "flex",
+    justifyContent: "flex-end",
+    alignItems: "center",
+  },
+  continueCallBtn: {
+    backgroundColor: "#2FB41A",
+    borderRadius: 10,
+    height: 48,
+    padding: 12,
+    color: "#fff",
+    display: "flex",
+    alignItems: "center",
+    cursor: "pointer",
+  },
+  endCallBtn: {
+    backgroundColor: "#FF0000",
+    borderRadius: 10,
+    border: "1px solid #FF0000",
+    height: 48,
+    padding: 12,
+    marginRight: 10,
+    color: "#fff",
+    display: "flex",
+    alignItems: "center",
+    cursor: "pointer",
+  },
+  endCallMessage: {
+    color: "#fff",
+  },
 }));
 
 const CallPage = (props) => {
@@ -82,6 +113,7 @@ const CallPage = (props) => {
   const [audio, setAudio] = useState(true);
   const [onVideo, setVideo] = useState(true);
   const bookingId = state.record && state.record.id_booking;
+
   let [userData, setUserData] = useState({
     first_name: "",
     last_name: "",
@@ -158,7 +190,11 @@ const CallPage = (props) => {
           <Spinner />
         ) : (
           <React.Fragment>
-            <Avatar className={classes.large} src={userData.image} />
+            {!userData.image ? (
+              <ImageComponent />
+            ) : (
+              <Avatar className={classes.large} src={userData.image} />
+            )}
             <TypographyComponent
               title={`${userData.first_name} ${userData.last_name}`}
             />
@@ -222,13 +258,19 @@ const CallPage = (props) => {
     setEndCallOpen(true);
   };
 
-  const onLeaveCall = () => {};
-
   const onContinueCall = () => {};
 
   const onReportAbuse = () => {};
 
-  const onLeave = () => {};
+  const onLeaveCall = () => {
+    room.on("disconnected", (room) => {
+      room.localParticipant.tracks.forEach((publication) => {
+        const attachedElements = publication.track.detach();
+        attachedElements.forEach((element) => element.remove());
+      });
+    });
+    room.disconnect();
+  };
 
   const audioTracksdisable = () => {
     room.localParticipant.audioTracks.forEach((publication) => {
@@ -244,7 +286,7 @@ const CallPage = (props) => {
     });
   };
   const videoTracksdisable = () => {
-    // handle video call here
+    //handle video call here
     room.localParticipant.videoTracks.forEach((publication) => {
       if (onVideo) {
         setVideo(false);
@@ -279,13 +321,8 @@ const CallPage = (props) => {
     }
 
     add("/video/join", params).then((res) => {
-      // Temporary code start - This code will execute if the auth token is invalid/expired/not-logged-in
       console.log(res);
-
-      // Temporary code end
-
       let video_token = res.data.video_token;
-
       createLocalTracks({
         audio: true,
         video: { width: 150, height: 150 },
@@ -358,12 +395,15 @@ const CallPage = (props) => {
   }, [bookingId, user.id_user]);
 
   useEffect(() => {
-    onFinish();
-  }, [onFinish]);
+    if (counter === 0) {
+      onFinish();
+    }
+  }, [onFinish, counter]);
   return (
     <React.Fragment>
       <Grid container spacing={3}>
         <Grid item xs={12} md={10}>
+          <span id="count">{counter !== 0 && counter}</span>
           <div className="remoteVideoContainer">
             <div id="remote-media-div-already"></div>
             <div id="remote-media-div"></div>
@@ -406,8 +446,16 @@ const CallPage = (props) => {
                     className="owera_link"
                   />
                 )}
-                
+
                 <DesktopWindowsIcon className="owera_link" />
+                <div
+                  onClick={() => {
+                    onEndCall();
+                  }}
+                  style={{ cursor: "pointer" }}
+                >
+                  <CallEndIcon />
+                </div>
               </div>
             </div>
           </div>
@@ -476,26 +524,38 @@ const CallPage = (props) => {
         }}
         open={endCallOpen}
         title={t("video-call.title")}
-        maxHeight={340}
       >
         <DialogContent>
-          <TypographyComponent title={t("video-call.message")} />
-          <div>
+          <TypographyComponent
+            title={t("video-call.message")}
+            className={classes.endCallMessage}
+          />
+          <div className={classes.endCallWrapper}>
             <div
               onClick={() => {
                 onLeaveCall();
               }}
+              className={classes.endCallBtn}
             >
               <span>Leave</span>
-              <img src={NextArrow} alt="call end icon" />
+              <img
+                src={NextArrow}
+                alt="call end icon"
+                style={{ width: "15px", height: "15px" }}
+              />
             </div>
             <div
               onClick={() => {
                 onContinueCall();
               }}
+              className={classes.continueCallBtn}
             >
               <span>Continue with call</span>
-              <img src={NextArrow} alt="call end icon" />
+              <img
+                src={NextArrow}
+                alt="call end icon"
+                style={{ width: "15px", height: "15px" }}
+              />
             </div>
           </div>
         </DialogContent>
