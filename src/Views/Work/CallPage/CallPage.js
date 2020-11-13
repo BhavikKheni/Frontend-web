@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Grid, InputBase, Avatar, Divider } from "@material-ui/core";
 import Rating from "@material-ui/lab/Rating";
-import { makeStyles, withStyles } from "@material-ui/core/styles";
-import MuiDialogContent from "@material-ui/core/DialogContent";
+import { makeStyles } from "@material-ui/core/styles";
 import SendIcon from "@material-ui/icons/Send";
 import MicOffIcon from "@material-ui/icons/MicOff";
 import MicIcon from "@material-ui/icons/Mic";
@@ -12,23 +11,21 @@ import DesktopWindowsIcon from "@material-ui/icons/DesktopWindows";
 import CallEndIcon from "@material-ui/icons/CallEnd";
 import TypographyComponent from "../../../Components/Typography/Typography";
 import ArrowIcon from "../../../images/select_arrow.svg";
-import DialogComponent from "../../../Components/Dialog/Dialog";
+
 import { useTranslation } from "react-i18next";
 import { themes } from "../../../themes";
 import { useSidebar } from "../../../Provider/SidebarProvider";
-import NextArrow from "../../../images/next_arrow_white.svg";
+
 import { get, add } from "../../../Services/Auth.service";
 import Spinner from "../../../Components/Spinner/Spinner";
 import { connect, createLocalTracks } from "twilio-video";
 import { SessionContext } from "../../../Provider/Provider";
 import ImageComponent from "../../../Components/Forms/Image";
+import ConfirmPopupForLeavingCall from "./ConfirmPopup/ConfirmPopup";
 import "./callpage.css";
+
 const useSession = () => React.useContext(SessionContext);
-const DialogContent = withStyles((theme) => ({
-  root: {
-    padding: theme.spacing(2),
-  },
-}))(MuiDialogContent);
+
 
 const useStyles = makeStyles((theme) => ({
   search: {
@@ -106,12 +103,13 @@ const CallPage = (props) => {
   const [simpathy, setSimpathy] = useState();
   const [service_quality, setServiceQuality] = useState();
   const { setSidebarContent, setSidebar } = useSidebar();
-  const [endCallOpen, setEndCallOpen] = useState(false);
+
   const { state = {} } = props && props.location;
   const [room, setRoom] = useState(null);
   const [isLoading, setLoading] = useState(false);
   const [audio, setAudio] = useState(true);
   const [onVideo, setVideo] = useState(true);
+  const [isOpenConfirmPopup, openConfirmPopup] = useState(false);
   const bookingId = state.record && state.record.id_booking;
 
   let [userData, setUserData] = useState({
@@ -119,9 +117,11 @@ const CallPage = (props) => {
     last_name: "",
     image: "",
   });
-  const onSearch = (e) => {
+
+  const onSendMessage = (e) => {
     e.preventDefault();
   };
+
   useEffect(() => {
     async function getData() {
       setLoading(true);
@@ -147,7 +147,6 @@ const CallPage = (props) => {
     return () => clearInterval(timer);
   }, [counter]);
 
-  const changeSearch = (e) => {};
   const [dynamicCounter, setDynamicCounter] = useState();
   const [timerId, setTimerID] = useState("");
 
@@ -254,22 +253,9 @@ const CallPage = (props) => {
     userData.last_name,
     userData.image,
   ]);
+
   const onEndCall = () => {
-    setEndCallOpen(true);
-  };
-
-  const onContinueCall = () => {};
-
-  const onReportAbuse = () => {};
-
-  const onLeaveCall = () => {
-    room.on("disconnected", (room) => {
-      room.localParticipant.tracks.forEach((publication) => {
-        const attachedElements = publication.track.detach();
-        attachedElements.forEach((element) => element.remove());
-      });
-    });
-    room.disconnect();
+    openConfirmPopup(true);
   };
 
   const audioTracksdisable = () => {
@@ -399,6 +385,11 @@ const CallPage = (props) => {
       onFinish();
     }
   }, [onFinish, counter]);
+
+  const handleClosePopup = () => {
+    openConfirmPopup(false);
+  }
+
   return (
     <React.Fragment>
       <Grid container spacing={3}>
@@ -415,11 +406,9 @@ const CallPage = (props) => {
             <div className="service_calling_wrapper">
               <div className="service_calling_message">
                 <InputBase
-                  placeholder="Search"
-                  inputProps={{ "aria-label": "search" }}
-                  onChange={changeSearch}
+                  placeholder="Tell us write here"
                 />
-                <span className={classes.searchIconItem} onClick={onSearch}>
+                <span className={classes.searchIconItem} onClick={onSendMessage}>
                   <SendIcon className={classes.searchIcon} />
                 </span>
               </div>
@@ -459,107 +448,13 @@ const CallPage = (props) => {
               </div>
             </div>
           </div>
-          {/* <div className="service_call">
-            <TypographyComponent title="Service title" />
-            <span id="count">{counter && counter}</span>
-            <div>
-              <TypographyComponent title={t("video-call.opinion")} />
-              <Rating
-                name="quality"
-                value={service_quality}
-                onChange={(event, newValue) => {
-                  setServiceQuality(newValue);
-                }}
-                size="small"
-              />
-              <Rating
-                name="simpathy"
-                value={simpathy}
-                onChange={(event, newValue) => {
-                  setSimpathy(newValue);
-                }}
-                size="small"
-              />
-              <div>
-                <div
-                  onClick={() => {
-                    onReportAbuse();
-                  }}
-                >
-                  <span>Repost abuse</span>
-                  {/* <img alt="Report abuse" src={NextArrow} /> */}
-          {/* </div>
-                <div
-                  onClick={() => {
-                    onLeave();
-                  }}
-                >
-                  <span>Leave</span> */}
-          {/* <img alt="leave" src={NextArrow} /> */}
-          {/* </div>
-              </div>
-            </div>
-           
-            </div>
-            <div className="service_calling_wrapper">
-              <InputBase
-                placeholder="Search"
-                inputProps={{ "aria-label": "search" }}
-                onChange={changeSearch}
-              />
-              <span className={classes.searchIconItem} onClick={onSearch}>
-                <SendIcon className={classes.searchIcon} />
-              </span>
-            </div>
-            <div>
-              <CallEndIcon onClick={() => onEndCall()} />
-            </div> 
-          </div> */}
         </Grid>
       </Grid>
-      <DialogComponent
-        onClose={(e) => {
-          e.stopPropagation();
-          setEndCallOpen(false);
-        }}
-        open={endCallOpen}
-        title={t("video-call.title")}
-      >
-        <DialogContent>
-          <TypographyComponent
-            title={t("video-call.message")}
-            className={classes.endCallMessage}
-          />
-          <div className={classes.endCallWrapper}>
-            <div
-              onClick={() => {
-                onLeaveCall();
-              }}
-              className={classes.endCallBtn}
-            >
-              <span>Leave</span>
-              <img
-                src={NextArrow}
-                alt="call end icon"
-                style={{ width: "15px", height: "15px" }}
-              />
-            </div>
-            <div
-              onClick={() => {
-                onContinueCall();
-              }}
-              className={classes.continueCallBtn}
-            >
-              <span>Continue with call</span>
-              <img
-                src={NextArrow}
-                alt="call end icon"
-                style={{ width: "15px", height: "15px" }}
-              />
-            </div>
-          </div>
-        </DialogContent>
-      </DialogComponent>
+      <ConfirmPopupForLeavingCall 
+        handleClosePopup={handleClosePopup}
+        openConfirmPopup={isOpenConfirmPopup}
+        room={room}
+      />
     </React.Fragment>
   );
 };
