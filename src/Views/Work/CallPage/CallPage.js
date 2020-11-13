@@ -192,19 +192,24 @@ const CallPage = (props) => {
     openConfirmPopup(true);
   };
 
-  const audioTracksdisable = () => {
+  const makeAudioTrackEnable = () => {
+    room.localParticipant.audioTracks.forEach((publication) => {
+      if (audio) {
+        publication.track.enable();
+        setAudio(true);
+      }
+    });
+  }
+
+  const makeAudioTrackDisable = () => {
     room.localParticipant.audioTracks.forEach((publication) => {
       if (audio) {
         publication.track.disable();
         setAudio(false);
-        console.log("local audio disabled");
-      } else {
-        publication.track.enable();
-        setAudio(true);
-        console.log("local audio enable");
       }
     });
-  };
+  }
+
   const videoTracksdisable = () => {
     //handle video call here
     room.localParticipant.videoTracks.forEach((publication) => {
@@ -349,12 +354,12 @@ const CallPage = (props) => {
               <div className="service_calling_option">
                 {audio ? (
                   <MicIcon
-                    onClick={() => audioTracksdisable()}
+                    onClick={() => makeAudioTrackDisable()}
                     className="owera_link"
                   />
                 ) : (
                   <MicOffIcon
-                    onClick={() => audioTracksdisable()}
+                    onClick={() => makeAudioTrackEnable()}
                     className="owera_link"
                   />
                 )}
