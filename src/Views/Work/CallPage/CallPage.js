@@ -220,8 +220,9 @@ const CallPage = (props) => {
     userData.last_name,
     userData.image,
   ]);
+
   const onEndCall = () => {
-    setEndCallOpen(true);
+    openConfirmPopup(true);
   };
 
   const onLeaveCall = () => {};
@@ -230,7 +231,9 @@ const CallPage = (props) => {
 
   const onReportAbuse = () => {};
 
-  const onLeave = () => {};
+  const onLeave = () => {
+
+  };
 
   const audioTracksdisable = () => {
     room.localParticipant.audioTracks.forEach((publication) => {
@@ -366,7 +369,7 @@ const CallPage = (props) => {
   const handleClosePopup = () => {
     openConfirmPopup(false);
   };
-  
+
   return (
     <React.Fragment>
       <Grid container spacing={3}>
