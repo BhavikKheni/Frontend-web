@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
@@ -20,8 +20,16 @@ const AddBookingSlotSideBar = (props) => {
   const [response, setResponse] = useState({});
   const [selectedDate, setSelectedDate] = React.useState(new Date());
   const [isLoading, setLoading] = useState(false);
-  const { user, selectedService } = props;
+  const { user, selectedService, getSelectedDateTime } = props;
   const [data, setData] = useState([]);
+
+  useEffect(() => {
+    if (getSelectedDateTime && getSelectedDateTime.startStr) {
+      setFromTime(moment(getSelectedDateTime.startStr).format("HH:mm"));
+      setToTime(moment(getSelectedDateTime.endStr).format("HH:mm"));
+      console.log("start time:", moment(getSelectedDateTime.startStr).format("HH:mm"));
+    }
+  })
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
@@ -97,14 +105,18 @@ const AddBookingSlotSideBar = (props) => {
           className="booking_time_interval_input"
         />
       </div>
-      <div className="booking_row booking_date">
-        <span className="booking_time_label">From Date:</span>
-        <span>{moment(selectedDate).format('YYYY-MM-DD')}</span>
-      </div>
-      <div className="booking_row booking_date">
-        <span className="booking_time_label">To Date:</span>
-        <span>{moment(selectedDate).format('YYYY-MM-DD')}</span>
-      </div>
+      { getSelectedDateTime && getSelectedDateTime.startStr ?
+        <React.Fragment>
+          <div className="booking_row booking_date">
+            <span className="booking_time_label">From Date:</span>
+            <span>{moment(getSelectedDateTime.startStr).format('YYYY-MM-DD')}</span>
+          </div>
+          <div className="booking_row booking_date">
+            <span className="booking_time_label">To Date:</span>
+            <span>{moment(getSelectedDateTime.endStr).format('YYYY-MM-DD')}</span>
+          </div>
+         </React.Fragment>: null
+      }
       <div className="confirm_booking_row">
         <ButtonComponent
           title="Add"

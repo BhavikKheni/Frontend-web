@@ -15,6 +15,7 @@
   },
   "signup": {
     "title": "Sign up",
+    "header":"Owera is a pilot project and can contain faults.",
     "alreadyHaveAccount": "Already have an account?",
     "citizenshipAgree": "I hereby confirm that I am domiciled in Switzerland.",
     "registrationAgree": "With your registration you agree to our",

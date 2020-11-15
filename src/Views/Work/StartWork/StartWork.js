@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { InputBase, Avatar, Divider } from "@material-ui/core";
+import React, { useState} from "react";
+import { InputBase, Avatar } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import SendIcon from "@material-ui/icons/Send";
 import MicOffIcon from "@material-ui/icons/MicOff";
@@ -58,8 +58,37 @@ const StartWork = () => {
   const { user } = useSession();
   const [onLineServiceLoader, setOnLineServiceLoader] = useState(false);
   const [offLineServiceLoader, setOffLineServiceLoader] = useState(false);
+  const [offlineButtonVisible, setOfflineButtonVisible] = useState(false);
+
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [error, setError] = useState({});
+  function countdown(elementName, minutes, seconds) {
+    var element, endTime, hours, mins, msLeft, time;
+
+    function twoDigits(n) {
+      return n <= 9 ? "0" + n : n;
+    }
+
+    function updateTimer() {
+      msLeft = endTime - +new Date();
+      if (msLeft < 1000) {
+        setOfflineButtonVisible(true);
+      } else {
+        time = new Date(msLeft);
+        hours = time.getUTCHours();
+        mins = time.getUTCMinutes();
+        element.innerHTML =
+          (hours ? hours + ":" + twoDigits(mins) : mins) +
+          ":" +
+          twoDigits(time.getUTCSeconds());
+        setTimeout(updateTimer, time.getUTCMilliseconds() + 500);
+      }
+    }
+
+    element = document.getElementById(elementName);
+    endTime = +new Date() + 1000 * (60 * minutes + seconds) + 500;
+    updateTimer();
+  }
 
   async function setLiveService(type) {
     const param = {
@@ -78,6 +107,7 @@ const StartWork = () => {
           setError(res);
           if (type === "ONLINE") {
             setOnLineServiceLoader(false);
+            countdown("timer", 10, 0);
           } else if (type === "OFFLINE") {
             setOffLineServiceLoader(false);
           }
@@ -166,22 +196,26 @@ const StartWork = () => {
               <TypographyComponent title="00.00/h" />
             </div>
           </div>
-          <ButtonComponent
-            title="Go online"
-            className="go_online"
-            startIcon={onLineServiceLoader && <Spinner />}
-            onClick={() => {
-              onGoOnline();
-            }}
-          />
-          <ButtonComponent
-            title="Go offline"
-            className="go_offline"
-            startIcon={offLineServiceLoader && <Spinner />}
-            onClick={() => {
-              onGoOffline();
-            }}
-          />
+          {!offlineButtonVisible && (
+            <ButtonComponent
+              title="Go online"
+              className="go_online"
+              startIcon={onLineServiceLoader && <Spinner size="small" />}
+              onClick={() => {
+                onGoOnline();
+              }}
+            />
+          )}
+          {offlineButtonVisible && (
+            <ButtonComponent
+              title="Go offline"
+              className="go_offline"
+              startIcon={offLineServiceLoader && <Spinner size="small" />}
+              onClick={() => {
+                onGoOffline();
+              }}
+            />
+          )}
         </div>
       </div>
       <SnackBarComponent

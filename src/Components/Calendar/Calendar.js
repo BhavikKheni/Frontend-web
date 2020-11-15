@@ -1,17 +1,32 @@
-import React from "react";
+import React, { useEffect } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
+import $ from "jquery";
 import "date-fns";
 import "./Calendar.css";
 
 const CalendarComponent = (props) => {
 
+  useEffect(() => {
+    $('.fc-prev-button').on('click', x => {
+      console.dir(x);
+      props.onDateChange();
+    });
+  //   $('.fc-button-prev span').click(function(){
+  //     alert('prev is clicked, do something');
+  //  });
+  }, []);
+
   const { INITIAL_EVENTS, renderEventContent, selectable=false } = props;
 
   const onSelectSlot = (event) => {
     props.onSelectBookingSlot(event);
+  }
+
+  const onSelectDate = (event) => {
+    props.onSelectDate(event);
   }
 
   return (
@@ -53,7 +68,12 @@ const CalendarComponent = (props) => {
         }
       }}
       select= {(info) => {
-        alert('selected ' + info.startStr + ' to ' + info.endStr);
+        // alert('selected ' + info.startStr + ' to ' + info.endStr);
+        // onSelectDate(info);
+        props.onSelectDate(info);
+      }}
+      eventChange = {() => {
+        console.log("eee")
       }}
     />
   );

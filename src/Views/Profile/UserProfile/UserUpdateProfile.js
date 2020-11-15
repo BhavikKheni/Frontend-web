@@ -71,7 +71,7 @@ const UpdateProfile = (props) => {
   const [deleteLoader, setDeleteLoader] = useState(false);
   const [deActivateLoader, setDeactivateLoader] = useState(false);
   const [updateLoader, setUpdateLoader] = useState(false);
-
+  const [imageButtonDisabled, setImageButtonDisabled] = useState(false);
   const [updateDisabled, setUpdateDisabled] = useState(false);
   const [deleteDisabled, setDeleteDisabled] = useState(false);
   const [deActivateDisabled, setDeactivateDisabled] = useState(false);
@@ -197,15 +197,21 @@ const UpdateProfile = (props) => {
     const formData = new FormData();
     formData.append("id_user", user.id_user);
     setImageRemoveLoader(true);
-    const res = await service
+    await service
       .upload("/profile/removeimage", formData)
+      .then((res) => {
+        if (res && res) {
+          props.newImagePath(null);
+          setResError({
+            message: res.message,
+            type: "success",
+          });
+          setImageRemoveLoader(false);
+        }
+      })
       .catch((err) => {
         setImageRemoveLoader(false);
       });
-    if (res.status === "SUCCESS") {
-    } else {
-      setImageRemoveLoader(false);
-    }
   };
   const saveImage = async (img) => {
     const formData = new FormData();
@@ -214,13 +220,16 @@ const UpdateProfile = (props) => {
     }
     formData.append("id_user", user.id_user);
     setImageUploadLoader(true);
+    setImageButtonDisabled(true);
     const res = await service.upload("/profile/update", formData);
     if (res.status === "SUCCESS") {
+      setImageButtonDisabled(false);
       setImageUploadLoader(false);
       setImageUploadSuccess(true);
     } else {
+      setImageButtonDisabled(false);
       setImageUploadLoader(false);
-      setImageUploadSuccess(false);
+      setImageUploadSuccess(true);
 
       console.log("Error");
     }
@@ -618,12 +627,49 @@ const UpdateProfile = (props) => {
                     style={{
                       color: "#FF0000",
                     }}
+                    startIcon={isImageRemoveLoader && <Spinner size="small" />}
+                  />
+                )}
+                <ButtonComponent
+                  variant="contained"
+                  color="primary"
+                  type="button"
+                  title={
+                    userData.image !== null
+                      ? "Upload picture"
+                      : "Change picture"
+                  }
+                  style={{ width: "100%", maxWidth: "170px" }}
+                  onClick={() => {
+                    document.getElementById("upload-button").click();
+                  }}
+                  startIcon={isImageUploadLoader && <Spinner />}
+                  loader={isImageUploadLoader}
+                  disabled={imageButtonDisabled}
+                />
+                {imageUploadSuccess && (
+                  <TypographyComponent
+                    variant="h4"
+                    title="Congrats! You’ve successfully changed your picture."
+                    style={{
+                      color: "#2FB41A",
+                      marginTop: 20,
+                    }}
+                  />
+                )}
+                {isImageSize && (
+                  <TypographyComponent
+                    variant="h4"
+                    title="Sorry! Image size is too big. It must be 2MB or smaller."
+                    style={{
+                      color: "#FF0000",
+                      marginTop: 20,
+                    }}
                   />
                 )}
               </FormControl>
             </DialogContent>
           </div>
-          
         </DialogComponent>
       </div>
       {/* confirmataion dialog for delete profile */}

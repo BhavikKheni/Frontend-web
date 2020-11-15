@@ -1,33 +1,27 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Grid, InputBase, Avatar, Divider } from "@material-ui/core";
-import Rating from "@material-ui/lab/Rating";
-import { makeStyles, withStyles } from "@material-ui/core/styles";
-import MuiDialogContent from "@material-ui/core/DialogContent";
+import { makeStyles } from "@material-ui/core/styles";
 import SendIcon from "@material-ui/icons/Send";
 import MicOffIcon from "@material-ui/icons/MicOff";
 import MicIcon from "@material-ui/icons/Mic";
 import VideocamOffIcon from "@material-ui/icons/VideocamOff";
 import VideocamIcon from "@material-ui/icons/Videocam";
 import DesktopWindowsIcon from "@material-ui/icons/DesktopWindows";
+import { connect, createLocalTracks } from "twilio-video";
 import CallEndIcon from "@material-ui/icons/CallEnd";
-import TypographyComponent from "../../../Components/Typography/Typography";
-import ArrowIcon from "../../../images/select_arrow.svg";
-import DialogComponent from "../../../Components/Dialog/Dialog";
 import { useTranslation } from "react-i18next";
+import ArrowIcon from "../../../images/select_arrow.svg";
 import { themes } from "../../../themes";
 import { useSidebar } from "../../../Provider/SidebarProvider";
-import NextArrow from "../../../images/next_arrow_white.svg";
 import { get, add } from "../../../Services/Auth.service";
 import Spinner from "../../../Components/Spinner/Spinner";
-import { connect, createLocalTracks } from "twilio-video";
 import { SessionContext } from "../../../Provider/Provider";
+import ImageComponent from "../../../Components/Forms/Image";
+import TypographyComponent from "../../../Components/Typography/Typography";
+import ConfirmPopupForLeavingCall from "./ConfirmPopup/ConfirmPopup";
 import "./callpage.css";
+
 const useSession = () => React.useContext(SessionContext);
-const DialogContent = withStyles((theme) => ({
-  root: {
-    padding: theme.spacing(2),
-  },
-}))(MuiDialogContent);
 
 const useStyles = makeStyles((theme) => ({
   search: {
@@ -64,91 +58,62 @@ const useStyles = makeStyles((theme) => ({
   large: {
     width: theme.spacing(20),
     height: theme.spacing(20),
-  },
+  }
 }));
 
 const CallPage = (props) => {
+
+  const { state = {} } = props && props.location;
+  const bookingId = state.record && state.record.id_booking;
+
   const classes = useStyles();
   const { t } = useTranslation();
   const { user } = useSession();
-  const [counter, setCounter] = React.useState(5);
+  const [counter, setCounter] = useState(5);
   const [simpathy, setSimpathy] = useState();
   const [service_quality, setServiceQuality] = useState();
   const { setSidebarContent, setSidebar } = useSidebar();
-  const [endCallOpen, setEndCallOpen] = useState(false);
-  const { state = {} } = props && props.location;
   const [room, setRoom] = useState(null);
   const [isLoading, setLoading] = useState(false);
   const [audio, setAudio] = useState(true);
   const [onVideo, setVideo] = useState(true);
-  const bookingId = state.record && state.record.id_booking;
+  const [isOpenConfirmPopup, openConfirmPopup] = useState(false);
+  const [dynamicCounter, setDynamicCounter] = useState();
+  const [timerId, setTimerID] = useState("");
   let [userData, setUserData] = useState({
     first_name: "",
     last_name: "",
     image: "",
   });
-  const onSearch = (e) => {
+
+  const onSendMessage = (e) => {
     e.preventDefault();
   };
-  useEffect(() => {
-    async function getData() {
-      setLoading(true);
-      const res = await get(`/profile/${user.id_user}`).catch((err) => {
-        setLoading(false);
-      });
 
-      if (res) {
-        setUserData({
-          ...res.data,
-        });
-        setLoading(false);
-      } else {
-        setLoading(false);
-      }
-    }
-    getData();
+  useEffect(() => {
+    getProfileInfo();
   }, [state]);
 
+  const getProfileInfo = async () => {
+    setLoading(true);
+    const res = await get(`/profile/${user.id_user}`).catch((err) => {
+      setLoading(false);
+    });
+
+    if (res) {
+      setUserData({
+        ...res.data,
+      });
+      setLoading(false);
+    } else {
+      setLoading(false);
+    }
+  }
+
   useEffect(() => {
-    const timer =
-      counter > 0 && setInterval(() => setCounter(counter - 1), 1000);
+    const timer = counter > 0 && setInterval(() => setCounter(counter - 1), 1000);
     return () => clearInterval(timer);
   }, [counter]);
-
-  const changeSearch = (e) => {};
-  const [dynamicCounter, setDynamicCounter] = useState();
-  const [timerId, setTimerID] = useState("");
-
-  const timer = useCallback(() => {
-    var count1 = dynamicCounter;
-    var counter1 = setInterval(timer, 1000);
-    count1 = count1 - 1;
-    if (count1 === -1) {
-      clearInterval(counter1);
-      return;
-    }
-
-    var seconds = count1 % 60;
-    var minutes = Math.floor(count1 / 60);
-    var hours = Math.floor(minutes / 60);
-    minutes %= 60;
-    hours %= 60;
-
-    document.getElementById(timerId).innerHTML =
-      hours + "hours : " + minutes + "minutes :" + seconds;
-  }, [dynamicCounter, timerId]);
-  // var counter = 5;
-
-  // setInterval(function () {
-  //   counter--;
-  //   if (counter >= 0) {
-  //     let span = document.getElementById("count");
-  //     span.innerHTML = counter;
-  //   }
-  //   if (counter === 0) {
-  //     clearInterval(counter);
-  //   }
-  // }, 1000);
 
   useEffect(() => {
     setSidebar(true);
@@ -158,7 +123,11 @@ const CallPage = (props) => {
           <Spinner />
         ) : (
           <React.Fragment>
-            <Avatar className={classes.large} src={userData.image} />
+            {!userData.image ? (
+              <ImageComponent />
+            ) : (
+              <Avatar className={classes.large} src={userData.image} />
+            )}
             <TypographyComponent
               title={`${userData.first_name} ${userData.last_name}`}
             />
@@ -218,33 +187,31 @@ const CallPage = (props) => {
     userData.last_name,
     userData.image,
   ]);
+
   const onEndCall = () => {
-    setEndCallOpen(true);
+    openConfirmPopup(true);
   };
 
-  const onLeaveCall = () => {};
+  const makeAudioTrackEnable = () => {
+    room.localParticipant.audioTracks.forEach((publication) => {
+      if (audio) {
+        publication.track.enable();
+        setAudio(true);
+      }
+    });
+  }
 
-  const onContinueCall = () => {};
-
-  const onReportAbuse = () => {};
-
-  const onLeave = () => {};
-
-  const audioTracksdisable = () => {
+  const makeAudioTrackDisable = () => {
     room.localParticipant.audioTracks.forEach((publication) => {
       if (audio) {
         publication.track.disable();
         setAudio(false);
-        console.log("local audio disabled");
-      } else {
-        publication.track.enable();
-        setAudio(true);
-        console.log("local audio enable");
       }
     });
-  };
+  }
+
   const videoTracksdisable = () => {
-    // handle video call here
+    //handle video call here
     room.localParticipant.videoTracks.forEach((publication) => {
       if (onVideo) {
         setVideo(false);
@@ -279,13 +246,8 @@ const CallPage = (props) => {
     }
 
     add("/video/join", params).then((res) => {
-      // Temporary code start - This code will execute if the auth token is invalid/expired/not-logged-in
       console.log(res);
-
-      // Temporary code end
-
       let video_token = res.data.video_token;
-
       createLocalTracks({
         audio: true,
         video: { width: 150, height: 150 },
@@ -358,12 +320,20 @@ const CallPage = (props) => {
   }, [bookingId, user.id_user]);
 
   useEffect(() => {
-    onFinish();
-  }, [onFinish]);
+    if (counter === 0) {
+      onFinish();
+    }
+  }, [onFinish, counter]);
+
+  const handleClosePopup = () => {
+    openConfirmPopup(false);
+  }
+
   return (
     <React.Fragment>
       <Grid container spacing={3}>
         <Grid item xs={12} md={10}>
+          <span id="count">{counter !== 0 && counter}</span>
           <div className="remoteVideoContainer">
             <div id="remote-media-div-already"></div>
             <div id="remote-media-div"></div>
@@ -375,23 +345,21 @@ const CallPage = (props) => {
             <div className="service_calling_wrapper">
               <div className="service_calling_message">
                 <InputBase
-                  placeholder="Search"
-                  inputProps={{ "aria-label": "search" }}
-                  onChange={changeSearch}
+                  placeholder="Tell us write here"
                 />
-                <span className={classes.searchIconItem} onClick={onSearch}>
+                <span className={classes.searchIconItem} onClick={onSendMessage}>
                   <SendIcon className={classes.searchIcon} />
                 </span>
               </div>
               <div className="service_calling_option">
                 {audio ? (
                   <MicIcon
-                    onClick={() => audioTracksdisable()}
+                    onClick={() => makeAudioTrackDisable()}
                     className="owera_link"
                   />
                 ) : (
                   <MicOffIcon
-                    onClick={() => audioTracksdisable()}
+                    onClick={() => makeAudioTrackEnable()}
                     className="owera_link"
                   />
                 )}
@@ -406,100 +374,26 @@ const CallPage = (props) => {
                     className="owera_link"
                   />
                 )}
-                
+
                 <DesktopWindowsIcon className="owera_link" />
+                <div
+                  onClick={() => {
+                    onEndCall();
+                  }}
+                  style={{ cursor: "pointer" }}
+                >
+                  <CallEndIcon />
+                </div>
               </div>
             </div>
           </div>
-          {/* <div className="service_call">
-            <TypographyComponent title="Service title" />
-            <span id="count">{counter && counter}</span>
-            <div>
-              <TypographyComponent title={t("video-call.opinion")} />
-              <Rating
-                name="quality"
-                value={service_quality}
-                onChange={(event, newValue) => {
-                  setServiceQuality(newValue);
-                }}
-                size="small"
-              />
-              <Rating
-                name="simpathy"
-                value={simpathy}
-                onChange={(event, newValue) => {
-                  setSimpathy(newValue);
-                }}
-                size="small"
-              />
-              <div>
-                <div
-                  onClick={() => {
-                    onReportAbuse();
-                  }}
-                >
-                  <span>Repost abuse</span>
-                  {/* <img alt="Report abuse" src={NextArrow} /> */}
-          {/* </div>
-                <div
-                  onClick={() => {
-                    onLeave();
-                  }}
-                >
-                  <span>Leave</span> */}
-          {/* <img alt="leave" src={NextArrow} /> */}
-          {/* </div>
-              </div>
-            </div>
-           
-            </div>
-            <div className="service_calling_wrapper">
-              <InputBase
-                placeholder="Search"
-                inputProps={{ "aria-label": "search" }}
-                onChange={changeSearch}
-              />
-              <span className={classes.searchIconItem} onClick={onSearch}>
-                <SendIcon className={classes.searchIcon} />
-              </span>
-            </div>
-            <div>
-              <CallEndIcon onClick={() => onEndCall()} />
-            </div> 
-          </div> */}
         </Grid>
       </Grid>
-      <DialogComponent
-        onClose={(e) => {
-          e.stopPropagation();
-          setEndCallOpen(false);
-        }}
-        open={endCallOpen}
-        title={t("video-call.title")}
-        maxHeight={340}
-      >
-        <DialogContent>
-          <TypographyComponent title={t("video-call.message")} />
-          <div>
-            <div
-              onClick={() => {
-                onLeaveCall();
-              }}
-            >
-              <span>Leave</span>
-              <img src={NextArrow} alt="call end icon" />
-            </div>
-            <div
-              onClick={() => {
-                onContinueCall();
-              }}
-            >
-              <span>Continue with call</span>
-              <img src={NextArrow} alt="call end icon" />
-            </div>
-          </div>
-        </DialogContent>
-      </DialogComponent>
+      <ConfirmPopupForLeavingCall 
+        handleClosePopup={handleClosePopup}
+        openConfirmPopup={isOpenConfirmPopup}
+        room={room}
+      />
     </React.Fragment>
   );
 };

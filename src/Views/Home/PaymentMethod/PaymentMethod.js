@@ -10,7 +10,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import { useTranslation } from "react-i18next";
 import { withStyles } from "@material-ui/core/styles";
 import MuiDialogContent from "@material-ui/core/DialogContent";
-import { Grid } from "@material-ui/core";
 import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
 import CardContent from "@material-ui/core/CardContent";
@@ -18,8 +17,9 @@ import AddIcon from "@material-ui/icons/Add";
 import TypographyComponent from "../../../Components/Typography/Typography";
 import DialogComponent from "../../../Components/Dialog/Dialog";
 import ButtonComponent from "../../../Components/Forms/Button";
-import ConfirmDialog from "../../../Components/ConfirmDialog/ConfirmDialog"
+import ConfirmDialog from "../../../Components/ConfirmDialog/ConfirmDialog";
 import DeleteIcon from "@material-ui/icons/Delete";
+import Spinner from "../../../Components/Spinner/Spinner";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -238,6 +238,9 @@ const PaymentMethod = (props) => {
   const stripe = useStripe();
   const [conformDeleteDialogOpen, setConformDeleteDialogOpen] = useState(false);
   const [deleteLoader, setDeleteLoader] = useState(false);
+  const [error, setError] = useState("");
+  const [disabled, setDisabled] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const onAdd = () => {
     setAddNewCardOpen(true);
@@ -252,15 +255,21 @@ const PaymentMethod = (props) => {
       return;
     }
     const cardElement = elements.getElement(CardNumberElement);
-
+    setDisabled(true);
+    setLoading(true);
     const payload = await stripe.createPaymentMethod({
       type: "card",
       card: cardElement,
     });
 
     if (payload.error) {
+      setLoading(false);
+      setDisabled(false);
       console.log("[error]", payload.error);
+      setError(payload.error);
     } else {
+      setLoading(false);
+      setDisabled(false);
       console.log("payload", payload);
     }
   };
@@ -293,12 +302,13 @@ const PaymentMethod = (props) => {
               />
             </div>
           </CardContent>
-          <div className={classes.payment_card_delete}>
-            <DeleteIcon
-              onClick={() => {
-                setConformDeleteDialogOpen(true);
-              }}
-            />
+          <div
+            className={classes.payment_card_delete}
+            onClick={() => {
+              setConformDeleteDialogOpen(true);
+            }}
+          >
+            <DeleteIcon />
             <label>Remove Card</label>
           </div>
         </Card>
@@ -338,10 +348,15 @@ const PaymentMethod = (props) => {
                 </div>
               </div>
             </div>
+            {error && <span>{error.message}</span>}
           </DialogContent>
-          <ButtonComponent className={classes.add_card_cta} title="Add new card" onClick={() => onAddCard()} />
         </div>
-        
+        <ButtonComponent
+          title="Add new card"
+          onClick={() => onAddCard()}
+          startIcon={loading && <Spinner size="small" />}
+          disabled={disabled}
+        />
       </DialogComponent>
       <ConfirmDialog
         open={conformDeleteDialogOpen}

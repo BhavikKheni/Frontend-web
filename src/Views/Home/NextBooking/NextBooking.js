@@ -185,7 +185,7 @@ const NextBooking = (props) => {
             <div className={classes.next_booking_item} key={index}>
               <ButtonComponent
                 title="Go to meeting"
-                onClick={() => goToMeeting()}
+                onClick={() => goToMeeting(r)}
               />
               <TypographyComponent title="11/03/2020" />
               <TypographyComponent
@@ -193,7 +193,7 @@ const NextBooking = (props) => {
               />
               <TypographyComponent title={moment(r.to_time).format("HH:mm")} />
               <TooltipComponent title={r.title} placement="bottom">
-                <TypographyComponent title={r.title} />
+                <span>{r.title}</span>
               </TooltipComponent>
               <MoreVertIcon
                 aria-describedby={id}

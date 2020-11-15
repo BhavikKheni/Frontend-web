@@ -97,13 +97,13 @@ const Work = (props) => {
       setIsJobLoading(false);
     });
     if (res) {
-      const { data, stopped_at, type } = res || {};
+      const { data, stopped_at, type, no_of_records } = res || {};
       if (type === "ERROR" || (data && data.length === 0)) {
         setIsJobLoading(false);
         setUpcomingMoreData(false);
         return;
       }
-      setTotalServices()
+      setTotalServices(no_of_records);
       setUpcomingOffset(stopped_at);
       setServices(data || []);
       setIsJobLoading(false);
@@ -144,6 +144,10 @@ const Work = (props) => {
       const res = await get("/categories/listcategories");
       if (res) {
         setCategories(res);
+        const sub = res.filter((f) => f.id === 1);
+        if (sub[0]) {
+          setSubCategories(sub[0].sub_categories);
+        }
       }
     }
     fetchCategory();
@@ -224,19 +228,25 @@ const Work = (props) => {
       image_3: null,
       image_4: null,
       title: "",
-      category: "",
-      subcategory: "",
+      category: "1",
+      subcategory: "2",
       price: "",
       description: "",
     },
     onSubmit: (values, { setSubmitting }) => {
       onSave(values, setSubmitting);
     },
-    validationSchema: Yup.object().shape({
-      title: Yup.string().required(t("validation.serviceTitle")),
-      category: Yup.string().required(t("validation.Category")),
-      subcategory: Yup.string().required(t("validation.SubCategory")),
-    }),
+    validate: (values) => {
+      const errors = {};
+      if (!values.title) {
+        errors.title = errors.title = t("validation.serviceTitle");
+      } else if (!values.category) {
+        errors.category = errors.category = t("validation.Category");
+      } else if (!values.subcategory) {
+        errors.subcategory = errors.subcategory = t("validation.SubCategory");
+      }
+      return errors;
+    },
   });
 
   const onEditService = async (record, formData, setSubmitting) => {
@@ -272,35 +282,38 @@ const Work = (props) => {
       formData.append(`deleted_images[${i}]`, getDeletedImageArry[i]);
     }
     setSaveLoader(true);
-    const res = await newService
+    await newService
       .upload("/service/update", formData)
+      .then((res) => res.json())
+      .then((res) => {
+        if (res && res.type === "SUCCESS") {
+          const targetIndex = services.findIndex(
+            (l) => l.id_service === formik.values.id_service
+          );
+          services[targetIndex] = formik.values;
+          setServices((d) => [...d]);
+          setSaveLoader(false);
+          setTypeRes({
+            message: res.message,
+            type: "success",
+          });
+          setSubmitting(false);
+          setOpenSnackbar(true);
+        } else {
+          setSaveLoader(false);
+          setTypeRes({
+            message: res.message,
+            type: "error",
+          });
+          setSubmitting(false);
+          setOpenSnackbar(true);
+        }
+      })
       .catch((err) => {
         setTypeRes(err);
         setOpenSnackbar(true);
         setSubmitting(false);
       });
-    if (res && res.type === "SUCCESS") {
-      const targetIndex = services.findIndex(
-        (l) => l.id_service === formik.values.id_service
-      );
-      services[targetIndex] = formik.values;
-      setServices((d) => [...d]);
-      setSaveLoader(false);
-      setTypeRes({
-        message: res.message,
-        type: "success",
-      });
-      setSubmitting(false);
-      setOpenSnackbar(true);
-    } else {
-      setSaveLoader(false);
-      setTypeRes({
-        message: res.message,
-        type: "error",
-      });
-      setSubmitting(false);
-      setOpenSnackbar(true);
-    }
   };
 
   const onSave = async (record, setSubmitting) => {
@@ -322,8 +335,29 @@ const Work = (props) => {
         formData.append("subcategory", record.subcategory);
         formData.append("description", record.description);
         formData.append("price", record.price);
+        setSaveLoader(true);
         const res = await newService
           .upload("/service/add", formData)
+          .then((res) => res.json())
+          .then((res) => {
+            if (res && res.type === "SUCCESS") {
+              setSaveLoader(false);
+              setServices((r) => [...r, { id: res.id, ...formik.values }]);
+              setTypeRes({
+                message: res.message,
+                type: "success",
+              });
+              setOpenSnackbar(true);
+            } else {
+              setSaveLoader(false);
+              setTypeRes({
+                message: res.message,
+                type: "error",
+              });
+              setSubmitting(false);
+              setOpenSnackbar(true);
+            }
+          })
           .catch((err) => {
             setSaveLoader(false);
             setSubmitting(false);
@@ -331,22 +365,6 @@ const Work = (props) => {
             setSubmitting(false);
             setOpenSnackbar(true);
           });
-        if (res && res.type === "SUCCESS") {
-          setSaveLoader(false);
-          setTypeRes({
-            message: res.message,
-            type: "success",
-          });
-          setOpenSnackbar(true);
-        } else {
-          setSaveLoader(false);
-          setTypeRes({
-            message: res.message,
-            type: "error",
-          });
-          setSubmitting(false);
-          setOpenSnackbar(true);
-        }
       }
     }
   };
@@ -498,9 +516,6 @@ const Work = (props) => {
           <h2>
             My service library <span>({totalServices} Services)</span>
           </h2>
-          {/* <TypographyComponent
-              title={`My service library (${services.length})`}
-            /> */}
           {isJobLoading ? (
             <Spinner />
           ) : (
@@ -570,7 +585,7 @@ const Work = (props) => {
                           onClick={(e) => {
                             onActivateDactivate(service);
                           }}
-                          startIcon={activeLoader && <Spinner />}
+                          startIcon={activeLoader && <Spinner size="small" />}
                           loader={activeLoader}
                         />
 
@@ -590,22 +605,38 @@ const Work = (props) => {
                           title={service.title}
                           className="work_service_title"
                         />
-                        <div className="work_service_review">
-                          <TypographyComponent
-                            title="Service quality"
-                            className="work_service_review_name"
-                          />
-                          <TypographyComponent title="5" />
-                          <StarBorderIcon />
-                        </div>
-                        <div className="work_service_review">
-                          <TypographyComponent
-                            title="Sympathy"
-                            className="work_service_review_name"
-                          />
-                          <TypographyComponent title="4.5" />
-                          <StarBorderIcon />
-                        </div>
+                        {service.reviews &&
+                          service.reviews.map((review, index) => {
+                            return (
+                              <React.Fragment key={index}>
+                                <div className="work_service_review">
+                                  <TypographyComponent
+                                    title="Service quality"
+                                    className="work_service_review_name"
+                                  />
+                                  <TypographyComponent
+                                    title={
+                                      review.averages
+                                        .average_service_quality_rating
+                                    }
+                                  />
+                                  <StarBorderIcon />
+                                </div>
+                                <div className="work_service_review">
+                                  <TypographyComponent
+                                    title="Sympathy"
+                                    className="work_service_review_name"
+                                  />
+                                  <TypographyComponent
+                                    title={
+                                      review.averages.average_sympathy_rating
+                                    }
+                                  />
+                                  <StarBorderIcon />
+                                </div>
+                              </React.Fragment>
+                            );
+                          })}
                       </div>
                     );
                   })
@@ -860,13 +891,13 @@ const Work = (props) => {
                   variant="contained"
                   color="primary"
                   type="submit"
-                  startIcon={saveLoader && <Spinner size={20} />}
-                  loader={saveLoader}
-                  disabled={formik.isSubmitting}
                   title={
                     formik.values.id_service ? "Save changes" : "Create service"
                   }
                   className="create_service_form_save_cta"
+                  disabled={formik.isSubmitting}
+                  startIcon={saveLoader && <Spinner size={20} />}
+                  loader={saveLoader}
                 />
               </div>
             </form>

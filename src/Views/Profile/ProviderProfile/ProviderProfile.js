@@ -83,7 +83,7 @@ const ProfileProvider = (props) => {
       if (type === "job-details") {
         scrollToSection("service-details");
       } else if (type === "calendar-view") {
-        scrollToSection("calendar");
+        scrollToSection("book-service");
       }
     }
   };
@@ -110,6 +110,11 @@ const ProfileProvider = (props) => {
         .then((res) => {
           setLoading(false);
           setUserData({ ...res.data });
+          if (type === "job-details") {
+            scrollToSection("service-details");
+          } else if (type === "calendar-view") {
+            scrollToSection("book-service");
+          }
         })
         .catch((error) => {
           setLoading(false);

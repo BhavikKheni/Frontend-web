@@ -99,14 +99,14 @@ const SignIn = (props) => {
                 ) {
                   errors.email = t("validation.inValidateEmail");
                 }
+                else if(!values.password){
+                  errors.password = errors.password = t("validation.password");
+                }
                 return errors;
               }}
               onSubmit={(values, { setSubmitting }) => {
                 onSubmit(values, setSubmitting);
               }}
-              validationSchema={Yup.object().shape({
-                password: Yup.string().required(t("validation.password")),
-              })}
             >
               {({
                 values,
