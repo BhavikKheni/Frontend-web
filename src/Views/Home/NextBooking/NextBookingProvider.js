@@ -193,7 +193,7 @@ const NextBooking = (props) => {
               />
               <TypographyComponent title={moment(r.to_time).format("HH:mm")} />
               <TooltipComponent title={r.title} placement="bottom">
-                <TypographyComponent title={r.title} />
+                <span>{r.title}</span>
               </TooltipComponent>
               <MoreVertIcon
                 aria-describedby={id}

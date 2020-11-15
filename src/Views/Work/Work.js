@@ -342,7 +342,9 @@ const Work = (props) => {
           .then((res) => {
             if (res && res.type === "SUCCESS") {
               setSaveLoader(false);
-              setServices((r) => [...r, { id: res.id, ...formik.values }]);
+              services.unshift({ id: res.id, ...formik.values, active: true });
+              formik.resetForm({});
+              setTotalServices((s) => s + 1);
               setTypeRes({
                 message: res.message,
                 type: "success",
@@ -829,7 +831,7 @@ const Work = (props) => {
                     name="price"
                     value={formik.values.price}
                     onChange={formik.handleChange}
-                    placeholder="00.00£"
+                    placeholder="CHF"
                   />
                 </div>
                 <TypographyComponent title="Uppon your price will be sett the conditions of a payment service provider and the comission of Owera. All employees of Owera thank you for using our service and enabling our workplaces. Enjoy this winn winn situation because this is our philosophy to achiefe." />

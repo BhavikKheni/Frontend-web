@@ -5,6 +5,7 @@ import {
   CardExpiryElement,
   useElements,
   useStripe,
+  CardElement,
 } from "@stripe/react-stripe-js";
 import { makeStyles } from "@material-ui/core/styles";
 import { useTranslation } from "react-i18next";
@@ -21,6 +22,9 @@ import ConfirmDialog from "../../../Components/ConfirmDialog/ConfirmDialog";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Spinner from "../../../Components/Spinner/Spinner";
 import RightArrow from  "../../../images/next_arrow_white.svg";
+import { add } from "../../../Services/Auth.service";
+import { SessionContext } from "../../../Provider/Provider";
+const useSession = () => React.useContext(SessionContext);
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -236,6 +240,7 @@ const DialogContent = withStyles((theme) => ({
 
 const CARD_OPTIONS = {
   style: {
+    hidePostalCode: true,
     base: {
       fontSize: "12px",
       color: "#fff",
@@ -250,18 +255,19 @@ const CARD_OPTIONS = {
     },
   },
 };
+
 const PaymentMethod = (props) => {
   const classes = useStyles();
   const { t } = useTranslation();
   const [addNewCardOpen, setAddNewCardOpen] = useState(false);
-  const elements = useElements();
   const stripe = useStripe();
   const [conformDeleteDialogOpen, setConformDeleteDialogOpen] = useState(false);
   const [deleteLoader, setDeleteLoader] = useState(false);
   const [error, setError] = useState("");
   const [disabled, setDisabled] = useState(false);
   const [loading, setLoading] = useState(false);
-
+  const elements = useElements();
+  const { user } = useSession();
   const onAdd = () => {
     setAddNewCardOpen(true);
   };
@@ -274,28 +280,20 @@ const PaymentMethod = (props) => {
     if (!stripe || !elements) {
       return;
     }
-    const cardElement = elements.getElement(CardNumberElement);
+    const res = await stripe.createToken(elements.getElement(CardElement));
     setDisabled(true);
     setLoading(true);
-    const payload = await stripe.createPaymentMethod({
-      type: "card",
-      card: cardElement,
+    add("/usercards/add", {
+      is_default: 0,
+      user_id: user.id_user,
+      card_token_id: res.token.id,
+    }).then((response) => {
+      setLoading(false);
+      setDisabled(false);
     });
-
-    if (payload.error) {
-      setLoading(false);
-      setDisabled(false);
-      console.log("[error]", payload.error);
-      setError(payload.error);
-    } else {
-      setLoading(false);
-      setDisabled(false);
-      console.log("payload", payload);
-    }
   };
 
   const onDeleteCard = () => {};
-
   return (
     <React.Fragment>
       <TypographyComponent title={t("home.paymentMethod.title")} variant="h2" />
@@ -363,8 +361,7 @@ const PaymentMethod = (props) => {
                     <TypographyComponent title="expired on" />
                   </div>
                   <div className={classes.card_user_details}>
-                    <CardNumberElement options={CARD_OPTIONS} />
-                    <CardExpiryElement options={CARD_OPTIONS} />
+                    <CardElement options={{ hidePostalCode: true }} />
                   </div>
                 </div>
               </div>

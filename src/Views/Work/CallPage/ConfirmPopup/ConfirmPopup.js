@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import { withRouter } from "react-router-dom";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import MuiDialogContent from "@material-ui/core/DialogContent";
 import TypographyComponent from "../../../../Components/Typography/Typography";
@@ -6,7 +7,9 @@ import { useTranslation } from "react-i18next";
 import NextArrow from "../../../../images/next_arrow_white.svg";
 import DialogComponent from "../../../../Components/Dialog/Dialog";
 import { themes } from "../../../../themes";
-
+import { add } from "../../../../Services/Auth.service";
+import ButtonComponent from "../../../../Components/Forms/Button";
+import Spinner from "../../../../Components/Spinner/Spinner";
 const DialogContent = withStyles((theme) => ({
   root: {
     padding: theme.spacing(2),
@@ -47,28 +50,46 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const ConfirmPopupForLeavingCall = (props) => {
-
   const classes = useStyles();
   const { t } = useTranslation();
-
-  const {
-    handleClosePopup,
-    openConfirmPopup,
-    room
-  } = props;
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDisable, setIsDisable] = useState(false);
+  const { handleClosePopup, openConfirmPopup, room } = props;
 
   const onContinueCall = () => {};
 
   const onReportAbuse = () => {};
 
   const onLeaveCall = () => {
-    room.on("disconnected", (room) => {
-      room.localParticipant.tracks.forEach((publication) => {
-        const attachedElements = publication.track.detach();
-        attachedElements.forEach((element) => element.remove());
+    const params = {
+      booking_id: props && props.booking_id,
+      user_id: props && props.user_id,
+    };
+    setIsLoading(true);
+    setIsDisable(true);
+    add("/video/end", params)
+      .then((response) => {
+        if (response.type === "success") {
+          const { history } = props;
+          setIsLoading(false);
+          setIsDisable(false);
+          room.on("disconnected", (room) => {
+            room.localParticipant.tracks.forEach((publication) => {
+              publication.track.stop();
+              publication.unpublish();
+              const attachedElements = publication.track.detach();
+              attachedElements.forEach((element) => element.remove());
+            });
+          });
+          history.push("/");
+          room.disconnect();
+          handleClosePopup();
+        }
+      })
+      .catch((error) => {
+        setIsLoading(false);
+        console.log(error);
       });
-    });
-    room.disconnect();
   };
 
   return (
@@ -87,37 +108,31 @@ const ConfirmPopupForLeavingCall = (props) => {
             className={classes.endCallMessage}
           />
           <div className={classes.endCallWrapper}>
-            <div
+            <ButtonComponent
+              title="Leave"
               onClick={() => {
                 onLeaveCall();
               }}
               className={classes.endCallBtn}
-            >
-              <span>Leave</span>
-              <img
-                src={NextArrow}
-                alt="call end icon"
-                style={{ width: "15px", height: "15px" }}
-              />
-            </div>
-            <div
+              startIcon={isLoading && <Spinner size={20} />}
+              loader={isLoading}
+              disabled={isDisable}
+            />
+            <ButtonComponent
               onClick={() => {
                 onContinueCall();
               }}
+              title="Continue with call"
               className={classes.continueCallBtn}
-            >
-              <span>Continue with call</span>
-              <img
-                src={NextArrow}
-                alt="call end icon"
-                style={{ width: "15px", height: "15px" }}
-              />
-            </div>
+              // startIcon={isLoading && <Spinner size={20} />}
+              // loader={isLoading}
+              // disabled={isDisable}
+            />
           </div>
         </DialogContent>
       </DialogComponent>
     </React.Fragment>
-  )
-}
+  );
+};
 
-export default ConfirmPopupForLeavingCall;
+export default withRouter(ConfirmPopupForLeavingCall);

@@ -13,50 +13,55 @@ import { add } from "../../../Services/Auth.service";
 import SnackBarComponent from "../../SnackBar/SnackBar";
 
 const AddBookingSlotSideBar = (props) => {
-
   const [getFromTime, setFromTime] = useState("");
   const [getToTime, setToTime] = useState("");
   const [openSnackBar, setOpenSnackBar] = useState(false);
   const [response, setResponse] = useState({});
-  const [selectedDate, setSelectedDate] = React.useState(new Date());
+  const [isDisabled, setDisabled] = useState(false);
   const [isLoading, setLoading] = useState(false);
-  const { user, selectedService, getSelectedDateTime } = props;
-  const [data, setData] = useState([]);
+  const { selectedService, getSelectedDateTime } = props;
 
   useEffect(() => {
     if (getSelectedDateTime && getSelectedDateTime.startStr) {
       setFromTime(moment(getSelectedDateTime.startStr).format("HH:mm"));
       setToTime(moment(getSelectedDateTime.endStr).format("HH:mm"));
-      console.log("start time:", moment(getSelectedDateTime.startStr).format("HH:mm"));
+      console.log(
+        "start time:",
+        moment(getSelectedDateTime.startStr).format("HH:mm")
+      );
     }
-  })
-
-  const handleDateChange = (date) => {
-    setSelectedDate(date);
-  };
+  });
 
   const onSaveSlot = () => {
-    const date = moment(selectedDate).format("YYYY-MM-DD");
+    const startDate = moment(getSelectedDateTime.startStr).format("YYYY-MM-DD");
+    const endDate = moment(getSelectedDateTime.endStr).format("YYYY-MM-DD");
     const bookingData = {
       id_service: selectedService.id_service,
-      start: moment(`${date} ${getFromTime}`).format(),
-      end: moment(`${date} ${getToTime}`).format(),
-      id_user: user.id_user,
-      color: "red",
+      from_datetime: moment(`${startDate} ${getFromTime}`).format(
+        "YYYY-MM-DD HH:mm:ss"
+      ),
+      to_datetime: moment(`${endDate} ${getToTime}`).format(
+        "YYYY-MM-DD HH:mm:ss"
+      ),
     };
-    setData(bookingData);
     props.onAddBookingCalendar(bookingData);
+    onSave(bookingData);
   };
 
-  const onSaveAddBooking = () => {
+  const onSave = (record) => {
     setLoading(true);
-    add("/service/book", data)
+    setDisabled(true);
+    add("/slot/add", record)
       .then((result) => {
-        setLoading(false);
-        setResponse(result);
-        setOpenSnackBar(true);
+        if (result.type === "SUCCESS") {
+          setLoading(false);
+          setResponse(result);
+          setOpenSnackBar(true);
+          setDisabled(false);
+        }
       })
       .catch((error) => {
+        setDisabled(false);
         setLoading(false);
         setResponse(error);
         console.log("Error", error);
@@ -105,37 +110,35 @@ const AddBookingSlotSideBar = (props) => {
           className="booking_time_interval_input"
         />
       </div>
-      { getSelectedDateTime && getSelectedDateTime.startStr ?
+      {getSelectedDateTime && getSelectedDateTime.startStr ? (
         <React.Fragment>
           <div className="booking_row booking_date">
             <span className="booking_time_label">From Date:</span>
-            <span>{moment(getSelectedDateTime.startStr).format('YYYY-MM-DD')}</span>
+            <span>
+              {moment(getSelectedDateTime.startStr).format("YYYY-MM-DD")}
+            </span>
           </div>
           <div className="booking_row booking_date">
             <span className="booking_time_label">To Date:</span>
-            <span>{moment(getSelectedDateTime.endStr).format('YYYY-MM-DD')}</span>
+            <span>
+              {moment(getSelectedDateTime.endStr).format("YYYY-MM-DD")}
+            </span>
           </div>
-         </React.Fragment>: null
-      }
+        </React.Fragment>
+      ) : null}
       <div className="confirm_booking_row">
         <ButtonComponent
           title="Add"
           type="button"
-          endIcon={<AddIcon />}
+          endIcon={!isLoading && <AddIcon />}
+          startIcon={isLoading && <Sppiner />}
+          loader={isLoading}
           onClick={() => {
             onSaveSlot();
           }}
+          disabled={isDisabled}
           className={"confirm_cta"}
         />
-        {/* <ButtonComponent
-          title="save"
-          type="button"
-          startIcon={isLoading && <Sppiner />}
-          onClick={() => {
-            onSaveAddBooking();
-          }}
-          className={"confirm_cta"}
-        /> */}
       </div>
       <SnackBarComponent
         open={openSnackBar}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Grid, InputBase, Avatar, Divider } from "@material-ui/core";
+import { Grid, InputBase } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import SendIcon from "@material-ui/icons/Send";
 import MicOffIcon from "@material-ui/icons/MicOff";
@@ -16,9 +16,9 @@ import { useSidebar } from "../../../Provider/SidebarProvider";
 import { get, add } from "../../../Services/Auth.service";
 import Spinner from "../../../Components/Spinner/Spinner";
 import { SessionContext } from "../../../Provider/Provider";
-import ImageComponent from "../../../Components/Forms/Image";
-import TypographyComponent from "../../../Components/Typography/Typography";
 import ConfirmPopupForLeavingCall from "./ConfirmPopup/ConfirmPopup";
+import Sidebar from "./Sidebar/Sidebar";
+
 import "./callpage.css";
 
 const useSession = () => React.useContext(SessionContext);
@@ -58,14 +58,12 @@ const useStyles = makeStyles((theme) => ({
   large: {
     width: theme.spacing(20),
     height: theme.spacing(20),
-  }
+  },
 }));
 
 const CallPage = (props) => {
-
   const { state = {} } = props && props.location;
   const bookingId = state.record && state.record.id_booking;
-
   const classes = useStyles();
   const { t } = useTranslation();
   const { user } = useSession();
@@ -78,8 +76,8 @@ const CallPage = (props) => {
   const [audio, setAudio] = useState(true);
   const [onVideo, setVideo] = useState(true);
   const [isOpenConfirmPopup, openConfirmPopup] = useState(false);
-  const [dynamicCounter, setDynamicCounter] = useState();
-  const [timerId, setTimerID] = useState("");
+  const { record = {} } = state;
+
   let [userData, setUserData] = useState({
     first_name: "",
     last_name: "",
@@ -91,27 +89,29 @@ const CallPage = (props) => {
   };
 
   useEffect(() => {
+    const getProfileInfo = async () => {
+      setLoading(true);
+      const res = await get(`/profile/${record.provider_id_user}`).catch(
+        (err) => {
+          setLoading(false);
+        }
+      );
+
+      if (res) {
+        setUserData({
+          ...res.data,
+        });
+        setLoading(false);
+      } else {
+        setLoading(false);
+      }
+    };
     getProfileInfo();
-  }, [state]);
-
-  const getProfileInfo = async () => {
-    setLoading(true);
-    const res = await get(`/profile/${user.id_user}`).catch((err) => {
-      setLoading(false);
-    });
-
-    if (res) {
-      setUserData({
-        ...res.data,
-      });
-      setLoading(false);
-    } else {
-      setLoading(false);
-    }
-  }
+  }, [record.provider_id_user]);
 
   useEffect(() => {
-    const timer = counter > 0 && setInterval(() => setCounter(counter - 1), 1000);
+    const timer =
+      counter > 0 && setInterval(() => setCounter(counter - 1), 1000);
     return () => clearInterval(timer);
   }, [counter]);
 
@@ -119,74 +119,10 @@ const CallPage = (props) => {
     setSidebar(true);
     setSidebarContent(
       <div style={{ margin: 20 }}>
-        {isLoading ? (
-          <Spinner />
-        ) : (
-          <React.Fragment>
-            {!userData.image ? (
-              <ImageComponent />
-            ) : (
-              <Avatar className={classes.large} src={userData.image} />
-            )}
-            <TypographyComponent
-              title={`${userData.first_name} ${userData.last_name}`}
-            />
-            <Divider className="divider" />
-            <div className="call-time">
-              <TypographyComponent title="Time left" />
-              <TypographyComponent title="120 Min" />
-            </div>
-            <div className="stay-Longer">
-              <span>Stay Longer?</span>
-              {/* <img src={ArrowIcon} alt="stay longer" /> */}
-            </div>
-            <div>
-              <span
-                id="timer-15"
-                onClick={() => {
-                  setDynamicCounter(900);
-                  setTimerID("timer-15");
-                }}
-              >
-                {!timerId && "15 min"}
-              </span>
-              <span
-                onClick={() => {
-                  setDynamicCounter(1800);
-                  setTimerID("timer-30");
-                }}
-                id="timer-30"
-              >
-                30 min
-              </span>
-              <span
-                onClick={() => {
-                  setDynamicCounter(3600);
-                  setTimerID("timer-60");
-                }}
-                id="timer-60"
-              >
-                60 min
-              </span>
-            </div>
-            <div>
-              <TypographyComponent title="Total:" />
-              <TypographyComponent title="00.0$" />
-            </div>
-          </React.Fragment>
-        )}
+        {isLoading ? <Spinner /> : <Sidebar userData={userData} />}
       </div>
     );
-  }, [
-    setSidebarContent,
-    setSidebar,
-    classes.large,
-    timerId,
-    isLoading,
-    userData.first_name,
-    userData.last_name,
-    userData.image,
-  ]);
+  }, [setSidebar, isLoading, setSidebarContent, state, userData]);
 
     useEffect(() => {
     if (counter === 0) {
@@ -198,23 +134,17 @@ const CallPage = (props) => {
     openConfirmPopup(true);
   };
 
-  const makeAudioTrackEnable = () => {
-    room.localParticipant.audioTracks.forEach((publication) => {
-      if (audio) {
-        publication.track.enable();
-        setAudio(true);
-      }
-    });
-  }
-
   const makeAudioTrackDisable = () => {
     room.localParticipant.audioTracks.forEach((publication) => {
       if (audio) {
         publication.track.disable();
         setAudio(false);
+      } else {
+        publication.track.enable();
+        setAudio(true);
       }
     });
-  }
+  };
 
   const videoTracksdisable = () => {
     //handle video call here
@@ -228,11 +158,11 @@ const CallPage = (props) => {
       }
     });
   };
-
-  const connectAccount = () => {
-    
+  function handleTrackEnabled(track) {
+    track.on("enabled", () => {
+      alert("mute or unmute");
+    });
   }
-
   const onFinish = useCallback(() => {
     getTwillioToken();
   }, [bookingId, user.id_user]);
@@ -249,6 +179,7 @@ const CallPage = (props) => {
         video: { width: 150, height: 150 },
       }).then(function (localTracks) {
         const localMediaContainer = document.getElementById("local-media");
+
         localTracks.forEach(function (track) {
           localMediaContainer.innerHTML = "";
           localMediaContainer.appendChild(track.attach());
@@ -340,7 +271,7 @@ const CallPage = (props) => {
 
   const handleClosePopup = () => {
     openConfirmPopup(false);
-  }
+  };
 
   return (
     <React.Fragment>
@@ -357,10 +288,11 @@ const CallPage = (props) => {
           <div className="start_work_hero_left">
             <div className="service_calling_wrapper">
               <div className="service_calling_message">
-                <InputBase
-                  placeholder="Tell us write here"
-                />
-                <span className={classes.searchIconItem} onClick={onSendMessage}>
+                <InputBase placeholder="Tell us write here" />
+                <span
+                  className={classes.searchIconItem}
+                  onClick={onSendMessage}
+                >
                   <SendIcon className={classes.searchIcon} />
                 </span>
               </div>
@@ -372,7 +304,7 @@ const CallPage = (props) => {
                   />
                 ) : (
                   <MicOffIcon
-                    onClick={() => makeAudioTrackEnable()}
+                    onClick={() => makeAudioTrackDisable()}
                     className="owera_link"
                   />
                 )}
@@ -402,10 +334,12 @@ const CallPage = (props) => {
           </div>
         </Grid>
       </Grid>
-      <ConfirmPopupForLeavingCall 
+      <ConfirmPopupForLeavingCall
         handleClosePopup={handleClosePopup}
         openConfirmPopup={isOpenConfirmPopup}
         room={room}
+        booking_id={bookingId}
+        user_id={user.id_user}
       />
     </React.Fragment>
   );

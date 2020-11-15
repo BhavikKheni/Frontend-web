@@ -1,9 +1,10 @@
 .start_work_hero_left {
   position: relative;
-  background-color: #E5E9F8;
+  background-color: #e5e9f8;
   /* max-width: calc(100% - 223px); */
   max-width: 1160px;
   width: 100%;
+  bottom: 0px;
 }
 .service_calling_wrapper {
   position: absolute;
