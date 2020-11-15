@@ -34,10 +34,12 @@ const ButtonComponent = (props) => {
     size,
     style,
     className,
-    loader
+    loader,
+    id
   } = props;
   return (
     <Button
+      id={id}
       variant={variant}
       color={color}
       className={clsx(classes.primary, classes.button, className)}

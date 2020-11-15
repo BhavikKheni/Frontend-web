@@ -444,7 +444,7 @@ const Work = (props) => {
     }
   };
 
-  const onActivateDactivate = (service) => {
+  const onActivateDactivate = (service, index) => {
     const d = {
       id_service: service.id_service,
       id_user: user.id_user,
@@ -577,13 +577,14 @@ const Work = (props) => {
                     return (
                       <div className="my_service" key={index}>
                         <ButtonComponent
+                          id={index}
                           title={service.active ? "Activate" : "Deactivate"}
                           className={clsx(
                             { deactivate_service_button: !service.active },
                             "activate_service_button"
                           )}
                           onClick={(e) => {
-                            onActivateDactivate(service);
+                            onActivateDactivate(service, index);
                           }}
                           startIcon={activeLoader && <Spinner size="small" />}
                           loader={activeLoader}

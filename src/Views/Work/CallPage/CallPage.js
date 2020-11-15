@@ -188,6 +188,12 @@ const CallPage = (props) => {
     userData.image,
   ]);
 
+    useEffect(() => {
+    if (counter === 0) {
+      onFinish();
+    }
+  }, [onFinish, counter]);
+
   const onEndCall = () => {
     openConfirmPopup(true);
   };
@@ -223,30 +229,20 @@ const CallPage = (props) => {
     });
   };
 
+  const connectAccount = () => {
+    
+  }
+
   const onFinish = useCallback(() => {
+    getTwillioToken();
+  }, [bookingId, user.id_user]);
+
+  const getTwillioToken = () => {
     const params = {
       user_id: user.id_user,
       booking_id: bookingId,
     };
-    function attachTrack(track, container) {
-      container.appendChild(track.attach());
-    }
-    function participantConnected(participant) {
-      participant.tracks.forEach((publication) => {
-        if (publication.isSubscribed) {
-          attachTrack(
-            publication.track,
-            document.getElementById("remote-media-div")
-          );
-        }
-      });
-      participant.on("trackSubscribed", (track) => {
-        attachTrack(track, document.getElementById("remote-media-div"));
-      });
-    }
-
     add("/video/join", params).then((res) => {
-      console.log(res);
       let video_token = res.data.video_token;
       createLocalTracks({
         audio: true,
@@ -258,72 +254,89 @@ const CallPage = (props) => {
           localMediaContainer.appendChild(track.attach());
         });
       });
-      connect(video_token, { booking_id: bookingId }).then(
-        (room) => {
-          console.log(`Successfully joined a Room: ${room}`);
-          setRoom(room);
-          // Log any Participants already connected to the Room
-
-          room.participants.forEach(participantConnected);
-
-          room.participants.forEach((participant) => {
-            console.log(
-              `Participant "${participant.identity}" is connected to the Room`
-            );
-            participant.tracks.forEach((publication) => {
-              console.log("publication", publication);
-              if (publication.track) {
-                document
-                  .getElementById("remote-media-div-already")
-                  .appendChild(publication.track.attach());
-              }
-            });
-          });
-
-          room.on("participantConnected", (participant) => {
-            console.log(`Participant "${participant.identity}" connected`);
-
-            participant.tracks.forEach((publication) => {
-              if (publication.isSubscribed) {
-                const track = publication.track;
-                document
-                  .getElementById("remote-media-div")
-                  .appendChild(track.attach());
-              }
-            });
-
-            participant.on("trackSubscribed", (track) => {
-              document
-                .getElementById("remote-media-div")
-                .appendChild(track.attach());
-            });
-            room.participants.forEach((participant) => {
-              participant.tracks.forEach((track) => {
-                document
-                  .getElementById("remote-media-div")
-                  .appendChild(track.attach());
-              });
-
-              participant.on("trackAdded", (track) => {
-                document
-                  .getElementById("remote-media-div")
-                  .appendChild(track.attach());
-              });
-            });
-          });
-        },
-        (error) => {
-          console.error(`Unable to connect to Room: ${error.message}`);
-        }
-      );
+      connectVideo(video_token);
     });
-  }, [bookingId, user.id_user]);
+  }
 
-  useEffect(() => {
-    if (counter === 0) {
-      onFinish();
-    }
-  }, [onFinish, counter]);
+  const connectVideo = (video_token) => {
+    connect(video_token, { booking_id: bookingId }).then(
+      (room) => {
+        setRoom(room);
+        room.participants.forEach(participantConnected);
+
+        room.participants.forEach((participant) => {
+          console.log(
+            `Participant "${participant.identity}" is connected to the Room`
+          );
+          participant.tracks.forEach((publication) => {
+            console.log("publication", publication);
+            if (publication.track) {
+              document
+                .getElementById("remote-media-div-already")
+                .appendChild(publication.track.attach());
+            }
+          });
+        });
+        subscribeEventsForParticipants();
+      },
+      (error) => {
+        console.error(`Unable to connect to Room: ${error.message}`);
+      }
+    );
+  }
+
+  const attachTrack = (track, container) => {
+    container.appendChild(track.attach());
+  }
+
+  const participantConnected = (participant) => {
+    participant.tracks.forEach((publication) => {
+      if (publication.isSubscribed) {
+        attachTrack(
+          publication.track,
+          document.getElementById("remote-media-div")
+        );
+      }
+    });
+    participant.on("trackSubscribed", (track) => {
+      attachTrack(track, document.getElementById("remote-media-div"));
+    });
+  }
+
+  const subscribeEventsForParticipants = () => {
+    room.on("participantConnected", (participant) => {
+      console.log(`Participant "${participant.identity}" connected`);
+
+      participant.tracks.forEach((publication) => {
+        if (publication.isSubscribed) {
+          const track = publication.track;
+          document
+            .getElementById("remote-media-div")
+            .appendChild(track.attach());
+        }
+      });
+
+      participant.on("trackSubscribed", (track) => {
+        document
+          .getElementById("remote-media-div")
+          .appendChild(track.attach());
+      });
+
+      room.participants.forEach((participant) => {
+        participant.tracks.forEach((track) => {
+          document
+            .getElementById("remote-media-div")
+            .appendChild(track.attach());
+        });
+
+        participant.on("trackAdded", (track) => {
+          document
+            .getElementById("remote-media-div")
+            .appendChild(track.attach());
+        });
+      });
+    });
+  }
 
   const handleClosePopup = () => {
     openConfirmPopup(false);

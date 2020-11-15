@@ -105,33 +105,53 @@ const NextBooking = (props) => {
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
 
-  useEffect(() => {
-    function fetchNextBooking() {
-      const params = {
-        limit: limit,
-        offset: 0,
-        role: "CLIENT",
-        id_user: user.id_user,
-        status: "NEXT",
-      };
-      setIsLoading(true);
-      search(path, params)
-        .then((res) => {
-          const { data, stopped_at, type } = res || {};
-          if (type === "ERROR" || (data && data.length === 0)) {
-            setIsLoading(false);
-            setUpcomingMoreData(false);
-            return;
-          }
-          setUpcomingOffset(stopped_at);
-          setRecords(res.data || []);
-          setIsLoading(false);
-        })
-        .catch((err) => {
-          setIsLoading(false);
+  const fetchBookings = () => {
+    const params = {
+      limit: limit,
+      offset: 0,
+      role: "CLIENT",
+      id_user: user.id_user,
+      status: "NEXT",
+    };
+    setIsLoading(true);
+    search(path, params)
+      .then((res) => {
+        
+        const { data, stopped_at, type } = res || {};
+
+        setIsLoading(false);
+        
+        if (type === "ERROR" || (data && data.length === 0)) {
+          setUpcomingMoreData(false);
+          return;
+        }
+
+        res.data.forEach((val) => {
+          val["duration"] = calculateDuration(val);
         });
+
+        console.log("aaa", res.data);
+
+        setUpcomingOffset(stopped_at);
+        setRecords(res.data || []);
+      })
+      .catch((err) => {
+        setIsLoading(false);
+      });
+  }
+
+  const calculateDuration = (val) => {
+    if (val.from_datetime && val.to_datetime) {
+      const fromDateTime = new Date(val.from_datetime).getTime();
+      const toDateTime = new Date(val.to_datetime).getTime();
+
+      const timeDiff = toDateTime/1000 - fromDateTime/1000;
+      return timeDiff/60 + " Minutes";
     }
-    fetchNextBooking();
+  }
+
+  useEffect(() => {
+    fetchBookings();
   }, [user.id_user]);
 
   const onMore = async (path, offset, criteria = {}) => {
@@ -187,11 +207,12 @@ const NextBooking = (props) => {
                 title="Go to meeting"
                 onClick={() => goToMeeting(r)}
               />
-              <TypographyComponent title="11/03/2020" />
+              <TypographyComponent title={moment(r.from_datetime).format("MM/DD/YYYY")} />
               <TypographyComponent
-                title={moment(r.from_time).format("HH:mm")}
+                title={moment(r.from_datetime).format("HH:mm")}
               />
-              <TypographyComponent title={moment(r.to_time).format("HH:mm")} />
+              <TypographyComponent title={r.duration} />
+              <TypographyComponent title={r.provider_name} />
               <TooltipComponent title={r.title} placement="bottom">
                 <span>{r.title}</span>
               </TooltipComponent>
