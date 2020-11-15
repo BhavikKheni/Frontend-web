@@ -20,6 +20,7 @@ import ButtonComponent from "../../../Components/Forms/Button";
 import ConfirmDialog from "../../../Components/ConfirmDialog/ConfirmDialog";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Spinner from "../../../Components/Spinner/Spinner";
+import RightArrow from  "../../../images/next_arrow_white.svg";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -145,7 +146,16 @@ const useStyles = makeStyles((theme) => ({
     minHeight: "209px",
     backgroundColor: "#ffffff",
     borderRadius: "10px",
-    padding: "27px 76px 15px 68px",
+    padding: "20px 76px 20px 68px",
+  },
+
+  card_provider_name: {
+    fontFamily: 'Rubik',
+    fontSize: '24px',
+    lineHeight: '36px',
+    color: '#FFFFFF',
+    padding: '0 15px 15px',
+    display: 'block',
   },
 
   card_form: {
@@ -157,7 +167,7 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.05)',
     borderRadius: '8px',
     padding: "0",
-    paddingTop: '70px',
+    paddingTop: '20px',
   },
 
   card_items: {
@@ -174,18 +184,28 @@ const useStyles = makeStyles((theme) => ({
   },
 
   add_card_cta: {
+    fontSize: '16px',
+    fontWeight: '500',
     width: '100%',
     margin: '20px auto',
     color: '#fff',
     textTransform: 'inherit',
 
-    '&::after' : {
-      content: 'Dhaval',
-      display: 'block',
-      margin: '0 auto',
-    }
-  },
+    '& .MuiButton-label': {
+      width: 'auto',
+    },
 
+    '&:after' : {
+      content: "''",
+      backgroundImage: `url(${RightArrow})`,
+      height: '20px',
+      width: '12px',
+      backgroundSize: 'cover',
+      backgroundRepeat: 'no-repeat',
+      marginLeft: '10px',
+    },
+  },
+  
   card_user_details : {
     display: 'flex',
     justifyContent: 'space-between',
@@ -336,6 +356,7 @@ const PaymentMethod = (props) => {
           <DialogContent>
             <div className={classes.card_wrapper}>
               <div className={classes.card_form}>
+                <span className={classes.card_provider_name}>VISA</span>
                 <div className={classes.card_items}>
                   <div className={classes.card_user_details}>
                     <TypographyComponent title="Number on card" style={{fontWeight:'500'}} />
@@ -350,13 +371,14 @@ const PaymentMethod = (props) => {
             </div>
             {error && <span>{error.message}</span>}
           </DialogContent>
+          <ButtonComponent
+            title="Add new card"
+            onClick={() => onAddCard()}
+            startIcon={loading && <Spinner size="small" />}
+            disabled={disabled}
+            className={classes.add_card_cta}
+          />
         </div>
-        <ButtonComponent
-          title="Add new card"
-          onClick={() => onAddCard()}
-          startIcon={loading && <Spinner size="small" />}
-          disabled={disabled}
-        />
       </DialogComponent>
       <ConfirmDialog
         open={conformDeleteDialogOpen}
