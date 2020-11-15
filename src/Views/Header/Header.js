@@ -435,6 +435,7 @@ const OweraHeader = (props) => {
           vertical: "top",
           horizontal: "left",
         }}
+        className="header_search_data_wrapper"
       >
         {searchLoader ? (
           <Sppiner />

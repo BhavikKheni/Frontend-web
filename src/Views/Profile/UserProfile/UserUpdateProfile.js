@@ -543,91 +543,87 @@ const UpdateProfile = (props) => {
           title="Change picture"
           maxHeight={490}
         >
-          <DialogContent style={{ textAlign: "center" }}>
-            <FormControl className="image-upload">
-              <div className="profile-image-tag">
-                {userData.image === null ||
-                userData.image === undefined ||
-                typeof userData.image === "string" ? (
-                  <ImageComponent />
-                ) : (
-                  <img
-                    alt="Profile"
-                    id="output"
-                    src={makeImage()}
-                    style={{
-                      width: "200px",
-                      height: "200px",
-                      borderRadius: "100%",
-                    }}
+          <div className="dialog_container">
+            <DialogContent>
+              <FormControl className="image_upload">
+                <div className="profile_image_tag">
+                  {userData.image === null ||
+                  userData.image === undefined ||
+                  typeof userData.image === "string" ? (
+                    <ImageComponent />
+                  ) : (
+                    <img
+                      alt="Profile"
+                      id="output"
+                      src={makeImage()}
+                    />
+                  )}
+                  <input
+                    type="file"
+                    id="upload-button"
+                    style={{ display: "none" }}
+                    name="image"
+                    onChange={(event) => handleUploadClick(event)}
+                    accept="image/*"
                   />
-                )}
-                <input
-                  type="file"
-                  id="upload-button"
-                  style={{ display: "none" }}
-                  name="image"
-                  onChange={(event) => handleUploadClick(event)}
-                  accept="image/*"
-                />
-              </div>
-              <div className="profile-image-button">
-                {userData.image && (
+                </div>
+                <div className="profile_image_button">
+                  {userData.image && (
+                    <ButtonComponent
+                      variant="contained"
+                      color="primary"
+                      type="button"
+                      style={{
+                        backgroundColor: "#FF0000",
+                        width: "100%",
+                        maxWidth: "170px",
+                      }}
+                      title="Remove picture"
+                      onClick={() => {
+                        setUserData((d) => ({ ...d, image: null }));
+                        removeImage();
+                      }}
+                      startIcon={isImageRemoveLoader && <Spinner />}
+                    />
+                  )}
                   <ButtonComponent
                     variant="contained"
                     color="primary"
                     type="button"
-                    style={{
-                      backgroundColor: "#FF0000",
-                      width: "100%",
-                      maxWidth: "170px",
-                    }}
-                    title="Remove picture"
+                    title={
+                      userData.image !== null
+                        ? "Upload picture"
+                        : "Change picture"
+                    }
+                    style={{ width: "100%", maxWidth: "170px" }}
                     onClick={() => {
-                      setUserData((d) => ({ ...d, image: null }));
-                      removeImage();
+                      document.getElementById("upload-button").click();
                     }}
-                    startIcon={isImageRemoveLoader && <Spinner />}
+                    startIcon={isImageUploadLoader && <Spinner />}
+                  />
+                </div>
+                {imageUploadSuccess && (
+                  <TypographyComponent
+                    variant="h4"
+                    title="Congrats! You’ve successfully changed your picture."
+                    style={{
+                      color: "#2FB41A",
+                    }}
                   />
                 )}
-                <ButtonComponent
-                  variant="contained"
-                  color="primary"
-                  type="button"
-                  title={
-                    userData.image !== null
-                      ? "Upload picture"
-                      : "Change picture"
-                  }
-                  style={{ width: "100%", maxWidth: "170px" }}
-                  onClick={() => {
-                    document.getElementById("upload-button").click();
-                  }}
-                  startIcon={isImageUploadLoader && <Spinner />}
-                />
-              </div>
-              {imageUploadSuccess && (
-                <TypographyComponent
-                  variant="h4"
-                  title="Congrats! You’ve successfully changed your picture."
-                  style={{
-                    color: "#2FB41A",
-                    marginTop: 20,
-                  }}
-                />
-              )}
-              {isImageSize && (
-                <TypographyComponent
-                  variant="h4"
-                  title="Sorry! Image size is too big. It must be 2MB or smaller."
-                  style={{
-                    color: "#FF0000",
-                    marginTop: 20,
-                  }}
-                />
-              )}
-            </FormControl>
-          </DialogContent>
+                {isImageSize && (
+                  <TypographyComponent
+                    variant="h4"
+                    title="Sorry! Image size is too big. It must be 2MB or smaller."
+                    style={{
+                      color: "#FF0000",
+                    }}
+                  />
+                )}
+              </FormControl>
+            </DialogContent>
+          </div>
+          
         </DialogComponent>
       </div>
       {/* confirmataion dialog for delete profile */}

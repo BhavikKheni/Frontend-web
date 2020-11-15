@@ -860,7 +860,7 @@ const Work = (props) => {
                   variant="contained"
                   color="primary"
                   type="submit"
-                  startIcon={saveLoader && <Spinner />}
+                  startIcon={saveLoader && <Spinner size={20} />}
                   loader={saveLoader}
                   disabled={formik.isSubmitting}
                   title={

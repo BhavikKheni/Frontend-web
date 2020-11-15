@@ -183,7 +183,11 @@
   font-weight: normal;
   background: #4AC836;
   text-transform: inherit;
+  min-width: 143px;
   margin: 0;
+}
+.create_service_form_cta_row button span {
+  margin: 0 auto;
 }
 .create_service_form_cta_row .create_service_form_delete_cta {
   background-color: transparent;

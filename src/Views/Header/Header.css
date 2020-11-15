@@ -241,10 +241,26 @@ header .flag-select__option__label {
   padding-left: 13px;
 }
 .search-item {
-  display: flex;
-  flex-direction: column;
-  padding: 10px;
+  display: block;
+  width: 100%;
+  padding: 0 48px;
+  margin: 5px auto;
 }
-.search-item span{
-    cursor: pointer;
+.search-item span {
+  cursor: pointer;
+  padding: 5px 10px;
+  transition: all 0.3s ease-in-out 0s;
+}
+.search-item span:hover {
+  background-color: #d3d3d3;
+  transition: all 0.3s ease-in-out 0s;
+}
+.header_search_data_wrapper .MuiPaper-root {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  max-width: 58.3%;
+  width: 100%;
+  min-height: 100px;
 }

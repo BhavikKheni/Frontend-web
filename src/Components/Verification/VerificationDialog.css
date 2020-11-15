@@ -22,3 +22,9 @@
 .otp_Varification .modal_bottom_cta .spinner_loading {
   margin-left: 15px;
 }
+
+.send-code {
+  width: 100%;
+  max-width: 137px;
+  height: 48px;
+}

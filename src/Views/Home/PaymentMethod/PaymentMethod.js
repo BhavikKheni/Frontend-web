@@ -20,7 +20,6 @@ import DialogComponent from "../../../Components/Dialog/Dialog";
 import ButtonComponent from "../../../Components/Forms/Button";
 import ConfirmDialog from "../../../Components/ConfirmDialog/ConfirmDialog"
 import DeleteIcon from "@material-ui/icons/Delete";
-import Styles from "./Payment.module.css";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -145,6 +144,7 @@ const useStyles = makeStyles((theme) => ({
     height: "100%",
     minHeight: "209px",
     backgroundColor: "#ffffff",
+    borderRadius: "10px",
     padding: "27px 76px 15px 68px",
   },
 
@@ -153,13 +153,17 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: "312px",
     height: "100%",
     minHeight: "167px",
-    backgroundColor: "#000",
-    padding: "10px",
+    backgroundColor: '#303030',
+    boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.05)',
+    borderRadius: '8px',
+    padding: "0",
+    paddingTop: '70px',
   },
 
   card_items: {
     background: "#434343",
     boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.05)",
+    padding: '15px',
   },
 
   payment_add_new_card: {
@@ -168,6 +172,40 @@ const useStyles = makeStyles((theme) => ({
     padding: "0",
     transition: "all 0.3s ease-in-out 0s",
   },
+
+  add_card_cta: {
+    width: '100%',
+    margin: '20px auto',
+    color: '#fff',
+    textTransform: 'inherit',
+
+    '&::after' : {
+      content: 'Dhaval',
+      display: 'block',
+      margin: '0 auto',
+    }
+  },
+
+  card_user_details : {
+    display: 'flex',
+    justifyContent: 'space-between',
+
+    '& .StripeElement--empty:first-child': {
+      width: '45%'
+    },
+
+    '& .StripeElement--empty:last-child': {
+      width: '27%',
+    },
+
+    '& p': {
+      fontFamily: 'Rubik',
+      fontWeight: '400',
+      fontSize: '12px',
+      letterSpacing: '0.02em',
+      color: '#FFFFFF',
+    }
+  }
 }));
 
 const DialogContent = withStyles((theme) => ({
@@ -179,12 +217,13 @@ const DialogContent = withStyles((theme) => ({
 const CARD_OPTIONS = {
   style: {
     base: {
-      fontSize: "18px",
+      fontSize: "12px",
       color: "#fff",
-      letterSpacing: "0.025em",
+      letterSpacing: "0.05em",
       "::placeholder": {
         color: "#fff",
       },
+      textAlign: 'right',
     },
     invalid: {
       color: "#9e2146",
@@ -283,23 +322,26 @@ const PaymentMethod = (props) => {
         open={addNewCardOpen}
         title={t("payment.addCard")}
       >
-        <DialogContent>
-          <div className={classes.card_wrapper}>
-            <div className={classes.card_form}>
-              <div className={classes.card_items}>
-                <div className={classes.cardElement}>
-                  <TypographyComponent title="Number on card" />
-                  <TypographyComponent title="expired on" />
-                </div>
-                <div className={classes.cardElement}>
-                  <CardNumberElement options={CARD_OPTIONS} />
-                  <CardExpiryElement options={CARD_OPTIONS} />
+        <div className="dialog_container">
+          <DialogContent>
+            <div className={classes.card_wrapper}>
+              <div className={classes.card_form}>
+                <div className={classes.card_items}>
+                  <div className={classes.card_user_details}>
+                    <TypographyComponent title="Number on card" style={{fontWeight:'500'}} />
+                    <TypographyComponent title="expired on" />
+                  </div>
+                  <div className={classes.card_user_details}>
+                    <CardNumberElement options={CARD_OPTIONS} />
+                    <CardExpiryElement options={CARD_OPTIONS} />
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </DialogContent>
-        <ButtonComponent title="Add new card" onClick={() => onAddCard()} />
+          </DialogContent>
+          <ButtonComponent className={classes.add_card_cta} title="Add new card" onClick={() => onAddCard()} />
+        </div>
+        
       </DialogComponent>
       <ConfirmDialog
         open={conformDeleteDialogOpen}
