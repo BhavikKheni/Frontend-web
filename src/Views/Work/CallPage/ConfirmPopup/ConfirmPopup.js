@@ -38,11 +38,14 @@ const useStyles = makeStyles((theme) => ({
     border: "1px solid #FF0000",
     height: 48,
     padding: 12,
-    marginRight: 10,
     color: "#fff",
     display: "flex",
     alignItems: "center",
     cursor: "pointer",
+
+    '& .MuiButton-startIcon': {
+      margin: '0 auto',
+    }
   },
   endCallMessage: {
     color: "#fff",

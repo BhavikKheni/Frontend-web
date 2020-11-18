@@ -63,18 +63,23 @@ const useStyles = makeStyles((theme) => ({
       lineHeight: "30px",
       letterSpacing: "0.02em",
       color: "#303030",
-      minWidth: "85px",
+      minWidth: "100px",
       textAlign: "center",
       margin: "0 3px",
 
       "&:last-of-type": {
         textAlign: "left",
-        maxWidth: "60%",
         width: "100%",
         overflow: "hidden",
         whiteSpace: "nowrap",
         textOverflow: "ellipsis",
+        paddingLeft: '25px',
+        paddingRight: '15px',
       },
+    },
+
+    '& span': {
+      whiteSpace: 'nowrap',
     },
 
     "& svg": {
@@ -207,7 +212,7 @@ const NextBooking = (props) => {
                 title="Go to meeting"
                 onClick={() => goToMeeting(r)}
               />
-              <TypographyComponent title={moment(r.from_datetime).format("MM/DD/YYYY")} />
+              <TypographyComponent title={moment(r.from_datetime).format("MM-DD-YYYY")} />
               <TypographyComponent
                 title={moment(r.from_datetime).format("HH:mm")}
               />
@@ -231,7 +236,7 @@ const NextBooking = (props) => {
       </div>
 
       {isUpcomingMoreData && records && records.length > 0 && (
-        <div>
+        <div style={{marginBottom: '20px'}}>
           {isUpcomingLoading ? (
             <Spinner />
           ) : (

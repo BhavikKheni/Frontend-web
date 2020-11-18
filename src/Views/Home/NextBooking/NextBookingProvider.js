@@ -63,7 +63,7 @@ const useStyles = makeStyles((theme) => ({
       lineHeight: "30px",
       letterSpacing: "0.02em",
       color: "#303030",
-      minWidth: "85px",
+      minWidth: "100px",
       textAlign: "center",
       margin: "0 3px",
 
@@ -77,7 +77,12 @@ const useStyles = makeStyles((theme) => ({
       },
     },
 
+    '& span': {
+      whiteSpace: 'nowrap',
+    },
+
     "& svg": {
+      color: '#000',
       marginLeft: "auto",
     },
   },
@@ -210,7 +215,7 @@ const NextBooking = (props) => {
       </div>
 
       {isUpcomingMoreData && records && records.length > 0 && (
-        <div>
+        <div style={{marginBottom: '20px'}}>
           {isUpcomingLoading ? (
             <Spinner />
           ) : (

@@ -214,12 +214,8 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'space-between',
 
-    '& .StripeElement--empty:first-child': {
-      width: '45%'
-    },
-
-    '& .StripeElement--empty:last-child': {
-      width: '27%',
+    '& .StripeElement' : {
+      width: '100% !important',
     },
 
     '& p': {
@@ -228,6 +224,10 @@ const useStyles = makeStyles((theme) => ({
       fontSize: '12px',
       letterSpacing: '0.02em',
       color: '#FFFFFF',
+
+      '&:last-child': {
+        paddingRight: '45px',
+      }
     }
   }
 }));
@@ -252,7 +252,7 @@ const CARD_OPTIONS = {
     },
     invalid: {
       color: "#9e2146",
-    },
+    }
   },
 };
 
@@ -361,7 +361,7 @@ const PaymentMethod = (props) => {
                     <TypographyComponent title="expired on" />
                   </div>
                   <div className={classes.card_user_details}>
-                    <CardElement options={{ hidePostalCode: true }} />
+                    <CardElement options={CARD_OPTIONS} />
                   </div>
                 </div>
               </div>

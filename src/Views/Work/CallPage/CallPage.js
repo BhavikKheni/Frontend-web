@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import clsx from "clsx";
 import { Grid, InputBase, Avatar, Divider } from "@material-ui/core";
 import Rating from "@material-ui/lab/Rating";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
@@ -31,12 +32,46 @@ const DialogContent = withStyles((theme) => ({
 }))(MuiDialogContent);
 
 const useStyles = makeStyles((theme) => ({
-  search: {
-    display: "flex",
-    background: "#FFFFFF",
-    border: "2px solid #303030",
-    borderRadius: 25,
-    width: "100%",
+  video_hero_wrapper: {
+    position: 'relative',
+    minHeight: '450px',
+    border: '1px solid #d3d3d3',
+    backgroundColor: '#E5E9F8',
+
+    '& h2' : {
+      position: 'absolute',
+      left: '20px',
+      top: '20px',
+    }
+  },
+  remoteVideoContainer : {
+    height: 'calc(100vh - 148px)',
+    overflow: 'hidden',
+  },
+  remote_media_div: {
+
+    '&:empty:after' : {
+      content: "'Loading...'",
+      position: 'absolute',
+      fontSize: '60px',
+      color: '#c5c5c5',
+      left: '50%',
+      top: '50%',
+      transform: 'translate(-50%, -50%)',
+      marginTop: '-30px',
+    },
+
+    '& video' : {
+      width: '100%',
+      objectFit: 'cover',
+      height: '100%',
+      display: 'block',
+    }
+  },
+  localVideoContainer: {
+    position: 'absolute',
+    bottom: '30px',
+    right: '30px',
   },
   searchIconItem: {
     width: "100%",
@@ -52,19 +87,6 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     alignItems: "center",
     color: themes.default.colors.white,
-  },
-  inputRoot: {
-    color: themes.default.colors.darkGray,
-  },
-  inputInput: {
-    padding: theme.spacing(1, 1, 1, 0),
-    paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
-    transition: theme.transitions.create("width"),
-    width: "100%",
-  },
-  large: {
-    width: theme.spacing(20),
-    height: theme.spacing(20),
   },
 }));
 
@@ -372,64 +394,61 @@ const CallPage = (props) => {
 
   return (
     <React.Fragment>
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={10}>
-          <div className="remoteVideoContainer">
-            <div id="remote-media-div-already"></div>
-            <div id="remote-media-div"></div>
+      <div className={clsx(classes.video_hero_wrapper, 'video_hero_wrapper')}>
+        <TypographyComponent title={state.record.title} variant="h2" />
+        <div className="remoteVideoContainer">
+          <div id="remote-media-div-already"></div>
+          <div id="remote-media-div" className={classes.remote_media_div}></div>
+        </div>
+        <div className={classes.localVideoContainer}>
+          <div id="local-media" style={{ height: "150px", width: "150px" }} />
+        </div>
+        <div className="service_calling_wrapper">
+          <div className="service_calling_message">
+            <InputBase
+              placeholder="Write here"
+              inputProps={{ "aria-label": "search" }}
+              onChange={changeSearch}
+            />
+            <span className={classes.searchIconItem} onClick={onSearch}>
+              <SendIcon className={classes.searchIcon} />
+            </span>
           </div>
-          <div className="localVideoContainer">
-            <div id="local-media" style={{ height: "150px", width: "150px" }} />
-          </div>
-          <div className="start_work_hero_left">
-            <div className="service_calling_wrapper">
-              <div className="service_calling_message">
-                <InputBase
-                  placeholder="Search"
-                  inputProps={{ "aria-label": "search" }}
-                  onChange={changeSearch}
-                />
-                <span className={classes.searchIconItem} onClick={onSearch}>
-                  <SendIcon className={classes.searchIcon} />
-                </span>
-              </div>
-              <div className="service_calling_option">
-                {audio ? (
-                  <MicIcon
-                    onClick={() => audioTracksdisable()}
-                    className="owera_link"
-                  />
-                ) : (
-                  <MicOffIcon
-                    onClick={() => audioTracksdisable()}
-                    className="owera_link"
-                  />
-                )}
-                {onVideo ? (
-                  <VideocamIcon
-                    onClick={() => videoTracksdisable()}
-                    className="owera_link"
-                  />
-                ) : (
-                  <VideocamOffIcon
-                    onClick={() => videoTracksdisable()}
-                    className="owera_link"
-                  />
-                )}
-                <DesktopWindowsIcon className="owera_link" />
-                <div
-                  onClick={() => {
-                    onEndCall();
-                  }}
-                  style={{ cursor: "pointer" }}
-                >
-                  <CallEndIcon />
-                </div>
-              </div>
+          <div className="service_calling_option">
+            {audio ? (
+              <MicIcon
+                onClick={() => audioTracksdisable()}
+                className="owera_link"
+              />
+            ) : (
+              <MicOffIcon
+                onClick={() => audioTracksdisable()}
+                className="owera_link"
+              />
+            )}
+            {onVideo ? (
+              <VideocamIcon
+                onClick={() => videoTracksdisable()}
+                className="owera_link"
+              />
+            ) : (
+              <VideocamOffIcon
+                onClick={() => videoTracksdisable()}
+                className="owera_link"
+              />
+            )}
+            <DesktopWindowsIcon className="owera_link" />
+            <div
+              onClick={() => {
+                onEndCall();
+              }}
+              style={{ cursor: "pointer" }}
+            >
+              <CallEndIcon />
             </div>
           </div>
-        </Grid>
-      </Grid>
+        </div>
+      </div>
       <ConfirmPopupForLeavingCall
         handleClosePopup={handleClosePopup}
         openConfirmPopup={isOpenConfirmPopup}

@@ -86,7 +86,7 @@ const AddBookingSlotCalendar = (props) => {
   return (
     <React.Fragment>
       {id_service && (
-        <section className="add-booking-space">
+        <section className="add-booking-space" style={{position: 'relative'}}>
           <h3>Add Booking Space</h3>
           <div className="service_calendar">
             <CalendarComponent
@@ -96,19 +96,18 @@ const AddBookingSlotCalendar = (props) => {
               onSelectDate={(e) => setSelectedDate(e)}
               onDateChange={() => {getSlotDetails()}}
             />
+            <div className="booking_time">
+              <AddBookingSlotSideBar
+                onAddBookingCalendar={(data) => onAddBookingCalendar(data)}
+                user={user}
+                selectedService={editRecord}
+                getSelectedDateTime={getSelectedDateTime}
+              />
+            </div>
           </div>
         </section>
       )}
-      {id_service && (
-        <div className="booking_time">
-          <AddBookingSlotSideBar
-            onAddBookingCalendar={(data) => onAddBookingCalendar(data)}
-            user={user}
-            selectedService={editRecord}
-            getSelectedDateTime={getSelectedDateTime}
-          />
-        </div>
-      )}
+      
     </React.Fragment>
   );
 };

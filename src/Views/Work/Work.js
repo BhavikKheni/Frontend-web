@@ -608,7 +608,7 @@ const Work = (props) => {
                           title={service.title}
                           className="work_service_title"
                         />
-                        {service.reviews &&
+                        {service.reviews && service.reviews.length &&
                           service.reviews.map((review, index) => {
                             return (
                               <React.Fragment key={index}>

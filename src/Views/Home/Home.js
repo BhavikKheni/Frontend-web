@@ -122,7 +122,7 @@ const Home = (props) => {
       <section className="next-booking">
         <NextBookingProvider user={user} />
       </section>
-      <section className="next-booking">
+      <section className="next-booking" style={{marginTop: '60px'}}>
         <NextBooking user={user} />
       </section>
       <section className={clsx(Styles.service_history)}>
