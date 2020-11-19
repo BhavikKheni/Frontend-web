@@ -4,7 +4,7 @@ import { makeStyles, withStyles } from "@material-ui/core/styles";
 import MuiDialogContent from "@material-ui/core/DialogContent";
 import TypographyComponent from "../../../../Components/Typography/Typography";
 import { useTranslation } from "react-i18next";
-import NextArrow from "../../../../images/next_arrow_white.svg";
+import RightArrow from  "../../../../images/next_arrow_white.svg";
 import DialogComponent from "../../../../Components/Dialog/Dialog";
 import { themes } from "../../../../themes";
 import { add } from "../../../../Services/Auth.service";
@@ -21,31 +21,56 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     justifyContent: "flex-end",
     alignItems: "center",
+    marginTop: '35px',
+
+    '& button': {
+      fontSize: '16px',
+      fontWeight: 'normal',
+      letterSpacing: '0.02em',
+      borderRadius: '10px',
+      color: "#fff",
+      height: '48px',
+      minWidth: '107px',
+      padding: '10px 21px',
+      textTransform: 'inherit',
+      cursor: "pointer",
+      margin: '0',
+
+      '&:after': {
+        content: "''",
+        backgroundImage: `url(${RightArrow})`,
+        height: '20px',
+        width: '12px',
+        backgroundSize: 'cover',
+        backgroundRepeat: 'no-repeat',
+        marginLeft: '5px',
+      },
+
+      '&.Mui-disabled': {
+        '&:after': {
+          display: 'none',
+        },
+      },
+    },
   },
   continueCallBtn: {
     backgroundColor: "#2FB41A",
-    borderRadius: 10,
-    height: 48,
-    padding: 12,
-    color: "#fff",
-    display: "flex",
-    alignItems: "center",
-    cursor: "pointer",
+    marginLeft: '10px !important',
   },
   endCallBtn: {
     backgroundColor: "#FF0000",
-    borderRadius: 10,
-    border: "1px solid #FF0000",
-    height: 48,
-    padding: 12,
-    color: "#fff",
-    display: "flex",
-    alignItems: "center",
-    cursor: "pointer",
 
-    "& .MuiButton-startIcon": {
-      margin: "0 auto",
+    '&:after': {
+      width: '14px !important',
     },
+
+    '&:hover' : {
+      backgroundColor: '#FF0000',
+    },
+
+    '& .MuiButton-startIcon': {
+      margin: '0 auto',
+    }
   },
   endCallMessage: {
     color: "#fff",
@@ -108,34 +133,36 @@ const ConfirmPopupForLeavingCall = (props) => {
         open={openConfirmPopup}
         title={t("video-call.title")}
       >
-        <DialogContent>
-          <TypographyComponent
-            title={t("video-call.message")}
-            className={classes.endCallMessage}
-          />
-          <div className={classes.endCallWrapper}>
-            <ButtonComponent
-              title="Leave"
-              onClick={() => {
-                onLeaveCall();
-              }}
-              className={classes.endCallBtn}
-              startIcon={isLoading && <Spinner size={20} />}
-              loader={isLoading}
-              disabled={isDisable}
+        <div className="dialog_container">
+          <DialogContent>
+            <TypographyComponent
+              title={t("video-call.message")}
+              className={classes.endCallMessage}
             />
-            <ButtonComponent
-              onClick={() => {
-                onContinueCall();
-              }}
-              title="Continue with call"
-              className={classes.continueCallBtn}
-              // startIcon={isLoading && <Spinner size={20} />}
-              // loader={isLoading}
-              // disabled={isDisable}
-            />
-          </div>
-        </DialogContent>
+            <div className={classes.endCallWrapper}>
+              <ButtonComponent
+                title="Leave"
+                onClick={() => {
+                  onLeaveCall();
+                }}
+                className={classes.endCallBtn}
+                startIcon={isLoading && <Spinner size={20} />}
+                loader={isLoading}
+                disabled={isDisable}
+              />
+              <ButtonComponent
+                onClick={() => {
+                  onContinueCall();
+                }}
+                title="Continue with call"
+                className={classes.continueCallBtn}
+                // startIcon={isLoading && <Spinner size={20} />}
+                // loader={isLoading}
+                // disabled={isDisable}
+              />
+            </div>
+          </DialogContent>
+        </div>
       </DialogComponent>
     </React.Fragment>
   );

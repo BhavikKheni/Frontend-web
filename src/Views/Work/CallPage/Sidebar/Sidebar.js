@@ -9,19 +9,88 @@ import SelectComponent from "../../../../Components/Forms/Select";
 import Spinner from "../../../../Components/Spinner/Spinner";
 
 const useStyles = makeStyles((theme) => ({
-  call_timer_left: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
+  call_sidebar_avatar: {
+    width: '187px',
+    height: '187px',
+    borderRadius: '50%',
+    overflow: 'hidden',
+    margin: '0 auto 30px',
+
+    '& img': {
+      width: '187px',
+      height: '187px',
+    },
+    
+    '& .MuiAvatar-root': {
+      width: '187px',
+      height: '187px',
+    },
   },
-  timer_item: {
-    marginTop: 10,
+  caller_username : {
+    fontFamily: 'Rubik',
+    fontSize: '18px',
+    lineHeight: '30px',
+    letterSpacing: '0.02em',
+    color: '#303030',
+  },
+  call_remaining_time : {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: '20px',
+    marginBottom: '5px',
+  },
+  call_time_wrapper: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: '15px',
   },
   call_page_timer: {
-    background: "#CFE9CB",
-    border: "1px solid #191919",
-    borderRadius: "10px",
-    padding: "10px",
+    fontFamily: 'Rubik',
+    fontSize: '16px',
+    lineHeight: '33px',
+    letterSpacing: '0.02em',
+    color: '#191919',
+    border: '1px solid #191919',
+    padding: '10px',
+    backgroundColor: '#CFE9CB',
+    borderRadius: '10px',
+    // width: '86px',
+    width: '78px',
+    height: '55px',
+    display: 'block',
+    textAlign: 'center',
+  },
+  call_total_time : {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    margin: '5px 0 15px',
+
+    '& P': {
+      fontFamily: 'Rubik',
+      fontSize: '24px',
+      lineHeight: '30px',
+      letterSpacing: '0.02em',
+      color: '#303030',
+    }
+  },
+  
+  call_select: {
+    '& .MuiFormControl-root': {
+      width: '100%',
+    },
+
+    '& label:not(.Mui-focused)': {
+      lineHeight: '12px',
+      marginLeft: '10px',
+    },
+
+    '& fieldset': {
+      border: '1px solid #303030',
+      borderRadius: '10px',
+    }
   },
 }));
 
@@ -54,21 +123,25 @@ const CallPageSidebar = (props) => {
   return (
     <React.Fragment>
       {!record.provider_profile_image ? (
-        <ImageComponent />
+        <div className={classes.call_sidebar_avatar}>
+          <ImageComponent />
+        </div>
       ) : (
-        <Avatar src={record.provider_profile_image} />
+        <div className={classes.call_sidebar_avatar}>
+          <Avatar src={record.provider_profile_image} />
+        </div>
       )}
-      <TypographyComponent title={`${record.provider_name}`} />
+      <TypographyComponent title={`${record.provider_name}`} className={classes.caller_username} />
       <Divider className="divider" />
-      <div className="call-time">
+      <div className={classes.call_remaining_time}>
         <TypographyComponent title="Time left" />
-        {sessionLoader ? <Spinner /> : <span id="remainingDuration"></span>}
+        {sessionLoader ? <Spinner /> : <p><b id="remainingDuration"></b></p>}
       </div>
-      <div className="stay-Longer">
-        <span>Stay Longer?</span>
+      <div>
+        <p><b>Stay Longer?</b></p>
         {/* <img src={ArrowIcon} alt="stay longer" /> */}
       </div>
-      <div className={classes.timer_item}>
+      <div className={classes.call_time_wrapper}>
         <span
           id="timer-15"
           onClick={() => {
@@ -97,30 +170,32 @@ const CallPageSidebar = (props) => {
           60 min
         </span>
       </div>
-      <div>
+      <div className={classes.call_total_time}>
         <TypographyComponent title="Total:" />
         <TypographyComponent title={`${getTotalCost} CHF`} />
       </div>
-      <FormControl variant="outlined">
-        <SelectComponent
-          name="select card"
-          label="Select card"
-          value={selectCard}
-          onChange={(e) => {
-            setSelectCard(e.target.value);
-          }}
-          native
-        >
-          {cardList &&
-            cardList.map((l, index) => {
-              return (
-                <option key={index} value={l.card_token_id}>
-                  {l.card_token_id}
-                </option>
-              );
-            })}
-        </SelectComponent>
-      </FormControl>
+      <div className={classes.call_select}>
+        <FormControl variant="outlined">
+          <SelectComponent
+            name="select card"
+            label="Select card"
+            value={selectCard}
+            onChange={(e) => {
+              setSelectCard(e.target.value);
+            }}
+            native
+          >
+            {cardList &&
+              cardList.map((l, index) => {
+                return (
+                  <option key={index} value={l.card_token_id}>
+                    {l.card_token_id}
+                  </option>
+                );
+              })}
+          </SelectComponent>
+        </FormControl>
+      </div>
     </React.Fragment>
   );
 };

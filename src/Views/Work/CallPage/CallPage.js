@@ -30,6 +30,20 @@ import Sidebar from "./Sidebar/Sidebar";
 import "./callpage.css";
 const useSession = () => React.useContext(SessionContext);
 const useStyles = makeStyles((theme) => ({
+  
+  call_sidebar: {
+    '& p': {
+      fontFamily: 'Rubik',
+      fontSize: '18px',
+      lineHeight: '30px',
+      color: '#303030',
+  
+      '& b': {
+        fontWeight: 500
+      }
+    },
+  },
+  
   video_hero_wrapper: {
     position: "relative",
     minHeight: "450px",
@@ -84,6 +98,15 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     alignItems: "center",
     color: themes.default.colors.white,
+  },
+  service_calling_option_provider: {
+    position: 'absolute',
+    top: '20px',
+    right: '20px',
+
+    '& svg': {
+      pointerEvents: 'none'
+    }
   },
 }));
 
@@ -186,7 +209,7 @@ const CallPage = (props) => {
   useEffect(() => {
     setSidebar(true);
     setSidebarContent(
-      <div style={{ margin: 20 }}>
+      <div className={classes.call_sidebar}>
         <Sidebar
           record={state.record}
           sessionLoader={sessionLoader}
@@ -396,7 +419,7 @@ const CallPage = (props) => {
         <div className="remoteVideoContainer">
           <div id="remote-media-div-already"></div>
           <div id="remote-media-div" className={classes.remote_media_div}></div>
-          <div className="service_calling_option">
+          <div className={clsx(classes.service_calling_option_provider, "service_calling_option")}>
             {isRemoteAudioMute ? (
               <MicIcon className="owera_link" />
             ) : (
