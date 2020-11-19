@@ -163,7 +163,6 @@ const AddBookingSidebar = forwardRef((props, ref) => {
       ),
       to_datetime: moment(`${date} ${getToTime}`).format("YYYY-MM-DD HH:mm:ss"),
     };
-    console.log(data);
     setLoading(true);
     setDisabled(true);
     add("/service/book", data)
@@ -229,8 +228,9 @@ const AddBookingSidebar = forwardRef((props, ref) => {
           title="Confirm"
           type="button"
           onClick={() => {
-            // onAddBooking();
-            setOpen(true);
+            if (getFromTime && getToTime) {
+              setOpen(true);
+            }
           }}
           className={"confirm_cta"}
         />

@@ -20,7 +20,7 @@ import { LOCALSTORAGE_DATA } from "../../../utils";
 import ChangePassword from "../../../Components/ChangePassword/ChangePassword";
 import { serverLogout } from "../../../Services/Auth.service";
 import "./UserUpdateProfile.css";
-import ConfirmDialog from "../../../Components/ConfirmDialog/ConfirmDialog";
+import ConfirmDialog from '../../../Components/ConfirmDialog/ConfirmDialog'
 const service = new Service();
 const useSession = () => React.useContext(SessionContext);
 
@@ -673,6 +673,7 @@ const UpdateProfile = (props) => {
         </DialogComponent>
       </div>
       {/* confirmataion dialog for delete profile */}
+    
       <ConfirmDialog
         open={openDeleteConfirmationDialog}
         onClose={() => setOpenDeleteConfirmationDialog(false)}
@@ -681,7 +682,7 @@ const UpdateProfile = (props) => {
         loader={deleteLoader}
         disabled={deleteDisabled}
       />
-      {/* confirmataion dialog for deactivate profile */}
+        {/* confirmataion dialog for deactivate profile */}
       <ConfirmDialog
         open={openDeactivateConfirmationDialog}
         onClose={() => setOpenDeactivateConfirmationDialog(false)}
@@ -690,6 +691,7 @@ const UpdateProfile = (props) => {
         loader={deActivateLoader}
         disabled={deActivateDisabled}
       />
+      
       <SnackBarComponent
         open={openErrorSnackBar}
         onClose={handleClose}

@@ -49,25 +49,23 @@ const ConfirmDialog = (props) => {
         title={props.title || "Alert"}
         className={classes.alert_modal}
       >
-        <div className="dialog_container">
-          <DialogContent>
-            <TypographyComponent
-              title={
-                props.header
-                  ? props.header
-                  : "Are you sure you want to continue with this?"
-              }
-            />
-            <ButtonComponent
-              className={classes.confirm_cta}
-              onClick={() => props.onConfirm()}
-              title="Ok"
-              startIcon={props.loader && <Spinner />}
-              loader={props.loader && props.loader}
-            />
-            <ButtonComponent onClick={() => props.onCancel()} title="Cancel" className={classes.cancel_cta} />
-          </DialogContent>
-        </div>
+        <DialogContent>
+          <TypographyComponent
+            title={
+              props.header
+                ? props.header
+                : "Are you sure you want to continue with this?"
+            }
+          />
+          <ButtonComponent
+            onClick={() => props.onConfirm()}
+            title="Ok"
+            startIcon={props.loader && <Spinner />}
+            loader={props.loader && props.loader}
+            disabled={props.disabled && props.disabled}
+          />
+          <ButtonComponent onClick={() => props.onCancel()} title="Cancel" />
+        </DialogContent>
       </DialogComponent>
     </React.Fragment>
   );

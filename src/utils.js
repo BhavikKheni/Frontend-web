@@ -18,7 +18,12 @@ export const languages_level = [
   { language_level_id: 2, label: "INTERMEDIATE" },
   { language_level_id: 3, label: "ADVANCED" },
 ];
-
+export const scrollToSection = (sectionName) => {
+  var elementCalendar = document.getElementsByClassName(sectionName);
+  if (elementCalendar[0]) {
+    elementCalendar[0].scrollIntoView();
+  }
+};
 export function countdown(elementName, minutes, seconds) {
   var element, endTime, hours, mins, msLeft, time;
 
@@ -43,5 +48,7 @@ export function countdown(elementName, minutes, seconds) {
 
   element = document.getElementById(elementName);
   endTime = +new Date() + 1000 * (60 * minutes + seconds) + 500;
-  updateTimer();
+  if(element){
+    updateTimer();
+  }
 }

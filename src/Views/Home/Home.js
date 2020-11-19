@@ -10,9 +10,10 @@ import MyServiceHistory from "./MyServiceHistory/MyServiceHistory";
 import NextBooking from "./NextBooking/NextBooking";
 import NextBookingProvider from "./NextBooking/NextBookingProvider";
 import PaymentMethod from "./PaymentMethod/PaymentMethod";
-import AddBookingSidebar from "../../Components/Booking/AddBookingSidebar/AddBookingSidebar";
 import Styles from "./home.module.css";
-
+import HomeWrapper from "./HomeWrapper";
+import { scrollToSection } from "../../utils";
+import AddBookingSidebar from "../../Components/Booking/AddBookingSidebar/AddBookingSidebar";
 const useSession = () => React.useContext(SessionContext);
 
 const Home = (props) => {
@@ -34,54 +35,54 @@ const Home = (props) => {
           <React.Fragment>
             <MenuItem
               component={Link}
-              to="/messages"
-              selected={pathname === "/messages"}
+              to="/home/messages"
+              selected={pathname === "/home/messages"}
             >
               {t("home.messages")}
             </MenuItem>
             <MenuItem
+              component={Link}
+              to="/home/calendar"
+              selected={pathname === "/home/calendar"}
               onClick={() => {
-                var elmnt = document.getElementsByClassName("calendar");
-                if (elmnt[0]) {
-                  elmnt[0].scrollIntoView();
-                }
+                scrollToSection("calendar");
               }}
             >
               {t("home.myCalendar.title")}
             </MenuItem>
             <MenuItem
+              component={Link}
+              to="/home/next-booking"
+              selected={pathname === "/home/next-booking"}
               onClick={() => {
-                var elmnt = document.getElementsByClassName("next-booking");
-                if (elmnt[0]) {
-                  elmnt[0].scrollIntoView();
-                }
+                scrollToSection("next_booking");
               }}
             >
               {t("home.nextBookings")}
             </MenuItem>
             <MenuItem
+              component={Link}
+              to="/home/service-history"
+              selected={pathname === "/home/service-history"}
               onClick={() => {
-                var elmnt = document.getElementsByClassName("service-history");
-                if (elmnt[0]) {
-                  elmnt[0].scrollIntoView();
-                }
+                scrollToSection("service_history");
               }}
             >
               {t("home.myServiceHistory")}
             </MenuItem>
             <MenuItem
               component={Link}
-              to="/profile"
-              selected={pathname === "/profile"}
+              to="/home/profile"
+              selected={pathname === "/home/profile"}
             >
               {t("home.myProfile")}
             </MenuItem>
             <MenuItem
+              component={Link}
+              to="/home/payment-methods"
+              selected={pathname === "/home/payment-methods"}
               onClick={() => {
-                var elmnt = document.getElementsByClassName("payment-method");
-                if (elmnt[0]) {
-                  elmnt[0].scrollIntoView();
-                }
+                scrollToSection("payment_methods");
               }}
             >
               {t("home.paymentMethods")}
@@ -111,24 +112,34 @@ const Home = (props) => {
   }, [setSidebarContent, setSidebar, t, pathname, isLoggedIn, user]);
 
   useEffect(() => {
-    var elmnt = document.getElementsByClassName("next-booking");
-    if (elmnt[0]) {
-      elmnt[0].scrollIntoView();
+    if (pathname === "/home/next-booking") {
+      scrollToSection("next_booking");
+    } else if (pathname === "/home/payment-methods") {
+      scrollToSection("payment_methods");
+    } else if (pathname === "/home/next_booking") {
+      scrollToSection("next_booking");
+    } else if (pathname === "/home/next_booking") {
+      scrollToSection("next_booking");
+    } else if (pathname === "/home/calendar") {
+      scrollToSection("calendar");
+    } else if (pathname === "/home/service_history") {
+      scrollToSection("service_history");
     }
-  }, []);
+  }, [pathname]);
 
   return (
     <div className={clsx(Styles.home_page)}>
-      <section className="next-booking">
+      <HomeWrapper> </HomeWrapper>
+      <section className="next_booking">
         <NextBookingProvider user={user} />
       </section>
-      <section className="next-booking" style={{marginTop: '60px'}}>
+      <section className="next_booking" style={{ marginTop: "60px" }}>
         <NextBooking user={user} />
       </section>
-      <section className={clsx(Styles.service_history)}>
+      <section className={clsx(Styles.service_history, "service_history")}>
         <MyServiceHistory user={user} />
       </section>
-      <section className="payment-method">
+      <section className="payment_methods">
         <PaymentMethod />
       </section>
       <section className="calendar">

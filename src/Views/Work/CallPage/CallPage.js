@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import clsx from "clsx";
 import { Grid, InputBase, Avatar, Divider } from "@material-ui/core";
-import Rating from "@material-ui/lab/Rating";
+import { withRouter } from "react-router-dom";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import MuiDialogContent from "@material-ui/core/DialogContent";
 import SendIcon from "@material-ui/icons/Send";
@@ -24,55 +24,51 @@ import { connect, createLocalTracks } from "twilio-video";
 import ConfirmPopupForLeavingCall from "./ConfirmPopup/ConfirmPopup";
 import { SessionContext } from "../../../Provider/Provider";
 import moment from "moment";
+import SnackBarComponent from "../../../Components/SnackBar/SnackBar";
+import { countdown } from "../../../utils";
+import Sidebar from "./Sidebar/Sidebar";
 import "./callpage.css";
 const useSession = () => React.useContext(SessionContext);
-const DialogContent = withStyles((theme) => ({
-  root: {
-    padding: theme.spacing(2),
-  },
-}))(MuiDialogContent);
-
 const useStyles = makeStyles((theme) => ({
   video_hero_wrapper: {
-    position: 'relative',
-    minHeight: '450px',
-    border: '1px solid #d3d3d3',
-    backgroundColor: '#E5E9F8',
+    position: "relative",
+    minHeight: "450px",
+    border: "1px solid #d3d3d3",
+    backgroundColor: "#E5E9F8",
 
-    '& h2' : {
-      position: 'absolute',
-      left: '20px',
-      top: '20px',
-    }
+    "& h2": {
+      position: "absolute",
+      left: "20px",
+      top: "20px",
+    },
   },
-  remoteVideoContainer : {
-    height: 'calc(100vh - 148px)',
-    overflow: 'hidden',
+  remoteVideoContainer: {
+    height: "calc(100vh - 148px)",
+    overflow: "hidden",
   },
   remote_media_div: {
-
-    '&:empty:after' : {
+    "&:empty:after": {
       content: "'Loading...'",
-      position: 'absolute',
-      fontSize: '60px',
-      color: '#c5c5c5',
-      left: '50%',
-      top: '50%',
-      transform: 'translate(-50%, -50%)',
-      marginTop: '-30px',
+      position: "absolute",
+      fontSize: "60px",
+      color: "#c5c5c5",
+      left: "50%",
+      top: "50%",
+      transform: "translate(-50%, -50%)",
+      marginTop: "-30px",
     },
 
-    '& video' : {
-      width: '100%',
-      objectFit: 'cover',
-      height: '100%',
-      display: 'block',
-    }
+    "& video": {
+      width: "100%",
+      objectFit: "cover",
+      height: "100%",
+      display: "block",
+    },
   },
   localVideoContainer: {
-    position: 'absolute',
-    bottom: '30px',
-    right: '30px',
+    position: "absolute",
+    bottom: "30px",
+    right: "30px",
   },
   searchIconItem: {
     width: "100%",
@@ -100,44 +96,21 @@ const CallPage = (props) => {
   const [service_quality, setServiceQuality] = useState();
   const { setSidebarContent, setSidebar } = useSidebar();
   const [endCallOpen, setEndCallOpen] = useState(false);
+  const [openSnackBar, setOpenSnackBar] = React.useState(false);
+  const [setRes, setTypeRes] = React.useState("");
   const { state = {} } = props && props.location;
   const [room, setRoom] = useState(null);
-  const [isLoading, setLoading] = useState(false);
   const [audio, setAudio] = useState(true);
   const [onVideo, setVideo] = useState(true);
   const [isOpenConfirmPopup, openConfirmPopup] = useState(false);
   const [getTotalCost, setTotalCost] = useState(null);
   const bookingId = state.record && state.record.id_booking;
-
-  let [userData, setUserData] = useState({
-    first_name: "",
-    last_name: "",
-    image: "",
-  });
-
+  const [sessionLoader, setSessionLoader] = useState(false);
+  const [isRemoteVideoMute, setRemoteVideoMute] = useState(true);
+  const [isRemoteAudioMute, setRemoteAudioMute] = useState(true);
   const onSearch = (e) => {
     e.preventDefault();
   };
-
-  useEffect(() => {
-    console.log("state.record: ", state.record);
-    async function getData() {
-      setLoading(true);
-      const res = await get(`/profile/${user.id_user}`).catch((err) => {
-        setLoading(false);
-      });
-
-      if (res) {
-        setUserData({
-          ...res.data,
-        });
-        setLoading(false);
-      } else {
-        setLoading(false);
-      }
-    }
-    getData();
-  }, [state]);
 
   useEffect(() => {
     const timer =
@@ -145,22 +118,38 @@ const CallPage = (props) => {
     return () => clearInterval(timer);
   }, [counter]);
 
-  const [remainingDuration, setRemainingDuration] = useState(state.record.duration);
+  const [remainingDuration, setRemainingDuration] = useState(
+    state.record.duration
+  );
 
   useEffect(() => {
-    setInterval(() => {
-      updateSessionToBackend();
-    }, 5000);
+    if (room) {
+      countdown("remainingDuration", remainingDuration, 0);
+      if (remainingDuration > 1) {
+        setInterval(() => {
+          updateSessionToBackend();
+        }, 300000);
+      }
+    }
     // return () => clearInterval(timer);
-  }, []);
-
+  }, [room, remainingDuration]);
 
   const updateSessionToBackend = () => {
-    console.log("1111", remainingDuration);
-    const a = remainingDuration - 1;
-    setRemainingDuration(a);
-    console.log("222", remainingDuration);
-    console.log("3333", parseInt(remainingDuration)-1);
+    const params = {
+      user_id: user.id_user,
+      booking_id: bookingId,
+    };
+    setSessionLoader(true);
+    add("/video/end", params)
+      .then((response) => {
+        if (response) {
+          setRemainingDuration(0);
+          setSessionLoader(false);
+        }
+      })
+      .catch((err) => {
+        setSessionLoader(false);
+      });
   };
 
   const calculatePrice = (get_from_time, get_to_time) => {
@@ -173,11 +162,18 @@ const CallPage = (props) => {
     const totalCost = finalTime * pricePerMinute;
     setTotalCost(totalCost);
   };
-
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenSnackBar(false);
+  };
   useEffect(() => {
-    calculatePrice(moment(state.record.from_datetime).format("HH:mm"), moment(state.record.to_datetime).format("HH:mm"));
-  }, [state.record.from_datetime, state.record.to_datetime])
-
+    calculatePrice(
+      moment(state.record.from_datetime).format("HH:mm"),
+      moment(state.record.to_datetime).format("HH:mm")
+    );
+  }, [state.record.from_datetime, state.record.to_datetime]);
 
   // Function will convert 13:45 time to minutes
   const getTimeInMinutes = (time) => {
@@ -191,67 +187,19 @@ const CallPage = (props) => {
     setSidebar(true);
     setSidebarContent(
       <div style={{ margin: 20 }}>
-        {isLoading ? (
-          <Spinner />
-        ) : (
-          <React.Fragment>
-            <Avatar className={classes.large} src={state.record.provider_profile_image} />
-            <TypographyComponent
-              title={`${state.record.provider_name}`}
-            />
-            <Divider className="divider" />
-            <div className="call-time">
-              <TypographyComponent title="Time left" />
-              <TypographyComponent title={remainingDuration} />
-            </div>
-            {/* <div className="stay-Longer">
-              <span>Stay Longer?</span>
-            </div>
-            <div>
-              <span
-                id="timer-15"
-                onClick={() => {
-                  setDynamicCounter(900);
-                  setTimerID("timer-15");
-                }}
-              >
-                {!timerId && "15 min"}
-              </span>
-              <span
-                onClick={() => {
-                  setDynamicCounter(1800);
-                  setTimerID("timer-30");
-                }}
-                id="timer-30"
-              >
-                30 min
-              </span>
-              <span
-                onClick={() => {
-                  setDynamicCounter(3600);
-                  setTimerID("timer-60");
-                }}
-                id="timer-60"
-              >
-                60 min
-              </span>
-            </div> */}
-            <div>
-              <TypographyComponent title="Total:" />
-              <TypographyComponent title={`${getTotalCost} CHF`} />
-            </div>
-          </React.Fragment>
-        )}
+        <Sidebar
+          record={state.record}
+          sessionLoader={sessionLoader}
+          getTotalCost={getTotalCost}
+        />
       </div>
     );
   }, [
     setSidebarContent,
     setSidebar,
-    classes.large,
-    isLoading,
-    userData.first_name,
-    userData.last_name,
-    userData.image,
+    state.record,
+    sessionLoader,
+    getTotalCost,
   ]);
 
   const onEndCall = () => {
@@ -264,9 +212,7 @@ const CallPage = (props) => {
 
   const onReportAbuse = () => {};
 
-  const onLeave = () => {
-
-  };
+  const onLeave = () => {};
 
   const audioTracksdisable = () => {
     room.localParticipant.audioTracks.forEach((publication) => {
@@ -282,16 +228,25 @@ const CallPage = (props) => {
     });
   };
   const videoTracksdisable = () => {
-    // handle video call here
-    room.localParticipant.videoTracks.forEach((publication) => {
-      if (onVideo) {
-        setVideo(false);
+    //handle video call here
+    const localMediaContainer = document.getElementById("local-media");
+    if (onVideo) {
+      setVideo(false);
+      room.localParticipant.videoTracks.forEach((publication) => {
         publication.track.disable();
-      } else {
-        setVideo(true);
+      });
+      localMediaContainer.innerHTML = "";
+    } else {
+      setVideo(true);
+      localMediaContainer.innerHTML = "";
+      console.log("local video enabled");
+
+      room.localParticipant.videoTracks.forEach((publication) => {
         publication.track.enable();
-      }
-    });
+
+        localMediaContainer.appendChild(publication.track.attach());
+      });
+    }
   };
 
   const onFinish = useCallback(() => {
@@ -314,15 +269,33 @@ const CallPage = (props) => {
       participant.on("trackSubscribed", (track) => {
         attachTrack(track, document.getElementById("remote-media-div"));
       });
+      participant.on("trackDisabled", (track) => {
+        if (track.kind === "audio") {
+          console.log("remote audio track disabled", track);
+          setRemoteAudioMute(false);
+        }
+        if (track.kind === "video") {
+          console.log("remote video track disabled", track);
+          setRemoteVideoMute(false);
+        }
+      });
+      participant.on("trackEnabled", (track) => {
+        if (track.kind === "audio") {
+          console.log("remote audio track enabled", track);
+          setRemoteAudioMute(true);
+          /****************/
+          /****************/
+        }
+        if (track.kind === "video") {
+          console.log("remote video track enabled", track);
+          setRemoteVideoMute(true);
+          /****************/
+          /****************/
+        }
+      });
     }
-
     add("/video/join", params).then((res) => {
-      // Temporary code start - This code will execute if the auth token is invalid/expired/not-logged-in
-      console.log(res);
-
-      // Temporary code end
-
-      let video_token = res.data.video_token;
+      const { video_token = "" } = res && res.data;
 
       createLocalTracks({
         audio: true,
@@ -357,8 +330,10 @@ const CallPage = (props) => {
           });
 
           room.on("participantConnected", (participant) => {
+            /****************/
+            /****************/
             console.log(`Participant "${participant.identity}" connected`);
-
+            document.getElementById("remote-media-div").innerHTML = "";
             participant.tracks.forEach((publication) => {
               if (publication.isSubscribed) {
                 const track = publication.track;
@@ -374,12 +349,6 @@ const CallPage = (props) => {
                 .appendChild(track.attach());
             });
             room.participants.forEach((participant) => {
-              // participant.tracks.forEach((track) => {
-              //   document
-              //     .getElementById("remote-media-div")
-              //     .appendChild(track.attach());
-              // });
-
               participant.on("trackAdded", (track) => {
                 document
                   .getElementById("remote-media-div")
@@ -387,13 +356,26 @@ const CallPage = (props) => {
               });
             });
           });
+          room.on("participantDisconnected", (participant) => {
+            /****************/
+            /****************/
+            updateSessionToBackend();
+            console.log(`Participant disconnected: ${participant.identity}`);
+            document.getElementById("remote-media-div").innerHTML = "";
+          });
         },
         (error) => {
+          props.history.push("/");
+          setOpenSnackBar(openSnackBar);
+          setTypeRes({
+            message: error.message,
+            type: "error",
+          });
           console.error(`Unable to connect to Room: ${error.message}`);
         }
       );
     });
-  }, [bookingId, user.id_user]);
+  }, [bookingId, user.id_user, openSnackBar, props.history]);
 
   useEffect(() => {
     onFinish();
@@ -403,13 +385,29 @@ const CallPage = (props) => {
     openConfirmPopup(false);
   };
 
+  const disconnectRoom = () => {
+    setRoom(null);
+  };
+
   return (
     <React.Fragment>
-      <div className={clsx(classes.video_hero_wrapper, 'video_hero_wrapper')}>
+      <div className={clsx(classes.video_hero_wrapper, "video_hero_wrapper")}>
         <TypographyComponent title={state.record.title} variant="h2" />
         <div className="remoteVideoContainer">
           <div id="remote-media-div-already"></div>
           <div id="remote-media-div" className={classes.remote_media_div}></div>
+          <div className="service_calling_option">
+            {isRemoteAudioMute ? (
+              <MicIcon className="owera_link" />
+            ) : (
+              <MicOffIcon className="owera_link" />
+            )}
+            {isRemoteVideoMute ? (
+              <VideocamIcon className="owera_link" />
+            ) : (
+              <VideocamOffIcon className="owera_link" />
+            )}
+          </div>
         </div>
         <div className={classes.localVideoContainer}>
           <div id="local-media" style={{ height: "150px", width: "150px" }} />
@@ -462,12 +460,23 @@ const CallPage = (props) => {
       <ConfirmPopupForLeavingCall
         handleClosePopup={handleClosePopup}
         openConfirmPopup={isOpenConfirmPopup}
+        disconnectRoom={disconnectRoom}
         room={room}
         booking_id={bookingId}
         user_id={user.id_user}
+      />
+      <SnackBarComponent
+        open={openSnackBar}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        message={setRes.message}
+        type={setRes.type && setRes.type.toLowerCase()}
       />
     </React.Fragment>
   );
 };
 
-export default CallPage;
+export default withRouter(CallPage);

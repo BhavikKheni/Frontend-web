@@ -43,9 +43,9 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "center",
     cursor: "pointer",
 
-    '& .MuiButton-startIcon': {
-      margin: '0 auto',
-    }
+    "& .MuiButton-startIcon": {
+      margin: "0 auto",
+    },
   },
   endCallMessage: {
     color: "#fff",
@@ -57,9 +57,11 @@ const ConfirmPopupForLeavingCall = (props) => {
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const [isDisable, setIsDisable] = useState(false);
-  const { handleClosePopup, openConfirmPopup, room } = props;
+  const { handleClosePopup, openConfirmPopup, room, disconnectRoom } = props;
 
-  const onContinueCall = () => {};
+  const onContinueCall = () => {
+    handleClosePopup();
+  };
 
   const onReportAbuse = () => {};
 
@@ -72,7 +74,7 @@ const ConfirmPopupForLeavingCall = (props) => {
     setIsDisable(true);
     add("/video/end", params)
       .then((response) => {
-        if (response.type === "success") {
+        if (response.type === "SUCCESS") {
           const { history } = props;
           setIsLoading(false);
           setIsDisable(false);
@@ -87,6 +89,7 @@ const ConfirmPopupForLeavingCall = (props) => {
           history.push("/");
           room.disconnect();
           handleClosePopup();
+          disconnectRoom();
         }
       })
       .catch((error) => {

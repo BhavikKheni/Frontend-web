@@ -1,8 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import clsx from "clsx";
 import {
-  CardNumberElement,
-  CardExpiryElement,
   useElements,
   useStripe,
   CardElement,
@@ -21,9 +19,10 @@ import ButtonComponent from "../../../Components/Forms/Button";
 import ConfirmDialog from "../../../Components/ConfirmDialog/ConfirmDialog";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Spinner from "../../../Components/Spinner/Spinner";
-import RightArrow from  "../../../images/next_arrow_white.svg";
-import { add } from "../../../Services/Auth.service";
+import RightArrow from "../../../images/next_arrow_white.svg";
+import { add, get } from "../../../Services/Auth.service";
 import { SessionContext } from "../../../Provider/Provider";
+import SnackBarComponent from "../../../Components/SnackBar/SnackBar";
 const useSession = () => React.useContext(SessionContext);
 
 const useStyles = makeStyles((theme) => ({
@@ -154,12 +153,12 @@ const useStyles = makeStyles((theme) => ({
   },
 
   card_provider_name: {
-    fontFamily: 'Rubik',
-    fontSize: '24px',
-    lineHeight: '36px',
-    color: '#FFFFFF',
-    padding: '0 15px 15px',
-    display: 'block',
+    fontFamily: "Rubik",
+    fontSize: "24px",
+    lineHeight: "36px",
+    color: "#FFFFFF",
+    padding: "0 15px 15px",
+    display: "block",
   },
 
   card_form: {
@@ -167,17 +166,17 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: "312px",
     height: "100%",
     minHeight: "167px",
-    backgroundColor: '#303030',
-    boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.05)',
-    borderRadius: '8px',
+    backgroundColor: "#303030",
+    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.05)",
+    borderRadius: "8px",
     padding: "0",
-    paddingTop: '20px',
+    paddingTop: "20px",
   },
 
   card_items: {
     background: "#434343",
     boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.05)",
-    padding: '15px',
+    padding: "15px",
   },
 
   payment_add_new_card: {
@@ -188,48 +187,48 @@ const useStyles = makeStyles((theme) => ({
   },
 
   add_card_cta: {
-    fontSize: '16px',
-    fontWeight: '500',
-    width: '100%',
-    margin: '20px auto',
-    color: '#fff',
-    textTransform: 'inherit',
+    fontSize: "16px",
+    fontWeight: "500",
+    width: "100%",
+    margin: "20px auto",
+    color: "#fff",
+    textTransform: "inherit",
 
-    '& .MuiButton-label': {
-      width: 'auto',
+    "& .MuiButton-label": {
+      width: "auto",
     },
 
-    '&:after' : {
+    "&:after": {
       content: "''",
       backgroundImage: `url(${RightArrow})`,
-      height: '20px',
-      width: '12px',
-      backgroundSize: 'cover',
-      backgroundRepeat: 'no-repeat',
-      marginLeft: '10px',
+      height: "20px",
+      width: "12px",
+      backgroundSize: "cover",
+      backgroundRepeat: "no-repeat",
+      marginLeft: "10px",
     },
   },
-  
-  card_user_details : {
-    display: 'flex',
-    justifyContent: 'space-between',
 
-    '& .StripeElement' : {
-      width: '100% !important',
+  card_user_details: {
+    display: "flex",
+    justifyContent: "space-between",
+
+    "& .StripeElement": {
+      width: "100% !important",
     },
 
-    '& p': {
-      fontFamily: 'Rubik',
-      fontWeight: '400',
-      fontSize: '12px',
-      letterSpacing: '0.02em',
-      color: '#FFFFFF',
+    "& p": {
+      fontFamily: "Rubik",
+      fontWeight: "400",
+      fontSize: "12px",
+      letterSpacing: "0.02em",
+      color: "#FFFFFF",
 
-      '&:last-child': {
-        paddingRight: '45px',
-      }
-    }
-  }
+      "&:last-child": {
+        paddingRight: "45px",
+      },
+    },
+  },
 }));
 
 const DialogContent = withStyles((theme) => ({
@@ -239,8 +238,8 @@ const DialogContent = withStyles((theme) => ({
 }))(MuiDialogContent);
 
 const CARD_OPTIONS = {
+  hidePostalCode: true,
   style: {
-    hidePostalCode: true,
     base: {
       fontSize: "12px",
       color: "#fff",
@@ -248,11 +247,11 @@ const CARD_OPTIONS = {
       "::placeholder": {
         color: "#fff",
       },
-      textAlign: 'right',
+      textAlign: "right",
     },
     invalid: {
       color: "#9e2146",
-    }
+    },
   },
 };
 
@@ -266,6 +265,9 @@ const PaymentMethod = (props) => {
   const [error, setError] = useState("");
   const [disabled, setDisabled] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [selectCard, setSelectCard] = useState({});
+  const [listCards, setListCards] = useState([]);
+  const [open, setOpen] = React.useState(false);
   const elements = useElements();
   const { user } = useSession();
   const onAdd = () => {
@@ -276,6 +278,17 @@ const PaymentMethod = (props) => {
     setAddNewCardOpen(false);
   };
 
+  useEffect(() => {
+    const onListCard = () => {
+      get("/usercards/list")
+        .then((response) => {
+          setListCards(response);
+        })
+        .catch((error) => {});
+    };
+    onListCard();
+  }, []);
+
   const onAddCard = async () => {
     if (!stripe || !elements) {
       return;
@@ -283,53 +296,86 @@ const PaymentMethod = (props) => {
     const res = await stripe.createToken(elements.getElement(CardElement));
     setDisabled(true);
     setLoading(true);
-    add("/usercards/add", {
-      is_default: 0,
-      user_id: user.id_user,
-      card_token_id: res.token.id,
-    }).then((response) => {
-      setLoading(false);
-      setDisabled(false);
-    });
+    if (res.token.card.id) {
+      add("/usercards/add", {
+        is_default: 0,
+        user_id: user.id_user,
+        card_token_id: res.token.card.id,
+      })
+        .then((response) => {
+          setLoading(false);
+          setDisabled(false);
+          setAddNewCardOpen(false)
+        })
+        .catch((error) => {
+          setOpen(true);
+          setAddNewCardOpen(false)
+          setError({
+            message: error,
+            type: "error",
+          });
+        });
+    }
   };
 
-  const onDeleteCard = () => {};
+  const onDeleteCard = () => {
+    setDeleteLoader(true);
+    add("/usercards/delete", {
+      id_user_cards: selectCard.id_user_cards,
+    })
+      .then((response) => {
+        setDeleteLoader(false);
+        setConformDeleteDialogOpen(false)
+      })
+      .catch((error) => {
+        setOpen(true);
+        setDeleteLoader(false);
+        setConformDeleteDialogOpen(false)
+        setError({
+          message: error,
+          type: "error",
+        });
+      });
+  };
   return (
     <React.Fragment>
       <TypographyComponent title={t("home.paymentMethod.title")} variant="h2" />
       <div className={classes.payment_card_wrapper}>
-        <Card className={classes.payment_card}>
-          <CardHeader
-            title="Visa"
-            variant="h6"
-            className={classes.card_title}
-          />
-          <CardContent className={classes.payment_card_content}>
-            <div className={classes.payment_item_card}>
-              <TypographyComponent
-                title="Name of card"
-                className={classes.user_card_name}
-              />
-              <TypographyComponent title="expired on" />
+        {listCards.map((c, index) => (
+          <Card className={classes.payment_card} key={index}>
+            <CardHeader
+              title="Visa"
+              variant="h6"
+              className={classes.card_title}
+            />
+            <CardContent className={classes.payment_card_content}>
+              <div className={classes.payment_item_card}>
+                <TypographyComponent
+                  title="Name of card"
+                  className={classes.user_card_name}
+                />
+                <TypographyComponent title="expired on" />
+              </div>
+              <div className={classes.payment_item_card}>
+                <TypographyComponent title="xxxx xxxx xxxx 9843" />
+                <TypographyComponent
+                  title="00/00"
+                  className={classes.user_card_expired_date}
+                />
+              </div>
+            </CardContent>
+            <div
+              className={classes.payment_card_delete}
+              onClick={() => {
+                setConformDeleteDialogOpen(true);
+                setSelectCard(c);
+              }}
+            >
+              <DeleteIcon />
+              <label>Remove Card</label>
             </div>
-            <div className={classes.payment_item_card}>
-              <TypographyComponent title="xxxx xxxx xxxx 9843" />
-              <TypographyComponent
-                title="00/00"
-                className={classes.user_card_expired_date}
-              />
-            </div>
-          </CardContent>
-          <div
-            className={classes.payment_card_delete}
-            onClick={() => {
-              setConformDeleteDialogOpen(true);
-            }}
-          >
-            <DeleteIcon />
-            <label>Remove Card</label>
-          </div>
-        </Card>
+          </Card>
+        ))}
         <Card
           className={clsx(classes.payment_card, classes.payment_add_new_card)}
         >
@@ -357,7 +403,10 @@ const PaymentMethod = (props) => {
                 <span className={classes.card_provider_name}>VISA</span>
                 <div className={classes.card_items}>
                   <div className={classes.card_user_details}>
-                    <TypographyComponent title="Number on card" style={{fontWeight:'500'}} />
+                    <TypographyComponent
+                      title="Number on card"
+                      style={{ fontWeight: "500" }}
+                    />
                     <TypographyComponent title="expired on" />
                   </div>
                   <div className={classes.card_user_details}>
@@ -374,6 +423,7 @@ const PaymentMethod = (props) => {
             startIcon={loading && <Spinner size="small" />}
             disabled={disabled}
             className={classes.add_card_cta}
+            loader={loading}
           />
         </div>
       </DialogComponent>
@@ -383,6 +433,16 @@ const PaymentMethod = (props) => {
         onConfirm={() => onDeleteCard()}
         onCancel={() => setConformDeleteDialogOpen(false)}
         loader={deleteLoader}
+      />
+      <SnackBarComponent
+        open={open}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        message={error.message}
+        type={error.type}
       />
     </React.Fragment>
   );

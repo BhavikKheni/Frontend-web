@@ -22,7 +22,9 @@ const CalendarComponent = (props) => {
   const { INITIAL_EVENTS, renderEventContent, selectable=false } = props;
 
   const onSelectSlot = (event) => {
-    props.onSelectBookingSlot(event);
+    if(props.onSelectBookingSlot){
+      props.onSelectBookingSlot(event);
+    }
   }
 
   const onSelectDate = (event) => {

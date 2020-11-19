@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Avatar, Divider } from "@material-ui/core";
+import { Avatar, Divider, FormControl } from "@material-ui/core";
 import ImageComponent from "../../../../Components/Forms/Image";
 import TypographyComponent from "../../../../Components/Typography/Typography";
 import { countdown } from "../../../../utils";
 import { get, search } from "../../../../Services/Auth.service";
+import SelectComponent from "../../../../Components/Forms/Select";
+import Spinner from "../../../../Components/Spinner/Spinner";
+
 const useStyles = makeStyles((theme) => ({
   call_timer_left: {
     display: "flex",
@@ -23,13 +26,16 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const CallPageSidebar = (props) => {
-  const { userData } = props;
+  const { getTotalCost, sessionLoader, record } = props;
+  console.log("sidebar", record);
+  const [cardList, setCardList] = useState([]);
   const classes = useStyles();
+  const [selectCard, setSelectCard] = useState(10);
   React.useEffect(() => {
     async function getCards() {
       const res = await get("/usercards/list").catch((err) => console.log(err));
       if (res) {
-        console.log("res", res);
+        setCardList(res);
       }
     }
     getCards();
@@ -47,14 +53,16 @@ const CallPageSidebar = (props) => {
 
   return (
     <React.Fragment>
-      {!userData.image ? <ImageComponent /> : <Avatar src={userData.image} />}
-      <TypographyComponent
-        title={`${userData.first_name} ${userData.last_name}`}
-      />
+      {!record.provider_profile_image ? (
+        <ImageComponent />
+      ) : (
+        <Avatar src={record.provider_profile_image} />
+      )}
+      <TypographyComponent title={`${record.provider_name}`} />
       <Divider className="divider" />
-      <div className={classes.call_timer_left}>
+      <div className="call-time">
         <TypographyComponent title="Time left" />
-        <TypographyComponent title="120 Min" />
+        {sessionLoader ? <Spinner /> : <span id="remainingDuration"></span>}
       </div>
       <div className="stay-Longer">
         <span>Stay Longer?</span>
@@ -91,8 +99,28 @@ const CallPageSidebar = (props) => {
       </div>
       <div>
         <TypographyComponent title="Total:" />
-        <TypographyComponent title="00.0$" />
+        <TypographyComponent title={`${getTotalCost} CHF`} />
       </div>
+      <FormControl variant="outlined">
+        <SelectComponent
+          name="select card"
+          label="Select card"
+          value={selectCard}
+          onChange={(e) => {
+            setSelectCard(e.target.value);
+          }}
+          native
+        >
+          {cardList &&
+            cardList.map((l, index) => {
+              return (
+                <option key={index} value={l.card_token_id}>
+                  {l.card_token_id}
+                </option>
+              );
+            })}
+        </SelectComponent>
+      </FormControl>
     </React.Fragment>
   );
 };

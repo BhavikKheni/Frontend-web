@@ -115,13 +115,13 @@ const AddBookingSlotSideBar = (props) => {
           <div className="booking_row booking_date">
             <span className="booking_time_label">From Date:</span>
             <span>
-              {moment(getSelectedDateTime.startStr).format("YYYY-MM-DD")}
+              {moment(getSelectedDateTime.startStr).format("MM-DD-YYYY")}
             </span>
           </div>
           <div className="booking_row booking_date">
             <span className="booking_time_label">To Date:</span>
             <span>
-              {moment(getSelectedDateTime.endStr).format("YYYY-MM-DD")}
+              {moment(getSelectedDateTime.endStr).format("MM-DD-YYYY")}
             </span>
           </div>
         </React.Fragment>

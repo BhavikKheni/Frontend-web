@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { withRouter, Link, Route } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
-import { MenuItem } from "@material-ui/core";
+import { MenuItem, Divider } from "@material-ui/core";
 import Breadcrumbs from "@material-ui/core/Breadcrumbs";
 import CheckIcon from "@material-ui/icons/Check";
 import ClearIcon from "@material-ui/icons/Clear";
@@ -20,7 +20,7 @@ import ImageComponent from "../../../Components/Forms/Image";
 import TooltipComponent from "../../../Components/Tooltip/Tooltip";
 import Verification from "../../../Components/Verification/VerificationDialog";
 import "./UserProfile.css";
-
+import { scrollToSection } from "../../../utils";
 const useSession = () => React.useContext(SessionContext);
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -94,18 +94,68 @@ const ProfileView = (props) => {
       <div style={{ margin: 20 }}>
         {isLoggedIn && (
           <React.Fragment>
-            <MenuItem>{t("home.messages")}</MenuItem>
-            <MenuItem>{t("home.myCalendar")}</MenuItem>
-            <MenuItem>{t("home.nextBookings")}</MenuItem>
-            <MenuItem>{t("home.myServiceHistory")}</MenuItem>
             <MenuItem
               component={Link}
-              to="/profile"
-              selected={pathname === "/profile"}
+              to="/home/messages"
+              selected={pathname === "/home/messages"}
+            >
+              {t("home.messages")}
+            </MenuItem>
+            <MenuItem
+              component={Link}
+              to="/home/calendar"
+              selected={pathname === "/home/calendar"}
+              onClick={() => {
+                scrollToSection("calendar");
+              }}
+            >
+              {t("home.myCalendar.title")}
+            </MenuItem>
+            <MenuItem
+              component={Link}
+              to="/home/next-booking"
+              selected={pathname === "/home/next-booking"}
+              onClick={() => {
+                scrollToSection("next_booking");
+              }}
+            >
+              {t("home.nextBookings")}
+            </MenuItem>
+            <MenuItem
+              component={Link}
+              to="/home/service-history"
+              selected={pathname === "/home/service-history"}
+              onClick={() => {
+                scrollToSection("service_history");
+              }}
+            >
+              {t("home.myServiceHistory")}
+            </MenuItem>
+            <MenuItem
+              component={Link}
+              to="/home/profile"
+              selected={pathname === "/home/profile"}
             >
               {t("home.myProfile")}
             </MenuItem>
-            <MenuItem>{t("home.paymentMethods")}</MenuItem>
+            <MenuItem
+              component={Link}
+              to="/home/payment-methods"
+              selected={pathname === "/home/payment-methods"}
+              onClick={() => {
+                scrollToSection("payment_methods");
+              }}
+            >
+              {t("home.paymentMethods")}
+            </MenuItem>
+            <MenuItem>
+              <Divider
+                style={{
+                  border: "0.5px solid #949494",
+                  width: "84%",
+                }}
+              />
+            </MenuItem>
           </React.Fragment>
         )}
         <MenuItem>{t("home.feedback")}</MenuItem>

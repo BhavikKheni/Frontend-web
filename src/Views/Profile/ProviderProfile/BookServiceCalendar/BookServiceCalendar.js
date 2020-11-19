@@ -62,7 +62,6 @@ const BookServiceCalendar = ({
   // Iterate the response and create array for the calendar
   const makeSlotsArray = (available_slots, booked_slots) => {
     let tempArray = [];
-    console.log("available_slots: ", available_slots);
     available_slots.forEach((slot) => {
       tempArray.push({
         start: slot.startDate,

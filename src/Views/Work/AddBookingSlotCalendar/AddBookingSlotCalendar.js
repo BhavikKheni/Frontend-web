@@ -79,7 +79,6 @@ const AddBookingSlotCalendar = (props) => {
   };
 
   const setSelectedDate = (selected) => {
-    console.log("AA", selected);
     setSelectedDateTime(selected);
   }
 

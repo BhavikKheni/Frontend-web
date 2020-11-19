@@ -122,7 +122,7 @@ const CARD_CVV = {
     },
   },
 };
-const Card = () => {
+const PaymentCardComponent = () => {
   const classes = useStyles();
   const [visibleCvc, setVisibleCvc] = useState(true);
   return (
@@ -150,4 +150,4 @@ const Card = () => {
     </React.Fragment>
   );
 };
-export default Card;
+export default PaymentCardComponent;
