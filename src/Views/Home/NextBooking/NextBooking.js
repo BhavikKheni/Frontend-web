@@ -135,8 +135,6 @@ const NextBooking = (props) => {
           val["duration"] = calculateDuration(val);
         });
 
-        console.log("aaa", res.data);
-
         setUpcomingOffset(stopped_at);
         setRecords(res.data || []);
       })
@@ -151,7 +149,7 @@ const NextBooking = (props) => {
       const toDateTime = new Date(val.to_datetime).getTime();
 
       const timeDiff = toDateTime/1000 - fromDateTime/1000;
-      return timeDiff/60 + " Minutes";
+      return timeDiff/60;
     }
   }
 
@@ -216,7 +214,7 @@ const NextBooking = (props) => {
               <TypographyComponent
                 title={moment(r.from_datetime).format("HH:mm")}
               />
-              <TypographyComponent title={r.duration} />
+              <TypographyComponent title={`${r.duration} Minutes`} />
               <TypographyComponent title={r.provider_name} />
               <TooltipComponent title={r.title} placement="bottom">
                 <span>{r.title}</span>

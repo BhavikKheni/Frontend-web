@@ -23,6 +23,7 @@ import Spinner from "../../../Components/Spinner/Spinner";
 import { connect, createLocalTracks } from "twilio-video";
 import ConfirmPopupForLeavingCall from "./ConfirmPopup/ConfirmPopup";
 import { SessionContext } from "../../../Provider/Provider";
+import moment from "moment";
 import "./callpage.css";
 const useSession = () => React.useContext(SessionContext);
 const DialogContent = withStyles((theme) => ({
@@ -105,16 +106,21 @@ const CallPage = (props) => {
   const [audio, setAudio] = useState(true);
   const [onVideo, setVideo] = useState(true);
   const [isOpenConfirmPopup, openConfirmPopup] = useState(false);
+  const [getTotalCost, setTotalCost] = useState(null);
   const bookingId = state.record && state.record.id_booking;
+
   let [userData, setUserData] = useState({
     first_name: "",
     last_name: "",
     image: "",
   });
+
   const onSearch = (e) => {
     e.preventDefault();
   };
+
   useEffect(() => {
+    console.log("state.record: ", state.record);
     async function getData() {
       setLoading(true);
       const res = await get(`/profile/${user.id_user}`).catch((err) => {
@@ -139,40 +145,47 @@ const CallPage = (props) => {
     return () => clearInterval(timer);
   }, [counter]);
 
-  const changeSearch = (e) => {};
-  const [dynamicCounter, setDynamicCounter] = useState();
-  const [timerId, setTimerID] = useState("");
+  const [remainingDuration, setRemainingDuration] = useState(state.record.duration);
 
-  const timer = useCallback(() => {
-    var count1 = dynamicCounter;
-    var counter1 = setInterval(timer, 1000);
-    count1 = count1 - 1;
-    if (count1 === -1) {
-      clearInterval(counter1);
-      return;
-    }
+  useEffect(() => {
+    setInterval(() => {
+      updateSessionToBackend();
+    }, 5000);
+    // return () => clearInterval(timer);
+  }, []);
 
-    var seconds = count1 % 60;
-    var minutes = Math.floor(count1 / 60);
-    var hours = Math.floor(minutes / 60);
-    minutes %= 60;
-    hours %= 60;
 
-    document.getElementById(timerId).innerHTML =
-      hours + "hours : " + minutes + "minutes :" + seconds;
-  }, [dynamicCounter, timerId]);
-  // var counter = 5;
+  const updateSessionToBackend = () => {
+    console.log("1111", remainingDuration);
+    const a = remainingDuration - 1;
+    setRemainingDuration(a);
+    console.log("222", remainingDuration);
+    console.log("3333", parseInt(remainingDuration)-1);
+  };
 
-  // setInterval(function () {
-  //   counter--;
-  //   if (counter >= 0) {
-  //     let span = document.getElementById("count");
-  //     span.innerHTML = counter;
-  //   }
-  //   if (counter === 0) {
-  //     clearInterval(counter);
-  //   }
-  // }, 1000);
+  const calculatePrice = (get_from_time, get_to_time) => {
+    const pricePerHour = parseInt(state.record.price);
+    const pricePerMinute = pricePerHour / 60;
+    const startTimeInMinutes = getTimeInMinutes(get_from_time);
+    const endTimeInMinutes = getTimeInMinutes(get_to_time);
+
+    const finalTime = endTimeInMinutes - startTimeInMinutes;
+    const totalCost = finalTime * pricePerMinute;
+    setTotalCost(totalCost);
+  };
+
+  useEffect(() => {
+    calculatePrice(moment(state.record.from_datetime).format("HH:mm"), moment(state.record.to_datetime).format("HH:mm"));
+  }, [state.record.from_datetime, state.record.to_datetime])
+
+
+  // Function will convert 13:45 time to minutes
+  const getTimeInMinutes = (time) => {
+    const hourTime = parseInt(time.toString().split(":")[0]);
+    const minuteTime = parseInt(time.toString().split(":")[1]);
+    const timeInMinutes = hourTime * 60 + minuteTime;
+    return timeInMinutes;
+  };
 
   useEffect(() => {
     setSidebar(true);
@@ -182,18 +195,17 @@ const CallPage = (props) => {
           <Spinner />
         ) : (
           <React.Fragment>
-            <Avatar className={classes.large} src={userData.image} />
+            <Avatar className={classes.large} src={state.record.provider_profile_image} />
             <TypographyComponent
-              title={`${userData.first_name} ${userData.last_name}`}
+              title={`${state.record.provider_name}`}
             />
             <Divider className="divider" />
             <div className="call-time">
               <TypographyComponent title="Time left" />
-              <TypographyComponent title="120 Min" />
+              <TypographyComponent title={remainingDuration} />
             </div>
-            <div className="stay-Longer">
+            {/* <div className="stay-Longer">
               <span>Stay Longer?</span>
-              {/* <img src={ArrowIcon} alt="stay longer" /> */}
             </div>
             <div>
               <span
@@ -223,10 +235,10 @@ const CallPage = (props) => {
               >
                 60 min
               </span>
-            </div>
+            </div> */}
             <div>
               <TypographyComponent title="Total:" />
-              <TypographyComponent title="00.0$" />
+              <TypographyComponent title={`${getTotalCost} CHF`} />
             </div>
           </React.Fragment>
         )}
@@ -236,7 +248,6 @@ const CallPage = (props) => {
     setSidebarContent,
     setSidebar,
     classes.large,
-    timerId,
     isLoading,
     userData.first_name,
     userData.last_name,
@@ -408,7 +419,6 @@ const CallPage = (props) => {
             <InputBase
               placeholder="Write here"
               inputProps={{ "aria-label": "search" }}
-              onChange={changeSearch}
             />
             <span className={classes.searchIconItem} onClick={onSearch}>
               <SendIcon className={classes.searchIcon} />
