@@ -1,21 +1,21 @@
-import React, { useState, useEffect } from "react";
-import { makeStyles } from "@material-ui/core/styles";
+import React, { useState, useEffect } from 'react'
 import { withRouter } from "react-router-dom";
+import { makeStyles } from "@material-ui/core/styles";
 import { useTranslation } from "react-i18next";
+import moment from "moment";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import Grid from "@material-ui/core/Grid";
 import Divider from "@material-ui/core/Divider";
-import Popover from "@material-ui/core/Popover";
-import CloseIcon from "@material-ui/icons/Close";
 import Spinner from "../../../Components/Spinner/Spinner";
 import ButtonComponent from "../../../Components/Forms/Button";
 import TypographyComponent from "../../../Components/Typography/Typography";
 import TooltipComponent from "../../../Components/Tooltip/Tooltip";
 import { search } from "../../../Services/Auth.service";
-import moment from "moment";
 
 let limit = 10;
 const path = "/service/bookings/list";
+const PROVIDER = "PROVIDER";
+const CONSUMER = "CLIENT";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -88,59 +88,58 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const NextBooking = (props) => {
+const NewNextBooking = (props) => {
+
   const classes = useStyles();
   const { t } = useTranslation();
   const { user } = props;
-  const [records, setRecords] = useState([]);
+  const [records, setNextBookingData] = useState([]);
+  const [upcomingOffset, setUpcomingOffset] = useState(0);
+  const [loadMoreOption, showLoadeMoreOption] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const [isUpcomingMoreData, setUpcomingMoreData] = useState(true);
-  const [isUpcomingLoading, setUpcomingLoading] = useState(false);
-  const [upcomingoffset, setUpcomingOffset] = useState(0);
-  const [anchorEl, setAnchorEl] = React.useState(null);
 
-  const handleClick = (event, record) => {
-    setAnchorEl(event.currentTarget);
-  };
+  const offset = 0;
 
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const open = Boolean(anchorEl);
-  const id = open ? "simple-popover" : undefined;
-
-  const fetchBookings = () => {
-    const params = {
+  const getParams = (role) => {
+    return {
       limit: limit,
-      offset: 0,
-      role: "CLIENT",
+      offset: offset,
+      role: role,
       id_user: user.id_user,
-      status: "NEXT",
+      status: "NEXT"
     };
-    setIsLoading(true);
-    search(path, params)
-      .then((res) => {
-        
-        const { data, stopped_at, type } = res || {};
+  }
 
-        setIsLoading(false);
-        
-        if (type === "ERROR" || (data && data.length === 0)) {
-          setUpcomingMoreData(false);
-          return;
-        }
+  let nextBookingsArr = [];
+  const getBookings = async () => {
+    try {
+      const allResponses = await Promise.all([
+        search(path, getParams(CONSUMER)),
+        search(path, getParams(PROVIDER))
+      ]);
 
-        res.data.forEach((val) => {
-          val["duration"] = calculateDuration(val);
-        });
+      if (allResponses) {
+        const nextBookingAsConsumer = allResponses[0];
+        const nextBookingAsProvider = allResponses[1];
+        manipulateBookingResponse(nextBookingAsConsumer.data, "Consumer");
+        manipulateBookingResponse(nextBookingAsProvider.data, "Provider");
+      }
+    } catch(err) {
+      console.log(err);
+    };
+  }
 
-        setUpcomingOffset(stopped_at);
-        setRecords(res.data || []);
-      })
-      .catch((err) => {
-        setIsLoading(false);
+  const manipulateBookingResponse = (data, role) => {
+    nextBookingsArr = [];
+    if (data && data.length) {
+      data.forEach((val, index) => {
+        val["role"] = role;
+        val["duration"] = calculateDuration(val);
+        nextBookingsArr.push(val);
       });
+      setNextBookingData(nextBookingsArr);
+      console.log("Records", nextBookingsArr)
+    }
   }
 
   const calculateDuration = (val) => {
@@ -148,33 +147,14 @@ const NextBooking = (props) => {
       const fromDateTime = new Date(val.from_datetime).getTime();
       const toDateTime = new Date(val.to_datetime).getTime();
 
-      const timeDiff = toDateTime/1000 - fromDateTime/1000;
-      return timeDiff/60;
+      const timeDiff = toDateTime / 1000 - fromDateTime / 1000;
+      return timeDiff / 60;
     }
   }
 
   useEffect(() => {
-    fetchBookings();
-  }, [user.id_user]);
-
-  const onMore = async (path, offset, criteria = {}) => {
-    setUpcomingLoading(true);
-    let res = await search(path, {
-      limit: limit,
-      offset: offset,
-      ...criteria,
-    });
-    if (res) {
-      const { data, stopped_at, type } = res || {};
-      if (type === "ERROR" || data.length === 0) {
-        setUpcomingMoreData(false);
-        return;
-      }
-      setUpcomingOffset(stopped_at);
-      setRecords((services) => [...(services || []), ...(data || [])]);
-      setUpcomingLoading(false);
-    }
-  };
+    getBookings();
+  }, []);
 
   const goToMeeting = (element) => {
     const { history } = props;
@@ -183,10 +163,34 @@ const NextBooking = (props) => {
     });
   };
 
+  const capitalize = (s) => {
+    if (typeof s !== 'string') return ''
+    const a = s.split(" ")
+    return a[0].charAt(0).toUpperCase() + a[0].slice(1) + " " + a[1].charAt(0).toUpperCase() + a[1].slice(1)
+  }
+
+  const onLoadMore = async () => {
+    setIsLoading(true);
+    // let res = await search(path, {
+    //   limit: limit,
+    //   offset: offset,
+    //   ...criteria,
+    // });
+    // if (res) {
+    //   const { data, stopped_at, type } = res || {};
+    //   if (type === "ERROR" || data.length === 0) {
+    //     setIsLoading(false);
+    //     return;
+    //   }
+    //   setUpcomingOffset(stopped_at);
+    //   setNextBookingData((services) => [...(services || []), ...(data || [])]);
+    //   setIsLoading(false);
+    // }
+  };
+
   return (
     <React.Fragment>
       <TypographyComponent title={t("home.nextBooking.title")} variant="h2" />
-
       <Grid container spacing={3}>
         <Grid item xs={12} md={12}>
           <Divider
@@ -215,63 +219,35 @@ const NextBooking = (props) => {
                 title={moment(r.from_datetime).format("HH:mm")}
               />
               <TypographyComponent title={`${r.duration} Minutes`} />
-              <TypographyComponent title={r.provider_name} />
+              <TypographyComponent title={capitalize(r.provider_name)} />
+              {/* <TypographyComponent title={`Booking As ${r.role}`} /> */}
               <TooltipComponent title={r.title} placement="bottom">
                 <span>{r.title}</span>
               </TooltipComponent>
               <MoreVertIcon
-                aria-describedby={id}
                 variant="contained"
                 color="primary"
-                onClick={(event) => handleClick(event, r)}
                 style={{ cursor: "pointer" }}
               />
             </div>
           ))
         )}
+
+        {loadMoreOption && records && records.length > 0 && (
+          <div style={{marginBottom: '20px'}}>
+            {isLoading ? (
+              <Spinner />
+            ) : (
+              <div
+                className="load-more"
+                onClick={() => onLoadMore()}
+              ></div>
+            )}
+          </div>
+        )}
       </div>
-
-      {isUpcomingMoreData && records && records.length > 0 && (
-        <div style={{marginBottom: '20px'}}>
-          {isUpcomingLoading ? (
-            <Spinner />
-          ) : (
-            <div
-              className="load-more"
-              onClick={() => onMore(path, upcomingoffset, {})}
-            ></div>
-          )}
-        </div>
-      )}
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={12}>
-          <Divider
-            style={{
-              border: "0.5px solid #9E9E9E",
-            }}
-          />
-        </Grid>
-      </Grid>
-      <Popover
-        id={id}
-        open={open}
-        anchorEl={anchorEl}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: "top",
-          horizontal: "right",
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "right",
-        }}
-        className="more_info_popover"
-      >
-        <CloseIcon onClick={handleClose} className="more_info_popover_close" />
-        <TypographyComponent title="Cancel Booking" />
-      </Popover>
     </React.Fragment>
-  );
-};
+  )
+}
 
-export default withRouter(NextBooking);
+export default withRouter(NewNextBooking);

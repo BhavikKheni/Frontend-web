@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -9,14 +9,14 @@ import "./Calendar.css";
 
 const CalendarComponent = (props) => {
 
+  const calendarRef = useRef();
+
   useEffect(() => {
     $('.fc-prev-button').on('click', x => {
-      console.dir(x);
-      props.onDateChange();
+      let calendarApi = calendarRef.current.getApi();
+      // console.log("AAAA: ", calendarApi.currentDataManager.state.dateProfile.activeRange);
+      console.log(" calendarRef: ", calendarRef);
     });
-  //   $('.fc-button-prev span').click(function(){
-  //     alert('prev is clicked, do something');
-  //  });
   }, []);
 
   const { INITIAL_EVENTS, renderEventContent, selectable=false } = props;
@@ -33,16 +33,12 @@ const CalendarComponent = (props) => {
 
   return (
     <FullCalendar
+      ref={calendarRef} 
       plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
       headerToolbar={{
         left: "today prevYear,prev,title,next,nextYear",
         right: "dayGridMonth,timeGridWeek,timeGridDay",
         center: "",
-      }}
-      dayHeaderFormat={{
-        day: "numeric",
-        weekday: "short",
-        month: "long",
       }}
       titleFormat={{
         month: "long",
@@ -50,9 +46,30 @@ const CalendarComponent = (props) => {
       }}
       initialView="timeGridWeek"
       formatDate={{
-        month: "long",
-        year: "numeric",
         day: "numeric",
+        month: "long",
+        year: "numeric"
+      }}
+      views={{
+        dayGrid: {
+          dayHeaderFormat: {
+            weekday: "long"
+          }
+        },
+        week: {
+          dayHeaderFormat: {
+            day: "numeric",
+            weekday: "short",
+            month: "long",
+          }
+        },
+        day: {
+          dayHeaderFormat: {
+            day: "numeric",
+            weekday: "long",
+            month: "long",
+          }
+        }
       }}
       // businessHours={true}
       editable={true}

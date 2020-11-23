@@ -14,6 +14,7 @@ import Styles from "./home.module.css";
 import HomeWrapper from "./HomeWrapper";
 import { scrollToSection } from "../../utils";
 import AddBookingSidebar from "../../Components/Booking/AddBookingSidebar/AddBookingSidebar";
+import NewNextBooking from "./NextBooking/NewNextBooking";
 const useSession = () => React.useContext(SessionContext);
 
 const Home = (props) => {
@@ -130,6 +131,7 @@ const Home = (props) => {
   return (
     <div className={clsx(Styles.home_page)}>
       <HomeWrapper> </HomeWrapper>
+      <NewNextBooking user={user}></NewNextBooking>
       <section className="next_booking">
         <NextBookingProvider user={user} />
       </section>

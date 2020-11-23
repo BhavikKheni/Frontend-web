@@ -341,7 +341,7 @@ const PaymentMethod = (props) => {
     <React.Fragment>
       <TypographyComponent title={t("home.paymentMethod.title")} variant="h2" />
       <div className={classes.payment_card_wrapper}>
-        {listCards.map((c, index) => (
+        {listCards && listCards.length && listCards.map((c, index) => (
           <Card className={classes.payment_card} key={index}>
             <CardHeader
               title="Visa"

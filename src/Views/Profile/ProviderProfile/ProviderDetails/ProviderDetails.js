@@ -6,6 +6,11 @@ import { languages_level } from "../../../../utils";
 import { themes } from "../../../../themes";
 import "../ProviderProfile.css";
 
+const capitalize = (s) => {
+  if (typeof s !== 'string') return ''
+  return s.charAt(0).toUpperCase() + s.slice(1)
+}
+
 const ProviderDetails = ({userData, allLanguages}) => {
   return (
     <div className="user_profile_updated_value">
@@ -21,7 +26,7 @@ const ProviderDetails = ({userData, allLanguages}) => {
       <div className="user_language_timezone">
         <TypographyComponent
           variant="h3"
-          title={`${userData.first_name} ${userData.last_name}`}
+          title={`${capitalize(userData.first_name)} ${capitalize(userData.last_name)}`}
           style={{
             color: themes.default.colors.darkGray,
           }}
