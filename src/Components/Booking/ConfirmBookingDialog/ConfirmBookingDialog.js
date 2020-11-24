@@ -9,8 +9,9 @@ import Spinner from "../../Spinner/Spinner";
 import PaymentCardComponent from "../../PaymentCard/PaymentCardComponent";
 import RightArrow from "../../../images/next_arrow_white.svg";
 import SelectComponent from "../../../Components/Forms/Select";
-import { get, add } from "../../../Services/Auth.service";
-
+import { get } from "../../../Services/Auth.service";
+import Service from "../../../Services/index";
+const newService = new Service();
 const useStyles = makeStyles((theme) => ({
   confirm_booking_title: {
     fontFamily: "Rubik",
@@ -98,6 +99,7 @@ const ConfirmBookingDialog = (props) => {
   const [selectCardVisible, setSelectCardVisible] = useState(false);
   const [cardList, setCardList] = useState([]);
   const [cardTokenId, setCardTokenId] = useState("");
+  const [addTokenId, addCardTokenId] = useState("");
   const stripe = useStripe();
   const elements = useElements();
 
@@ -117,6 +119,7 @@ const ConfirmBookingDialog = (props) => {
       get("/usercards/list")
         .then((response) => {
           setCardList(response);
+          setCardTokenId(response[0].card_token_id);
         })
         .catch((error) => {});
     };
@@ -128,20 +131,21 @@ const ConfirmBookingDialog = (props) => {
       return;
     }
     const res = await stripe.createToken(elements.getElement(CardElement));
-
+    const formData = new FormData();
+    formData.append("user_id", props.user.id_user);
+    formData.append("card_token_id", res.token.card.id);
+    formData.append("token_id", res.token.id);
     if (res.token.card.id) {
-      add("/usercards/add", {
-        is_default: 0,
-        user_id: props.user.id_user,
-        card_token_id: res.token.card.id,
-        token_id: res.token.id,
-      })
-        .then((response) => {
-          if (response.type === "SUCCESS") {
-            setCardTokenId(res.token.card.id);
+      newService
+        .upload("/usercards/add", formData)
+        .then((res) => res.json())
+        .then((res) => {
+          if (res.type === "SUCCESS") {
+            addCardTokenId(res.token.card.id);
+            onSetBooking(res.token.card.id);
           }
         })
-        .catch((error) => {});
+        .catch((err) => {});
     }
   };
 
@@ -223,8 +227,8 @@ const ConfirmBookingDialog = (props) => {
                   cardList.map((l, index) => {
                     return (
                       <option key={index} value={l.card_token_id}>
-                        <span>{`xxxx xxxx xxxx ${l.last4}`}</span>
-                        <span> {`${l.exp_month}/${l.exp_year}`}</span>
+                        XXXX XXXX XXXX XXXX {l.last4}
+                        {l.exp_month}/{l.exp_year}
                       </option>
                     );
                   })}
@@ -236,9 +240,14 @@ const ConfirmBookingDialog = (props) => {
           <ButtonComponent
             title="Buy to set booking"
             style={{ color: classes.textColor }}
+            type="button"
             onClick={() => {
-              onAddCard();
-              onSetBooking(cardTokenId);
+              if (addTokenId) {
+                onAddCard();
+              }
+              if (cardTokenId) {
+                onSetBooking(cardTokenId);
+              }
             }}
             startIcon={isLoading && <Spinner />}
             disabled={disabled}

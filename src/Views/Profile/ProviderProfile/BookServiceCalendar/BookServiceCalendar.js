@@ -27,6 +27,7 @@ const BookServiceCalendar = ({
   averageRatingInfo,
   selectedServiceDetails,
   userData,
+  loginUser
 }) => {
   // For the slot details and languages
   useEffect(() => {
@@ -47,12 +48,8 @@ const BookServiceCalendar = ({
 
     await search("/slot/list", params)
       .then((response) => {
-        response = {
-          booked_slots: [],
-          available_slots: [],
-        };
         setAvailableSlots(response["available_slots"]);
-        makeSlotsArray(response.available_slots, response.booked_slots);
+        makeSlotsArray(response['available_slots'], response['booked_slots']);
       })
       .catch((err) => {
         console.log("error", err);
@@ -100,7 +97,6 @@ const BookServiceCalendar = ({
     console.log("dasdsa", data);
     // setAllSlots((d) => [...(d || []), data]);
   };
-
   return (
     <section className="book-service">
       <TypographyComponent
@@ -162,6 +158,7 @@ const BookServiceCalendar = ({
             onAddBooking={(data) => onAddBooking(data)}
             user={userData}
             selectedService={selectedServiceDetails}
+            loginUser={loginUser}
           />
         </div>
       </div>

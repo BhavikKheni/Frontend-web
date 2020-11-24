@@ -19,8 +19,9 @@ import RightArrow from "../../../images/next_arrow_white.svg";
 import { add, get } from "../../../Services/Auth.service";
 import { SessionContext } from "../../../Provider/Provider";
 import SnackBarComponent from "../../../Components/SnackBar/SnackBar";
+import Service from "../../../Services/index";
 const useSession = () => React.useContext(SessionContext);
-
+const newService = new Service();
 const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
@@ -292,19 +293,18 @@ const PaymentMethod = (props) => {
     setDisabled(true);
     setLoading(true);
 
+    const formData = new FormData();
+    formData.append("user_id", user.id_user);
+    formData.append("card_token_id", res.token.card.id);
+    formData.append("token_id", res.token.id);
+    formData.append("is_default", "0");
+
     if (res.token.card.id) {
-      add("/usercards/add", {
-        user_id: user.id_user,
-        card_token_id: res.token.card.id,
-        token_id: res.token.id,
-        is_default:0
-      })
-        .then((response) => {
-          setLoading(false);
-          setDisabled(false);
-          setAddNewCardOpen(false);
-        })
-        .catch((error) => {
+      newService
+        .upload("/usercards/add", formData)
+        .then((res) => res.json())
+        .then((res) => {})
+        .catch((err) => {
           setOpen(true);
           setAddNewCardOpen(false);
           setError({
@@ -323,6 +323,12 @@ const PaymentMethod = (props) => {
       .then((response) => {
         setDeleteLoader(false);
         setConformDeleteDialogOpen(false);
+        const targetIndex = listCards.findIndex(
+          (l) => l.id_user_cards === selectCard.id_user_cards
+        );
+
+        listCards.splice(targetIndex, 1);
+        setListCards((d) => [...d]);
       })
       .catch((error) => {
         setOpen(true);

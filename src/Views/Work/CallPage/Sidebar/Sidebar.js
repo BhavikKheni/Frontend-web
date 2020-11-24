@@ -7,6 +7,7 @@ import { countdown } from "../../../../utils";
 import { get, search } from "../../../../Services/Auth.service";
 import SelectComponent from "../../../../Components/Forms/Select";
 import Spinner from "../../../../Components/Spinner/Spinner";
+import ButtonComponent from "../../../../Components/Forms/Button";
 
 const useStyles = makeStyles((theme) => ({
   call_sidebar_avatar: {
@@ -199,13 +200,16 @@ const CallPageSidebar = (props) => {
               cardList.map((l, index) => {
                 return (
                   <option key={index} value={l.card_token_id}>
-                    <span>{`xxxx xxxx xxxx ${l.last4}`}</span>
-                    <span> {`${l.exp_month}/${l.exp_year}`}</span>
+                    XXXX XXXX XXXX XXXX {l.last4}
+                    {l.exp_month}/{l.exp_year}
                   </option>
                 );
               })}
           </SelectComponent>
         </FormControl>
+        <ButtonComponent title="Buy & stay longer" onClick={() => {
+          
+        }} />
       </div>
     </React.Fragment>
   );

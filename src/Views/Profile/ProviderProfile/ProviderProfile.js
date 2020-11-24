@@ -18,7 +18,7 @@ const ProfileProvider = (props) => {
   const [isLoading, setLoading] = useState(false);
   const { state = {} } = props.location && props.location;
   let { pathname } = props.location;
-  const { service = {}, type } = state;
+  const { service = {}, type, loginUser } = state;
   const { history } = props;
   const [selectedService, setSelectedService] = useState({});
   const [selectedReviews, setSelectedReview] = useState([]);
@@ -161,6 +161,7 @@ const ProfileProvider = (props) => {
             averageRatingInfo={averages}
             selectedServiceDetails={selectedService}
             userData={userData}
+            loginUser={loginUser}
           />
         </React.Fragment>
       )}

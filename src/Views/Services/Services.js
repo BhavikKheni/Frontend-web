@@ -460,6 +460,7 @@ const Services = (props) => {
     history.push("/profile-provider", {
       userId: element.provider_id_user,
       service: element,
+      loginUser: user,
     });
   };
 

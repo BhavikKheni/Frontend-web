@@ -1,50 +1,12 @@
 import React, { forwardRef, useState, useImperativeHandle } from "react";
 import moment from "moment";
-import clsx from "clsx";
-import { makeStyles } from "@material-ui/core/styles";
-import AddIcon from "@material-ui/icons/Add";
 import InputComponent from "../../Forms/Input";
 import ButtonComponent from "../../Forms/Button";
 import { add } from "../../../Services/Auth.service";
 import SnackBarComponent from "../../SnackBar/SnackBar";
-import TypographyComponent from "../../Typography/Typography";
 import DialogComponent from "../../Dialog/Dialog";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import DialogContent from "@material-ui/core/DialogContent";
-import ChevronRightIcon from "@material-ui/icons/ChevronRight";
-import Select from "@material-ui/core/Select";
-import Radio from "@material-ui/core/Radio";
 import ConfirmBookingDialog from "../ConfirmBookingDialog/ConfirmBookingDialog";
-
-const useStyles = makeStyles((theme) => ({
-  timeFields: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  textColor: {
-    color: "#fff",
-  },
-  item: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  selectCards: {
-    textAlign: "end",
-    padding: "10px 0px 10px 0px",
-    cursor: "pointer",
-  },
-  card_wrapper: {
-    backgroundColor: "#fff",
-  },
-  card_list_item: {
-    backgroundColor: "#000",
-    width: "100%",
-    maxWidth: "273px",
-    padding: 10,
-  },
-}));
 
 const AddBookingSidebar = forwardRef((props, ref) => {
   const [getFromTime, setFromTime] = useState("");
@@ -222,7 +184,17 @@ const AddBookingSidebar = forwardRef((props, ref) => {
           type="button"
           onClick={() => {
             if (getFromTime && getToTime) {
-              setOpen(true);
+              console.log("login user",props.loginUser)
+              if (selectedService.id_user === props.loginUser.id_user) {
+                setOpenSnackBar(true);
+                setResponse({
+                  message:
+                    "You can't this service because it is belongs to you",
+                  type: "error",
+                });
+              } else {
+                setOpen(true);
+              }
             }
           }}
           className={"confirm_cta"}
