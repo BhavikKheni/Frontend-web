@@ -99,7 +99,8 @@ const NewNextBooking = (props) => {
     consumer: true,
     provider: true
   });
-  const [isLoading, setIsLoading] = useState(false);
+  const [paginationLoader, setPaginationLoader] = useState(false);
+  const [showSectionLoader, setSectionLoader] = useState(false);
 
   let nextBookingsArr = [];
 
@@ -134,6 +135,8 @@ const NewNextBooking = (props) => {
         const allResponses = await Promise.all(apisArr);
 
         if (allResponses) {
+          setSectionLoader(false);
+          setPaginationLoader(false);
           if (loadMoreOption.consumer && loadMoreOption.provider) {
             const nextBookingAsConsumer = allResponses[0];
             const nextBookingAsProvider = allResponses[1];
@@ -165,7 +168,7 @@ const NewNextBooking = (props) => {
       data.forEach((val, index) => {
         val["bookingsFor"] = bookingsFor;
         val["duration"] = calculateDuration(val);
-        val["textToShow"] = bookingsFor === "provider" ? "My Booking" : "Job";
+        res["textToShow"] = bookingsFor === "provider" ? "My Booking" : "Job";
         nextBookingsArr.push(val);
       });
       setNextBookingData(nextBookingsArr);
@@ -187,9 +190,15 @@ const NewNextBooking = (props) => {
   }
 
   useEffect(() => {
+    setSectionLoader(true);
     getBookings();
-  }, [])
-;
+  }, []);
+
+  const loadMore = () => {
+    setPaginationLoader(true);
+    getBookings();
+  }
+
   const goToMeeting = (element) => {
     const { history } = props;
     history.push("/call-page",{ 
@@ -216,9 +225,9 @@ const NewNextBooking = (props) => {
         </Grid>
       </Grid>
       <div className={classes.next_booking_wrapper}>
-        {isLoading ? (
+        {showSectionLoader ? (
           <Spinner />
-        ) : records && !records.length ? (
+        ) : (!showSectionLoader && records && !records.length) ? (
           <span className="no_records_found">
             {t("home.nextBooking.notFoundRecord")}
           </span>
@@ -247,19 +256,28 @@ const NewNextBooking = (props) => {
             </div>
           ))
         )}
-        {loadMoreOption.provider && loadMoreOption.consumer && (
+        {records && records.length>0 && loadMoreOption.provider && loadMoreOption.consumer && (
           <div style={{marginBottom: '20px'}}>
-            {isLoading ? (
+            {paginationLoader ? (
               <Spinner />
             ) : (
               <div
                 className="load-more"
-                onClick={() => getBookings()}
+                onClick={() => loadMore()}
               ></div>
             )}
           </div>
         )}
       </div>
+      <Grid container spacing={3}>
+        <Grid item xs={12} md={12}>
+          <Divider
+            style={{
+              border: "0.5px solid #9E9E9E",
+            }}
+          />
+        </Grid>
+      </Grid>
     </React.Fragment>
   )
 }
