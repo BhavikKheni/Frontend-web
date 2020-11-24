@@ -11,7 +11,9 @@ import RightArrow from "../../../images/next_arrow_white.svg";
 import SelectComponent from "../../../Components/Forms/Select";
 import { get } from "../../../Services/Auth.service";
 import Service from "../../../Services/index";
+
 const newService = new Service();
+
 const useStyles = makeStyles((theme) => ({
   confirm_booking_title: {
     fontFamily: "Rubik",
@@ -95,6 +97,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const ConfirmBookingDialog = (props) => {
+
   const classes = useStyles();
   const [selectCardVisible, setSelectCardVisible] = useState(false);
   const [cardList, setCardList] = useState([]);
@@ -119,7 +122,6 @@ const ConfirmBookingDialog = (props) => {
       get("/usercards/list")
         .then((response) => {
           setCardList(response);
-          setCardTokenId(response[0].card_token_id);
         })
         .catch((error) => {});
     };
@@ -130,12 +132,13 @@ const ConfirmBookingDialog = (props) => {
     if (!stripe || !elements) {
       return;
     }
-    const res = await stripe.createToken(elements.getElement(CardElement));
+
+    const cardDetails = getCardInfo(); 
     const formData = new FormData();
     formData.append("user_id", props.user.id_user);
-    formData.append("card_token_id", res.token.card.id);
-    formData.append("token_id", res.token.id);
-    if (res.token.card.id) {
+    formData.append("card_token_id", cardDetails.token.card.id);
+    formData.append("token_id", cardDetails.token.id);
+    if (cardDetails.token.card.id) {
       newService
         .upload("/usercards/add", formData)
         .then((res) => res.json())
@@ -148,6 +151,29 @@ const ConfirmBookingDialog = (props) => {
         .catch((err) => {});
     }
   };
+
+  const getCardInfo = async () => {
+    const res = await stripe.createToken(elements.getElement(CardElement));
+    if (res) {
+      return res.token ? res.token : null; 
+    } else {
+      return null;
+    }
+  }
+
+  const onConfirmBooking = () => {
+    const cardDetails = getCardInfo();
+    if (cardTokenId && cardDetails.id) {
+      alert("You have selected a card from existing and also entered a new card details. action not performed");
+      return;
+    } else if (cardTokenId) {
+      onSetBooking(cardTokenId);
+    } else if (cardDetails && cardDetails.id) {
+      onAddCard();
+    } else {
+      alert("Please enter card details or choose a card from list");
+    }
+  }
 
   return (
     <React.Fragment>
@@ -242,12 +268,7 @@ const ConfirmBookingDialog = (props) => {
             style={{ color: classes.textColor }}
             type="button"
             onClick={() => {
-              if (addTokenId) {
-                onAddCard();
-              }
-              if (cardTokenId) {
-                onSetBooking(cardTokenId);
-              }
+              onConfirmBooking();
             }}
             startIcon={isLoading && <Spinner />}
             disabled={disabled}
