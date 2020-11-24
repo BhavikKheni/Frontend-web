@@ -73,7 +73,7 @@
       "notFoundRecord": "Records not found"
     },
     "nextBooking": {
-      "title": "Next Bookings As Consumer",
+      "title": "Next Bookings",
       "notFoundRecord": "Records not found",
       "deleteDialog": "Booking purpose",
       "titleProvider":"Next Bookings As Provider"

@@ -131,13 +131,15 @@ const Home = (props) => {
   return (
     <div className={clsx(Styles.home_page)}>
       <HomeWrapper> </HomeWrapper>
-      <NewNextBooking user={user}></NewNextBooking>
       <section className="next_booking">
+        <NewNextBooking user={user}></NewNextBooking>
+      </section>
+      {/* <section className="next_booking">
         <NextBookingProvider user={user} />
       </section>
       <section className="next_booking" style={{ marginTop: "60px" }}>
         <NextBooking user={user} />
-      </section>
+      </section> */}
       <section className={clsx(Styles.service_history, "service_history")}>
         <MyServiceHistory user={user} />
       </section>

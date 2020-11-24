@@ -95,51 +95,85 @@ const NewNextBooking = (props) => {
   const { user } = props;
   const [records, setNextBookingData] = useState([]);
   const [upcomingOffset, setUpcomingOffset] = useState(0);
-  const [loadMoreOption, showLoadeMoreOption] = useState(true);
+  const [loadMoreOption, showLoadeMoreOption] = useState({
+    consumer: true,
+    provider: true
+  });
   const [isLoading, setIsLoading] = useState(false);
 
-  const offset = 0;
+  let nextBookingsArr = [];
 
-  const getParams = (role) => {
+  const getParams = (bookingsFor) => {
     return {
       limit: limit,
-      offset: offset,
-      role: role,
+      offset: upcomingOffset,
+      role: bookingsFor,
       id_user: user.id_user,
       status: "NEXT"
-    };
+    }
   }
 
-  let nextBookingsArr = [];
+  const getAPIArray = () => {
+    const arr = [];
+    if (loadMoreOption.consumer && loadMoreOption.provider) {
+      arr.push(search(path, getParams(CONSUMER)));
+      arr.push(search(path, getParams(PROVIDER)));
+    } else if (loadMoreOption.consumer) {
+      arr.push(search(path, getParams(CONSUMER)));
+    } else if (loadMoreOption.provider) {
+      arr.push(search(path, getParams(PROVIDER)));
+    };
+    return arr;
+  }
+
   const getBookings = async () => {
     try {
-      const allResponses = await Promise.all([
-        search(path, getParams(CONSUMER)),
-        search(path, getParams(PROVIDER))
-      ]);
+      debugger;
+      const apisArr = getAPIArray();
+      if (apisArr && apisArr.length) {
+        const allResponses = await Promise.all(apisArr);
 
-      if (allResponses) {
-        const nextBookingAsConsumer = allResponses[0];
-        const nextBookingAsProvider = allResponses[1];
-        manipulateBookingResponse(nextBookingAsConsumer.data, "Consumer");
-        manipulateBookingResponse(nextBookingAsProvider.data, "Provider");
+        if (allResponses) {
+          if (loadMoreOption.consumer && loadMoreOption.provider) {
+            const nextBookingAsConsumer = allResponses[0];
+            const nextBookingAsProvider = allResponses[1];
+            manipulateBookingResponse(nextBookingAsConsumer, "consumer");
+            manipulateBookingResponse(nextBookingAsProvider, "provider");
+          } else if (loadMoreOption.consumer) {
+            const nextBookingAsConsumer = allResponses[0];
+            manipulateBookingResponse(nextBookingAsConsumer, "consumer");
+          } else if (loadMoreOption.provider) {
+            const nextBookingAsProvider = allResponses[1];
+            manipulateBookingResponse(nextBookingAsProvider, "provider");
+          }
+        }
       }
     } catch(err) {
       console.log(err);
     };
   }
 
-  const manipulateBookingResponse = (data, role) => {
+  const manipulateBookingResponse = (res, bookingsFor) => {
+    res["bookingsFor"] = bookingsFor;
+    if (!res) return;
+    const data = res.data;
     nextBookingsArr = [];
+    let loadMore = loadMoreOption;
     if (data && data.length) {
+      loadMore[bookingsFor] = true;
+      setUpcomingOffset(res.stopped_at);
       data.forEach((val, index) => {
-        val["role"] = role;
+        val["bookingsFor"] = bookingsFor;
         val["duration"] = calculateDuration(val);
+        val["textToShow"] = bookingsFor === "provider" ? "My Booking" : "Job";
         nextBookingsArr.push(val);
       });
       setNextBookingData(nextBookingsArr);
-      console.log("Records", nextBookingsArr)
+    } else {
+      loadMore[bookingsFor] = false;
     }
+    showLoadeMoreOption(loadMore);
+    console.log("Records", bookingsFor, loadMoreOption, data);
   }
 
   const calculateDuration = (val) => {
@@ -154,11 +188,11 @@ const NewNextBooking = (props) => {
 
   useEffect(() => {
     getBookings();
-  }, []);
-
+  }, [])
+;
   const goToMeeting = (element) => {
     const { history } = props;
-    history.push("/call-page", {
+    history.push("/call-page",{ 
       record:element
     });
   };
@@ -168,25 +202,6 @@ const NewNextBooking = (props) => {
     const a = s.split(" ")
     return a[0].charAt(0).toUpperCase() + a[0].slice(1) + " " + a[1].charAt(0).toUpperCase() + a[1].slice(1)
   }
-
-  const onLoadMore = async () => {
-    setIsLoading(true);
-    // let res = await search(path, {
-    //   limit: limit,
-    //   offset: offset,
-    //   ...criteria,
-    // });
-    // if (res) {
-    //   const { data, stopped_at, type } = res || {};
-    //   if (type === "ERROR" || data.length === 0) {
-    //     setIsLoading(false);
-    //     return;
-    //   }
-    //   setUpcomingOffset(stopped_at);
-    //   setNextBookingData((services) => [...(services || []), ...(data || [])]);
-    //   setIsLoading(false);
-    // }
-  };
 
   return (
     <React.Fragment>
@@ -220,7 +235,7 @@ const NewNextBooking = (props) => {
               />
               <TypographyComponent title={`${r.duration} Minutes`} />
               <TypographyComponent title={capitalize(r.provider_name)} />
-              {/* <TypographyComponent title={`Booking As ${r.role}`} /> */}
+              <TypographyComponent title={`${r.textToShow}`} />
               <TooltipComponent title={r.title} placement="bottom">
                 <span>{r.title}</span>
               </TooltipComponent>
@@ -232,15 +247,14 @@ const NewNextBooking = (props) => {
             </div>
           ))
         )}
-
-        {loadMoreOption && records && records.length > 0 && (
+        {loadMoreOption.provider && loadMoreOption.consumer && (
           <div style={{marginBottom: '20px'}}>
             {isLoading ? (
               <Spinner />
             ) : (
               <div
                 className="load-more"
-                onClick={() => onLoadMore()}
+                onClick={() => getBookings()}
               ></div>
             )}
           </div>
