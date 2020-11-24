@@ -131,6 +131,8 @@ const CallPage = (props) => {
   const [sessionLoader, setSessionLoader] = useState(false);
   const [isRemoteVideoMute, setRemoteVideoMute] = useState(true);
   const [isRemoteAudioMute, setRemoteAudioMute] = useState(true);
+  const [videoJoinData, setVideoJoinData] = useState({});
+  const [isParticipant, setParticipant] = useState(false);
   const onSearch = (e) => {
     e.preventDefault();
   };
@@ -142,28 +144,49 @@ const CallPage = (props) => {
   }, [counter]);
 
   const [remainingDuration, setRemainingDuration] = useState(
-    state.record.duration
+    Number(state.record.duration)
   );
 
   useEffect(() => {
-    if (room) {
+    const params = {
+      booking_id: bookingId,
+      user_id: user.user_id,
+    };
+    if (isParticipant) {
       countdown("remainingDuration", remainingDuration, 0);
       if (remainingDuration > 1) {
         setInterval(() => {
           updateSessionToBackend();
         }, 300000);
+      } else {
+        add("/video/end", params).then((response) => {
+          if (response.type === "SUCCESS") {
+            room.on("disconnected", (room) => {
+              room.localParticipant.tracks.forEach((publication) => {
+                publication.track.stop();
+                publication.unpublish();
+                const attachedElements = publication.track.detach();
+                attachedElements.forEach((element) => element.remove());
+              });
+            });
+            room.disconnect();
+            setRoom(null);
+          }
+        });
       }
     }
     // return () => clearInterval(timer);
-  }, [room, remainingDuration]);
+  }, [room, remainingDuration, bookingId, user.user_id]);
 
   const updateSessionToBackend = () => {
     const params = {
       user_id: user.id_user,
       booking_id: bookingId,
+      room_sid: videoJoinData.room,
     };
+    console.log("status", videoJoinData);
     setSessionLoader(true);
-    add("/video/end", params)
+    add("/video/status", params)
       .then((response) => {
         if (response) {
           setRemainingDuration(0);
@@ -228,14 +251,6 @@ const CallPage = (props) => {
   const onEndCall = () => {
     openConfirmPopup(true);
   };
-
-  const onLeaveCall = () => {};
-
-  const onContinueCall = () => {};
-
-  const onReportAbuse = () => {};
-
-  const onLeave = () => {};
 
   const audioTracksdisable = () => {
     room.localParticipant.audioTracks.forEach((publication) => {
@@ -319,7 +334,7 @@ const CallPage = (props) => {
     }
     add("/video/join", params).then((res) => {
       const { video_token = "" } = res && res.data;
-
+      setVideoJoinData(res.data);
       createLocalTracks({
         audio: true,
         video: { width: 150, height: 150 },
@@ -355,6 +370,7 @@ const CallPage = (props) => {
           room.on("participantConnected", (participant) => {
             /****************/
             /****************/
+            setParticipant(true);
             console.log(`Participant "${participant.identity}" connected`);
             document.getElementById("remote-media-div").innerHTML = "";
             participant.tracks.forEach((publication) => {
@@ -419,18 +435,20 @@ const CallPage = (props) => {
         <div className="remoteVideoContainer">
           <div id="remote-media-div-already"></div>
           <div id="remote-media-div" className={classes.remote_media_div}></div>
-          <div className={clsx(classes.service_calling_option_provider, "service_calling_option")}>
-            {isRemoteAudioMute ? (
-              <MicIcon className="owera_link" />
-            ) : (
-              <MicOffIcon className="owera_link" />
-            )}
-            {isRemoteVideoMute ? (
-              <VideocamIcon className="owera_link" />
-            ) : (
-              <VideocamOffIcon className="owera_link" />
-            )}
-          </div>
+          {isParticipant && (
+            <div className="service_calling_option">
+              {isRemoteAudioMute ? (
+                <MicIcon className="owera_link" />
+              ) : (
+                <MicOffIcon className="owera_link" />
+              )}
+              {isRemoteVideoMute ? (
+                <VideocamIcon className="owera_link" />
+              ) : (
+                <VideocamOffIcon className="owera_link" />
+              )}
+            </div>
+          )}
         </div>
         <div className={classes.localVideoContainer}>
           <div id="local-media" style={{ height: "150px", width: "150px" }} />

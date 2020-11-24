@@ -120,17 +120,9 @@ const AddBookingSidebar = forwardRef((props, ref) => {
     }
   };
 
-  const onAddBooking = () => {
+  const onAddBooking = (token) => {
     if (checkIfValidSlotSelectedOrNot()) {
-      // const bookingData = {
-      //   id_service: selectedService.id_service,
-      //   start: moment(`${date} ${getFromTime}`).format(),
-      //   end: moment(`${date} ${getToTime}`).format(),
-      //   id_user: user.id_user,
-      //   color: "red",
-      // };
-      // setData(bookingData);
-      // props.onAddBooking(bookingData);
+      onSetBooking(token);
     } else {
       alert("Slot is not available for your selected date and time");
     }
@@ -153,7 +145,7 @@ const AddBookingSidebar = forwardRef((props, ref) => {
     calculatePrice(getFromTime, e.target.value);
   };
 
-  const onSetBooking = () => {
+  const onSetBooking = (token) => {
     const date = moment(selectedDate).format("YYYY-MM-DD");
     const data = {
       id_service: selectedService.id_service,
@@ -162,6 +154,7 @@ const AddBookingSidebar = forwardRef((props, ref) => {
         "YYYY-MM-DD HH:mm:ss"
       ),
       to_datetime: moment(`${date} ${getToTime}`).format("YYYY-MM-DD HH:mm:ss"),
+      payment_token: token,
     };
     setLoading(true);
     setDisabled(true);
@@ -249,9 +242,10 @@ const AddBookingSidebar = forwardRef((props, ref) => {
             getToTime={getToTime}
             selectedDate={selectedDate}
             getTotalCost={getTotalCost}
-            onSetBooking={() => onSetBooking()}
+            onSetBooking={(token) => onAddBooking(token)}
             isLoading={isLoading}
             disabled={disabled}
+            user={user}
           />
         </DialogContent>
       </DialogComponent>

@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from "react";
 import clsx from "clsx";
-import {
-  useElements,
-  useStripe,
-  CardElement,
-} from "@stripe/react-stripe-js";
+import { useElements, useStripe, CardElement } from "@stripe/react-stripe-js";
 import { makeStyles } from "@material-ui/core/styles";
 import { useTranslation } from "react-i18next";
 import { withStyles } from "@material-ui/core/styles";
@@ -288,7 +284,6 @@ const PaymentMethod = (props) => {
     };
     onListCard();
   }, []);
-
   const onAddCard = async () => {
     if (!stripe || !elements) {
       return;
@@ -296,20 +291,22 @@ const PaymentMethod = (props) => {
     const res = await stripe.createToken(elements.getElement(CardElement));
     setDisabled(true);
     setLoading(true);
+
     if (res.token.card.id) {
       add("/usercards/add", {
-        is_default: 0,
         user_id: user.id_user,
         card_token_id: res.token.card.id,
+        token_id: res.token.id,
+        is_default:0
       })
         .then((response) => {
           setLoading(false);
           setDisabled(false);
-          setAddNewCardOpen(false)
+          setAddNewCardOpen(false);
         })
         .catch((error) => {
           setOpen(true);
-          setAddNewCardOpen(false)
+          setAddNewCardOpen(false);
           setError({
             message: error,
             type: "error",
@@ -325,12 +322,12 @@ const PaymentMethod = (props) => {
     })
       .then((response) => {
         setDeleteLoader(false);
-        setConformDeleteDialogOpen(false)
+        setConformDeleteDialogOpen(false);
       })
       .catch((error) => {
         setOpen(true);
         setDeleteLoader(false);
-        setConformDeleteDialogOpen(false)
+        setConformDeleteDialogOpen(false);
         setError({
           message: error,
           type: "error",
@@ -341,41 +338,43 @@ const PaymentMethod = (props) => {
     <React.Fragment>
       <TypographyComponent title={t("home.paymentMethod.title")} variant="h2" />
       <div className={classes.payment_card_wrapper}>
-        {listCards && listCards.length && listCards.map((c, index) => (
-          <Card className={classes.payment_card} key={index}>
-            <CardHeader
-              title="Visa"
-              variant="h6"
-              className={classes.card_title}
-            />
-            <CardContent className={classes.payment_card_content}>
-              <div className={classes.payment_item_card}>
-                <TypographyComponent
-                  title="Name of card"
-                  className={classes.user_card_name}
-                />
-                <TypographyComponent title="expired on" />
+        {listCards &&
+          listCards.length &&
+          listCards.map((c, index) => (
+            <Card className={classes.payment_card} key={index}>
+              <CardHeader
+                title="Visa"
+                variant="h6"
+                className={classes.card_title}
+              />
+              <CardContent className={classes.payment_card_content}>
+                <div className={classes.payment_item_card}>
+                  <TypographyComponent
+                    title="Name of card"
+                    className={classes.user_card_name}
+                  />
+                  <TypographyComponent title="expired on" />
+                </div>
+                <div className={classes.payment_item_card}>
+                  <TypographyComponent title={`xxxx xxxx xxxx ${c.last4}`} />
+                  <TypographyComponent
+                    title={`${c.exp_month}/${c.exp_year}`}
+                    className={classes.user_card_expired_date}
+                  />
+                </div>
+              </CardContent>
+              <div
+                className={classes.payment_card_delete}
+                onClick={() => {
+                  setConformDeleteDialogOpen(true);
+                  setSelectCard(c);
+                }}
+              >
+                <DeleteIcon />
+                <label>Remove Card</label>
               </div>
-              <div className={classes.payment_item_card}>
-                <TypographyComponent title="xxxx xxxx xxxx 9843" />
-                <TypographyComponent
-                  title="00/00"
-                  className={classes.user_card_expired_date}
-                />
-              </div>
-            </CardContent>
-            <div
-              className={classes.payment_card_delete}
-              onClick={() => {
-                setConformDeleteDialogOpen(true);
-                setSelectCard(c);
-              }}
-            >
-              <DeleteIcon />
-              <label>Remove Card</label>
-            </div>
-          </Card>
-        ))}
+            </Card>
+          ))}
         <Card
           className={clsx(classes.payment_card, classes.payment_add_new_card)}
         >

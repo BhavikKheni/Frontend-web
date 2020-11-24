@@ -352,7 +352,7 @@ const Services = (props) => {
 
     const fetchLanguage = new Promise((resolve, reject) => {
       const cnt = LOCALSTORAGE_DATA.get("languages") || [];
-      if (!cnt.data) {
+      if (!cnt.data || typeof cnt.data === "undefined") {
         const res = get("/languages/list").catch((error) => {
           reject(error);
         });
@@ -366,7 +366,7 @@ const Services = (props) => {
 
     const fetchCountry = new Promise((resolve, reject) => {
       const cnt = LOCALSTORAGE_DATA.get("countries") || [];
-      if (!cnt.data) {
+      if (!cnt.data || typeof cnt.data === "undefined") {
         const res = get("/countries/list").catch((error) => {
           reject(error);
         });

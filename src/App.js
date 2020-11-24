@@ -10,7 +10,7 @@ import LayoutWrapper from "./Views/Layout/LayoutWrapper";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import "./App.css";
-const stripePromise = loadStripe("pk_test_6pRNASCoBOKtIshFeQd4XMUh");
+const stripePromise = loadStripe("pk_test_51HV3voA4BHXPR0uaKu46F6TbzTFRpsRUjTA8R3EVo79EdEKvnzwqLxghxL3G7sxiFmw3KrUxn6HPjY0vtGJEgodb00bu2NvPeI");
 const theme = createMuiTheme({
   overrides: {
     MuiInputLabel: {

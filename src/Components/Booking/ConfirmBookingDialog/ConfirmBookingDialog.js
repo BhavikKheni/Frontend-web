@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
 import moment from "moment";
 import { FormControl } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
@@ -8,7 +9,7 @@ import Spinner from "../../Spinner/Spinner";
 import PaymentCardComponent from "../../PaymentCard/PaymentCardComponent";
 import RightArrow from "../../../images/next_arrow_white.svg";
 import SelectComponent from "../../../Components/Forms/Select";
-import { get } from "../../../Services/Auth.service";
+import { get, add } from "../../../Services/Auth.service";
 
 const useStyles = makeStyles((theme) => ({
   confirm_booking_title: {
@@ -95,8 +96,11 @@ const useStyles = makeStyles((theme) => ({
 const ConfirmBookingDialog = (props) => {
   const classes = useStyles();
   const [selectCardVisible, setSelectCardVisible] = useState(false);
-  const [selectCard, setCard] = useState(10);
   const [cardList, setCardList] = useState([]);
+  const [cardTokenId, setCardTokenId] = useState("");
+  const stripe = useStripe();
+  const elements = useElements();
+
   const {
     selectedService,
     getFromTime,
@@ -118,6 +122,28 @@ const ConfirmBookingDialog = (props) => {
     };
     onListCard();
   }, []);
+
+  const onAddCard = async () => {
+    if (!stripe || !elements) {
+      return;
+    }
+    const res = await stripe.createToken(elements.getElement(CardElement));
+
+    if (res.token.card.id) {
+      add("/usercards/add", {
+        is_default: 0,
+        user_id: props.user.id_user,
+        card_token_id: res.token.card.id,
+        token_id: res.token.id,
+      })
+        .then((response) => {
+          if (response.type === "SUCCESS") {
+            setCardTokenId(res.token.card.id);
+          }
+        })
+        .catch((error) => {});
+    }
+  };
 
   return (
     <React.Fragment>
@@ -187,9 +213,9 @@ const ConfirmBookingDialog = (props) => {
               <SelectComponent
                 name="select card"
                 label="Select card"
-                value={selectCard}
+                value={cardTokenId}
                 onChange={(e) => {
-                  setCard(e.target.value);
+                  setCardTokenId(e.target.value);
                 }}
                 native
               >
@@ -197,34 +223,27 @@ const ConfirmBookingDialog = (props) => {
                   cardList.map((l, index) => {
                     return (
                       <option key={index} value={l.card_token_id}>
-                        {l.card_token_id}
+                        <span>{`xxxx xxxx xxxx ${l.last4}`}</span>
+                        <span> {`${l.exp_month}/${l.exp_year}`}</span>
                       </option>
                     );
                   })}
               </SelectComponent>
             </FormControl>
           ) : (
-            <PaymentCardComponent />
+            <PaymentCardComponent user={props.user} CardElement={CardElement} />
           )}
-          {selectCardVisible ? (
-            <ButtonComponent
-              title="Buy to set start"
-              style={{ color: classes.textColor }}
-              onClick={() => {}}
-              // startIcon={isLoading && <Spinner />}
-              // disabled={disabled}
-              className={classes.confirm_booking_cta}
-            />
-          ) : (
-            <ButtonComponent
-              title="Buy to set booking"
-              style={{ color: classes.textColor }}
-              onClick={() => onSetBooking()}
-              startIcon={isLoading && <Spinner />}
-              disabled={disabled}
-              className={classes.confirm_booking_cta}
-            />
-          )}
+          <ButtonComponent
+            title="Buy to set booking"
+            style={{ color: classes.textColor }}
+            onClick={() => {
+              onAddCard();
+              onSetBooking(cardTokenId);
+            }}
+            startIcon={isLoading && <Spinner />}
+            disabled={disabled}
+            className={classes.confirm_booking_cta}
+          />
         </div>
       </div>
     </React.Fragment>

@@ -1,3 +1,11 @@
+{/* temporary add signup header */}
+.signup-header-temporary{
+  max-width: 488px;
+  width: 100%;
+  padding: 0 15px;
+  margin: 0 auto;
+  color: white;
+}
 .dialog_content.terms-condition-form-wrapper {
   max-width: 1270px;
 }

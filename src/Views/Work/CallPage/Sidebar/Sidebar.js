@@ -10,93 +10,92 @@ import Spinner from "../../../../Components/Spinner/Spinner";
 
 const useStyles = makeStyles((theme) => ({
   call_sidebar_avatar: {
-    width: '187px',
-    height: '187px',
-    borderRadius: '50%',
-    overflow: 'hidden',
-    margin: '0 auto 30px',
+    width: "187px",
+    height: "187px",
+    borderRadius: "50%",
+    overflow: "hidden",
+    margin: "0 auto 30px",
 
-    '& img': {
-      width: '187px',
-      height: '187px',
+    "& img": {
+      width: "187px",
+      height: "187px",
     },
-    
-    '& .MuiAvatar-root': {
-      width: '187px',
-      height: '187px',
+
+    "& .MuiAvatar-root": {
+      width: "187px",
+      height: "187px",
     },
   },
-  caller_username : {
-    fontFamily: 'Rubik',
-    fontSize: '18px',
-    lineHeight: '30px',
-    letterSpacing: '0.02em',
-    color: '#303030',
+  caller_username: {
+    fontFamily: "Rubik",
+    fontSize: "18px",
+    lineHeight: "30px",
+    letterSpacing: "0.02em",
+    color: "#303030",
   },
-  call_remaining_time : {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: '20px',
-    marginBottom: '5px',
+  call_remaining_time: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginTop: "20px",
+    marginBottom: "5px",
   },
   call_time_wrapper: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: '15px',
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginTop: "15px",
   },
   call_page_timer: {
-    fontFamily: 'Rubik',
-    fontSize: '16px',
-    lineHeight: '33px',
-    letterSpacing: '0.02em',
-    color: '#191919',
-    border: '1px solid #191919',
-    padding: '10px',
-    backgroundColor: '#CFE9CB',
-    borderRadius: '10px',
+    fontFamily: "Rubik",
+    fontSize: "16px",
+    lineHeight: "33px",
+    letterSpacing: "0.02em",
+    color: "#191919",
+    border: "1px solid #191919",
+    padding: "10px",
+    backgroundColor: "#CFE9CB",
+    borderRadius: "10px",
     // width: '86px',
-    width: '78px',
-    height: '55px',
-    display: 'block',
-    textAlign: 'center',
+    width: "78px",
+    height: "55px",
+    display: "block",
+    textAlign: "center",
   },
-  call_total_time : {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    margin: '5px 0 15px',
+  call_total_time: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    margin: "5px 0 15px",
 
-    '& P': {
-      fontFamily: 'Rubik',
-      fontSize: '24px',
-      lineHeight: '30px',
-      letterSpacing: '0.02em',
-      color: '#303030',
-    }
+    "& P": {
+      fontFamily: "Rubik",
+      fontSize: "24px",
+      lineHeight: "30px",
+      letterSpacing: "0.02em",
+      color: "#303030",
+    },
   },
-  
+
   call_select: {
-    '& .MuiFormControl-root': {
-      width: '100%',
+    "& .MuiFormControl-root": {
+      width: "100%",
     },
 
-    '& label:not(.Mui-focused)': {
-      lineHeight: '12px',
-      marginLeft: '10px',
+    "& label:not(.Mui-focused)": {
+      lineHeight: "12px",
+      marginLeft: "10px",
     },
 
-    '& fieldset': {
-      border: '1px solid #303030',
-      borderRadius: '10px',
-    }
+    "& fieldset": {
+      border: "1px solid #303030",
+      borderRadius: "10px",
+    },
   },
 }));
 
 const CallPageSidebar = (props) => {
   const { getTotalCost, sessionLoader, record } = props;
-  console.log("sidebar", record);
   const [cardList, setCardList] = useState([]);
   const classes = useStyles();
   const [selectCard, setSelectCard] = useState(10);
@@ -117,7 +116,7 @@ const CallPageSidebar = (props) => {
         })
         .catch((err) => console.log(err));
     }
-    getVideoRoomInfo();
+    // getVideoRoomInfo();
   }, []);
 
   return (
@@ -131,14 +130,25 @@ const CallPageSidebar = (props) => {
           <Avatar src={record.provider_profile_image} />
         </div>
       )}
-      <TypographyComponent title={`${record.provider_name}`} className={classes.caller_username} />
+      <TypographyComponent
+        title={`${record.provider_name}`}
+        className={classes.caller_username}
+      />
       <Divider className="divider" />
       <div className={classes.call_remaining_time}>
         <TypographyComponent title="Time left" />
-        {sessionLoader ? <Spinner /> : <p><b id="remainingDuration"></b></p>}
+        {sessionLoader ? (
+          <Spinner />
+        ) : (
+          <p>
+            <b id="remainingDuration"></b>
+          </p>
+        )}
       </div>
       <div>
-        <p><b>Stay Longer?</b></p>
+        <p>
+          <b>Stay Longer?</b>
+        </p>
         {/* <img src={ArrowIcon} alt="stay longer" /> */}
       </div>
       <div className={classes.call_time_wrapper}>
@@ -189,7 +199,8 @@ const CallPageSidebar = (props) => {
               cardList.map((l, index) => {
                 return (
                   <option key={index} value={l.card_token_id}>
-                    {l.card_token_id}
+                    <span>{`xxxx xxxx xxxx ${l.last4}`}</span>
+                    <span> {`${l.exp_month}/${l.exp_year}`}</span>
                   </option>
                 );
               })}

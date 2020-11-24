@@ -275,7 +275,7 @@ const ProfileView = (props) => {
     <div className="profile_page_wrapper">
       <Breadcrumbs aria-label="breadcrumb">
         <Link to={path}> My profile </Link>
-        {pathname === "/profile/edit" && <Link to={`/profile/edit`}>edit</Link>}
+        {pathname === "/home/profile/edit" && <Link to={`/home/profile/edit`}>edit</Link>}
       </Breadcrumbs>
       {isLoading ? (
         <Spinner />
@@ -289,7 +289,7 @@ const ProfileView = (props) => {
                 <ImageComponent />
               )}
             </div>
-            {pathname === "/profile/edit" && (
+            {pathname === "/home/profile/edit" && (
               <TypographyComponent
                 className="user_profile_change_cta"
                 title="Change picture"
@@ -346,9 +346,9 @@ const ProfileView = (props) => {
                   );
                 })}
             </div>
-            {pathname !== "/profile/edit" && (
-              <div className="profile_edit_cta">
-                <Link to={`/profile/edit`}>Edit</Link>
+            {pathname !== "/home/profile/edit" && (
+              <div className="/home/profile_edit_cta">
+                <Link to={`/home/profile/edit`}>Edit</Link>
               </div>
             )}
           </div>
@@ -421,7 +421,7 @@ const ProfileView = (props) => {
       )}
       {!isLoading && (
         <Route
-          path={`/profile/:edit`}
+          path={`/home/profile/:edit`}
           render={() => (
             <UpdateProfile
               newLng={(data) => newLng(data)}

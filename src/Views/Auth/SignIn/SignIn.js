@@ -11,7 +11,6 @@ import DialogComponent from "../../../Components/Dialog/Dialog";
 import SnackBarComponent from "../../../Components/SnackBar/SnackBar";
 import { Formik } from "formik";
 import { useTranslation } from "react-i18next";
-import * as Yup from "yup";
 import { LOCALSTORAGE_DATA } from "../../../utils";
 import "./signin.css";
 

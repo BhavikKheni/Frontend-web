@@ -128,10 +128,12 @@ const SignUp = (props) => {
           handleCloseSignUp();
           openSignInDialog();
         }}
-        maxHeight={500}
       >
         {/* Signup Popup */}
-        <TypographyComponent title={t("signup.header")} />
+        {/* temporary add signup header */}
+        <div className="signup-header-temporary">
+          <TypographyComponent title={t("signup.header")} />
+        </div>
         <div className="dialog_container">
           <DialogContent style={{ overflow: "inherit" }}>
             <form onSubmit={formik.handleSubmit} className="signup-form">
