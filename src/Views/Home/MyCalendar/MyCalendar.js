@@ -29,6 +29,7 @@ function renderEventContent(eventInfo) {
   );
 }
 const MyCalendar = (props) => {
+
   const { t } = useTranslation();
   const [slots, setAllSlots] = useState([]);
   useEffect(() => {
@@ -72,6 +73,11 @@ const MyCalendar = (props) => {
     }
     fetchSlots();
   }, []);
+
+  function handleChildClick(color) {
+    alert("aa")
+  }
+
   return (
     <React.Fragment>
       <Grid container spacing={3}>
@@ -86,6 +92,7 @@ const MyCalendar = (props) => {
         <CalendarComponent
           INITIAL_EVENTS={slots}
           renderEventContent={renderEventContent}
+          onDateChanged={handleChildClick}
         />
       </div>
     </React.Fragment>

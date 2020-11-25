@@ -21,7 +21,9 @@ import TooltipComponent from "../../../Components/Tooltip/Tooltip";
 import Verification from "../../../Components/Verification/VerificationDialog";
 import "./UserProfile.css";
 import { scrollToSection } from "../../../utils";
+
 const useSession = () => React.useContext(SessionContext);
+
 const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
@@ -41,6 +43,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const ProfileView = (props) => {
+
   const classes = useStyles();
   const { setSidebarContent, setSidebar } = useSidebar();
   const [isLoading, setLoading] = useState(false);
@@ -88,6 +91,7 @@ const ProfileView = (props) => {
   const { pathname } = props.location;
   const { path } = props.match;
   const { t } = useTranslation();
+
   React.useEffect(() => {
     setSidebar(true);
     setSidebarContent(
@@ -160,7 +164,6 @@ const ProfileView = (props) => {
         )}
         <MenuItem>{t("home.feedback")}</MenuItem>
         <MenuItem>{t("home.faq")}</MenuItem>
-        <MenuItem>{t("home.support")}</MenuItem>
       </div>
     );
   }, [
@@ -183,10 +186,9 @@ const ProfileView = (props) => {
         setLocalStorage({
           ...((res && res.data) || {}),
         });
-        setLoading(false);
-      } else {
-        setLoading(false);
       }
+      setLoading(false);
+      console.log("userdata: ", userData);
     }
     if (isLoggedIn) {
       getData();

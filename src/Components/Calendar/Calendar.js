@@ -11,15 +11,28 @@ const CalendarComponent = (props) => {
 
   const calendarRef = useRef();
 
+  const { INITIAL_EVENTS, renderEventContent, selectable=false, onDateChanged} = props;
+
   useEffect(() => {
     $('.fc-prev-button').on('click', x => {
-      let calendarApi = calendarRef.current.getApi();
-      // console.log("AAAA: ", calendarApi.currentDataManager.state.dateProfile.activeRange);
-      console.log(" calendarRef: ", calendarRef);
+      setTimeout(() => {
+        onDateRangeChange();
+      }, 200);
+    });
+    $('.fc-next-button').on('click', x => {
+      setTimeout(() => {
+        onDateRangeChange();
+      }, 200);
     });
   }, []);
 
-  const { INITIAL_EVENTS, renderEventContent, selectable=false } = props;
+  const onDateRangeChange = () => {
+    let calendar = calendarRef.current.getApi();
+    const startDate = calendar.view.activeStart;
+    const endDate = calendar.view.activeEnd;
+    console.log("startDate and endDate: ", startDate, endDate);
+    onDateChanged();
+  }
 
   const onSelectSlot = (event) => {
     if(props.onSelectBookingSlot){
@@ -90,9 +103,6 @@ const CalendarComponent = (props) => {
         // alert('selected ' + info.startStr + ' to ' + info.endStr);
         // onSelectDate(info);
         props.onSelectDate(info);
-      }}
-      eventChange = {() => {
-        console.log("eee")
       }}
     />
   );

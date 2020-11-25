@@ -345,7 +345,7 @@ const PaymentMethod = (props) => {
       <TypographyComponent title={t("home.paymentMethod.title")} variant="h2" />
       <div className={classes.payment_card_wrapper}>
         {listCards &&
-          listCards.length &&
+          listCards.length > 0 &&
           listCards.map((c, index) => (
             <Card className={classes.payment_card} key={index}>
               <CardHeader

@@ -268,7 +268,7 @@ const UpdateProfile = (props) => {
         formData.append("timezone", updateRecord.timezone);
       }
 
-      props.languages.forEach((ele, index) => {
+      props.languages && props.languages.length >0 && props.languages.forEach((ele, index) => {
         formData.append(`languages[${[index]}][0]`, ele.language_id);
         formData.append(`languages[${[index]}][1]`, ele.language_level_id);
       });
