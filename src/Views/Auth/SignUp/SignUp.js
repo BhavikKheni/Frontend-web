@@ -92,12 +92,20 @@ const SignUp = (props) => {
           setDisabled(false);
           setLoading(false);
           setOpen(true);
+          setTypeRes({
+            message: res.message,
+            type: "success",
+          });
         }
       })
       .catch((error) => {
         console.log("Error", error);
         setLoading(false);
         setDisabled(false);
+        setTypeRes({
+          message: error,
+          type: "error",
+        });
       });
   };
 

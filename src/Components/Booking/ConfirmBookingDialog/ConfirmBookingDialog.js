@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
 import moment from "moment";
 import { FormControl } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
@@ -94,10 +96,22 @@ const useStyles = makeStyles((theme) => ({
     cursor: "pointer",
     fontSize: "24px",
   },
+  cardListItem: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    color: "#000",
+    width: "100%",
+  },
+  root: {
+    flexDirection: "column",
+  },
+  listNav: {
+    backgroundColor: "#fff",
+  },
 }));
 
 const ConfirmBookingDialog = (props) => {
-
   const classes = useStyles();
   const [selectCardVisible, setSelectCardVisible] = useState(false);
   const [cardList, setCardList] = useState([]);
@@ -105,6 +119,7 @@ const ConfirmBookingDialog = (props) => {
   const [addTokenId, addCardTokenId] = useState("");
   const stripe = useStripe();
   const elements = useElements();
+  const [selectedIndex, setSelectedIndex] = React.useState(1);
 
   const {
     selectedService,
@@ -133,7 +148,7 @@ const ConfirmBookingDialog = (props) => {
       return;
     }
 
-    const cardDetails = getCardInfo(); 
+    const cardDetails = getCardInfo();
     const formData = new FormData();
     formData.append("user_id", props.user.id_user);
     formData.append("card_token_id", cardDetails.token.card.id);
@@ -155,16 +170,18 @@ const ConfirmBookingDialog = (props) => {
   const getCardInfo = async () => {
     const res = await stripe.createToken(elements.getElement(CardElement));
     if (res) {
-      return res.token ? res.token : null; 
+      return res.token ? res.token : null;
     } else {
       return null;
     }
-  }
+  };
 
   const onConfirmBooking = () => {
     const cardDetails = getCardInfo();
     if (cardTokenId && cardDetails.id) {
-      alert("You have selected a card from existing and also entered a new card details. action not performed");
+      alert(
+        "You have selected a card from existing and also entered a new card details. action not performed"
+      );
       return;
     } else if (cardTokenId) {
       onSetBooking(cardTokenId);
@@ -173,7 +190,12 @@ const ConfirmBookingDialog = (props) => {
     } else {
       alert("Please enter card details or choose a card from list");
     }
-  }
+  };
+
+  const handleListItemClick = (tokenId, index) => {
+    setCardTokenId(tokenId);
+    setSelectedIndex(index);
+  };
 
   return (
     <React.Fragment>
@@ -239,27 +261,33 @@ const ConfirmBookingDialog = (props) => {
             )}
           </div>
           {selectCardVisible ? (
-            <FormControl variant="outlined">
-              <SelectComponent
-                name="select card"
-                label="Select card"
-                value={cardTokenId}
-                onChange={(e) => {
-                  setCardTokenId(e.target.value);
-                }}
-                native
-              >
-                {cardList &&
-                  cardList.map((l, index) => {
-                    return (
-                      <option key={index} value={l.card_token_id}>
-                        XXXX XXXX XXXX XXXX {l.last4}
-                        {l.exp_month}/{l.exp_year}
-                      </option>
-                    );
-                  })}
-              </SelectComponent>
-            </FormControl>
+            <List component="nav" className={classes.listNav}>
+              {cardList &&
+                cardList.map((l, index) => {
+                  return (
+                    <ListItem
+                      key={index}
+                      button
+                      selected={selectedIndex === index}
+                      onClick={(event) =>
+                        handleListItemClick(l.card_token_id, index)
+                      }
+                      className={classes.root}
+                    >
+                      <div className={classes.cardListItem}>
+                        <span>Name</span>
+                        <span>expired on</span>
+                      </div>
+                      <div className={classes.cardListItem}>
+                        <span>XXXX XXXX XXXX XXXX {l.last4}</span>
+                        <span>
+                          {l.exp_month}/{l.exp_year}
+                        </span>
+                      </div>
+                    </ListItem>
+                  );
+                })}
+            </List>
           ) : (
             <PaymentCardComponent user={props.user} CardElement={CardElement} />
           )}

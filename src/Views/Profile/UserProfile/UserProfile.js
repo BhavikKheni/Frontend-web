@@ -244,6 +244,12 @@ const ProfileView = (props) => {
         setOpen(true);
       } else {
         setOpen(true);
+        setTypeRes({
+          message: res.message,
+          type: "error",
+        });
+        setIsDisabledEmailVerify(false);
+        setEmailVerifyLoader(false);
       }
     } else if (type === "phone") {
       const data = {
@@ -265,6 +271,12 @@ const ProfileView = (props) => {
         setOpen(true);
       } else {
         setOpen(true);
+        setTypeRes({
+          message: res.message,
+          type: "error",
+        });
+        setIsDisabledMobileVerify(false);
+        setIsMobileVerifyLoader(false);
       }
     }
   };
@@ -277,7 +289,9 @@ const ProfileView = (props) => {
     <div className="profile_page_wrapper">
       <Breadcrumbs aria-label="breadcrumb">
         <Link to={path}> My profile </Link>
-        {pathname === "/home/profile/edit" && <Link to={`/home/profile/edit`}>edit</Link>}
+        {pathname === "/home/profile/edit" && (
+          <Link to={`/home/profile/edit`}>edit</Link>
+        )}
       </Breadcrumbs>
       {isLoading ? (
         <Spinner />
@@ -349,7 +363,7 @@ const ProfileView = (props) => {
                 })}
             </div>
             {pathname !== "/home/profile/edit" && (
-              <div className="/home/profile_edit_cta">
+              <div className="profile_edit_cta">
                 <Link to={`/home/profile/edit`}>Edit</Link>
               </div>
             )}
@@ -382,7 +396,7 @@ const ProfileView = (props) => {
                       "We’ve send a 4 digit code to your email. Please enter the code to verify your email-id."
                     );
                   }}
-                  startIcon={isEmailVerifyLoader && <Spinner />}
+                  startIcon={isEmailVerifyLoader && <Spinner size="small"/>}
                   disabled={isDisabledEmailVerify}
                   loader={isEmailVerifyLoader}
                 />
@@ -412,7 +426,7 @@ const ProfileView = (props) => {
                       "We’ve send a 4 digit code to your mobile. Please enter the code to verify your mobile."
                     );
                   }}
-                  startIcon={isMobileVerifyLoader && <Spinner />}
+                  startIcon={isMobileVerifyLoader && <Spinner size="small"/>}
                   disabled={isDisabledMobileVerify}
                   loader={isMobileVerifyLoader}
                 />
@@ -421,10 +435,10 @@ const ProfileView = (props) => {
           </div>
         </div>
       )}
-      {!isLoading && (
-        <Route
-          path={`/home/profile/:edit`}
-          render={() => (
+      <Route
+        path={`/home/profile/:edit`}
+        render={() =>
+          !isLoading && (
             <UpdateProfile
               newLng={(data) => newLng(data)}
               languages={userData.languages}
@@ -434,8 +448,9 @@ const ProfileView = (props) => {
               userData={userData}
               setUpdate={(data) => setUpdate(data)}
             />
-          )}
-        />
+          )
+        }
+      />
       )}
       <Verification
         user={user}
@@ -445,7 +460,6 @@ const ProfileView = (props) => {
         subTitle1={subTitle}
         type={type}
       />
-
       <SnackBarComponent
         open={open}
         onClose={handleClose}

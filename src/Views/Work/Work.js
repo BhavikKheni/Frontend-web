@@ -344,6 +344,7 @@ const Work = (props) => {
               setSaveLoader(false);
               services.unshift({ id: res.id, ...formik.values, active: true });
               formik.resetForm({});
+              setFileList([]);
               setTotalServices((s) => s + 1);
               setTypeRes({
                 message: res.message,
@@ -423,7 +424,9 @@ const Work = (props) => {
       setSubCategories(sub[0].sub_categories);
     }
     formik.setFieldValue("subcategory", sub[0].sub_categories[0].id_category);
-    setFileList([...response.images]);
+    if(response.images){
+      setFileList([...response.images]);
+    }
     scrollToSection("create_service");
   };
 
@@ -580,9 +583,9 @@ const Work = (props) => {
                       <div className="my_service" key={index}>
                         <ButtonComponent
                           id={index}
-                          title={service.active ? "Activate" : "Deactivate"}
+                          title={service.active ? "Deactivate" : "Activate"}
                           className={clsx(
-                            { deactivate_service_button: !service.active },
+                            { deactivate_service_button: service.active },
                             "activate_service_button"
                           )}
                           onClick={(e) => {

@@ -271,6 +271,17 @@ const OweraHeader = (props) => {
     setAnchorEl(null);
   };
 
+  const selectedHome = () => {
+    return [
+      "/home",
+      "/home/calendar",
+      "/home/next-booking",
+      "/home/service-history",
+      "/home/profile",
+      "/home/payment-methods",
+    ].includes(pathname);
+  };
+
   return (
     <div>
       <AppBar
@@ -318,7 +329,7 @@ const OweraHeader = (props) => {
                   Services
                 </ListItem>
                 <ListItem
-                  selected={pathname === "/home"}
+                  selected={selectedHome()}
                   onClick={(event, index) => {
                     onHomeHeader(1);
                   }}
@@ -421,7 +432,7 @@ const OweraHeader = (props) => {
           </DialogContent>
         </div>
       </DialogComponent>
-  
+
       <Popover
         id={id}
         open={open}
@@ -440,7 +451,8 @@ const OweraHeader = (props) => {
         {searchLoader ? (
           <Sppiner />
         ) : (
-          searchRecords && searchRecords.map((m, index) => (
+          searchRecords &&
+          searchRecords.map((m, index) => (
             <div key={index} className="search-item">
               <span onClick={() => goToServiceDetails(m)}>{m.title}</span>
             </div>

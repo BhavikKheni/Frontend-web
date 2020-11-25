@@ -51,6 +51,7 @@ const MyCalendar = (props) => {
               start: moment(slot.startDate).format(),
               end: moment(slot.endDate).format(),
               display: "background",
+              color:'#4AC836'
               // constraint: 'availableForMeeting',
             });
           });
