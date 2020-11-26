@@ -3,9 +3,12 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
+import {HEADER_TOOLBAR, TITLE_FORMAT, FORMAT_DATE, VIEWS} from './CalendarConst';
+
 import $ from "jquery";
 import "date-fns";
 import "./Calendar.css";
+
 
 const CalendarComponent = (props) => {
 
@@ -14,24 +17,30 @@ const CalendarComponent = (props) => {
   const { INITIAL_EVENTS, renderEventContent, selectable=false, onDateChanged} = props;
 
   useEffect(() => {
+    onDateRangeChanged();
+    handleDateChangeOnClick();
+  }, []);
+
+  const handleDateChangeOnClick = () => {
     $('.fc-prev-button').on('click', x => {
       setTimeout(() => {
-        onDateRangeChange();
+        onDateRangeChanged();
       }, 200);
     });
     $('.fc-next-button').on('click', x => {
       setTimeout(() => {
-        onDateRangeChange();
+        onDateRangeChanged();
       }, 200);
     });
-  }, []);
+  }
 
-  const onDateRangeChange = () => {
+  const onDateRangeChanged = () => {
     let calendar = calendarRef.current.getApi();
-    const startDate = calendar.view.activeStart;
-    const endDate = calendar.view.activeEnd;
-    console.log("startDate and endDate: ", startDate, endDate);
-    onDateChanged();
+    const dates = {
+      from_datetime: calendar.view.activeStart,
+      to_datetime: calendar.view.activeEnd
+    };
+    onDateChanged(dates);
   }
 
   const onSelectSlot = (event) => {
@@ -40,70 +49,40 @@ const CalendarComponent = (props) => {
     }
   }
 
-  const onSelectDate = (event) => {
-    props.onSelectDate(event);
+  const validRange = (nowDate) => {
+    return {
+      start: nowDate,
+    }
+  }
+
+  const onSelectDate = (info) => {
+    // alert('selected ' + info.startStr + ' to ' + info.endStr);
+    props.onSelectDate(info);
+  }
+
+  const onEventClick = (info) => {
+    if (!info.event.extendedProps.isBooked) {
+      onSelectSlot(info.event);
+    }
   }
 
   return (
     <FullCalendar
       ref={calendarRef} 
       plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-      headerToolbar={{
-        left: "today prevYear,prev,title,next,nextYear",
-        right: "dayGridMonth,timeGridWeek,timeGridDay",
-        center: "",
-      }}
-      titleFormat={{
-        month: "long",
-        year: "numeric",
-      }}
+      headerToolbar={HEADER_TOOLBAR}
+      titleFormat={TITLE_FORMAT}
       initialView="timeGridWeek"
-      formatDate={{
-        day: "numeric",
-        month: "long",
-        year: "numeric"
-      }}
-      views={{
-        dayGrid: {
-          dayHeaderFormat: {
-            weekday: "long"
-          }
-        },
-        week: {
-          dayHeaderFormat: {
-            day: "numeric",
-            weekday: "short",
-            month: "long",
-          }
-        },
-        day: {
-          dayHeaderFormat: {
-            day: "numeric",
-            weekday: "long",
-            month: "long",
-          }
-        }
-      }}
-      // businessHours={true}
+      formatDate={FORMAT_DATE}
+      views={VIEWS}
       editable={true}
-      eventConstraint={"businessHours"} // disabled drag and drop in whole calendar
-      // selectConstraint= {{
-      //   start: moment().subtract(1, 'days'),
-      //  end: moment().startOf('year').add(100, 'year')
-      //  }}
+      eventConstraint={"businessHours"}
       selectable={selectable}
       eventContent={renderEventContent}
       events={INITIAL_EVENTS}
-      eventClick= {(info) => {
-        if (!info.event.extendedProps.isBooked) {
-          onSelectSlot(info.event);
-        }
-      }}
-      select= {(info) => {
-        // alert('selected ' + info.startStr + ' to ' + info.endStr);
-        // onSelectDate(info);
-        props.onSelectDate(info);
-      }}
+      eventClick= {(info) => onEventClick(info)}
+      select= {(info) => onSelectDate(info)}
+      validRange={(nowDate) => validRange(nowDate)}
     />
   );
 };

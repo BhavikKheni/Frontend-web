@@ -44,7 +44,6 @@ const AddBookingSlotSideBar = (props) => {
         "YYYY-MM-DD HH:mm:ss"
       ),
     };
-    props.onAddBookingCalendar(bookingData);
     onSave(bookingData);
   };
 
@@ -59,6 +58,7 @@ const AddBookingSlotSideBar = (props) => {
           setOpenSnackBar(true);
           setDisabled(false);
         }
+        props.onAddBookingCalendar();
       })
       .catch((error) => {
         setDisabled(false);
