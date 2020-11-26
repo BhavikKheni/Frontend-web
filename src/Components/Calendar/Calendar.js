@@ -34,6 +34,7 @@ const CalendarComponent = (props) => {
     });
   }
 
+  // Refresh the calendar when date range changed
   const onDateRangeChanged = () => {
     let calendar = calendarRef.current.getApi();
     const dates = {
@@ -61,6 +62,7 @@ const CalendarComponent = (props) => {
   }
 
   const onEventClick = (info) => {
+    console.log("AAA: ", info)
     if (!info.event.extendedProps.isBooked) {
       onSelectSlot(info.event);
     }

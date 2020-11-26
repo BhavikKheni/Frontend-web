@@ -29,35 +29,30 @@ const BookServiceCalendar = ({
   userData,
   loginUser
 }) => {
-  // For the slot details and languages
-  useEffect(() => {
-    getSlotDetails();
-  }, []);
 
   const { t } = useTranslation();
   const [slots, setAllSlots] = useState([]);
-  const [availableSlots, setAvailableSlots] = useState([]);
+
+  // To set start and end datetime 
+  const [dateRange, setDateRange] = useState({});
+
   const childRef = useRef();
 
-  // Fetch the slots details
-  const getSlotDetails = async () => {
+  const fetchSlots = async (from_datetime, to_datetime) => {
     const params = {
-      from_datetime: moment().startOf("week").format("YYYY-MM-DD"),
-      to_datetime: moment().endOf("week").format("YYYY-MM-DD"),
+      from_datetime: moment(from_datetime).subtract(1, 'day').format("YYYY-MM-DD hh:mm:ss"),
+      to_datetime: moment(to_datetime).format("YYYY-MM-DD hh:mm:ss")
     };
 
-    await search("/slot/list", params)
-      .then((response) => {
-        setAvailableSlots(response["available_slots"]);
-        makeSlotsArray(response['available_slots'], response['booked_slots']);
-      })
-      .catch((err) => {
-        console.log("error", err);
-      });
+    await search("/slot/list", params).then((response) => {
+      handleResponse(response['available_slots'], response['booked_slots']);
+    }).catch((err) => {
+      console.log("error", err);
+    });
   };
 
   // Iterate the response and create array for the calendar
-  const makeSlotsArray = (available_slots, booked_slots) => {
+  const handleResponse = (available_slots, booked_slots) => {
     let tempArray = [];
     available_slots.forEach((slot) => {
       tempArray.push({
@@ -88,15 +83,16 @@ const BookServiceCalendar = ({
     setAllSlots([...tempArray]);
   };
 
-  // on add booking save data to the database
-  const onAddBooking = (data) => {
-    // availableSlots.forEach((slot) => {
-    //   const startDate = moment(slot.startDate).format("YYYY-MM-DDTHH:mm:ss");
-    //   const endDate = moment(slot.endDate).format("YYYY-MM-DDTHH:mm:ss");
-    // });
-    console.log("dasdsa", data);
-    // setAllSlots((d) => [...(d || []), data]);
+  // Refresh the calendar once create slot
+  const onAddBookingCalendar = () => {
+    fetchSlots(dateRange.from_datetime, dateRange.to_datetime);
   };
+
+  const refreshCalendar = (val) => {
+    setDateRange(val);
+    fetchSlots(val.from_datetime, val.to_datetime);
+  }
+
   return (
     <section className="book-service">
       <TypographyComponent
@@ -147,6 +143,7 @@ const BookServiceCalendar = ({
         <CalendarComponent
           INITIAL_EVENTS={slots}
           renderEventContent={renderEventContent}
+          onDateChanged={(val) => refreshCalendar(val)}
           onSelectBookingSlot={(selectedServiceInfo) => {
             childRef.current.getSeletedSlotDetails(selectedServiceInfo);
           }}
@@ -155,7 +152,7 @@ const BookServiceCalendar = ({
         <div className="booking_time">
           <AddBookingSidebar
             ref={childRef}
-            onAddBooking={(data) => onAddBooking(data)}
+            onAddBookingCalendar={onAddBookingCalendar}
             user={userData}
             selectedService={selectedServiceDetails}
             loginUser={loginUser}

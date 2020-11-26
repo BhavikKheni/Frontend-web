@@ -28,6 +28,10 @@
     text-transform: capitalize;
 } */
 
+.service_calendar .fc-bg-event {
+    /* opacity: initial;
+    cursor: pointer; */
+}
 
 .service_calendar th.fc-timegrid-axis,
 .service_calendar td.fc-timegrid-axis.fc-scrollgrid-shrink {

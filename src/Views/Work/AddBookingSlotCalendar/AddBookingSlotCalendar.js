@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useRef } from "react";
 import { SessionContext } from "../../../Provider/Provider";
 import CalendarComponent from "../../../Components/Calendar/Calendar";
 import AddBookingSlotSideBar from "../../../Components/Booking/AddBookingSlotSidebar/AddBookingSlotSidebar";
@@ -18,18 +18,19 @@ const AddBookingSlotCalendar = (props) => {
 
   const useSession = () => React.useContext(SessionContext);
   const { user } = useSession();
+  const childRef = useRef();
 
   const { id_service, editRecord } = props;
   const [slots, setAllSlots] = useState([]);
-  const [getSelectedDateTime, setSelectedDateTime] = useState(null);
+
+  // To set start and end datetime 
   const [dateRange, setDateRange] = useState({});
   
   const fetchSlots = async (from_datetime, to_datetime) => {
     const params = {
-      from_datetime: moment(from_datetime).format("YYYY-MM-DD hh:mm:ss"),
+      from_datetime: moment(from_datetime).subtract(1, 'day').format("YYYY-MM-DD hh:mm:ss"),
       to_datetime: moment(to_datetime).format("YYYY-MM-DD hh:mm:ss")
     };
-    console.log("params", params);
     const response = await search("/slot/list", params).catch((err) => {
       console.log("error", err);
     });
@@ -44,27 +45,26 @@ const AddBookingSlotCalendar = (props) => {
     let tempArray = [];
     data["available_slots"] && data["available_slots"].forEach((slot) => {
       tempArray.push({
-        groupId: "availableForMeeting",
-        start: moment(slot.startDate).toISOString(),
-        end: moment(slot.endDate).toISOString(),
-        display: "background",
-        // constraint: 'availableForMeeting',
+        start: slot.startDate,
+        end: slot.endDate,
+        color: "#4AC836",
+        resize: false,
+        overlap: false,
+        slot_id: slot.slot_id,
+        date1: moment(slot.startDate).format("DD/MM/YYYY HH:mm"),
+        date2: moment(slot.endDate).format("DD/MM/YYYY HH:mm")
       });
     });
+    console.log(tempArray)
     setAllSlots([...tempArray]);
   }
 
   // Refresh the calendar once create slot
   const onAddBookingCalendar = () => {
-    fetchSlots(dateRange);
+    fetchSlots(dateRange.from_datetime, dateRange.to_datetime);
   };
 
-  const setSelectedDate = (selected) => {
-    setSelectedDateTime(selected);
-  }
-
   const refreshCalendar = (val) => {
-    console.log(val)
     setDateRange(val);
     fetchSlots(val.from_datetime, val.to_datetime);
   }
@@ -79,14 +79,20 @@ const AddBookingSlotCalendar = (props) => {
               INITIAL_EVENTS={slots}
               renderEventContent={renderEventContent}
               selectable={true}
-              onSelectDate={(e) => setSelectedDate(e)}
+              onSelectDate={(slotDetails) => {
+                childRef.current.setSeletedSlotDetails(slotDetails);
+              }}
               onDateChanged={(val) => refreshCalendar(val)}
+              onSelectBookingSlot={(slotDetails) => {
+                childRef.current.setSeletedSlotDetails(slotDetails);
+              }}
             />
             <div className="booking_time">
               <AddBookingSlotSideBar
+                ref={childRef}
                 onAddBookingCalendar={onAddBookingCalendar}
                 user={user}
-                getSelectedDateTime={getSelectedDateTime}
+                id_service={id_service}
               />
             </div>
           </div>

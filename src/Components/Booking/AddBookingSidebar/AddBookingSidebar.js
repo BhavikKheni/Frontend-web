@@ -14,7 +14,7 @@ const AddBookingSidebar = forwardRef((props, ref) => {
   const [openSnackBar, setOpenSnackBar] = useState(false);
   const [response, setResponse] = useState({});
   const [selectedDate, setSelectedDate] = React.useState();
-  const { user, selectedService } = props;
+  const { user, selectedService, onAddBookingCalendar } = props;
   const [getSlotDetails, setSlotDetails] = useState({});
   const [getTotalCost, setTotalCost] = useState(null);
   const [getFinalTime, setFinalTime] = useState(null);
@@ -127,6 +127,7 @@ const AddBookingSidebar = forwardRef((props, ref) => {
         setLoading(false);
         setResponse(result);
         setOpenSnackBar(true);
+        onAddBookingCalendar();
       })
       .catch((error) => {
         setDisabled(false);

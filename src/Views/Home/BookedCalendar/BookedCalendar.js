@@ -36,7 +36,7 @@ const BookedCalendarComponent = (props) => {
 
   const fetchSlots = async (from_datetime, to_datetime) => {
     const params = {
-      from_datetime: moment(from_datetime).format("YYYY-MM-DD hh:mm:ss"),
+      from_datetime: moment(from_datetime).subtract(1, 'day').format("YYYY-MM-DD hh:mm:ss"),
       to_datetime: moment(to_datetime).format("YYYY-MM-DD hh:mm:ss")
     };
     const response = await search("/slot/list", params).catch((err) => {
@@ -53,8 +53,8 @@ const BookedCalendarComponent = (props) => {
     response["booked_slots"] && response["booked_slots"].forEach((slot) => {
       tempArray.push({
         id: slot.slot_id,
-        start: moment(slot.startDate).format(),
-        end: moment(slot.endDate).format(),
+        start: slot.startDate,
+        end: slot.endDate,
         title: slot.service_title,
         description: "Booked",
         booked_by: slot.booked_by,
