@@ -28,50 +28,42 @@ function renderEventContent(eventInfo) {
     </>
   );
 }
-const MyCalendar = (props) => {
+
+const BookedCalendarComponent = (props) => {
 
   const { t } = useTranslation();
   const [slots, setAllSlots] = useState([]);
-  useEffect(() => {
-    async function fetchSlots() {
-      const params = {
-        from_datetime: moment().startOf("week").format("YYYY-MM-DD hh:mm:ss"),
-        to_datetime: moment().endOf("week").format("YYYY-MM-DD hh:mm:ss"),
-      };
-      const response = await search("/slot/list", params).catch((err) => {
-        console.log("error", err);
-      });
 
-      if (response) {
-        let tempArray = [];
-        response["available_slots"] &&
-          response["available_slots"].forEach((slot) => {
-            tempArray.push({
-              groupId: "availableForMeeting",
-              start: moment(slot.startDate).format(),
-              end: moment(slot.endDate).format(),
-              display: "background",
-              color:'#4AC836'
-              // constraint: 'availableForMeeting',
-            });
+  const fetchSlots = async () => {
+    const params = {
+      from_datetime: moment().startOf("week").format("YYYY-MM-DD hh:mm:ss"),
+      to_datetime: moment().endOf("week").format("YYYY-MM-DD hh:mm:ss"),
+    };
+    const response = await search("/slot/list", params).catch((err) => {
+      console.log("error", err);
+    });
+
+    if (response) {
+      let tempArray = [];
+      response["booked_slots"] &&
+        response["booked_slots"].forEach((slot) => {
+          tempArray.push({
+            id: slot.slot_id,
+            start: moment(slot.startDate).format(),
+            end: moment(slot.endDate).format(),
+            title: slot.service_title,
+            description: "Booked",
+            booked_by: slot.booked_by,
+            color: "#4F4F4F",
+            resize: false,
+            overlap: false,
           });
-        response["booked_slots"] &&
-          response["booked_slots"].forEach((slot) => {
-            tempArray.push({
-              id: slot.slot_id,
-              start: moment(slot.startDate).format(),
-              end: moment(slot.endDate).format(),
-              title: slot.service_title,
-              description: "Booked",
-              booked_by: slot.booked_by,
-              color: "#4F4F4F",
-              resize: false,
-              overlap: false,
-            });
-          });
-        setAllSlots([...tempArray]);
-      }
+        });
+      setAllSlots([...tempArray]);
     }
+  }
+
+  useEffect(() => {
     fetchSlots();
   }, []);
 
@@ -99,4 +91,4 @@ const MyCalendar = (props) => {
     </React.Fragment>
   );
 };
-export default MyCalendar;
+export default BookedCalendarComponent;

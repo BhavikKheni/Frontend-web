@@ -5,10 +5,8 @@ import { MenuItem, Divider } from "@material-ui/core";
 import { useSidebar } from "../../Provider/SidebarProvider";
 import { useTranslation } from "react-i18next";
 import { SessionContext } from "../../Provider/Provider";
-import CalendarComponent from "./MyCalendar/MyCalendar";
+import BookedCalendarComponent from "./BookedCalendar/BookedCalendar";
 import MyServiceHistory from "./MyServiceHistory/MyServiceHistory";
-import NextBooking from "./NextBooking/NextBooking";
-import NextBookingProvider from "./NextBooking/NextBookingProvider";
 import PaymentMethod from "./PaymentMethod/PaymentMethod";
 import Styles from "./home.module.css";
 import HomeWrapper from "./HomeWrapper";
@@ -75,6 +73,9 @@ const Home = (props) => {
               component={Link}
               to="/home/profile"
               selected={pathname === "/home/profile"}
+              onClick={() => {
+                scrollToSection("profile_section");
+              }}
             >
               {t("home.myProfile")}
             </MenuItem>
@@ -147,7 +148,7 @@ const Home = (props) => {
         <PaymentMethod />
       </section>
       <section className="calendar">
-        <CalendarComponent />
+        <BookedCalendarComponent />
       </section>
     </div>
   );

@@ -129,7 +129,6 @@ const NewNextBooking = (props) => {
 
   const getBookings = async () => {
     try {
-      debugger;
       const apisArr = getAPIArray();
       if (apisArr && apisArr.length) {
         const allResponses = await Promise.all(apisArr);
