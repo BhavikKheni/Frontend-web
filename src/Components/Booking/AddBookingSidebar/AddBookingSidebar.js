@@ -122,12 +122,23 @@ const AddBookingSidebar = forwardRef((props, ref) => {
     setDisabled(true);
     add("/service/book", data)
       .then((result) => {
-        setOpen(false);
-        setDisabled(false);
-        setLoading(false);
-        setResponse(result);
-        setOpenSnackBar(true);
-        onAddBookingCalendar();
+        if(result.type === "SUCCESS"){
+          setOpen(false);
+          setDisabled(false);
+          setLoading(false);
+          setResponse(result);
+          setOpenSnackBar(true);
+          onAddBookingCalendar();
+        }else {
+          setOpen(false);
+          setDisabled(false);
+          setLoading(false);
+          setResponse({
+            message: result.message,
+            type: "error",
+          });
+          setOpenSnackBar(true);
+        }
       })
       .catch((error) => {
         setDisabled(false);
@@ -185,7 +196,6 @@ const AddBookingSidebar = forwardRef((props, ref) => {
           type="button"
           onClick={() => {
             if (getFromTime && getToTime) {
-              console.log("login user",props.loginUser)
               if (selectedService.id_user === props.loginUser.id_user) {
                 setOpenSnackBar(true);
                 setResponse({
@@ -219,6 +229,7 @@ const AddBookingSidebar = forwardRef((props, ref) => {
             isLoading={isLoading}
             disabled={disabled}
             user={user}
+            loginUser={props.loginUser}
           />
         </DialogContent>
       </DialogComponent>
