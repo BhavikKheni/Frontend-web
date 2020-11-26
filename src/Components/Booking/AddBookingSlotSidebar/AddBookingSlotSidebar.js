@@ -27,7 +27,7 @@ const AddBookingSlotSideBar = forwardRef((props, ref) => {
   };
 
   const onChangeFromTime = (e) => {
-    // setFromTime(e.target.value);
+    setFromTime(e.target.value);
   };
 
   const onChangeToTime = (e) => {
