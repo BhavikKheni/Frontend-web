@@ -69,15 +69,15 @@ const PaymentMethod = (props) => {
   const handleClose = () => {
     setAddNewCardOpen(false);
   };
+  const onListCard = () => {
+    get("/usercards/list")
+      .then((response) => {
+        setListCards(response);
+      })
+      .catch((error) => {});
+  };
 
-  useEffect(() => {
-    const onListCard = () => {
-      get("/usercards/list")
-        .then((response) => {
-          setListCards(response);
-        })
-        .catch((error) => {});
-    };
+  useEffect(() => {  
     onListCard();
   }, []);
   const onAddCard = async () => {
@@ -92,13 +92,16 @@ const PaymentMethod = (props) => {
     formData.append("user_id", user.id_user);
     formData.append("card_token_id", res.token.card.id);
     formData.append("token_id", res.token.id);
-    formData.append("is_default", "0");
+    //formData.append("is_default", "0");
 
     if (res.token.card.id) {
       newService
         .upload("/usercards/add", formData)
         .then((res) => res.json())
-        .then((res) => {})
+        .then((res) => {
+          onListCard();
+          setAddNewCardOpen(false);
+        })
         .catch((err) => {
           setOpen(true);
           setAddNewCardOpen(false);

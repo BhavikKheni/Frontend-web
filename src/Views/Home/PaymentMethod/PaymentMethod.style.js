@@ -115,6 +115,7 @@ export const useStyles = makeStyles((theme) => ({
       "& p": {
         fontSize: "14px",
         fontWeight: "500",
+        textAlign: "center"
       },
     },
   
