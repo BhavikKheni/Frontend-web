@@ -387,6 +387,8 @@ const Services = (props) => {
         setLanguages(languages);
       })
       .catch((error) => {
+        LOCALSTORAGE_DATA.remove("countries");
+        LOCALSTORAGE_DATA.remove("languages");
         console.log("Error", error);
       });
   }, [logout]);
