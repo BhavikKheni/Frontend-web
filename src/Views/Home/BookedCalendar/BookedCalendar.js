@@ -36,8 +36,8 @@ const BookedCalendarComponent = (props) => {
 
   const fetchSlots = async (from_datetime, to_datetime) => {
     const params = {
-      from_datetime: moment(from_datetime).subtract(1, 'day').format("YYYY-MM-DD hh:mm:ss"),
-      to_datetime: moment(to_datetime).format("YYYY-MM-DD hh:mm:ss")
+      from_datetime: moment(from_datetime).subtract(1, 'day').toISOString(),
+      to_datetime: moment(to_datetime).toISOString()
     };
     const response = await search("/slot/list", params).catch((err) => {
       console.log("error", err);

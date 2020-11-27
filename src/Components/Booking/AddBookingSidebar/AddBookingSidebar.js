@@ -112,10 +112,8 @@ const AddBookingSidebar = forwardRef((props, ref) => {
     const data = {
       id_service: selectedService.id_service,
       id_user: user.id_user,
-      from_datetime: moment(`${date} ${getFromTime}`).format(
-        "YYYY-MM-DD HH:mm:ss"
-      ),
-      to_datetime: moment(`${date} ${getToTime}`).format("YYYY-MM-DD HH:mm:ss"),
+      from_datetime: moment(`${date} ${getFromTime}`).toISOString(),
+      to_datetime: moment(`${date} ${getToTime}`).toISOString(),
       payment_token: token,
     };
     setLoading(true);
