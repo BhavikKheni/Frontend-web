@@ -188,7 +188,6 @@ const ProfileView = (props) => {
         });
       }
       setLoading(false);
-      console.log("userdata: ", userData);
     }
     if (isLoggedIn) {
       getData();
@@ -451,7 +450,6 @@ const ProfileView = (props) => {
           )
         }
       />
-      )}
       <Verification
         user={user}
         verify={verify}
