@@ -121,6 +121,14 @@ const AddBookingSidebar = forwardRef((props, ref) => {
     add("/service/book", data)
       .then((result) => {
         if(result.type === "SUCCESS"){
+          if(result.payment.charge.error){
+            setResponse({
+              message: result.payment.charge.error,
+              type:"error"
+            })
+          }else{
+
+          }
           setOpen(false);
           setDisabled(false);
           setLoading(false);
@@ -194,7 +202,7 @@ const AddBookingSidebar = forwardRef((props, ref) => {
           type="button"
           onClick={() => {
             if (getFromTime && getToTime) {
-              if (selectedService.id_user === props.loginUser.id_user) {
+              if (selectedService && selectedService.id_user === props.loginUser && props.loginUser.id_user) {
                 setOpenSnackBar(true);
                 setResponse({
                   message:
