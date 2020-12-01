@@ -29,9 +29,10 @@ const AddBookingSlotCalendar = (props) => {
   const fetchSlots = async (from_datetime, to_datetime) => {
     const params = {
       from_datetime: moment(from_datetime).subtract(1, 'day').format("YYYY-MM-DD hh:mm:ss"),
-      to_datetime: moment(to_datetime).format("YYYY-MM-DD hh:mm:ss")
+      to_datetime: moment(to_datetime).format("YYYY-MM-DD hh:mm:ss"),
+      id_service:id_service
     };
-    const response = await search("/slot/list", params).catch((err) => {
+    const response = await search("/slot/list/service", params).catch((err) => {
       console.log("error", err);
     });
     

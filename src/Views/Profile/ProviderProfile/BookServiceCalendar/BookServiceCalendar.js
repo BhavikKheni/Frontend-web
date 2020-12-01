@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState,  useRef } from "react";
 import StarRateRounded from "@material-ui/icons/StarRateRounded";
 import { useTranslation } from "react-i18next";
 import { search } from "../../../../Services/Auth.service";
@@ -38,13 +38,14 @@ const BookServiceCalendar = ({
 
   const childRef = useRef();
 
-  const fetchSlots = async (from_datetime, to_datetime) => {
+  const fetchSlots = async (from_datetime, to_datetime,service) => {
     const params = {
+      id_service:service.id_service,
       from_datetime: moment(from_datetime).subtract(1, 'day').format("YYYY-MM-DD hh:mm:ss"),
       to_datetime: moment(to_datetime).format("YYYY-MM-DD hh:mm:ss")
     };
 
-    await search("/slot/list", params).then((response) => {
+    await search("/slot/list/service", params).then((response) => {
       handleResponse(response['available_slots'], response['booked_slots']);
     }).catch((err) => {
       console.log("error", err);
@@ -85,12 +86,12 @@ const BookServiceCalendar = ({
 
   // Refresh the calendar once create slot
   const onAddBookingCalendar = () => {
-    fetchSlots(dateRange.from_datetime, dateRange.to_datetime);
+    fetchSlots(dateRange.from_datetime, dateRange.to_datetime,selectedServiceDetails);
   };
 
   const refreshCalendar = (val) => {
     setDateRange(val);
-    fetchSlots(val.from_datetime, val.to_datetime);
+    fetchSlots(val.from_datetime, val.to_datetime,selectedServiceDetails);
   }
 
   return (

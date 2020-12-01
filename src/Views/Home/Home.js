@@ -114,19 +114,17 @@ const Home = (props) => {
   }, [setSidebarContent, setSidebar, t, pathname, isLoggedIn, user]);
 
   useEffect(() => {
-    if (pathname === "/home/next-booking") {
-      scrollToSection("next_booking");
-    } else if (pathname === "/home/payment-methods") {
+    if(pathname === "/home"){
+      scrollToSection("main_content")
+    }else if (pathname === "/home/payment-methods") {
       scrollToSection("payment_methods");
-    } else if (pathname === "/home/next_booking") {
-      scrollToSection("next_booking");
     } else if (pathname === "/home/next_booking") {
       scrollToSection("next_booking");
     } else if (pathname === "/home/calendar") {
       scrollToSection("calendar");
     } else if (pathname === "/home/service_history") {
       scrollToSection("service_history");
-    }
+    } 
   }, [pathname]);
 
   return (

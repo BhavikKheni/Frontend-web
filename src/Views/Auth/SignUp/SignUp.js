@@ -46,7 +46,7 @@ const SignUp = (props) => {
       first_name: "",
       last_name: "",
       email: "",
-      phone_number: "",
+      phone: "",
       password: "",
       checkedC: false,
       checked: false,
@@ -66,8 +66,8 @@ const SignUp = (props) => {
         !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
       ) {
         errors.email = t("validation.inValidateEmail");
-      } else if (!values.phone_number) {
-        errors.phone_number = t("validation.phoneNumber");
+      } else if (!values.phone) {
+        errors.phone = t("validation.phoneNumber");
       } else if (!values.password) {
         errors.password = t("validation.password");
       } else if (!values.checkedC) {
@@ -191,14 +191,14 @@ const SignUp = (props) => {
                   <InputComponent
                     type="tel"
                     placeholder="Phone Number"
-                    name="phone_number"
+                    name="phone"
                     id="outlined-name"
                     onChange={formik.handleChange}
-                    value={formik.values.phone_number}
-                    error={formik.errors.phone_number ? true : false}
+                    value={formik.values.phone}
+                    error={formik.errors.phone ? true : false}
                     helperText={
-                      formik.errors.phone_number &&
-                      `${formik.errors.phone_number}`
+                      formik.errors.phone &&
+                      `${formik.errors.phone}`
                     }
                   />
                 </div>
@@ -375,14 +375,14 @@ const SignUp = (props) => {
                       <InputComponent
                         type="tel"
                         placeholder="Phone Number"
-                        name="phone_number"
+                        name="phone"
                         id="outlined-name"
                         onChange={formik.handleChange}
-                        value={formik.values.phone_number}
-                        error={formik.errors.phone_number ? true : false}
+                        value={formik.values.phone}
+                        error={formik.errors.phone ? true : false}
                         helperText={
-                          formik.errors.phone_number &&
-                          `${formik.errors.phone_number}`
+                          formik.errors.phone &&
+                          `${formik.errors.phone}`
                         }
                       />
                     </div>

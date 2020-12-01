@@ -112,22 +112,31 @@ const AddBookingSidebar = forwardRef((props, ref) => {
     const data = {
       id_service: selectedService.id_service,
       id_user: user.id_user,
-      from_datetime: moment(`${date} ${getFromTime}`).format(
-        "YYYY-MM-DD HH:mm:ss"
-      ),
-      to_datetime: moment(`${date} ${getToTime}`).format("YYYY-MM-DD HH:mm:ss"),
+      from_datetime: moment(`${date} ${getFromTime}`).toISOString(),
+      to_datetime: moment(`${date} ${getToTime}`).toISOString(),
       payment_token: token,
     };
     setLoading(true);
     setDisabled(true);
     add("/service/book", data)
       .then((result) => {
-        setOpen(false);
-        setDisabled(false);
-        setLoading(false);
-        setResponse(result);
-        setOpenSnackBar(true);
-        onAddBookingCalendar();
+        if(result.type === "SUCCESS"){
+          setOpen(false);
+          setDisabled(false);
+          setLoading(false);
+          setResponse(result);
+          setOpenSnackBar(true);
+          onAddBookingCalendar();
+        }else {
+          setOpen(false);
+          setDisabled(false);
+          setLoading(false);
+          setResponse({
+            message: result.message,
+            type: "error",
+          });
+          setOpenSnackBar(true);
+        }
       })
       .catch((error) => {
         setDisabled(false);
@@ -185,7 +194,6 @@ const AddBookingSidebar = forwardRef((props, ref) => {
           type="button"
           onClick={() => {
             if (getFromTime && getToTime) {
-              console.log("login user",props.loginUser)
               if (selectedService.id_user === props.loginUser.id_user) {
                 setOpenSnackBar(true);
                 setResponse({
@@ -219,6 +227,7 @@ const AddBookingSidebar = forwardRef((props, ref) => {
             isLoading={isLoading}
             disabled={disabled}
             user={user}
+            loginUser={props.loginUser}
           />
         </DialogContent>
       </DialogComponent>

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { withRouter } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
+import CloseIcon from "@material-ui/icons/Close";
+import Popover from "@material-ui/core/Popover";
 import { useTranslation } from "react-i18next";
 import moment from "moment";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
@@ -102,7 +104,18 @@ const NewNextBooking = (props) => {
   const [paginationLoader, setPaginationLoader] = useState(false);
   const [showSectionLoader, setSectionLoader] = useState(false);
 
+  const [anchorEl, setAnchorEl] = React.useState(null);
   let nextBookingsArr = [];
+  const handleClick = (event, record) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? "simple-popover" : undefined;
 
   const getParams = (bookingsFor) => {
     return {
@@ -152,6 +165,7 @@ const NewNextBooking = (props) => {
       }
     } catch(err) {
       console.log(err);
+      setSectionLoader(false);
     };
   }
 
@@ -251,6 +265,7 @@ const NewNextBooking = (props) => {
                 variant="contained"
                 color="primary"
                 style={{ cursor: "pointer" }}
+                onClick={(event) => handleClick(event, r)}
               />
             </div>
           ))
@@ -277,6 +292,24 @@ const NewNextBooking = (props) => {
           />
         </Grid>
       </Grid>
+      <Popover
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        className="more_info_popover"
+      >
+        <CloseIcon onClick={handleClose} className="more_info_popover_close" />
+        <TypographyComponent title="Cancel Booking" />
+      </Popover>
     </React.Fragment>
   )
 }

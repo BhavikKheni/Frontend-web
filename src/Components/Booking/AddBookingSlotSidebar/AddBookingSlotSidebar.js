@@ -27,7 +27,7 @@ const AddBookingSlotSideBar = forwardRef((props, ref) => {
   };
 
   const onChangeFromTime = (e) => {
-    // setFromTime(e.target.value);
+    setFromTime(e.target.value);
   };
 
   const onChangeToTime = (e) => {
@@ -62,12 +62,8 @@ const AddBookingSlotSideBar = forwardRef((props, ref) => {
     const startDate = moment(getFromDate).format("YYYY-MM-DD");
     const endDate = moment(getToDate).format("YYYY-MM-DD");
     let bookingData = {
-      from_datetime: moment(`${startDate} ${getFromTime}`).format(
-        "YYYY-MM-DD HH:mm:ss"
-      ),
-      to_datetime: moment(`${endDate} ${getToTime}`).format(
-        "YYYY-MM-DD HH:mm:ss"
-      ),
+      from_datetime: moment(`${startDate} ${getFromTime}`).toISOString(),
+      to_datetime: moment(`${endDate} ${getToTime}`).toISOString(),
     };
 
     setLoading(true);
