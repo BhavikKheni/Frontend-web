@@ -234,7 +234,7 @@ const ConfirmBookingDialog = (props) => {
         .then((res) => res.json())
         .then((res) => {
           if (res.type === "SUCCESS") {
-            onSetBooking(cardDetails.card.id);
+            onSetBooking(cardDetails.id);
           }
         })
         .catch((err) => {});

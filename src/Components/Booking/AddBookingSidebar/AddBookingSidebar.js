@@ -121,6 +121,7 @@ const AddBookingSidebar = forwardRef((props, ref) => {
     add("/service/book", data)
       .then((result) => {
         if(result.type === "SUCCESS"){
+          setOpenSnackBar(true);
           if(result.payment.charge.error){
             setResponse({
               message: result.payment.charge.error,

@@ -112,6 +112,7 @@ const ConfirmPopupForLeavingCall = (props) => {
             });
           });
           history.push("/");
+          window.location.reload(true);
           room.disconnect();
           handleClosePopup();
           disconnectRoom();
