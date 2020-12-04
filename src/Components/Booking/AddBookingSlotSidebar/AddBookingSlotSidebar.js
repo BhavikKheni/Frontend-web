@@ -1,11 +1,15 @@
 import React, { useState, useImperativeHandle, forwardRef } from "react";
 import moment from "moment";
 import AddIcon from "@material-ui/icons/Add";
+import DeleteIcon from "@material-ui/icons/Delete";
 import InputComponent from "../../Forms/Input";
 import ButtonComponent from "../../Forms/Button";
 import Sppiner from "../../Spinner/Spinner";
 import { add } from "../../../Services/Auth.service";
+import Service from "../../../Services/index";
+import ConfirmDialog from '../../../Components/ConfirmDialog/ConfirmDialog'
 import SnackBarComponent from "../../SnackBar/SnackBar";
+const newService = new Service();
 
 const AddBookingSlotSideBar = forwardRef((props, ref) => {
   const [getFromTime, setFromTime] = useState("");
@@ -18,7 +22,8 @@ const AddBookingSlotSideBar = forwardRef((props, ref) => {
   const [isLoading, setLoading] = useState(false);
   const [slot_id, setSlot_id] = useState(null);
   const { id_service } = props;
-
+  const [conformDeleteDialogOpen, setConformDeleteDialogOpen] = useState(false);
+  const [deleteLoader, setDeleteLoader] = useState(false);
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
@@ -51,7 +56,6 @@ const AddBookingSlotSideBar = forwardRef((props, ref) => {
     } else {
       setSlot_id(null);
     }
-    console.log("Slot_id", slot_id);
   };
 
   const getTitle = () => {
@@ -79,9 +83,7 @@ const AddBookingSlotSideBar = forwardRef((props, ref) => {
   };
 
   const onSave = (record) => {
-    console.log("1");
     add("/slot/add", record).then((result) => {
-      console.log("2");
       handleResponse(result);
     }).catch((error) => {
       handleError(error);
@@ -90,7 +92,6 @@ const AddBookingSlotSideBar = forwardRef((props, ref) => {
 
   const onUpdate = (record) => {
     add("/slot/update", record).then((result) => {
-      console.log("3");
       handleResponse(result);
     }).catch((error) => {
       handleError(error);
@@ -99,7 +100,6 @@ const AddBookingSlotSideBar = forwardRef((props, ref) => {
 
   const handleResponse = (result) => {
     if (result.type === "SUCCESS") {
-      console.log("4");
       setLoading(false);
       setResponse(result);
       setOpenSnackBar(true);
@@ -114,6 +114,33 @@ const AddBookingSlotSideBar = forwardRef((props, ref) => {
     setResponse(error);
     setOpenSnackBar(true);
   }
+
+  const onDelete = async () => {
+    setDeleteLoader(true);
+    const res = await newService
+      .add("/slot/delete", {
+        id_slot:slot_id,
+      })
+      .catch((err) => {
+        setOpenSnackBar(true);
+        setResponse({
+          message: 'TypeError: Failed to fetch',
+          type: "error",
+        });
+        setDeleteLoader(false);
+      });
+    if (res && res.type === "SUCCESS") {
+      setConformDeleteDialogOpen(false);
+      setDeleteLoader(false);
+      props.onAddBookingCalendar()
+    } else if(res && res.type === "ERROR"){
+      setOpenSnackBar(true);
+      setResponse({
+        message: res.message,
+        type: res.type,
+      });
+    }
+  };
 
   return (
     <React.Fragment>
@@ -172,6 +199,29 @@ const AddBookingSlotSideBar = forwardRef((props, ref) => {
           className={"confirm_cta"}
         />
       </div>
+      {slot_id && 
+      <div className="confirm_booking_row">
+        <ButtonComponent
+          title={slot_id && "Delete"}
+          type="button"
+          endIcon={!isLoading && <DeleteIcon />}
+          startIcon={isLoading && <Sppiner />}
+          loader={isLoading}
+          onClick={() => {
+            setConformDeleteDialogOpen(true)
+          }}
+          disabled={isDisabled}
+          className={"confirm_cta"}
+        />
+        </div>
+        }
+        <ConfirmDialog
+          open={conformDeleteDialogOpen}
+          onClose={() => setConformDeleteDialogOpen(false)}
+          onConfirm={() => onDelete()}
+          onCancel={() => setConformDeleteDialogOpen(false)}
+          loader={deleteLoader}
+        />
       <SnackBarComponent
         open={openSnackBar}
         onClose={handleClose}
