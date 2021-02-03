@@ -24,6 +24,16 @@ import Verification from "../../Components/Verification/VerificationDialog";
 import "./service.css";
 import SignIn from "../Auth/SignIn/SignIn";
 import { useDebouncedCallback } from "use-debounce";
+import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import DialogComponent from "../../Components/Dialog/Dialog"
+import DialogContent from "@material-ui/core/DialogContent";
+import ButtonComponent from "../../Components/Forms/Button";
+import RightArrow from "../../images/next_arrow_white.svg";
+import Service from "../../Services/index";
+import moment from "moment";
+const newService = new Service();
 const useSession = () => React.useContext(SessionContext);
 const useSession1 = () => React.useContext(AuthenticationContext);
 
@@ -41,6 +51,128 @@ const useStyles = makeStyles((theme) => ({
   margin: {
     margin: theme.spacing(1),
   },
+  call_time_wrapper: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginTop: "15px",
+  },
+  call_page_timer: {
+    fontFamily: "Rubik",
+    fontSize: "16px",
+    lineHeight: "33px",
+    letterSpacing: "0.02em",
+    color: "#191919",
+    border: "1px solid #191919",
+    padding: "10px",
+    backgroundColor: "#CFE9CB",
+    borderRadius: "10px",
+    // width: '86px',
+    width: "85px",
+    height: "55px",
+    display: "block",
+    textAlign: "center",
+    cursor: "pointer"
+  },
+  total_card_title:{
+    display:'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    color: "#fff",
+    marginTop:10
+  },
+  card_wrapper: {
+    width: "100%",
+    maxWidth: "456px",
+    backgroundColor: "#ffffff",
+    borderRadius: "10px",
+    display: "flex",
+    alignItems: "flex-end",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    padding: "27px 23px 15px",
+    marginTop:10
+  },
+
+  card_form: {
+    width: "100%",
+    maxWidth: "273px",
+    height: "100%",
+    minHeight: "145px",
+    backgroundColor: "#303030",
+    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.05)",
+    borderRadius: "8px",
+    padding: "0",
+    paddingTop: "10px",
+  },
+
+  card_provider_name: {
+    fontFamily: "Rubik",
+    fontSize: "24px",
+    lineHeight: "36px",
+    color: "#FFFFFF",
+    padding: "0 15px 5px",
+    display: "block",
+  },
+
+  card_items: {
+    background: "#434343",
+    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.05)",
+    padding: "15px",
+  },
+  payment_add_new_card: {
+    display: "flex",
+    justifyContent: "center",
+    padding: "0",
+    transition: "all 0.3s ease-in-out 0s",
+  },
+
+  card_user_details: {
+    display: "flex",
+    justifyContent: "space-between",
+
+    "& .StripeElement": {
+      width: "100% !important",
+    },
+
+    "& p": {
+      fontFamily: "Rubik",
+      fontWeight: "400",
+      fontSize: "12px",
+      letterSpacing: "0.02em",
+      color: "#FFFFFF",
+      "&:last-child": {
+        paddingRight: "45px",
+      },
+    },
+  },
+  listNav: {
+    backgroundColor: "#fff",
+  },
+  select_card:{
+    cursor: "pointer",
+  },
+  confirm_booking_cta: {
+    fontSize: "16px",
+    fontWeight: "500",
+    width: "100%",
+    maxWidth: "456px",
+    margin: "20px auto",
+    color: "#fff",
+    textTransform: "inherit",
+    "& .MuiButton-label": {
+      width: "auto",
+    },
+    "&:after": {
+      content: "''",
+      backgroundImage: `url(${RightArrow})`,
+      height: "20px",
+      width: "12px",
+      backgroundSize: "cover",
+      backgroundRepeat: "no-repeat",
+      marginLeft: "10px",
+    },
+  },
 }));
 
 const FormControl = withStyles((theme) => ({
@@ -48,7 +180,23 @@ const FormControl = withStyles((theme) => ({
     "& .MuiOutlinedInput-root": {},
   },
 }))(MuiFormControl);
-
+const CARD_OPTIONS = {
+  hidePostalCode: true,
+  style: {
+    base: {
+      fontSize: "12px",
+      color: "#fff",
+      letterSpacing: "0.05em",
+      "::placeholder": {
+        color: "#fff",
+      },
+      textAlign: "right",
+    },
+    invalid: {
+      color: "#9e2146",
+    },
+  },
+};
 const Services = (props) => {
   const classes = useStyles();
   const { t } = useTranslation();
@@ -85,6 +233,28 @@ const Services = (props) => {
   const [verifyLoader, setVerifyLoader] = useState(false);
   const [disabledPromotionLink, setDisabledPromotionLink] = useState(false);
   const [promotion_text_hide, setPromotion_text_hide] = useState(false);
+  const [timerDialog,setTimerDialog]=useState(false);
+  const [selectCardVisible, setSelectCardVisible] = useState(false);
+  const [selectedIndex, setSelectedIndex] = React.useState(1);
+  const [time,setTime]=useState(0);
+  const [totalCost,setTotalCost]=useState(0);
+  const [cardTokenId, setCardTokenId] = useState("");
+  const [cardList, setCardList] = useState([]);
+  const [selectService,setSelectService]=useState({})
+  const stripe = useStripe();
+  const elements = useElements();
+
+  useEffect(() => {
+    const onListCard = () => {
+      get("/usercards/list")
+        .then((response) => {
+          setCardList(response);
+        })
+        .catch((error) => {});
+    };
+    onListCard();
+  }, []);
+
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
@@ -424,10 +594,8 @@ const Services = (props) => {
       });
     } else {
       if (isLoggedIn) {
-        history.push("/call-page", {
-          service: element,
-          userId: element.provider_id_user,
-        });
+        setTimerDialog(true)
+        setSelectService(element)
       } else {
         openSignInDialog();
       }
@@ -507,6 +675,107 @@ const Services = (props) => {
   const onPromotionClick = () => {
     setPromotion_text_hide(true);
   };
+  const handleListItemClick = (tokenId, index) => {
+    setCardTokenId(tokenId);
+    setSelectedIndex(index);
+  };
+
+  const onAddCard = (cardDetails) => {
+    if (!stripe || !elements) {
+      return;
+    }
+
+    const formData = new FormData();  
+    formData.append("user_id", user.id_user);
+    formData.append("card_token_id", cardDetails.card.id);
+    formData.append("token_id", cardDetails.id);
+  
+    if (cardDetails.card.id) {
+      newService
+        .upload("/usercards/add", formData)
+        .then((res) => res.json())
+        .then((res) => {
+          if (res.type === "SUCCESS") {
+            instantBookingCall(cardDetails.id);
+          }
+        })
+        .catch((err) => {});
+    }
+  };
+
+  const getCardInfo = async () => {
+    try {
+      const res = await stripe.createToken(elements.getElement(CardElement));
+      if (res) {
+        return res.token ? res.token : null;
+      } else {
+        return null;
+      }
+    } catch(e) {
+      console.log("Eroro: ", e);
+    }
+  };
+  
+  const instantBookingCall =(tokenID)=>{
+ let from_datetime = '2020-12-07T12:30:03+0530';//moment().subtract(1, 'day').toISOString()
+    const toData={
+       id_user:user.id_user,
+       id_service:selectService.id_service,
+       from_datetime : from_datetime,
+       to_datetime:'2020-12-07T12:45:03+0530',//moment(from_datetime).add(15,"minute").toISOString(),
+       payment_token:tokenID,
+    }
+    
+    add("/service/instant/book", toData)
+    .then((res) => {
+      if (res.type === "SUCCESS") {
+        history.push("/call-page", {
+          service: selectService,
+          userId: selectService.provider_id_user,
+        });
+      }
+    })
+    .catch((err) => {});
+  }
+
+  const onConfirmBooking = () => {
+  if(time){
+    getCardInfo().then((cardDetails) => {
+        if (cardTokenId && cardDetails && cardDetails.id) {
+          setCardTokenId(null)
+          alert(
+            "You have selected a card from existing and also entered a new card details. action not performed"
+          );
+          return;
+        } else if (cardTokenId) {
+          instantBookingCall(cardTokenId)
+        } else if (cardDetails && cardDetails.id) {
+          onAddCard(cardDetails);
+        } else {
+          alert("Please enter card details or choose a card from list");
+        }
+      });
+    }else{
+      setOpen(true)
+      setTypeRes({
+        message: "Please select time",
+        type:"error"
+      })
+    }
+  };
+  
+  const getTotalCost=useCallback((value)=>{
+    const pricePerHour = value;
+    const pricePerMinute = pricePerHour / 60;
+    const cost = value * pricePerMinute;
+    setTotalCost(cost)
+    setTime(value)
+  },[])
+
+  const onSetTime=useCallback((value)=>{
+    getTotalCost(value)
+  },[getTotalCost])
+
 
   return (
     <div className="service_card_content">
@@ -606,6 +875,128 @@ const Services = (props) => {
         handleCloseSignIn={handleCloseSignIn}
         setLogin={LoggedIn}
       />
+       <DialogComponent
+        onClose={() => {
+          setTimerDialog(false);
+        }}
+        open={timerDialog}
+        title="Set time and start"
+      >
+        <DialogContent>
+        <div className={classes.call_time_wrapper}>
+        <span
+          className={classes.call_page_timer}
+          onClick={()=>onSetTime(15)}
+        >
+          15 min
+        </span>
+        <span
+          className={classes.call_page_timer}
+          onClick={()=>onSetTime(30)}
+        >
+          30 min
+        </span>
+        <span
+          className={classes.call_page_timer}
+          onClick={()=>onSetTime(60)}
+        >
+          60 min
+        </span>
+        <span
+          className={classes.call_page_timer}
+          onClick={()=>onSetTime(120)}
+        >
+          120 min
+        </span>
+        <TextField
+          type="number"
+          placeholder="00:00"
+          name="time"
+          vaule={time}
+          InputProps={{ inputProps: { min: 0} }}
+          onChange={(e) => {
+            onSetTime(e.target.value)
+          }}
+          variant="outlined"
+        />
+      </div>
+      <div className={classes.total_card_title}>
+        <div><span>Total:</span><span>{totalCost}CHF</span></div>
+        <div>   
+          {selectCardVisible ? (
+              <span
+                className={classes.select_card}
+                onClick={() => {
+                  setSelectCardVisible(false);
+                }}
+              >
+                go back
+              </span>
+            ) : (
+              <span
+                className={classes.select_card}
+                onClick={() => {
+                  setSelectCardVisible(true);
+                }}
+              >
+                Select Card
+              </span>
+            )}</div>
+      </div>
+      {selectCardVisible ? (
+            <List component="nav" className={classes.listNav}>
+              {cardList &&
+                cardList.map((l, index) => {
+                  return (
+                    <ListItem
+                      key={index}
+                      button
+                      selected={selectedIndex === index}
+                      onClick={(event) =>{
+                        handleListItemClick(l.card_token_id, index)
+                      }
+                      }
+                      className={classes.root}
+                    >
+                      <div className={classes.cardListItem}>
+                        <span>Name</span>
+                        <span>expired on</span>
+                      </div>
+                      <div className={classes.cardListItem}>
+                        <span>XXXX XXXX XXXX XXXX {l.last4}</span>
+                        <span>
+                          {l.exp_month}/{l.exp_year}
+                        </span>
+                      </div>
+                    </ListItem>
+                  );
+                })}
+            </List>
+          ) : (
+            <div className={classes.card_wrapper}>
+            <div className={classes.card_form}>
+              <span className={classes.card_provider_name}>VISA</span>
+              <div className={classes.card_items}>
+                <div className={classes.card_user_details}>
+                  <TypographyComponent
+                    title="Number on card"
+                    style={{ fontWeight: "500" }}
+                  />
+                  <TypographyComponent title="expired on" />
+                </div>
+                <div className={classes.card_user_details}>
+                <CardElement options={CARD_OPTIONS} />
+                </div>
+              </div>
+            </div>
+          </div>
+          )}
+         <ButtonComponent title="Buy and start" className={classes.confirm_booking_cta}   onClick={() => {
+              onConfirmBooking();
+              
+            }}/>
+        </DialogContent>
+        </DialogComponent>
       <SnackBarComponent
         open={open}
         onClose={handleClose}
